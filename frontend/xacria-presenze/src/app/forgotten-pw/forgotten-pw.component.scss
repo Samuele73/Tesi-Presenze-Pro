@@ -1,0 +1,16 @@
+::-webkit-input-placeholder { /* per browser WebKit come Chrome e Safari */
+  text-align: center;
+}
+:-moz-placeholder { /* per browser Mozilla Firefox 4 a 18 */
+  text-align: center;
+}
+::-moz-placeholder { /* per browser Mozilla Firefox 19+ */
+  text-align: center;
+}
+:-ms-input-placeholder { /* per browser Internet Explorer 10 e 11 */
+  text-align: center;
+}
+
+#logo{
+  width: 65px;
+}

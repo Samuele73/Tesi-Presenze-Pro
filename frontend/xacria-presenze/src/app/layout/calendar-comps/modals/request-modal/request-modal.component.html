@@ -1,0 +1,141 @@
+<ng-template #modal let-modal>
+  <div *ngIf="!isModifyMode; else modify_modal">
+    <div class="modal-header">
+      <div>
+        <h2 class="modal-title" id="modal-basic-title">{{"Aggiungi richiesta" | translate}}</h2>
+        <span id="emailHelp" class="form-text">* Inserire la richiesta da approvare</span>
+      </div>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <form [formGroup]="form" (ngSubmit)="submitForm()">
+      <div class="modal-body">
+        <div class="">
+          <div class="row mb-3">
+            <div class="col-10">
+              <h4>{{"Tipo di richiesta" | translate}}</h4>
+              <select name="form-select" class="form-select" formControlName="request_type">
+                <option value="{{request_type}}" *ngFor="let request_type of request_types">{{request_type | translate}}</option>
+              </select>
+              <app-form-error [formControlRef]="requestType" [validator]="'required'" [errorText]="'Seleziona il tipo di richiesta'"></app-form-error>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-10">
+              <h4>{{"Data" | translate}}</h4>
+              <div class="row text-primary">
+                <div class="col-6">
+                  <label for="date-from" class="form-label h5">{{"Da" | translate}}</label>
+                  <input type="date" class="form-control" formControlName="date_from">
+                  <app-form-error [formControlRef]="dateFrom" [validator]="'required'" [errorText]="'Seleziona la data di inizio'"></app-form-error>
+                </div>
+                <div class="col-6">
+                  <label for="date-from" class="form-label h5">{{"A" | translate}}</label>
+                  <input type="date" class="form-control" formControlName="date_to">
+                  <app-form-error [formControlRef]="dateTo" [validator]="'required'" [errorText]="'Seleziona la data di fine'"></app-form-error>
+                </div>
+              </div>
+            </div>
+          </div> <!-- VIKTORRR VIKTORRRR VIKTORRRRRRRRRRRRRRRRR -->
+          <div class="row">
+            <div class="col-10">
+              <h4>{{"Ora" | translate}}</h4>
+              <div class="row gap-0">
+                <div class="col-6">
+                  <label for="time-from" class="form-label h5">{{"Da" | translate}}</label>
+                  <input type="time" class="form-control w-100" id="time-from" formControlName="time_from">
+                  <app-form-error [formControlRef]="timeFrom" [validator]="'required'" [errorText]="'Seleziona l orario di inizio'"></app-form-error>
+                </div>
+                <div class="col-6">
+                  <label for="time-from" class="form-label h5">{{"A" | translate}}</label>
+                  <input type="time" class="form-control w-100" id="time-to" formControlName="time_to">
+                  <app-form-error [formControlRef]="timeTo" [validator]="'required'" [errorText]="'Seleziona l orario di fine'"></app-form-error>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="px-4 py-0 rounded-4 bg-dark-subtle border-0 text-dark" (click)="modal.close('Save click')">Annulla</button>
+        <button type="button" class="px-4 py-0 rounded-4 bg-primary border-0 text-light" (click)="modal.close('Save click')" [disabled]="form.invalid" [class.disabled]="form.invalid" id="save-btn">Salva</button>
+      </div>
+    </form>
+  </div>
+  <!-- template presente nel caso in cui vi siano entries date dal comnponente padre -->
+  <ng-template #modify_modal>
+    <div class="modal-header">
+      <div>
+        <h2 class="modal-title" id="modal-basic-title">{{"Modifica le richieste" | translate}}</h2>
+        <span id="emailHelp" class="form-text">* {{"Modificare le richieste presenti" | translate}}</span>
+      </div>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <form [formGroup]="form" (ngSubmit)="submitForm()">
+      <div class="modal-body accordion" formArrayName="requests" id="requests_accordion">
+        <div *ngFor="let request of requests.controls; let i = index" formGroupName="{{i}}" > <!-- prima c'era class = {{i}}. se noti cambiamenti rimettilo e controlla il bug -->
+          <div class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#' + i" [ngClass]="{'delete-mode': toDeleteEntries.includes(request.value)}">
+              <strong>#{{i + 1}} {{"Richiesta" | translate}}</strong>
+            </button>
+          </div>
+          <div class="accordion-collapse collapse"  id="{{i}}"> <!-- se vuoi che rimanga solo un item aperto rimetti data-bs-parent="#requests_accordion" -->
+            <div class="accordion-body">
+              <div class="row mb-3">
+                <div class="col-10">
+                  <h4>{{"Tipo di richiesta" | translate}}</h4>
+                  <select name="form-select" class="form-select" formControlName="request_type">
+                    <option value="{{request_type}}" *ngFor="let request_type of request_types">{{request_type | translate}}</option>
+                  </select>
+                  <app-form-error [formControlRef]="requests.at(i).get('request_type')" [validator]="'required'" [errorText]="'Seleziona il tipo di richiesta'"></app-form-error>
+                </div>
+                <div class="col-2">
+                  <div class="d-flex align-items-end">
+                    <button class="rounded-circle bg-danger btn btn-icon" type="button" (click)="toggleEntryDelete(request.value, i)"><fa-icon [icon]="faIcons.xSimbol" class="fa-sm text-light"></fa-icon></button>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-10">
+                  <h4>{{"Data" | translate}}</h4>
+                  <div class="row text-primary">
+                    <div class="col-6">
+                      <label for="date-from" class="form-label h5">{{"Da" | translate}}</label>
+                      <input type="date" class="form-control" formControlName="date_from">
+                      <app-form-error [formControlRef]="requests.at(i).get('date_from')" [validator]="'required'" [errorText]="'Seleziona la data di inizio'"></app-form-error>
+                    </div>
+                    <div class="col-6">
+                      <label for="date-from" class="form-label h5">{{"A" | translate}}</label>
+                      <input type="date" class="form-control" formControlName="date_to">
+                      <app-form-error [formControlRef]="requests.at(i).get('date_to')" [validator]="'required'" [errorText]="'Seleziona la data di fine'"></app-form-error>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-10">
+                  <h4>{{"Ora" | translate}}</h4>
+                  <div class="row gap-0">
+                    <div class="col-6">
+                      <label for="time-from" class="form-label h5">{{"Da" | translate}}</label>
+                      <input type="time" class="form-control w-100" id="time-from" formControlName="time_from">
+                      <app-form-error [formControlRef]="requests.at(i).get('time_from')" [validator]="'required'" [errorText]="'Seleziona l orario di inizio'"></app-form-error>
+                    </div>
+                    <div class="col-6">
+                      <label for="time-from" class="form-label h5">{{"A" | translate}}</label>
+                      <input type="time" class="form-control w-100" id="time-to" formControlName="time_to">
+                      <app-form-error [formControlRef]="requests.at(i).get('time_to')" [validator]="'required'" [errorText]="'Seleziona l orario di fine'"></app-form-error>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="px-4 py-0 rounded-4 bg-dark-subtle border-0 text-dark" (click)="modal.close('Save click')">{{"Annulla" | translate}}</button>
+        <button type="submit" class="px-4 py-0 rounded-4 bg-primary border-0 text-light" (click)="modal.close('Save click')" [disabled]="form.invalid" [class.disabled]="form.invalid">{{"Modifica" | translate}}</button>
+      </div>
+    </form>
+  </ng-template>
+</ng-template>

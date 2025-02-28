@@ -1,0 +1,45 @@
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+
+.btn-icon{
+  width: 2em; /* Dimensione del bottone */
+  height: 2em; /* Dimensione del bottone */
+  display: flex; /* Per centrare l'icona */
+  align-items: center;
+  justify-content: center;
+  padding: 0; /* Rimuove il padding interno */
+}
+
+.btn-icon:hover{
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+  scale: (1.02);
+  transition: all 0.3s ease;
+}
+
+.delete-mode{
+  background-color: rgba(255, 0, 0, 0.406);
+  border-radius: 20px;
+  padding: $spacer;
+  transition: all 0.2s ease;
+}
+
+::ng-deep .custom-modal .modal-dialog  {
+
+  max-width: none;
+  width: fit-content;
+  background-color: transparent;
+}
+
+/* ::ng-deep .custom-modal .modal-content  {
+
+  width: auto;
+} */
+
+/* .custom-modal .modal-dialog {
+  max-width: 80%;
+  width: auto;
+}
+.custom-modal .modal-content {
+  max-height: 90vh;
+  overflow: hidden;
+} */

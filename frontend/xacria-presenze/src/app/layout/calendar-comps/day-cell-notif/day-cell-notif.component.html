@@ -1,0 +1,22 @@
+<div class="d-flex gap-2 align-items-center" (click)="openModifyModal()">
+  <fa-icon [icon]="icon" class="fa-lg"></fa-icon>
+  <button class=" border-0 rounded-2 text-light calendar-button" [ngClass]="{'bg-primary': notifs > 0, 'bg-secondary' : notifs <= 0}">{{notifs + " " + text}}</button>
+</div>
+<!-- Selezione della corretta modale -->
+<ng-container *ngTemplateOutlet="getTemplate()"></ng-container>
+
+<ng-template #dayworkTemplate>
+  <app-daywork-modal #modal [date]="date!" [dateString]="dateString!" [calendarEntries]="modalCalendarEntries" [isModifyMode]="modalModify"></app-daywork-modal>
+</ng-template>
+
+<ng-template #requestTemplate>
+  <app-request-modal #modal [calendarEntries]="modalCalendarEntries" [isModifyMode]="modalModify"></app-request-modal>
+</ng-template>
+
+<ng-template #workingTripTemplate>
+  <app-working-trip-modal #modal [calendarEntries]="modalCalendarEntries" [isModifyMode]="modalModify"></app-working-trip-modal>
+</ng-template>
+
+<ng-template #availabilityTemplate>
+  <app-availability-modal #modal [calendarEntries]="modalCalendarEntries" [isModifyMode]="modalModify"></app-availability-modal>
+</ng-template>

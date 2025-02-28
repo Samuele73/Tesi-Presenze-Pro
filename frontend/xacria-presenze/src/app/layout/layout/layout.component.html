@@ -1,0 +1,29 @@
+<!-- <div class="d-flex flex-column min-vh-100">
+  <app-navbar></app-navbar>
+  <div class="d-flex flex-grow-1">
+    <div class="col-auto p-0">
+      <app-sidebar></app-sidebar>
+    </div>
+    <div class="col px-4 py-4 d-flex flex-column ">
+      <app-profile-menu [username]="newUsername"></app-profile-menu>
+      <div class=" ">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+<div class="h-100 w-100">
+  <app-navbar></app-navbar>
+  <div class="row content-wrapper">
+    <div class="col-auto">
+      <app-sidebar></app-sidebar>
+    </div>
+    <div class="col-10 px-4 py-4 d-flex flex-column h-100 ">
+      <app-profile-menu [username]="newUsername"></app-profile-menu>
+      <div class=" overflow-x-hidden">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>

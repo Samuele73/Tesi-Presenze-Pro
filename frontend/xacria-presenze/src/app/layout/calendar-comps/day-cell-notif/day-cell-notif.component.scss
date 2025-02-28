@@ -1,0 +1,21 @@
+.calendar-button{
+  font-size: 0.9em;
+}
+
+.calendar-button:hover{
+  cursor: pointer;
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+  scale: (1.02);
+  transition: all 0.3s ease;
+}
+
+/* .add-content-container .d-flex:hover  {
+  cursor: pointer;
+
+  fa-icon{
+    color: vars.$primary;
+    transform: scale(1.2);
+    padding-left: 4px;
+    transition: all 0.3s ease;
+  }
+} */

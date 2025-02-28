@@ -1,0 +1,48 @@
+@use "../../../../vars.scss" as vars;
+
+.calcccc{
+  height: calc(0.69*100vh); //soluzine temporanea
+}
+
+.btn-icon{
+  width: 2em; /* Dimensione del bottone */
+  height: 2em; /* Dimensione del bottone */
+  display: flex; /* Per centrare l'icona */
+  align-items: center;
+  justify-content: center;
+  padding: 0; /* Rimuove il padding interno */
+}
+
+.cal-out-month .day-number{
+  color: gray;
+}
+
+.add-content-container .d-flex:hover  {
+  cursor: pointer;
+
+  fa-icon{
+    color: vars.$primary;
+    transform: scale(1.2);
+    padding-left: 4px;
+    transition: all 0.3s ease;
+  }
+}
+
+.btn-icon:hover{
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+  scale: (1.02);
+  transition: all 0.3s ease;
+}
+
+.calendar-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* 7 colonne, una per ogni giorno */
+  background: #1b8a42; /* Verde scuro come nell'immagine */
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  padding: 10px 0;
+  border-radius: 5px;
+}
+
+

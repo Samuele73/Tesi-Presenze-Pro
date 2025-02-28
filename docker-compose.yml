@@ -1,0 +1,14 @@
+services:
+  mongodb:
+    image: mongo
+    container_name: mongo_presenze_pro
+    ports:
+      - 27019:27017
+    volumes:
+      - mongo_db:/data
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=user
+      - MONGO_INITDB_ROOT_PASSWORD=user
+
+volumes:
+  mongo_db: {} #{} indica il path di default dove docker salva i volumi

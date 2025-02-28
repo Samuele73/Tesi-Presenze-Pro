@@ -1,0 +1,27 @@
+<app-select-lang class="position-absolute mx-2 my-2"></app-select-lang>
+<section class="min-vw-100 min-vh-100 d-flex align-items-center">
+  <div class="container">
+    <div class="row g-0 rounded-3">
+      <div class="col-lg-4 mx-auto text-center rounded bg-white">
+        <img src="../../favicon.ico" alt="" class="img-fluid mb-5" id="logo">
+        <form [formGroup]="forgottenPwdForm" (ngSubmit)="forgottenPwdFormSubmit()">
+          <div class="form-group" class="mb-4">
+            <label for="email" class="fw-bold fs-5 d-block mb-2">E-mail</label>
+            <input type="text" id="email" class="w-100 form-control form-control-sm shadow-sm border-dark border-1 rounded-3" placeholder="Rosita@xacria.com" formControlName="email">
+            <div *ngIf="emailControl!.invalid && emailControl!.touched">
+              <app-form-error [formControlRef]="emailControl" [validator]="'required'" [errorText]="'Campo richiesto' | translate"></app-form-error>
+              <app-form-error [formControlRef]="emailControl" [validator]="'pattern'" [errorText]="'Formato E-mail non valido' | translate"></app-form-error>
+            </div>
+          </div>
+          <button class="btn btn-sm btn-primary w-100 rounded-3 text-white fw-bold" [disabled]="forgottenPwdForm.invalid">{{"Modifica password" | translate}}</button>
+        </form>
+        <div *ngIf="isSubmittedEmailWrong" class="text-danger small mt-1">{{"E-mail errata" | translate}}</div>
+        <div *ngIf="emailFound" class="text-primary small mt-1">{{"Controllare l'email indicata per il cambio password" | translate}}</div>
+        <div class="d-flex justify-content-between mt-2">
+          <app-auth-link [link]="'/login'" [text]="'Accedi' | translate"></app-auth-link>
+          <app-auth-link [text]="'Informativa sulla privacy' | translate"></app-auth-link>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

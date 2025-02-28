@@ -1,0 +1,17 @@
+<div class="wrapper">
+  <div class="profile-details d-block d-lg-flex align-items-center">
+    <div class="profile-pic">
+
+    </div>
+    <span>{{username?.name + " " + username?.surname}}</span>
+  </div>
+  <div class="menu">
+    <button class="btn btn-link text-secondary p-0 mt-0 text-decoration-none fs-5" routerLink="/app/profile" [routerLinkActive]="'is-active'" [routerLinkActiveOptions]="{ exact: true }">{{"Il mio profilo" | translate}}</button>
+    <button class="btn btn-link text-secondary p-0 mt-0 text-decoration-none fs-5" routerLink="/app/docs">{{"Documenti" | translate}}</button>
+    <button class="btn btn-link text-secondary p-0 mt-0 text-decoration-none fs-5" routerLink="/app/attendance" [routerLinkActive]="'is-active'" [routerLinkActiveOptions]="{ exact: true }">{{"Presenze" | translate}}</button>
+    <button class="btn btn-link text-secondary p-0 mt-0 text-decoration-none fs-5" routerLink="/app/shlist">{{"Nota spesa" | translate}}</button>
+    <button class="btn btn-link text-secondary p-0 mt-0 text-decoration-none fs-5" routerLink="/app/goals">{{"Obiettivi" | translate}}</button>
+    <button class="btn btn-link text-secondary p-0 mt-0 text-decoration-none fs-5" routerLink="/app/awards">{{"Premi" | translate}}</button>
+  </div>
+  <hr>
+</div>

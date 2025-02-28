@@ -1,0 +1,77 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# Compiled output
+frontend/xacria-presenze/dist/
+frontend/xacria-presenze/tmp/
+frontend/xacria-presenze/out-tsc/
+frontend/xacria-presenze/bazel-out/
+
+# Node
+frontend/xacria-presenze/node_modules/
+frontend/xacria-presenze/npm-debug.log
+frontend/xacria-presenze/yarn-error.log
+
+# IDEs and editors
+frontend/xacria-presenze/.idea/
+frontend/xacria-presenze/.project
+frontend/xacria-presenze/.classpath
+frontend/xacria-presenze/.c9/
+frontend/xacria-presenze/*.launch
+frontend/xacria-presenze/.settings/
+frontend/xacria-presenze/*.sublime-workspace
+
+# Visual Studio Code
+frontend/xacria-presenze/.vscode/*
+!frontend/xacria-presenze/.vscode/settings.json
+!frontend/xacria-presenze/.vscode/tasks.json
+!frontend/xacria-presenze/.vscode/launch.json
+!frontend/xacria-presenze/.vscode/extensions.json
+frontend/xacria-presenze/.history/
+
+# Miscellaneous
+frontend/xacria-presenze/.angular/cache/
+frontend/xacria-presenze/.sass-cache/
+frontend/xacria-presenze/connect.lock
+frontend/xacria-presenze/coverage/
+frontend/xacria-presenze/libpeerconnection.log
+frontend/xacria-presenze/testem.log
+frontend/xacria-presenze/typings/
+
+# System files
+frontend/xacria-presenze/.DS_Store
+frontend/xacria-presenze/Thumbs.db
+
+backend/presenze-pro/HELP.md
+backend/presenze-pro/target/
+backend/presenze-pro/.mvn/wrapper/maven-wrapper.jar
+backend/presenze-pro/!**/src/main/**/target/
+backend/presenze-pro/!**/src/test/**/target/
+
+### STS ###
+backend/presenze-pro/.apt_generated
+backend/presenze-pro/.classpath
+backend/presenze-pro/.factorypath
+backend/presenze-pro/.project
+backend/presenze-pro/.settings
+backend/presenze-pro/.springBeans
+backend/presenze-pro/.sts4-cache
+
+### IntelliJ IDEA ###
+backend/presenze-pro/.idea
+backend/presenze-pro/*.iws
+backend/presenze-pro/*.iml
+backend/presenze-pro/*.ipr
+
+### NetBeans ###
+backend/presenze-pro/nbproject/private/
+backend/presenze-pro/nbbuild/
+backend/presenze-pro/dist/
+backend/presenze-pro/nbdist/
+backend/presenze-pro/.nb-gradle/
+backend/presenze-pro/build/
+backend/presenze-pro/!**/src/main/**/build/
+backend/presenze-pro/!**/src/test/**/build/
+
+### VS Code ###
+backend/presenze-pro/.vscode/
+.vscode

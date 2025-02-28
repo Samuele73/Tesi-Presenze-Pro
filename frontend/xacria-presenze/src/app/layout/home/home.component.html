@@ -1,0 +1,42 @@
+<div class="home">
+  <div class="profile-stats align-center">
+    <div class="stats">
+      <div class="stat">
+        <b><p>{{"Ferie rimanenti" | translate}}</p></b>
+        <div class="circle circle-lg  bg-primary">
+          <div class="d-flex flex-column align-items-center">
+            <span>100</span>
+            <span>ore</span>
+          </div>
+        </div>
+      </div>
+      <div class="stat">
+        <b><p>{{"Permessi rimanenti" | translate}}</p></b>
+        <div class="circle circle-lg bg-primary">
+          <div class="d-flex flex-column align-items-center">
+            <span>200</span>
+            <span>{{"ore" | translate}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="stat">
+        <b><p>{{"Richieste ricevute" | translate}}</p></b>
+        <div class="circle circle-lg orange">
+          <span>0</span>
+        </div>
+      </div>
+      <div class="stat">
+        <b><p>{{"Richieste in sospeso" | translate}}</p></b>
+        <div class="circle circle-lg orange">
+          <span>0</span>
+        </div>
+      </div>
+    </div>
+    <hr class="mt-5">
+  </div>
+  <div class="d-block d-lg-flex">
+    <app-requests-list class="w-50 me-5" [listName]="'Richieste in sospeso' | translate"></app-requests-list>
+    <app-requests-list class="w-50" [listName]="'Richieste ricevute' | translate"></app-requests-list>
+  </div>
+</div>
+

@@ -1,0 +1,13 @@
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+
+button.disabled {
+  opacity: 0.5;
+}
+
+.delete-mode{
+  background-color: rgba(255, 0, 0, 0.406);
+  border-radius: 20px;
+  padding: $spacer;
+  transition: all 0.2s ease;
+}

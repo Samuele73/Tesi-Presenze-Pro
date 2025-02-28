@@ -1,0 +1,10 @@
+<div class="dropdown">
+  <a class="btn btn-link btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+    <img src="/assets/img/flags/{{usedLang}}.svg" alt="main-flag" class="flag rounded-circle">
+  </a>
+  <ul class="dropdown-menu  dropdown-menu-end" id="drp-menu">
+    <li><a class="dropdown-item"><img src="/assets/img/flags/{{usedLang}}.svg" alt="main-flag" class="flag rounded-circle">{{usedLang == 'it' ? 'Italiano' : 'Inglese' | translate}}</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" (click)="switchLang()"><img src="/assets/img/flags/{{usedLang == 'it' ? 'en' : 'it'}}.svg" alt="main-flag" class="flag rounded-circle">{{usedLang == 'it' ? 'Inglese' : 'Italiano' | translate}}</a></li>
+  </ul>
+</div>
