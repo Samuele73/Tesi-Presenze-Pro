@@ -1,2 +1,6 @@
 # Tesi-Presenze-Pro
-Progetto di tesi per conseguimento della triennale in Informatica
+Avvio lato front-end: ng serve
+
+Avvio lato back-end: mvn spring-boot:run
+
+Avvio database mongo dockerizzato: docker compose up
