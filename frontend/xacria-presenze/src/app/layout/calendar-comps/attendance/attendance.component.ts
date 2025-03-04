@@ -40,7 +40,7 @@ export class AttendanceComponent implements OnInit{
   faIcons: any = faIcons;
   weekDayNames !: string[];
   monthNames !: string[];
-  calendarEntries!: any[]; //Array con le entries del mese del calendario (meglio farlo in base a quale giorno si clicca);
+  calendarEntries!: any[];
   CalendarEntryType = CalendarEntryType;
 
   //varibili per server mock
