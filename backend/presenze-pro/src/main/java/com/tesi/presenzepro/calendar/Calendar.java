@@ -1,6 +1,7 @@
 package com.tesi.presenzepro.calendar;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Builder
 @Document
 @JsonDeserialize(using = CalendarDeserializer.class)
+@Schema(description = "Rappresenta una entry del calendario nella sua interezza, cioè quella che viene visualizzata nel DB")
 public class Calendar {
 
     @Id

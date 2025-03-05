@@ -1,5 +1,6 @@
 package com.tesi.presenzepro.calendar;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Schema(description = "Rappresenta una entry di una trasferta nel calendario")
 public class CalendarWorkingTripEntry implements CalendarEntry{
     private Date from;
     private Date to;

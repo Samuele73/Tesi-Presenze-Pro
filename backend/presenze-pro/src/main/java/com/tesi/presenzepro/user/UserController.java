@@ -1,5 +1,7 @@
 package com.tesi.presenzepro.user;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/users")
 @CrossOrigin(origins = "http://localhost:4200")
+@Tag(name = "Utente", description = "Operazioni relative all'utente")
 public class UserController {
 
     private final UserService service;
@@ -36,6 +39,7 @@ public class UserController {
     }
 
     //Aggiungere cattura exception di JWTService
+    @Operation(description = "Valida il token inviato")
     @PostMapping("/secure")
     public ResponseEntity<?> validToken(@RequestBody String token){
         System.out.print("[Server msg]: validando tkn" + token + "\n");
@@ -73,6 +77,7 @@ public class UserController {
     }
 
     //Rotta raggiunta tramite la pagina di password dimenticata
+    @Operation(description = "Richiede il reset della password. Consegue l'invio di una email")
     @PostMapping("/resetPassword")
     public ResponseEntity<?> resetPassword(HttpServletRequest request, @RequestBody String email){
         if(this.service.resetPassword(email, request))
@@ -81,6 +86,7 @@ public class UserController {
     }
 
     //Rotta raggiunta tramite il link presente nella email per la modifica della password
+    @Operation(description = "Redirect a pagina per il cambio password. Rotta raggiunta tramite il link nella email di richiesta password")
     @GetMapping("/changePassword")
     public void showChangePasswordPage(HttpServletResponse httpServletResponse, @RequestParam("token") String token) throws IOException {
         if(!this.service.showChangePasswordPage(token)){
@@ -91,6 +97,7 @@ public class UserController {
     }
 
     //Rotta utilizzato per il salvataggio di una nuova password dopo aver richiesto ed utilizzato l'email di conferma
+    @Operation(description = "Cambio della password con quella nuova indicata")
     @PostMapping("/savePassword")
     public ResponseEntity<?> saveNewPassword(@RequestBody NewPasswordDto newPasswordDto){
         if(!this.service.savePassword(newPasswordDto))
@@ -98,6 +105,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(description = "Ottenimento dell'email interna al token indicato")
     @PostMapping("/getEmail")
     public ResponseEntity<?> getEmailFromTkn(@RequestBody String token){
         System.out.println("AO GUARDA: " + token);
