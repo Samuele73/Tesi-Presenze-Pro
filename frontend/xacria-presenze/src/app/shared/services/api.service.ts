@@ -3,13 +3,14 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { UserCreds } from 'src/interfaces';
 import { UserProfile, userCredentials } from '../models/userModel';
 import { apiEntry, entryType } from 'src/app/layout/shared/services/attendance-controller.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
 
-  private API_URL: string = "http://localhost:8080";
+ private API_URL: string = environment.apiUrl;
 
   constructor(private httpClient: HttpClient) {}
 
@@ -57,7 +58,7 @@ export class ApiService {
     return this.httpClient.post(this.API_URL + "/users/getEmail", token, {headers: headers});
   }
 
-  retrieveCalendarEntries(token: string){
+  /* retrieveCalendarEntries(token: string){
     const headers: HttpHeaders = new HttpHeaders({
       Authorization: "Bearer " + token
     });
@@ -70,6 +71,6 @@ export class ApiService {
     });
     console.log("Mando la richiesta di modifica", token);
     return this.httpClient.put<apiEntry[]>(this.API_URL + "/calendar/modifyEntries", {headers: headers});
-  }
+  } */
 }
 
