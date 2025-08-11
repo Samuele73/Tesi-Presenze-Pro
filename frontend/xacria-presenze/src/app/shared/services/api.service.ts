@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http'
 import { UserCreds } from 'src/interfaces';
 import { UserProfile, userCredentials } from '../models/userModel';
-import { apiEntry, entryType } from 'src/app/layout/shared/services/attendance-controller.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
