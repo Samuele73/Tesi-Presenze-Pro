@@ -12,7 +12,7 @@ import { hoursValidators } from '../../validators/hours.validators';
 import { datesValidators } from '../../validators/dates.validators';
 import { projects, request_types, monthNamesIt, monthNamesEn  } from '../const-vars';
 /* import { fi } from 'date-fns/locale'; */
-import { AttendanceControllerService, calendar, working_trip } from '../../shared/services/attendance-controller.service';
+import { AttendanceControllerService } from '../../shared/services/attendance-controller.service';
 import { CalendarView } from 'angular-calendar';
 import { WorkingTripModalComponent } from '../modals/working-trip-modal/working-trip-modal.component';
 import { ModalComponent } from '../modals/modalComponent';
