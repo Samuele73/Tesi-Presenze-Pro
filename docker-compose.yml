@@ -9,6 +9,38 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=user
       - MONGO_INITDB_ROOT_PASSWORD=user
+    networks:
+      - presenze_pro_network
+  backend:
+    build: 
+      context: ./backend/presenze-pro
+      dockerfile: Dockerfile
+    container_name: backend_presenze_pro
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://user:user@mongodb:27017/presenze_pro?authSource=admin
+      - SERVER_PORT=8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+    networks:
+      - presenze_pro_network
+  frontend:
+    build:
+      context: ./frontend/xacria-presenze
+      dockerfile: Dockerfile
+    container_name: frontend_presenze_pro
+    ports: 
+      - 4200:4200
+    depends_on:
+      - backend
+    networks:
+      - presenze_pro_network
+    environment:
+      - API_URL=http://backend:3000/api
 
 volumes:
-  mongo_db: {} #{} indica il path di default dove docker salva i volumi
+  mongo_db: {}
+networks:
+  presenze_pro_network:
+    driver: bridge

@@ -56,20 +56,5 @@ export class ApiService {
     });
     return this.httpClient.post(this.API_URL + "/users/getEmail", token, {headers: headers});
   }
-
-  /* retrieveCalendarEntries(token: string){
-    const headers: HttpHeaders = new HttpHeaders({
-      Authorization: "Bearer " + token
-    });
-    return this.httpClient.get<apiEntry[]>(this.API_URL + "/calendar/retrieveAll", {headers: headers});
-  }
-
-  modifyCalendarEntries(to_modify_entries: {old_entry: any, new_entry: any}[], entries_type: entryType, token: string){
-    const headers: HttpHeaders = new HttpHeaders({
-      Authorization: "Bearer " + token
-    });
-    console.log("Mando la richiesta di modifica", token);
-    return this.httpClient.put<apiEntry[]>(this.API_URL + "/calendar/modifyEntries", {headers: headers});
-  } */
 }
 

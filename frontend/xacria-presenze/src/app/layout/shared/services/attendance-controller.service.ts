@@ -18,7 +18,7 @@ import { DateFormatService } from 'src/app/shared/services/date-format.service';
   providedIn: 'root',
 })
 export class AttendanceControllerService {
-  calendar_entries!: calendar; //Forse meglio calendar[] | [] per mettere mesi su localStorage.
+  calendar_entries!: calendar; //Elmina dopo aver integrato il server
   private API_URL: string = environment.apiUrl;
 
   constructor(
