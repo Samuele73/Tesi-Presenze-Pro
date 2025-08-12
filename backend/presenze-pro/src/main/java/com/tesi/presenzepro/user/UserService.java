@@ -1,6 +1,6 @@
 package com.tesi.presenzepro.user;
 
-import com.tesi.presenzepro.jwt.JwtService;
+import com.tesi.presenzepro.jwt.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -24,7 +24,7 @@ public class UserService {
     private final UserRepository repository;
     private final PasswordResetTokenRespository resetTokenRespository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
+    private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
     private final UserDetailsServiceImp userDetailsService;
@@ -49,7 +49,7 @@ public class UserService {
         User user = repository.findByEmail(userRequest.getEmail()).orElseThrow();
         //STUDIANDO AUTHENTICATION MANAGER NON SERVE QUESTO IF ELSE. PRIMA STUDIARLO E POI TOGLIERLO
         if(passwordEncoder.matches(userRequest.getPwd(), user.getPwd())){
-            String token = jwtService.generateToken(user);
+            String token = jwtUtils.generateTokenFromUsername(user);
             return new UserAuthResponseDto(token);
         }
         else
@@ -65,21 +65,21 @@ public class UserService {
     }
 
     public boolean isTokenValid(String token){
-        String email = jwtService.extractEmail(token);
+        String email = jwtUtils.getUsernameFromJwt(token);
         if(email != null){
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-            return jwtService.isValid(token, userDetails);
+            return jwtUtils.validateJwtToken(token);
         }
         System.out.println("ERRORE: Errore nell'estrazione dell'email nella verifica del token");
         return false;
     }
 
     public User getUserProfile(String token){
-        String email = jwtService.extractEmail(token);
+        String email = jwtUtils.getUsernameFromJwt(token);
         if(email != null){
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
             User user = repository.findByEmail(email).get();
-            if(jwtService.isValid(token, userDetails)) {
+            if(jwtUtils.validateJwtToken(token)) {
                 return user;
             }
             return null;
@@ -176,7 +176,7 @@ public class UserService {
     }
 
     public String getEmailFromTkn(String tkn){
-        return jwtService.extractEmail(tkn);
+        return jwtUtils.getUsernameFromJwt(tkn);
     }
 
 }

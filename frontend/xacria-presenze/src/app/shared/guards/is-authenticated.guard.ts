@@ -26,7 +26,6 @@ export class IsAuthenticatedGuard implements CanActivate {
           return false;
         }
         this.authService.email = isLoggedIn.email;
-        console.log("PER FAVORE GUARDA::::", this.authService.email);
         return true;
       })
     );
