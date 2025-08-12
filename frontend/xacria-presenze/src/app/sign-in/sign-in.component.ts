@@ -16,6 +16,7 @@ import { userCredentials } from '../shared/models/userModel';
 })
 export class SignInComponent {
   signinForm!: FormGroup;
+  apiError?: string;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -74,8 +75,8 @@ export class SignInComponent {
         }
       },
       error: (err: any) => {
-        console.error('Error during signin:', err);
-        alert('Errore durante la registrazione. Riprova.');
+        console.error('Error during signin:', err.message);
+        this.apiError = err.message;
       },
     });
     /* if(this.authService.signin(userCredentials))
