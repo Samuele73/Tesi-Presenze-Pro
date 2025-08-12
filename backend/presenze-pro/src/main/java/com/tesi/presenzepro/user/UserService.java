@@ -1,5 +1,7 @@
 package com.tesi.presenzepro.user;
 
+import com.mongodb.DuplicateKeyException;
+import com.tesi.presenzepro.exception.DuplicateEmailException;
 import com.tesi.presenzepro.jwt.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -58,10 +60,16 @@ public class UserService {
 
     public User signIn(UserAuthRequestDto userDto){
         User user = userMapper.fromSigninToUser(userDto);
-        if(isUserInvalid(user) || repository.findByEmail(user.getUsername()).isPresent()) //dare un check all'utente in caso di account già esistente
-            return null;
+        if(isUserInvalid(user))
+            throw new IllegalArgumentException("Invalid user data");
+        if(repository.findByEmail(user.getUsername()).isPresent())
+            throw new DuplicateEmailException(user.getUsername());
         user.setPwd(passwordEncoder.encode(user.getPwd()));
-        return repository.save(user);
+        try{
+            return repository.save(user);
+        }catch (DuplicateKeyException e){
+            throw new DuplicateEmailException(user.getUsername());
+        }
     }
 
     public boolean isTokenValid(String token){

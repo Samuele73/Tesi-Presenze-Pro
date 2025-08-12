@@ -91,10 +91,16 @@ export class AuthService {
   signin(userCredentials: userCredentials) {
     return this.apiService.signInUser(userCredentials).pipe(
       catchError((err: HttpErrorResponse) => {
-        if (err.status === 0)
-          console.error('Client side or Network error occured: ', err.error);
-        else console.error('Server side error occured: ', err.error);
-        return throwError(() => new Error('Cannot signin user!')); // modifica sia questa parte sia nel backend in modo da sapere perfettamente se è causato da un accont già presente
+        if (err.status === 0) {
+          console.error('Client side or Network error occurred:', err.error);
+        } else if (err.status === 409) {
+          console.error('Email already exists:', err.error);
+          // Qui puoi fare qualcosa di specifico, tipo notificare l'utente
+          return throwError(() => new Error('Email already registered'));
+        } else {
+          console.error('Server side error occurred:', err.error);
+        }
+        return throwError(() => new Error('Cannot sign in user!'));
       })
     );
   }

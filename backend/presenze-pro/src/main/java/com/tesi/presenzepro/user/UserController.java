@@ -29,13 +29,8 @@ public class UserController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> signIn(@RequestBody UserAuthRequestDto user){
-        Map<String, String> responseMessage = new HashMap<>();
-        if(service.signIn(user) == null){
-            responseMessage.put("message", "Errore nella registrazione dell'utente");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseMessage);
-        }
-        responseMessage.put("message", "Utente registrato con successo!");
-        return ResponseEntity.ok(responseMessage);
+        User savedUser = service.signIn(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
     //Aggiungere cattura exception di JWTService
