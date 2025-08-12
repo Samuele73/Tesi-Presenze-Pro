@@ -21,11 +21,7 @@ export class ApiService {
   }
 
   signInUser(userCredentials: userCredentials) {
-    this.httpClient
-      .post(this.API_URL + '/users/signin', userCredentials)
-      .subscribe((resp) => {
-        console.log('API RESPONSE', resp);
-      });
+    return this.httpClient.post(this.API_URL + '/users/signin', userCredentials);
   }
 
   changeUserPassword(email: string) {

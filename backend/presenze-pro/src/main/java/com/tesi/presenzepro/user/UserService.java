@@ -58,7 +58,7 @@ public class UserService {
 
     public User signIn(UserAuthRequestDto userDto){
         User user = userMapper.fromSigninToUser(userDto);
-        if(isUserInvalid(user)) //Controllare anche che l'utente non sia già registrato
+        if(isUserInvalid(user) || repository.findByEmail(user.getUsername()).isPresent()) //dare un check all'utente in caso di account già esistente
             return null;
         user.setPwd(passwordEncoder.encode(user.getPwd()));
         return repository.save(user);
