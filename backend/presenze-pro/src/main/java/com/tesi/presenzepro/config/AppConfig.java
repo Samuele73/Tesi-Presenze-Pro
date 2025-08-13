@@ -1,8 +1,7 @@
 package com.tesi.presenzepro.config;
 
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.tesi.presenzepro.calendar.Calendar;
-import com.tesi.presenzepro.calendar.CalendarEntry;
+import com.tesi.presenzepro.calendar.model.Calendar;
 import com.tesi.presenzepro.calendar.CalendarDeserializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

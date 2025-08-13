@@ -1,11 +1,12 @@
-package com.tesi.presenzepro.calendar;
+package com.tesi.presenzepro.calendar.controller;
 
+import com.tesi.presenzepro.calendar.CalendarResponseEntry;
+import com.tesi.presenzepro.calendar.model.Calendar;
+import com.tesi.presenzepro.calendar.service.CalendarService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

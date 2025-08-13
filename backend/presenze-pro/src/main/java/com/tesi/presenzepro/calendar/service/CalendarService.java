@@ -1,5 +1,9 @@
-package com.tesi.presenzepro.calendar;
+package com.tesi.presenzepro.calendar.service;
 
+import com.tesi.presenzepro.calendar.mapper.CalendarMapper;
+import com.tesi.presenzepro.calendar.repository.CalendarRepository;
+import com.tesi.presenzepro.calendar.CalendarResponseEntry;
+import com.tesi.presenzepro.calendar.model.Calendar;
 import com.tesi.presenzepro.jwt.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -14,13 +18,13 @@ public class CalendarService {
     private final JwtUtils jwtUtils;
     private final CalendarMapper calendarMapper;
 
-    boolean saveNewCalendarEntry(Calendar calendarData){
+    public boolean saveNewCalendarEntry(Calendar calendarData){
         Calendar ciao = this.repository.save(calendarData);
         System.out.println("IL CAlendaRIO qui: " + ciao);
         return false;
     }
 
-    List<CalendarResponseEntry> retrieveAllUserEntries(HttpServletRequest request){
+    public List<CalendarResponseEntry> retrieveAllUserEntries(HttpServletRequest request){
         final String authHeader = request.getHeader("Authorization");
         if(authHeader == null)
             return null;

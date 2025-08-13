@@ -1,4 +1,4 @@
-package com.tesi.presenzepro.calendar;
+package com.tesi.presenzepro.calendar.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @Schema(description = "Rappresenta una entry di una richiesta nel calendario")
-public class CalendarRequestEntry implements CalendarEntry{
+public class CalendarRequestEntry implements CalendarEntry {
     private String request_type;
     private Date date_from;
     private Date date_to;

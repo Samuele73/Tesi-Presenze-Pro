@@ -1,4 +1,4 @@
-package com.tesi.presenzepro.calendar;
+package com.tesi.presenzepro.calendar.model;
 
 public enum CalendarEntryType {
     WORKING_DAY,

@@ -1,6 +1,7 @@
-package com.tesi.presenzepro.calendar;
+package com.tesi.presenzepro.calendar.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.tesi.presenzepro.calendar.CalendarDeserializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
