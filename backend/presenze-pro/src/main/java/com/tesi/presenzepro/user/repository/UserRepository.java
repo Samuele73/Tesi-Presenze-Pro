@@ -1,5 +1,6 @@
-package com.tesi.presenzepro.user;
+package com.tesi.presenzepro.user.repository;
 
+import com.tesi.presenzepro.user.model.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;

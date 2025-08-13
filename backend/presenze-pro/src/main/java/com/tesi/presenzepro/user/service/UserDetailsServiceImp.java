@@ -1,5 +1,6 @@
-package com.tesi.presenzepro.user;
+package com.tesi.presenzepro.user.service;
 
+import com.tesi.presenzepro.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

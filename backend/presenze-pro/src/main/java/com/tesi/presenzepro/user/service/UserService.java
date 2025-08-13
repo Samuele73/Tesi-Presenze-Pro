@@ -1,8 +1,17 @@
-package com.tesi.presenzepro.user;
+package com.tesi.presenzepro.user.service;
 
 import com.mongodb.DuplicateKeyException;
 import com.tesi.presenzepro.exception.DuplicateEmailException;
 import com.tesi.presenzepro.jwt.JwtUtils;
+import com.tesi.presenzepro.user.dto.NewPasswordDto;
+import com.tesi.presenzepro.user.dto.UserAuthRequestDto;
+import com.tesi.presenzepro.user.dto.UserAuthResponseDto;
+import com.tesi.presenzepro.user.mapper.UserMapper;
+import com.tesi.presenzepro.user.model.PasswordResetToken;
+import com.tesi.presenzepro.user.model.User;
+import com.tesi.presenzepro.user.model.UserProfile;
+import com.tesi.presenzepro.user.repository.PasswordResetTokenRespository;
+import com.tesi.presenzepro.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;

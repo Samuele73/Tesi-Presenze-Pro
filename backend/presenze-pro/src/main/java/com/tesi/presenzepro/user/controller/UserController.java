@@ -1,5 +1,11 @@
-package com.tesi.presenzepro.user;
+package com.tesi.presenzepro.user.controller;
 
+import com.tesi.presenzepro.user.model.User;
+import com.tesi.presenzepro.user.model.UserProfile;
+import com.tesi.presenzepro.user.service.UserService;
+import com.tesi.presenzepro.user.dto.NewPasswordDto;
+import com.tesi.presenzepro.user.dto.UserAuthRequestDto;
+import com.tesi.presenzepro.user.dto.UserAuthResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;

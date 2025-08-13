@@ -1,6 +1,6 @@
 package com.tesi.presenzepro.jwt;
 
-import com.tesi.presenzepro.user.UserDetailsServiceImp;
+import com.tesi.presenzepro.user.service.UserDetailsServiceImp;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

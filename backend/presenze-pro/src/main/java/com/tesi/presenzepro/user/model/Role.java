@@ -1,4 +1,4 @@
-package com.tesi.presenzepro.user;
+package com.tesi.presenzepro.user.model;
 
 public enum Role {
     USER,

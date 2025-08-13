@@ -1,4 +1,4 @@
-package com.tesi.presenzepro.user;
+package com.tesi.presenzepro.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

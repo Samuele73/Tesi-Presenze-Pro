@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CalendarRepository extends MongoRepository<Calendar, String> {
-    List<Calendar> findAllByUser(String userEmail);
+    List<Calendar> findAllByUserId(String userEmail);
 }

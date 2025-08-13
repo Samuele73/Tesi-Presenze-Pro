@@ -1,4 +1,4 @@
-package com.tesi.presenzepro.user;
+package com.tesi.presenzepro.user.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +24,7 @@ public class PasswordResetToken {
     private String userEmail;
     private Date expiryDate;
 
-    PasswordResetToken(String token, String userEmail){
+    public PasswordResetToken(String token, String userEmail){
         this.token = token;
         this.userEmail = userEmail;
         Calendar calendar = Calendar.getInstance();

@@ -1,5 +1,6 @@
-package com.tesi.presenzepro.user;
+package com.tesi.presenzepro.user.repository;
 
+import com.tesi.presenzepro.user.model.User;
 import lombok.AllArgsConstructor;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;

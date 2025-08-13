@@ -37,7 +37,7 @@ public class CalendarDeserializer extends JsonDeserializer<Calendar> {
 
         // Crea l'istanza di Calendar e popola i campi
         Calendar calendar = new Calendar();
-        calendar.setUser(node.get("user").asText());
+        calendar.setUserId(node.get("user").asText());
         calendar.setEntryType(CalendarEntryType.valueOf(entryType));
         calendar.setCalendarEntry(calendarEntry);
 

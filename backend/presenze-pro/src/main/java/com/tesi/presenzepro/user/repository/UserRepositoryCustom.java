@@ -1,4 +1,6 @@
-package com.tesi.presenzepro.user;
+package com.tesi.presenzepro.user.repository;
+
+import com.tesi.presenzepro.user.model.User;
 
 import java.util.Optional;
 

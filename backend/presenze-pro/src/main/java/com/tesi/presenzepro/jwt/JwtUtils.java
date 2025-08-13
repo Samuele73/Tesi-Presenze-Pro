@@ -1,6 +1,5 @@
 package com.tesi.presenzepro.jwt;
 
-import com.tesi.presenzepro.user.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -14,7 +13,6 @@ import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service
 public class JwtUtils {

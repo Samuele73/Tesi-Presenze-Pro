@@ -1,5 +1,9 @@
-package com.tesi.presenzepro.user;
+package com.tesi.presenzepro.user.mapper;
 
+import com.tesi.presenzepro.user.model.Role;
+import com.tesi.presenzepro.user.model.User;
+import com.tesi.presenzepro.user.model.UserProfile;
+import com.tesi.presenzepro.user.dto.UserAuthRequestDto;
 import org.springframework.stereotype.Service;
 
 @Service

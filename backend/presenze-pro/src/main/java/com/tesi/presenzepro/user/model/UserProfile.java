@@ -1,4 +1,4 @@
-package com.tesi.presenzepro.user;
+package com.tesi.presenzepro.user.model;
 
 import java.util.Date;
 

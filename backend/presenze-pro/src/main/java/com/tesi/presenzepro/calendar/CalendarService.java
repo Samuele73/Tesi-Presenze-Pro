@@ -26,7 +26,7 @@ public class CalendarService {
             return null;
         final String tkn = authHeader.substring(7);
         final String userEmail = jwtUtils.getUsernameFromJwt(tkn);
-        List<Calendar> calendars = repository.findAllByUser(userEmail);
+        List<Calendar> calendars = repository.findAllByUserId(userEmail);
         return calendarMapper.fromCalendarsToCalendarEntries(calendars);
     }
 }

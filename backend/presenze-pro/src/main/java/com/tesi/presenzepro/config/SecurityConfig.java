@@ -3,7 +3,7 @@ package com.tesi.presenzepro.config;
 //import com.tesi.presenzepro.jwt.JwtAuthenticationFilter;
 import com.tesi.presenzepro.jwt.AuthEntryPointJwt;
 import com.tesi.presenzepro.jwt.JwtAuthenticationFilter;
-import com.tesi.presenzepro.user.UserDetailsServiceImp;
+import com.tesi.presenzepro.user.service.UserDetailsServiceImp;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

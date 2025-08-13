@@ -1,4 +1,4 @@
-package com.tesi.presenzepro.user;
+package com.tesi.presenzepro.user.dto;
 
 public record NewPasswordDto(
         String password,
