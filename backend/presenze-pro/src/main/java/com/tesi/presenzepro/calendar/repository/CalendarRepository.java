@@ -2,6 +2,7 @@ package com.tesi.presenzepro.calendar.repository;
 
 import com.tesi.presenzepro.calendar.model.Calendar;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,12 +29,15 @@ public class CalendarController {
     }
 
     @Operation(description = "Ottieni tutte le entries del calendario dell'utente indciato")
-    @GetMapping("/retrieveAll")
-    ResponseEntity<?> retrieveAllEntries(HttpServletRequest request){
+    @GetMapping("/getAllEntries")
+    ResponseEntity<?> getAllEntries(HttpServletRequest request){
         final List<CalendarResponseEntry> calendarEntries = service.retrieveAllUserEntries(request);
-        if(calendarEntries == null)
-            return ResponseEntity.badRequest().build();
-        return ResponseEntity.ok(calendarEntries);
+        return ResponseEntity.status(HttpStatus.OK).body(calendarEntries);
+    }
+
+    @GetMapping("/getByMonthYearEntries")
+    ResponseEntity<?> getEntriesByMonthYear(@RequestParam String month, @RequestParam String year){
+        return ResponseEntity.status(HttpStatus.OK).body("ok");
     }
 
     @Operation(description = "modifica una entry nel calendario dell'utente (n.b: da finire)")

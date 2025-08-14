@@ -27,6 +27,7 @@ public class SecurityConfig {
     private final UserDetailsServiceImp userDetailsServiceImp;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthEntryPointJwt unauthorizedHandler;
+    private final NotFoundAfterAuthFilter notFoundAfterAuthFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception{
@@ -41,7 +42,8 @@ public class SecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .csrf(AbstractHttpConfigurer::disable)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) //filtro JWT
+                .addFilterAfter(notFoundAfterAuthFilter, JwtAuthenticationFilter.class) // filtro 404 dopo l'autenticazione
                 .build();
     }
 

@@ -5,6 +5,7 @@ import com.tesi.presenzepro.calendar.repository.CalendarRepository;
 import com.tesi.presenzepro.calendar.CalendarResponseEntry;
 import com.tesi.presenzepro.calendar.model.Calendar;
 import com.tesi.presenzepro.jwt.JwtUtils;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,10 +26,10 @@ public class CalendarService {
     }
 
     public List<CalendarResponseEntry> retrieveAllUserEntries(HttpServletRequest request){
-        final String authHeader = request.getHeader("Authorization");
-        if(authHeader == null)
-            return null;
-        final String tkn = authHeader.substring(7);
+        final String tkn = jwtUtils.getJwtFromHeader(request);
+        if(tkn == null){
+            throw new JwtException("token is null");
+        }
         final String userEmail = jwtUtils.getUsernameFromJwt(tkn);
         List<Calendar> calendars = repository.findAllByUserId(userEmail);
         return calendarMapper.fromCalendarsToCalendarEntries(calendars);
