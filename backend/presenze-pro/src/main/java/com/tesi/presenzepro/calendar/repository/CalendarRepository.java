@@ -12,6 +12,6 @@ import java.util.List;
 public interface CalendarRepository extends MongoRepository<CalendarEntity, String> {
     List<CalendarEntity> findAllByUserEmail(String userEmail);
 
-    @Query("{ 'userEmail': ?0, 'calendarEntry.from': { $gte: ?1, $lte: ?2 } }")
-    List<CalendarEntity> findByUserAndFromBetween(String userEmail, Date start, Date end);
+    @Query("{ 'userEmail': ?0, 'calendarEntry.date_from': { $gte: ?1, $lte: ?2 } }")
+    List<CalendarEntity> findByUserEmailAndDateFromBetween(String userEmail, Date start, Date end);
 }

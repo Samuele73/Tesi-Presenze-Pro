@@ -67,7 +67,7 @@ public class CalendarService {
         }
         final String userEmail = jwtUtils.getUsernameFromJwt(jwt);
         final Date[] monthStartAndEnd = getMonthStartAndEnd(month, year);
-        final List<CalendarEntity> calendarEntries = repository.findByUserAndFromBetween(userEmail, monthStartAndEnd[0], monthStartAndEnd[1]);
+        final List<CalendarEntity> calendarEntries = repository.findByUserEmailAndDateFromBetween(userEmail, monthStartAndEnd[0], monthStartAndEnd[1]);
         return calendarMapper.fromCalendarsToCalendarEntries(calendarEntries);
     }
 }

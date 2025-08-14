@@ -14,7 +14,7 @@ import java.util.Date;
 @Builder
 @Schema(description = "Rappresenta una entry di disponibilità nel calendario")
 public class CalendarAvailabilityEntry implements CalendarEntry{
-    private Date from;
-    private Date to;
+    private Date date_from;
+    private Date date_to;
     private String project;
 }
