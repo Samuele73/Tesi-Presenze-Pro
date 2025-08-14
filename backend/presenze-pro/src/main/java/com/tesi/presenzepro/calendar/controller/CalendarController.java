@@ -3,9 +3,11 @@ package com.tesi.presenzepro.calendar.controller;
 import com.tesi.presenzepro.calendar.dto.CalendarResponseEntry;
 import com.tesi.presenzepro.calendar.dto.SaveCalendarEntryDto;
 import com.tesi.presenzepro.calendar.model.CalendarEntity;
+import com.tesi.presenzepro.calendar.model.CalendarEntry;
 import com.tesi.presenzepro.calendar.service.CalendarService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,31 +22,26 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 @Tag(name = "Calendario", description = "Operazioni relative al calendario")
 public class CalendarController {
-    private final CalendarService service;
+    private final CalendarService calendarService;
 
-//    @Operation(description = "Salva una nuova entry nel calendario")
-//    @PostMapping("/prova")
-//    ResponseEntity<?> saveNewEntry(@RequestBody Calendar calendarData){
-//        service.saveNewCalendarEntry(calendarData);
-//        return ResponseEntity.ok().build();
-//    }
-
-    @Operation(description = "Ottieni tutte le entries del calendario dell'utente indciato")
+    @Operation(description = "Obtain all entries from the provided user")
     @GetMapping("/getAllEntries")
     ResponseEntity<?> getAllEntries(HttpServletRequest request){
-        final List<CalendarResponseEntry> calendarEntries = service.getAllUserEntries(request);
+        final List<CalendarResponseEntry> calendarEntries = calendarService.getAllUserEntries(request);
         return ResponseEntity.status(HttpStatus.OK).body(calendarEntries);
     }
 
+    @Operation(description = "Obtain all user calendar entries from specific month and year")
     @GetMapping("/getByMonthYearEntries")
     ResponseEntity<?> getEntriesByMonthYear(HttpServletRequest request ,@RequestParam String month, @RequestParam String year){
-        final List<CalendarResponseEntry> calendarEntries = service.getUserEntriesByMonthYear(request ,Integer.parseInt(month), Integer.parseInt(year));
+        final List<CalendarResponseEntry> calendarEntries = calendarService.getUserEntriesByMonthYear(request ,Integer.parseInt(month), Integer.parseInt(year));
         return ResponseEntity.status(HttpStatus.OK).body(calendarEntries);
     }
 
+    @Operation(description = "Save a new calendar entry")
     @PostMapping("/saveCalendarEntry")
     ResponseEntity<?> saveEntry(@RequestBody CalendarEntity calendarEntityEntry){
-        final CalendarEntity savedCalendarEntityEntry = service.saveNewCalendarEntry(calendarEntityEntry);
+        final CalendarEntity savedCalendarEntityEntry = calendarService.saveNewCalendarEntry(calendarEntityEntry);
         SaveCalendarEntryDto responseBody = new SaveCalendarEntryDto(
                 savedCalendarEntityEntry.getUserEmail(),
                 savedCalendarEntityEntry.getEntryType(),
@@ -53,10 +50,9 @@ public class CalendarController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
 
-    @Operation(description = "modifica una entry nel calendario dell'utente (n.b: da finire)")
-    @PutMapping("/modifyEntries")
-    ResponseEntity<?> modifyEntries(){
-        System.out.println("Mofifica entries in corso: ");
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/deleteCalendarEntry/{id}")
+    ResponseEntity<?> removeEntry(HttpServletRequest request, @PathVariable String id){
+        final CalendarEntity deletedCalendarEntry = calendarService.deleteCalendarEntry(request ,id);
+        return ResponseEntity.status(HttpStatus.OK).body(deletedCalendarEntry);
     }
 }

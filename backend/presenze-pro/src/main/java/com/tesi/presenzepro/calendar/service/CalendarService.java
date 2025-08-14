@@ -1,6 +1,7 @@
 package com.tesi.presenzepro.calendar.service;
 
 import com.tesi.presenzepro.calendar.mapper.CalendarMapper;
+import com.tesi.presenzepro.calendar.model.CalendarEntry;
 import com.tesi.presenzepro.calendar.repository.CalendarRepository;
 import com.tesi.presenzepro.calendar.dto.CalendarResponseEntry;
 import com.tesi.presenzepro.calendar.model.CalendarEntity;
@@ -8,7 +9,9 @@ import com.tesi.presenzepro.jwt.JwtUtils;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -25,12 +28,16 @@ public class CalendarService {
         return this.repository.save(calendarEntityData);
     }
 
-    public List<CalendarResponseEntry> getAllUserEntries(HttpServletRequest request){
+    private String getUserEmailFromRequest(HttpServletRequest request){
         final String tkn = jwtUtils.getJwtFromHeader(request);
         if(tkn == null){
             throw new JwtException("token is null");
         }
-        final String userEmail = jwtUtils.getUsernameFromJwt(tkn);
+        return jwtUtils.getUsernameFromJwt(tkn);
+    }
+
+    public List<CalendarResponseEntry> getAllUserEntries(HttpServletRequest request){
+        final String userEmail = this.getUserEmailFromRequest(request);
         List<CalendarEntity> calendarEntities = repository.findAllByUserEmail(userEmail);
         System.out.println("LOOK BEFORE" + calendarEntities);
         System.out.println("LOOK" + calendarMapper.fromCalendarsToCalendarEntries(calendarEntities));
@@ -61,13 +68,20 @@ public class CalendarService {
     }
 
     public List<CalendarResponseEntry> getUserEntriesByMonthYear(HttpServletRequest request, Integer month, Integer year) {
-        final String jwt = jwtUtils.getJwtFromHeader(request);
-        if(jwt == null){
-            throw new JwtException("token is null");
-        }
-        final String userEmail = jwtUtils.getUsernameFromJwt(jwt);
+        final String userEmail = this.getUserEmailFromRequest(request);
         final Date[] monthStartAndEnd = getMonthStartAndEnd(month, year);
         final List<CalendarEntity> calendarEntries = repository.findByUserEmailAndDateFromBetween(userEmail, monthStartAndEnd[0], monthStartAndEnd[1]);
         return calendarMapper.fromCalendarsToCalendarEntries(calendarEntries);
+    }
+
+    public CalendarEntity deleteCalendarEntry(HttpServletRequest request ,String entityId) {
+        final String userEmail = this.getUserEmailFromRequest(request);
+
+        CalendarEntity entity = repository
+                .findByUserEmailAndId(userEmail, entityId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        repository.delete(entity);
+        return entity;
     }
 }

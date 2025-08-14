@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public class CalendarMapper {
     public List<CalendarResponseEntry> fromCalendarsToCalendarEntries(List<CalendarEntity> entries){
          return entries.stream().map(entry -> {
-                return new CalendarResponseEntry(entry.getEntryType(), entry.getCalendarEntry());
+                return new CalendarResponseEntry(entry.getId() ,entry.getEntryType(), entry.getCalendarEntry());
             }
          ).collect(Collectors.toList());
     }
