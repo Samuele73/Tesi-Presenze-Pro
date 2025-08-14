@@ -20,12 +20,8 @@ public class CalendarService {
     private final JwtUtils jwtUtils;
     private final CalendarMapper calendarMapper;
 
-    public Calendar saveNewCalendarEntry(SaveCalendarEntryDto calendarData){
-        return this.repository.save(Calendar.builder()
-                .userEmail(calendarData.userEmail())
-                .calendarEntry(calendarData.calendarEntry())
-                .entryType(calendarData.entryType())
-                .build());
+    public Calendar saveNewCalendarEntry(Calendar calendarData){
+        return this.repository.save(calendarData);
     }
 
     public List<CalendarResponseEntry> retrieveAllUserEntries(HttpServletRequest request){

@@ -42,12 +42,12 @@ public class CalendarController {
     }
 
     @PostMapping("/saveCalendarEntry")
-    ResponseEntity<?> saveEntry(@RequestBody SaveCalendarEntryDto calendarEntry){
-        final Calendar newCalendarEntry = service.saveNewCalendarEntry(calendarEntry);
+    ResponseEntity<?> saveEntry(@RequestBody Calendar calendarEntry){
+        final Calendar savedCalendarEntry = service.saveNewCalendarEntry(calendarEntry);
         SaveCalendarEntryDto responseBody = new SaveCalendarEntryDto(
-                newCalendarEntry.getUserEmail(),
-                newCalendarEntry.getEntryType(),
-                newCalendarEntry.getCalendarEntry()
+                savedCalendarEntry.getUserEmail(),
+                savedCalendarEntry.getEntryType(),
+                savedCalendarEntry.getCalendarEntry()
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
