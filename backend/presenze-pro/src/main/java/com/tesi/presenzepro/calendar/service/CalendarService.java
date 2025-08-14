@@ -1,5 +1,6 @@
 package com.tesi.presenzepro.calendar.service;
 
+import com.tesi.presenzepro.calendar.dto.SaveCalendarEntryDto;
 import com.tesi.presenzepro.calendar.mapper.CalendarMapper;
 import com.tesi.presenzepro.calendar.repository.CalendarRepository;
 import com.tesi.presenzepro.calendar.CalendarResponseEntry;
@@ -19,10 +20,12 @@ public class CalendarService {
     private final JwtUtils jwtUtils;
     private final CalendarMapper calendarMapper;
 
-    public boolean saveNewCalendarEntry(Calendar calendarData){
-        Calendar ciao = this.repository.save(calendarData);
-        System.out.println("IL CAlendaRIO qui: " + ciao);
-        return false;
+    public Calendar saveNewCalendarEntry(SaveCalendarEntryDto calendarData){
+        return this.repository.save(Calendar.builder()
+                .userEmail(calendarData.userEmail())
+                .calendarEntry(calendarData.calendarEntry())
+                .entryType(calendarData.entryType())
+                .build());
     }
 
     public List<CalendarResponseEntry> retrieveAllUserEntries(HttpServletRequest request){
@@ -31,7 +34,7 @@ public class CalendarService {
             throw new JwtException("token is null");
         }
         final String userEmail = jwtUtils.getUsernameFromJwt(tkn);
-        List<Calendar> calendars = repository.findAllByUserId(userEmail);
+        List<Calendar> calendars = repository.findAllByUserEmail(userEmail);
         return calendarMapper.fromCalendarsToCalendarEntries(calendars);
     }
 }

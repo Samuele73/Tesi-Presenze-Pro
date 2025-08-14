@@ -23,7 +23,7 @@ public class Calendar {
     @Id
     private String id;
     @Indexed
-    private String userId; //User Email associated with the calendar Entry
+    private String userEmail; //User Email associated with the calendar Entry
     private CalendarEntryType entryType; //Utilizzato dal CalendarDeserializer per convertire calendarEntry nella giusta implementazione quando avviene il JSon mapping
     private CalendarEntry calendarEntry;
 }

@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 public interface CalendarRepository extends MongoRepository<Calendar, String> {
-    List<Calendar> findAllByUserId(String userEmail);
+    List<Calendar> findAllByUserEmail(String userEmail);
 }

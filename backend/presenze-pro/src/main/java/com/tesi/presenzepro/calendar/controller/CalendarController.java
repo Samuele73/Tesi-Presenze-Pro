@@ -1,6 +1,7 @@
 package com.tesi.presenzepro.calendar.controller;
 
 import com.tesi.presenzepro.calendar.CalendarResponseEntry;
+import com.tesi.presenzepro.calendar.dto.SaveCalendarEntryDto;
 import com.tesi.presenzepro.calendar.model.Calendar;
 import com.tesi.presenzepro.calendar.service.CalendarService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,12 +22,12 @@ import java.util.List;
 public class CalendarController {
     private final CalendarService service;
 
-    @Operation(description = "Salva una nuova entry nel calendario")
-    @PostMapping("/prova")
-    ResponseEntity<?> saveNewEntry(@RequestBody Calendar calendarData){
-        service.saveNewCalendarEntry(calendarData);
-        return ResponseEntity.ok().build();
-    }
+//    @Operation(description = "Salva una nuova entry nel calendario")
+//    @PostMapping("/prova")
+//    ResponseEntity<?> saveNewEntry(@RequestBody Calendar calendarData){
+//        service.saveNewCalendarEntry(calendarData);
+//        return ResponseEntity.ok().build();
+//    }
 
     @Operation(description = "Ottieni tutte le entries del calendario dell'utente indciato")
     @GetMapping("/getAllEntries")
@@ -38,6 +39,17 @@ public class CalendarController {
     @GetMapping("/getByMonthYearEntries")
     ResponseEntity<?> getEntriesByMonthYear(@RequestParam String month, @RequestParam String year){
         return ResponseEntity.status(HttpStatus.OK).body("ok");
+    }
+
+    @PostMapping("/saveCalendarEntry")
+    ResponseEntity<?> saveEntry(@RequestBody SaveCalendarEntryDto calendarEntry){
+        final Calendar newCalendarEntry = service.saveNewCalendarEntry(calendarEntry);
+        SaveCalendarEntryDto responseBody = new SaveCalendarEntryDto(
+                newCalendarEntry.getUserEmail(),
+                newCalendarEntry.getEntryType(),
+                newCalendarEntry.getCalendarEntry()
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
 
     @Operation(description = "modifica una entry nel calendario dell'utente (n.b: da finire)")
