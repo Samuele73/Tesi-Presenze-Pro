@@ -1,10 +1,10 @@
-package com.tesi.presenzepro.calendar;
+package com.tesi.presenzepro.calendar.dto;
 
 import com.tesi.presenzepro.calendar.model.CalendarEntry;
 import com.tesi.presenzepro.calendar.model.CalendarEntryType;
 
 public record CalendarResponseEntry(
         CalendarEntryType entryType,
-        CalendarEntry entry
+        CalendarEntry calendarEntry
 ) {
 }

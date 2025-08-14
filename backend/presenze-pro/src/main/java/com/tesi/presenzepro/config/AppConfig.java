@@ -1,7 +1,7 @@
 package com.tesi.presenzepro.config;
 
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.tesi.presenzepro.calendar.model.Calendar;
+import com.tesi.presenzepro.calendar.model.CalendarEntity;
 import com.tesi.presenzepro.calendar.CalendarDeserializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,7 +43,7 @@ public class AppConfig {
     @Bean
     public SimpleModule calendarModule() {
         SimpleModule module = new SimpleModule();
-        module.addDeserializer(Calendar.class, new CalendarDeserializer());
+        module.addDeserializer(CalendarEntity.class, new CalendarDeserializer());
         return module;
     }
 }

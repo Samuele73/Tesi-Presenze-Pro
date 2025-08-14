@@ -9,10 +9,10 @@ import com.tesi.presenzepro.exception.WrongCalendarEntryTypeException;
 
 import java.io.IOException;
 
-public class CalendarDeserializer extends JsonDeserializer<Calendar> {
+public class CalendarDeserializer extends JsonDeserializer<CalendarEntity> {
 
     @Override
-    public Calendar deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+    public CalendarEntity deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
 
         // Estrai il campo entryType
@@ -38,12 +38,12 @@ public class CalendarDeserializer extends JsonDeserializer<Calendar> {
         }
 
         // Crea l'istanza di Calendar e popola i campi
-        Calendar calendar = new Calendar();
-        calendar.setUserEmail(node.get("userEmail").asText());
-        calendar.setEntryType(CalendarEntryType.valueOf(entryType));
-        calendar.setCalendarEntry(calendarEntry);
+        CalendarEntity calendarEntity = new CalendarEntity();
+        calendarEntity.setUserEmail(node.get("userEmail").asText());
+        calendarEntity.setEntryType(CalendarEntryType.valueOf(entryType));
+        calendarEntity.setCalendarEntry(calendarEntry);
 
-        return calendar;
+        return calendarEntity;
     }
 }
 

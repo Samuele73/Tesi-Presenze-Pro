@@ -18,7 +18,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 @JsonDeserialize(using = CalendarDeserializer.class)
 @Schema(description = "Rappresenta una entry del calendario nella sua interezza, cioè quella che viene visualizzata nel DB")
-public class Calendar {
+public class CalendarEntity {
 
     @Id
     private String id;

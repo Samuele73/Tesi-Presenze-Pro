@@ -1,8 +1,8 @@
 package com.tesi.presenzepro.calendar.controller;
 
-import com.tesi.presenzepro.calendar.CalendarResponseEntry;
+import com.tesi.presenzepro.calendar.dto.CalendarResponseEntry;
 import com.tesi.presenzepro.calendar.dto.SaveCalendarEntryDto;
-import com.tesi.presenzepro.calendar.model.Calendar;
+import com.tesi.presenzepro.calendar.model.CalendarEntity;
 import com.tesi.presenzepro.calendar.service.CalendarService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,22 +32,23 @@ public class CalendarController {
     @Operation(description = "Ottieni tutte le entries del calendario dell'utente indciato")
     @GetMapping("/getAllEntries")
     ResponseEntity<?> getAllEntries(HttpServletRequest request){
-        final List<CalendarResponseEntry> calendarEntries = service.retrieveAllUserEntries(request);
+        final List<CalendarResponseEntry> calendarEntries = service.getAllUserEntries(request);
         return ResponseEntity.status(HttpStatus.OK).body(calendarEntries);
     }
 
     @GetMapping("/getByMonthYearEntries")
-    ResponseEntity<?> getEntriesByMonthYear(@RequestParam String month, @RequestParam String year){
-        return ResponseEntity.status(HttpStatus.OK).body("ok");
+    ResponseEntity<?> getEntriesByMonthYear(HttpServletRequest request ,@RequestParam String month, @RequestParam String year){
+        final List<CalendarResponseEntry> calendarEntries = service.getUserEntriesByMonthYear(request ,Integer.parseInt(month), Integer.parseInt(year));
+        return ResponseEntity.status(HttpStatus.OK).body(calendarEntries);
     }
 
     @PostMapping("/saveCalendarEntry")
-    ResponseEntity<?> saveEntry(@RequestBody Calendar calendarEntry){
-        final Calendar savedCalendarEntry = service.saveNewCalendarEntry(calendarEntry);
+    ResponseEntity<?> saveEntry(@RequestBody CalendarEntity calendarEntityEntry){
+        final CalendarEntity savedCalendarEntityEntry = service.saveNewCalendarEntry(calendarEntityEntry);
         SaveCalendarEntryDto responseBody = new SaveCalendarEntryDto(
-                savedCalendarEntry.getUserEmail(),
-                savedCalendarEntry.getEntryType(),
-                savedCalendarEntry.getCalendarEntry()
+                savedCalendarEntityEntry.getUserEmail(),
+                savedCalendarEntityEntry.getEntryType(),
+                savedCalendarEntityEntry.getCalendarEntry()
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
