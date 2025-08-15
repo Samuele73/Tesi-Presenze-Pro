@@ -5,10 +5,16 @@ import com.tesi.presenzepro.calendar.model.CalendarEntry;
 import com.tesi.presenzepro.calendar.repository.CalendarRepository;
 import com.tesi.presenzepro.calendar.dto.CalendarResponseEntry;
 import com.tesi.presenzepro.calendar.model.CalendarEntity;
+import com.tesi.presenzepro.exception.CalendarEntityNotFound;
 import com.tesi.presenzepro.jwt.JwtUtils;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.mongodb.core.FindAndModifyOptions;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -23,6 +29,7 @@ public class CalendarService {
     private final CalendarRepository repository;
     private final JwtUtils jwtUtils;
     private final CalendarMapper calendarMapper;
+    private final MongoTemplate mongoTemplate;
 
     public CalendarEntity saveNewCalendarEntry(CalendarEntity calendarEntityData){
         return this.repository.save(calendarEntityData);
@@ -74,24 +81,43 @@ public class CalendarService {
         return calendarMapper.fromCalendarsToCalendarEntries(calendarEntries);
     }
 
+    private CalendarEntity getCalendarEntity(String entityId, String userEmail){
+        return repository
+                .findByUserEmailAndId(userEmail, entityId)
+                .orElseThrow(() -> new CalendarEntityNotFound(entityId));
+    }
+
     public CalendarEntity deleteCalendarEntry(HttpServletRequest request ,String entityId) {
         final String userEmail = this.getUserEmailFromRequest(request);
-
-        CalendarEntity entity = repository
-                .findByUserEmailAndId(userEmail, entityId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
+        CalendarEntity entity = getCalendarEntity(entityId, userEmail);
         repository.delete(entity);
         return entity;
     }
 
-    public CalendarEntity updateCalendarEntity(HttpServletRequest request ,String entityId, CalendarEntity newCalendarEntity) {
+    private CalendarEntity updateCalendarEntityById(String id, CalendarEntity calendarEntity){
+        Query query = new Query(Criteria.where("_id").is(id));
+
+        Update update = new Update()
+                .set("calendarEntry", calendarEntity.getCalendarEntry())
+                .set("entryType", calendarEntity.getEntryType());
+
+        CalendarEntity updated = mongoTemplate.findAndModify(
+                query,
+                update,
+                FindAndModifyOptions.options().returnNew(true), // ritorna il nuovo documento
+                CalendarEntity.class
+        );
+
+        if(updated == null){
+            throw new CalendarEntityNotFound(id);
+        }
+
+        return updated;
+    }
+
+    public CalendarEntity updateCalendarEntity(HttpServletRequest request ,String entityId, CalendarEntity updatedCalendarEntity) {
         final String userEmail = this.getUserEmailFromRequest(request);
-
-        CalendarEntity entity = repository
-                .findByUserEmailAndId(userEmail, entityId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
-        return null;
+        //CalendarEntity entity = getCalendarEntity(entityId, userEmail);
+        return this.updateCalendarEntityById(entityId, updatedCalendarEntity);
     }
 }

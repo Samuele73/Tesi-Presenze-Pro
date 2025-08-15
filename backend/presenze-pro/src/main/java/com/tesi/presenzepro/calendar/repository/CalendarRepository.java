@@ -18,4 +18,5 @@ public interface CalendarRepository extends MongoRepository<CalendarEntity, Stri
 
 //    Optional<CalendarEntity> deleteCalendarEntityByUserEmailAndId(String userEmail, String id);
     Optional<CalendarEntity> findByUserEmailAndId(String userEmail, String id);
+
 }
