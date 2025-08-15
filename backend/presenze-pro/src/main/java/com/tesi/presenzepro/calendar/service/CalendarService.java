@@ -84,4 +84,14 @@ public class CalendarService {
         repository.delete(entity);
         return entity;
     }
+
+    public CalendarEntity updateCalendarEntity(HttpServletRequest request ,String entityId, CalendarEntity newCalendarEntity) {
+        final String userEmail = this.getUserEmailFromRequest(request);
+
+        CalendarEntity entity = repository
+                .findByUserEmailAndId(userEmail, entityId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        return null;
+    }
 }

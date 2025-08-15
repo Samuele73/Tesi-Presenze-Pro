@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tesi.presenzepro.calendar.model.*;
-import com.tesi.presenzepro.exception.WrongCalendarEntryTypeException;
+import com.tesi.presenzepro.exception.WrongCalendarEntityTypeException;
 
 import java.io.IOException;
 
@@ -34,7 +34,7 @@ public class CalendarDeserializer extends JsonDeserializer<CalendarEntity> {
         }else if("AVAILABILITY".equals(entryType)){
             calendarEntry = mapper.treeToValue(calendarEntryNode, CalendarAvailabilityEntry.class);
         }else {
-            throw new WrongCalendarEntryTypeException("Wrong entry type: " + entryType);
+            throw new WrongCalendarEntityTypeException("Wrong entry type: " + entryType);
         }
 
         // Crea l'istanza di Calendar e popola i campi

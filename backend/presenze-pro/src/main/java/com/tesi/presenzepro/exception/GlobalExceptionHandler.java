@@ -19,8 +19,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
-    @ExceptionHandler(WrongCalendarEntryTypeException.class)
-    public ResponseEntity<ErrorResponse> handleWrongCalendarEntryType(WrongCalendarEntryTypeException ex) {
+    @ExceptionHandler(WrongCalendarEntityTypeException.class)
+    public ResponseEntity<ErrorResponse> handleWrongCalendarEntryType(WrongCalendarEntityTypeException ex) {
         ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Wrong entry type");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
