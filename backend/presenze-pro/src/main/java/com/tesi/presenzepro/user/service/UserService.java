@@ -12,6 +12,7 @@ import com.tesi.presenzepro.user.model.User;
 import com.tesi.presenzepro.user.model.UserProfile;
 import com.tesi.presenzepro.user.repository.PasswordResetTokenRespository;
 import com.tesi.presenzepro.user.repository.UserRepository;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -91,16 +92,18 @@ public class UserService {
         return false;
     }
 
-    public User getUserProfile(String token){
-        String email = jwtUtils.getUsernameFromJwt(token);
-        if(email != null){
-            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-            User user = repository.findByEmail(email).get();
-            if(jwtUtils.validateJwtToken(token)) {
-                return user;
-            }
-            return null;
+    private String getUserEmailFromRequest(HttpServletRequest request){
+        final String tkn = jwtUtils.getJwtFromHeader(request);
+        if(tkn == null){
+            throw new JwtException("token is null");
         }
+        return jwtUtils.getUsernameFromJwt(tkn);
+    }
+
+    public User getUserProfile(HttpServletRequest request){
+        String email = this.getUserEmailFromRequest(request);
+        if(email != null)
+            return repository.findByEmail(email).get();
         return null;
     }
 

@@ -54,9 +54,9 @@ public class UserController {
     }
 
     //Utilizzato per reperire i dati del profilo dell
-    @PostMapping("/profile")
-    public ResponseEntity<?> getUserProfile(@RequestBody String token){
-         final User user = service.getUserProfile(token);
+    @GetMapping("/profile")
+    public ResponseEntity<?> getUserProfile(HttpServletRequest request){
+         final User user = service.getUserProfile(request);
          if(user != null)
              return ResponseEntity.ok(user);
          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);

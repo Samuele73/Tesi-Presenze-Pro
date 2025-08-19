@@ -115,11 +115,7 @@ export class AuthService {
   }
 
   retrieveCreds() {
-    if (!this.token) {
-      console.error('Impossibile reperire token nel local storage!');
-      return null;
-    }
-    return this.apiService.retrieveUserCreds(this.token);
+    return this.apiService.retrieveUserCreds();
   }
 
   updateCreds(user_creds: UserProfile) {

@@ -35,8 +35,8 @@ export class ApiService {
     );
   }
 
-  retrieveUserCreds(token: string) {
-    return this.httpClient.post(this.API_URL + '/users/profile', token);
+  retrieveUserCreds() {
+    return this.httpClient.get(this.API_URL + '/users/profile');
   }
 
   updateUserCreds(user_creds: UserProfile) {
