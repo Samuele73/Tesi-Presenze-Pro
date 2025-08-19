@@ -26,6 +26,13 @@ public class NotFoundAfterAuthFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
+
+        String path = request.getRequestURI();
+        if (path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         try {
             if (handlerMapping.getHandler(request) == null) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
