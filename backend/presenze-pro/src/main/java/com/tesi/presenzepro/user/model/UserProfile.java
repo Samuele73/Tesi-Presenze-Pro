@@ -6,14 +6,14 @@ public record UserProfile(
         String name,
         String surname,
         String email,
-        Integer serialNum,
+        Long serialNum,
         String duty,
         String employmentType,
         Date hireDate,
         Date birthDate,
         String address,
         String phone,
-        Integer iban,
+        Long iban,
         Role role
 ) {
 }

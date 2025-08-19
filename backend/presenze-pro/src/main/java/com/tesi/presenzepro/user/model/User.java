@@ -29,11 +29,11 @@ public class User implements UserDetails {
     //Altri dati
     private String name;
     private String surname;
-    private Integer serialNum;
+    private Long serialNum;
     private String duty;
     private String employmentType;
     private Date hireDate;
-    private Integer iban;
+    private Long iban;
     private Date birthDate;
     private String address;
     private String phone;
@@ -61,7 +61,7 @@ public class User implements UserDetails {
         this.surname = surname;
     }
 
-    public void setSerialNum(Integer serialNum) {
+    public void setSerialNum(Long serialNum) {
         this.serialNum = serialNum;
     }
 
@@ -77,7 +77,7 @@ public class User implements UserDetails {
         this.hireDate = hireDate;
     }
 
-    public void setIban(Integer iban) {
+    public void setIban(Long iban) {
         this.iban = iban;
     }
 
