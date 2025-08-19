@@ -6,6 +6,7 @@ import com.tesi.presenzepro.calendar.model.CalendarEntity;
 import com.tesi.presenzepro.calendar.model.CalendarEntry;
 import com.tesi.presenzepro.calendar.service.CalendarService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,21 +25,21 @@ import java.util.List;
 public class CalendarController {
     private final CalendarService calendarService;
 
-    @Operation(description = "Obtain all entries from the provided user")
+    @Operation(description = "Obtain all entries from the provided user", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("")
     ResponseEntity<?> getAllCalendarEntities(HttpServletRequest request){
         final List<CalendarResponseEntry> calendarEntries = calendarService.getAllUserEntries(request);
         return ResponseEntity.status(HttpStatus.OK).body(calendarEntries);
     }
 
-    @Operation(description = "Obtain all user calendar entries from specific month and year")
+    @Operation(description = "Obtain all user calendar entries from specific month and year", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/byMonthYear")
     ResponseEntity<?> getCalendarEntitiesByMonthYear(HttpServletRequest request ,@RequestParam String month, @RequestParam String year){
         final List<CalendarResponseEntry> calendarEntries = calendarService.getUserEntriesByMonthYear(request ,Integer.parseInt(month), Integer.parseInt(year));
         return ResponseEntity.status(HttpStatus.OK).body(calendarEntries);
     }
 
-    @Operation(description = "Save a new calendar entry")
+    @Operation(description = "Save a new calendar entry", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping("")
     ResponseEntity<?> saveCalendarEntity(@RequestBody CalendarEntity calendarEntityEntry){
         final CalendarEntity savedCalendarEntityEntry = calendarService.saveNewCalendarEntry(calendarEntityEntry);
@@ -50,12 +51,14 @@ public class CalendarController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
 
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping("/{id}")
     ResponseEntity<?> deleteCalendarEntity(HttpServletRequest request, @PathVariable String id){
         final CalendarEntity deletedCalendarEntry = calendarService.deleteCalendarEntry(request ,id);
         return ResponseEntity.status(HttpStatus.OK).body(deletedCalendarEntry);
     }
 
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping("/{id}")
     ResponseEntity<?> updateCalendarEntity(HttpServletRequest request ,@RequestBody CalendarEntity newCalendarEntity, @PathVariable String id){
         final CalendarEntity updatedCalendarEntity = calendarService.updateCalendarEntity(request, id, newCalendarEntity);

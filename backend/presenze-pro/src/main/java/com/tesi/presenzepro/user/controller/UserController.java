@@ -8,6 +8,7 @@ import com.tesi.presenzepro.user.dto.NewPasswordDto;
 import com.tesi.presenzepro.user.dto.SignInRequestDto;
 import com.tesi.presenzepro.user.dto.UserAuthResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -57,6 +58,7 @@ public class UserController {
     }
 
     //Utilizzato per reperire i dati del profilo dell
+    @Operation(description = "Ottieni il profilo utente",security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/profile")
     public ResponseEntity<?> getUserProfile(HttpServletRequest request){
          final User user = service.getUserProfile(request);
@@ -66,6 +68,7 @@ public class UserController {
     }
 
     //Implementare il metodo di aggiornamento
+    @Operation(description = "Modifica le credenziali del profilo utente", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping("/profile")
     public ResponseEntity<?> updateUserProfile(@RequestBody User updatedUserProfile){
         System.out.println("MESSAGGIO DA PUT UPDATE:: " + updatedUserProfile);
@@ -81,7 +84,7 @@ public class UserController {
     }
 
     //Rotta raggiunta tramite la pagina di password dimenticata
-    @Operation(description = "Richiede il reset della password. Consegue l'invio di una email")
+    @Operation(description = "Richiede il reset della password. Consegue l'invio di una email", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping("/resetPassword")
     public ResponseEntity<?> resetPassword(HttpServletRequest request, @RequestBody String email){
         if(this.service.resetPassword(email, request))
@@ -101,7 +104,7 @@ public class UserController {
     }
 
     //Rotta utilizzato per il salvataggio di una nuova password dopo aver richiesto ed utilizzato l'email di conferma
-    @Operation(description = "Cambio della password con quella nuova indicata")
+    @Operation(description = "Cambio della password con quella nuova indicata", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping("/savePassword")
     public ResponseEntity<?> saveNewPassword(@RequestBody NewPasswordDto newPasswordDto){
         if(!this.service.savePassword(newPasswordDto))
@@ -109,7 +112,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(description = "Ottenimento dell'email interna al token indicato")
+    @Operation(description = "Ottenimento dell'email interna al token indicato", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping("/getEmail")
     public ResponseEntity<?> getEmailFromTkn(@RequestBody String token){
         System.out.println("AO GUARDA: " + token);
