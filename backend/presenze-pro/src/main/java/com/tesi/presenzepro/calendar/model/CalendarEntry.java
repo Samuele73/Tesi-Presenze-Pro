@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 //        @JsonSubTypes.Type(value = CalendarWorkingTripEntry.class, name = "CalendarWorkingTripEntry"),
 //        @JsonSubTypes.Type(value = CalendarAvailabilityEntry.class, name = "CalendarAvailabilityEntry")
 //})
-@Schema(description = "Interfaccia base per le varie entry del calendario")
+@Schema(description = "Interfaccia base per le varie entry del calendario",
+oneOf = {CalendarRequestEntry.class, CalendarWorkingDayEntry.class, CalendarAvailabilityEntry.class, CalendarWorkingTripEntry.class})
 public interface CalendarEntry {
 }
