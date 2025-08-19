@@ -32,7 +32,7 @@ public class CalendarController {
     }
 
     @Operation(description = "Obtain all user calendar entries from specific month and year")
-    @GetMapping(params = {"year", "month"})
+    @GetMapping("/byMonthYear")
     ResponseEntity<?> getCalendarEntitiesByMonthYear(HttpServletRequest request ,@RequestParam String month, @RequestParam String year){
         final List<CalendarResponseEntry> calendarEntries = calendarService.getUserEntriesByMonthYear(request ,Integer.parseInt(month), Integer.parseInt(year));
         return ResponseEntity.status(HttpStatus.OK).body(calendarEntries);

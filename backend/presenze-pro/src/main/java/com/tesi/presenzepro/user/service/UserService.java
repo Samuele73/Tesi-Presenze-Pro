@@ -3,8 +3,9 @@ package com.tesi.presenzepro.user.service;
 import com.mongodb.DuplicateKeyException;
 import com.tesi.presenzepro.exception.DuplicateEmailException;
 import com.tesi.presenzepro.jwt.JwtUtils;
+import com.tesi.presenzepro.user.dto.LoginRequestDto;
 import com.tesi.presenzepro.user.dto.NewPasswordDto;
-import com.tesi.presenzepro.user.dto.UserAuthRequestDto;
+import com.tesi.presenzepro.user.dto.SignInRequestDto;
 import com.tesi.presenzepro.user.dto.UserAuthResponseDto;
 import com.tesi.presenzepro.user.mapper.UserMapper;
 import com.tesi.presenzepro.user.model.PasswordResetToken;
@@ -47,7 +48,7 @@ public class UserService {
         return user.getEmail().isBlank() || user.getPwd().isBlank();
     }
 
-    public UserAuthResponseDto login(UserAuthRequestDto userDto){
+    public UserAuthResponseDto login(LoginRequestDto userDto){
         User userRequest = userMapper.fromLoginToUser(userDto);
         System.out.println(userRequest);
         if(isUserInvalid(userRequest))
@@ -68,7 +69,7 @@ public class UserService {
             return null;
     }
 
-    public User signIn(UserAuthRequestDto userDto){
+    public User signIn(SignInRequestDto userDto){
         User user = userMapper.fromSigninToUser(userDto);
         if(isUserInvalid(user))
             throw new IllegalArgumentException("Invalid user data");

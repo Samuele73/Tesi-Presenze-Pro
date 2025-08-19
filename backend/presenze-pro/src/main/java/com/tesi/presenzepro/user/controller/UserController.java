@@ -1,10 +1,11 @@
 package com.tesi.presenzepro.user.controller;
 
+import com.tesi.presenzepro.user.dto.LoginRequestDto;
 import com.tesi.presenzepro.user.model.User;
 import com.tesi.presenzepro.user.model.UserProfile;
 import com.tesi.presenzepro.user.service.UserService;
 import com.tesi.presenzepro.user.dto.NewPasswordDto;
-import com.tesi.presenzepro.user.dto.UserAuthRequestDto;
+import com.tesi.presenzepro.user.dto.SignInRequestDto;
 import com.tesi.presenzepro.user.dto.UserAuthResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,13 +29,15 @@ public class UserController {
 
     private final UserService service;
 
+    @Operation(security = {})
     @PostMapping("/login")
-    public ResponseEntity<UserAuthResponseDto> login(@RequestBody UserAuthRequestDto user){
+    public ResponseEntity<UserAuthResponseDto> login(@RequestBody LoginRequestDto user){
         return ResponseEntity.ok(service.login(user));
     }
 
+    @Operation(security = {})
     @PostMapping("/signin")
-    public ResponseEntity<?> signIn(@RequestBody UserAuthRequestDto user){
+    public ResponseEntity<?> signIn(@RequestBody SignInRequestDto user){
         User savedUser = service.signIn(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
