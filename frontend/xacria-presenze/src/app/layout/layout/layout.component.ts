@@ -13,7 +13,7 @@ export class LayoutComponent {
 
   constructor(private usernameService: UsernameService, private authService: AuthService){
     this.authService.checkUserAutentication(this.authService.token);
-    let userCreds = this.authService.retrieveCreds();
+    let userCreds = this.authService.getUserProfile();
     if(userCreds != null){
       userCreds.subscribe({
         next: (resp: any) => {

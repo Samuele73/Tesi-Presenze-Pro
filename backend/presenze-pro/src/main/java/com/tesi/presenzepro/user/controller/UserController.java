@@ -81,7 +81,7 @@ public class UserController {
         return ResponseEntity.ok(responseMessage);
     }
 
-    //Rotta raggiunta tramite la pagina di password dimenticata
+    //Rotta raggiunta tramite la pagina di password dimenticata. genera l'email
     @Operation(description = "Richiede il reset della password. Consegue l'invio di una email", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping("/resetPassword")
     public ResponseEntity<?> resetPassword(HttpServletRequest request, @RequestBody String email){

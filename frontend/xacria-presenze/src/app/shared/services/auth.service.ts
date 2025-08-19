@@ -6,6 +6,7 @@ import { UserProfile, userCredentials } from '../models/userModel';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { catchError, map, tap } from 'rxjs/operators';
+import { NewPasswordDto, User, UserService } from 'src/generated-client';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,7 @@ export class AuthService {
   private readonly TOKEN_NAME: string = 'tkn';
   private userEmail: string = '';
 
-  constructor(private apiService: ApiService, private router: Router) {
+  constructor(private userService: UserService, private router: Router) {
     /* this.checkUserAutentication(this.token); se si hanno problemi controlla*/
   }
 
@@ -36,7 +37,7 @@ export class AuthService {
     console.log('Token from ls:', this.token, this._isLoggedIn$);
     if (token) {
       console.log('ci sono');
-      this.apiService.validateToken(this.token).subscribe({
+      this.userService.validToken(this.token!!).subscribe({
         next: (resp: any) => {
           console.log('tkn resp: ', resp, this._isLoggedIn$);
           isTokenValid = resp;
@@ -61,7 +62,7 @@ export class AuthService {
   //Metodo corretto per l'autenticazione
   checkUserAutentication2() {
     if (this.token) {
-      return this.apiService.validateToken(this.token);
+      return this.userService.validToken(this.token!!);
       //aggiornare user role
     }
     return;
@@ -70,13 +71,13 @@ export class AuthService {
   getUserEmail() {
     const tkn = this.token;
     if (tkn) {
-      return this.apiService.getEmailFromTkn(tkn);
+      return this.userService.getEmailFromTkn(tkn);
     }
     return false;
   }
 
   login(userCredentials: userCredentials) {
-    return this.apiService.loginUser(userCredentials).pipe(
+    return this.userService.login(userCredentials).pipe(
       tap((resp: any) => {
         console.log('Login TAP: ', resp);
         if (resp) {
@@ -89,8 +90,8 @@ export class AuthService {
   }
 
   signin(userCredentials: userCredentials) {
-    return this.apiService
-      .signInUser(userCredentials)
+    return this.userService
+      .signIn(userCredentials)
       .pipe(catchError(this.handleSigninError));
   }
 
@@ -107,18 +108,18 @@ export class AuthService {
   }
 
   changePassword(email: string) {
-    return this.apiService.changeUserPassword(email);
+    return this.userService.resetPassword(email);
   }
 
-  updatePassword(newPasswordRequest: object) {
-    return this.apiService.updatePassword(newPasswordRequest);
+  updatePassword(newPasswordRequest: NewPasswordDto) {
+    return this.userService.saveNewPassword(newPasswordRequest);
   }
 
-  retrieveCreds() {
-    return this.apiService.retrieveUserCreds();
+  getUserProfile() {
+    return this.userService.getUserProfile();
   }
 
-  updateCreds(user_creds: UserProfile) {
-    return this.apiService.updateUserCreds(user_creds);
+  updateCreds(user_creds: User) {
+    return this.userService.updateUserProfile(user_creds);
   }
 }

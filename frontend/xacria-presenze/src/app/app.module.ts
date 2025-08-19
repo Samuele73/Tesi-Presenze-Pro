@@ -23,6 +23,7 @@ import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
+import { ApiModule } from 'src/generated-client';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
       useFactory: adapterFactory,
     }),
     FontAwesomeModule,
+    ApiModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

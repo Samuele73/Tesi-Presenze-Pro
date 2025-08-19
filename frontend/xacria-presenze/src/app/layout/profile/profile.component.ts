@@ -5,6 +5,7 @@ import { AuthService } from 'src/app/shared/services/auth.service';
 import { UserCreds } from 'src/interfaces';
 import { Username } from '../shared/models/username';
 import { UsernameService } from '../shared/services/username.service';
+import { User } from 'src/generated-client';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -74,7 +75,7 @@ export class ProfileComponent {
   }
 
   retrieveUserCreds(): void{
-    let userCreds = this.authService.retrieveCreds();
+    let userCreds = this.authService.getUserProfile();
     if(userCreds != null){
       userCreds.subscribe({
         next: (resp: any) => {
@@ -99,7 +100,7 @@ export class ProfileComponent {
     if(this.profileForm.invalid)
       return;
     console.log("Profile form submitted!");
-    const tmp_user_creds: UserProfile = this.getAllUserCreds();
+    const tmp_user_creds: User = this.getAllUserCreds();
     this.authService.updateCreds(tmp_user_creds).subscribe({
       next: (resp: any) => {
         console.log("GUARDAMIIII:", resp.new_creds);
@@ -120,7 +121,7 @@ export class ProfileComponent {
   }
 
   //Returns an UserCreds object with values from profileForm and userCreds variable (because contains password)
-  getAllUserCreds(): UserProfile{
+  getAllUserCreds(): User{
     return {
       name: this.name?.value,
       surname: this.surname?.value,
