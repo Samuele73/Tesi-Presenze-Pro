@@ -63,7 +63,7 @@ public class UserController {
     }
 
     //Implementare il metodo di aggiornamento
-    @PutMapping("/profile/update")
+    @PutMapping("/profile")
     public ResponseEntity<?> updateUserProfile(@RequestBody User updatedUserProfile){
         System.out.println("MESSAGGIO DA PUT UPDATE:: " + updatedUserProfile);
         Map<String, Object> responseMessage = new HashMap<>();

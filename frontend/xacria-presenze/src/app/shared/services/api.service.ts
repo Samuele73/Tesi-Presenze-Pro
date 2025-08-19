@@ -42,7 +42,7 @@ export class ApiService {
   updateUserCreds(user_creds: UserProfile) {
     console.log('Le credenziali NUOVE SONO:', user_creds);
     return this.httpClient.put(
-      this.API_URL + '/users/profile/update',
+      this.API_URL + '/users/profile',
       user_creds
     );
     localStorage.setItem('user_creds', JSON.stringify(user_creds));
