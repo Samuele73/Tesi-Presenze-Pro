@@ -29,7 +29,7 @@ export class ApiService {
   }
 
   updatePassword(newPasswordRequest: object) {
-    return this.httpClient.post(
+    return this.httpClient.put(
       this.API_URL + '/users/savePassword',
       newPasswordRequest
     );

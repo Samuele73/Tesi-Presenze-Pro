@@ -91,7 +91,7 @@ public class UserController {
     @GetMapping("/changePassword")
     public void showChangePasswordPage(HttpServletResponse httpServletResponse, @RequestParam("token") String token) throws IOException {
         if(!this.service.showChangePasswordPage(token)){
-            httpServletResponse.sendRedirect("http://localhost:4200/login");
+            httpServletResponse.sendRedirect("http://localhost:4200/login"); //In produzione cambiare l'indirizzo. In generale impostalo dalle properties
             return;
         }
         httpServletResponse.sendRedirect("http://localhost:4200/updatePassword?token=" + token);
@@ -99,7 +99,7 @@ public class UserController {
 
     //Rotta utilizzato per il salvataggio di una nuova password dopo aver richiesto ed utilizzato l'email di conferma
     @Operation(description = "Cambio della password con quella nuova indicata")
-    @PostMapping("/savePassword")
+    @PutMapping("/savePassword")
     public ResponseEntity<?> saveNewPassword(@RequestBody NewPasswordDto newPasswordDto){
         if(!this.service.savePassword(newPasswordDto))
             return ResponseEntity.status(401).build();
