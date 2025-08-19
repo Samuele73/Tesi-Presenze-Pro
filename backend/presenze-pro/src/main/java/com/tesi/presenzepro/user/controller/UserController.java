@@ -25,18 +25,16 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/users")
 @CrossOrigin(origins = "http://localhost:4200")
-@Tag(name = "Utente", description = "Operazioni relative all'utente")
+@Tag(name = "User", description = "Operazioni relative all'utente")
 public class UserController {
 
     private final UserService service;
 
-    @Operation(security = {})
     @PostMapping("/login")
     public ResponseEntity<UserAuthResponseDto> login(@RequestBody LoginRequestDto user){
         return ResponseEntity.ok(service.login(user));
     }
 
-    @Operation(security = {})
     @PostMapping("/signin")
     public ResponseEntity<?> signIn(@RequestBody SignInRequestDto user){
         User savedUser = service.signIn(user);

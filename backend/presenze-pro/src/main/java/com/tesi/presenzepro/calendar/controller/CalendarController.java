@@ -21,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/calendar")
 @CrossOrigin(origins = "http://localhost:4200")
-@Tag(name = "Calendario", description = "Operazioni relative al calendario")
+@Tag(name = "Calendar", description = "Operazioni relative al calendario")
 public class CalendarController {
     private final CalendarService calendarService;
 
