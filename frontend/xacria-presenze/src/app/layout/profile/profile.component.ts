@@ -3,7 +3,7 @@ import { Form, FormBuilder, FormControl, FormGroup, Validators } from '@angular/
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { Username } from '../shared/models/username';
 import { UsernameService } from '../shared/services/username.service';
-import { User } from 'src/generated-client';
+import { User, UserProfile } from 'src/generated-client';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -11,7 +11,7 @@ import { User } from 'src/generated-client';
 })
 export class ProfileComponent {
   profileForm!: FormGroup;
-  user_creds!: any; //cambiare il tipo
+  user_creds!: UserProfile; //cambiare il tipo
   @Output() newUsername = new EventEmitter<{name: string, surname: string}>;
 
   constructor(private formBuilder: FormBuilder, private authService: AuthService, private usernameService: UsernameService){
@@ -49,7 +49,7 @@ export class ProfileComponent {
       employment_type: [this.user_creds.employmentType, [
 
       ]],
-      hire_date: [this.user_creds.hireDate, [
+      hire_date: [this.user_creds.hireDate?.toString().split("T", 1)[0], [
 
       ]],
       email: [this.user_creds.email , [
@@ -60,7 +60,7 @@ export class ProfileComponent {
         Validators.minLength(5),
         Validators.maxLength(34)
       ]],
-      birth_date: [this.user_creds.birthDate, [
+      birth_date: [this.user_creds.birthDate?.toString().split("T", 1)[0], [
 
       ]],
       address: [this.user_creds.address, [
@@ -94,20 +94,16 @@ export class ProfileComponent {
 
   }
 
-  onProfileFormSubmit(): void{
+   onProfileFormSubmit(): void{
     if(this.profileForm.invalid)
       return;
     console.log("Profile form submitted!");
-    const tmp_user_creds: User = this.getAllUserCreds();
+    const tmp_user_creds: UserProfile = this.getAllUserCreds();
     this.authService.updateCreds(tmp_user_creds).subscribe({
-      next: (resp: any) => {
-        if(resp.new_creds.hireDate)
-            resp.new_creds.hireDate = resp.new_creds.hireDate.split("T", 1)[0];
-        if(resp.new_creds.birthDate)
-          resp.new_creds.birthDate = resp.new_creds.birthDate.split("T", 1)[0];
-        this.user_creds = resp.new_creds;
+      next: (user_creds: UserProfile) => {
+        this.user_creds = user_creds;
         this.setProfileForm();
-        this.emitChangedUsername({name: resp.new_creds.name, surname: resp.new_creds.surname})
+        this.emitChangedUsername({name: user_creds.name || "", surname: user_creds.surname || ""});
       },
       error: (err: any) => {
         console.log("Error in Profile update: ", err);
@@ -117,7 +113,7 @@ export class ProfileComponent {
   }
 
   //Returns an UserCreds object with values from profileForm and userCreds variable (because contains password)
-  getAllUserCreds(): User{
+  getAllUserCreds(): UserProfile{
     return {
       name: this.name?.value,
       surname: this.surname?.value,
