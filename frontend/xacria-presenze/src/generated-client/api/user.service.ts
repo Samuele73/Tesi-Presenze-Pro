@@ -22,6 +22,7 @@ import { NewPasswordDto } from '../model/newPasswordDto';
 import { SignInRequestDto } from '../model/signInRequestDto';
 import { User } from '../model/user';
 import { UserAuthResponseDto } from '../model/userAuthResponseDto';
+import { UserProfile } from '../model/userProfile';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -66,9 +67,9 @@ export class UserService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getEmailFromTkn(body: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public getEmailFromTkn(body: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public getEmailFromTkn(body: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public getEmailFromTkn(body: string, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public getEmailFromTkn(body: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public getEmailFromTkn(body: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
     public getEmailFromTkn(body: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
@@ -102,7 +103,7 @@ export class UserService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<any>('post',`${this.basePath}/users/getEmail`,
+        return this.httpClient.request<string>('post',`${this.basePath}/users/getEmail`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,
@@ -119,9 +120,9 @@ export class UserService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getUserProfile(observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public getUserProfile(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public getUserProfile(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public getUserProfile(observe?: 'body', reportProgress?: boolean): Observable<UserProfile>;
+    public getUserProfile(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserProfile>>;
+    public getUserProfile(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserProfile>>;
     public getUserProfile(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
@@ -146,7 +147,7 @@ export class UserService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<any>('get',`${this.basePath}/users/profile`,
+        return this.httpClient.request<UserProfile>('get',`${this.basePath}/users/profile`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -365,9 +366,9 @@ export class UserService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public signIn(body: SignInRequestDto, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public signIn(body: SignInRequestDto, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public signIn(body: SignInRequestDto, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public signIn(body: SignInRequestDto, observe?: 'body', reportProgress?: boolean): Observable<User>;
+    public signIn(body: SignInRequestDto, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<User>>;
+    public signIn(body: SignInRequestDto, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<User>>;
     public signIn(body: SignInRequestDto, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
@@ -394,7 +395,7 @@ export class UserService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<any>('post',`${this.basePath}/users/signin`,
+        return this.httpClient.request<User>('post',`${this.basePath}/users/signin`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,
@@ -412,9 +413,9 @@ export class UserService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateUserProfile(body: User, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public updateUserProfile(body: User, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public updateUserProfile(body: User, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public updateUserProfile(body: User, observe?: 'body', reportProgress?: boolean): Observable<UserProfile>;
+    public updateUserProfile(body: User, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserProfile>>;
+    public updateUserProfile(body: User, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserProfile>>;
     public updateUserProfile(body: User, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
@@ -448,7 +449,7 @@ export class UserService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<any>('put',`${this.basePath}/users/profile`,
+        return this.httpClient.request<UserProfile>('put',`${this.basePath}/users/profile`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,
@@ -466,9 +467,9 @@ export class UserService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public validToken(body: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public validToken(body: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public validToken(body: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public validToken(body: string, observe?: 'body', reportProgress?: boolean): Observable<boolean>;
+    public validToken(body: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<boolean>>;
+    public validToken(body: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<boolean>>;
     public validToken(body: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
@@ -495,7 +496,7 @@ export class UserService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<any>('post',`${this.basePath}/users/secure`,
+        return this.httpClient.request<boolean>('post',`${this.basePath}/users/secure`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,

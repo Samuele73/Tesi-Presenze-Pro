@@ -9,32 +9,22 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { GrantedAuthority } from './grantedAuthority';
 
-export interface User { 
-    id?: string;
-    email?: string;
-    pwd?: string;
+export interface UserProfile { 
     name?: string;
     surname?: string;
+    email?: string;
     serialNum?: number;
     duty?: string;
     employmentType?: string;
     hireDate?: Date;
-    iban?: number;
     birthDate?: Date;
     address?: string;
     phone?: string;
-    role?: User.RoleEnum;
-    password?: string;
-    enabled?: boolean;
-    username?: string;
-    authorities?: Array<GrantedAuthority>;
-    accountNonExpired?: boolean;
-    credentialsNonExpired?: boolean;
-    accountNonLocked?: boolean;
+    iban?: number;
+    role?: UserProfile.RoleEnum;
 }
-export namespace User {
+export namespace UserProfile {
     export type RoleEnum = 'USER' | 'ADMIN';
     export const RoleEnum = {
         USER: 'USER' as RoleEnum,

@@ -101,19 +101,16 @@ public class UserService {
         return jwtUtils.getUsernameFromJwt(tkn);
     }
 
-    public User getUserProfile(HttpServletRequest request){
+    public UserProfile getUserProfile(HttpServletRequest request){
         String email = this.getUserEmailFromRequest(request);
-        if(email != null)
-            return repository.findByEmail(email).get();
-        return null;
+        Optional<User> user = repository.findByEmail(email);
+        return user.map(userMapper::fromUserToUserProfile).orElse(null);
     }
 
     public UserProfile updateUserProfile(User updatedUserProfile){
         System.out.println("AGGIORNAMENTO UTENTE PROFILO:" + repository.findByIdAndModify(updatedUserProfile));
         Optional<User> newUserProfile = repository.findByIdAndModify(updatedUserProfile);
-        if(newUserProfile.isEmpty())
-            return null;
-        return userMapper.fromUserToUserProfile(newUserProfile.get());
+        return newUserProfile.map(userMapper::fromUserToUserProfile).orElse(null);
     }
 
     public boolean resetPassword(String userEmail, HttpServletRequest request){

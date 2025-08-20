@@ -24,7 +24,7 @@ public class CalendarController {
 
     @Operation(description = "Obtain all entries from the provided user", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("")
-    ResponseEntity<?> getAllCalendarEntities(HttpServletRequest request){
+    ResponseEntity<List<CalendarResponseDto>> getAllCalendarEntities(HttpServletRequest request){
         final List<CalendarResponseDto> calendarEntries = calendarService.getAllUserEntries(request);
         return ResponseEntity.status(HttpStatus.OK).body(calendarEntries);
     }

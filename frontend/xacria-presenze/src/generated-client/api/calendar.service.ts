@@ -18,6 +18,7 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 import { CalendarEntity } from '../model/calendarEntity';
+import { CalendarResponseDto } from '../model/calendarResponseDto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -62,9 +63,9 @@ export class CalendarService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public deleteCalendarEntity(id: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public deleteCalendarEntity(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public deleteCalendarEntity(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public deleteCalendarEntity(id: string, observe?: 'body', reportProgress?: boolean): Observable<CalendarResponseDto>;
+    public deleteCalendarEntity(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<CalendarResponseDto>>;
+    public deleteCalendarEntity(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<CalendarResponseDto>>;
     public deleteCalendarEntity(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (id === null || id === undefined) {
@@ -93,7 +94,7 @@ export class CalendarService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<any>('delete',`${this.basePath}/calendar/${encodeURIComponent(String(id))}`,
+        return this.httpClient.request<CalendarResponseDto>('delete',`${this.basePath}/calendar/${encodeURIComponent(String(id))}`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -109,9 +110,9 @@ export class CalendarService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAllCalendarEntities(observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public getAllCalendarEntities(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public getAllCalendarEntities(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public getAllCalendarEntities(observe?: 'body', reportProgress?: boolean): Observable<Array<CalendarResponseDto>>;
+    public getAllCalendarEntities(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<CalendarResponseDto>>>;
+    public getAllCalendarEntities(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<CalendarResponseDto>>>;
     public getAllCalendarEntities(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
@@ -136,7 +137,7 @@ export class CalendarService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<any>('get',`${this.basePath}/calendar`,
+        return this.httpClient.request<Array<CalendarResponseDto>>('get',`${this.basePath}/calendar`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -154,9 +155,9 @@ export class CalendarService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getCalendarEntitiesByMonthYear(month: string, year: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public getCalendarEntitiesByMonthYear(month: string, year: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public getCalendarEntitiesByMonthYear(month: string, year: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public getCalendarEntitiesByMonthYear(month: string, year: string, observe?: 'body', reportProgress?: boolean): Observable<Array<CalendarResponseDto>>;
+    public getCalendarEntitiesByMonthYear(month: string, year: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<CalendarResponseDto>>>;
+    public getCalendarEntitiesByMonthYear(month: string, year: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<CalendarResponseDto>>>;
     public getCalendarEntitiesByMonthYear(month: string, year: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (month === null || month === undefined) {
@@ -197,7 +198,7 @@ export class CalendarService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<any>('get',`${this.basePath}/calendar/byMonthYear`,
+        return this.httpClient.request<Array<CalendarResponseDto>>('get',`${this.basePath}/calendar/byMonthYear`,
             {
                 params: queryParameters,
                 withCredentials: this.configuration.withCredentials,
@@ -215,9 +216,9 @@ export class CalendarService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public saveCalendarEntity(body: CalendarEntity, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public saveCalendarEntity(body: CalendarEntity, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public saveCalendarEntity(body: CalendarEntity, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public saveCalendarEntity(body: CalendarEntity, observe?: 'body', reportProgress?: boolean): Observable<CalendarResponseDto>;
+    public saveCalendarEntity(body: CalendarEntity, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<CalendarResponseDto>>;
+    public saveCalendarEntity(body: CalendarEntity, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<CalendarResponseDto>>;
     public saveCalendarEntity(body: CalendarEntity, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
@@ -251,7 +252,7 @@ export class CalendarService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<any>('post',`${this.basePath}/calendar`,
+        return this.httpClient.request<CalendarResponseDto>('post',`${this.basePath}/calendar`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,
@@ -270,9 +271,9 @@ export class CalendarService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateCalendarEntity(body: CalendarEntity, id: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public updateCalendarEntity(body: CalendarEntity, id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public updateCalendarEntity(body: CalendarEntity, id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public updateCalendarEntity(body: CalendarEntity, id: string, observe?: 'body', reportProgress?: boolean): Observable<CalendarResponseDto>;
+    public updateCalendarEntity(body: CalendarEntity, id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<CalendarResponseDto>>;
+    public updateCalendarEntity(body: CalendarEntity, id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<CalendarResponseDto>>;
     public updateCalendarEntity(body: CalendarEntity, id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
@@ -310,7 +311,7 @@ export class CalendarService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<any>('put',`${this.basePath}/calendar/${encodeURIComponent(String(id))}`,
+        return this.httpClient.request<CalendarResponseDto>('put',`${this.basePath}/calendar/${encodeURIComponent(String(id))}`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,

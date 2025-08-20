@@ -101,13 +101,11 @@ export class ProfileComponent {
     const tmp_user_creds: User = this.getAllUserCreds();
     this.authService.updateCreds(tmp_user_creds).subscribe({
       next: (resp: any) => {
-        console.log("GUARDAMIIII:", resp.new_creds);
         if(resp.new_creds.hireDate)
             resp.new_creds.hireDate = resp.new_creds.hireDate.split("T", 1)[0];
         if(resp.new_creds.birthDate)
           resp.new_creds.birthDate = resp.new_creds.birthDate.split("T", 1)[0];
         this.user_creds = resp.new_creds;
-        console.log("OIIIIIIIIII:" , this.user_creds);
         this.setProfileForm();
         this.emitChangedUsername({name: resp.new_creds.name, surname: resp.new_creds.surname})
       },

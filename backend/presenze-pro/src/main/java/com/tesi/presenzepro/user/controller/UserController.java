@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +37,7 @@ public class UserController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> signIn(@RequestBody SignInRequestDto user){
+    public ResponseEntity<User> signIn(@RequestBody SignInRequestDto user){
         User savedUser = service.signIn(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
@@ -44,41 +45,25 @@ public class UserController {
     //Aggiungere cattura exception di JWTService
     @Operation(description = "Valida il token inviato")
     @PostMapping("/secure")
-    public ResponseEntity<?> validToken(@RequestBody String token){
-        System.out.print("[Server msg]: validando tkn" + token + "\n");
-        Map<String, Object> responseMessage = new HashMap<>();
-        if(service.isTokenValid(token)){
-            responseMessage.put("email", service.getEmailFromTkn(token));
-            responseMessage.put("status", true);
-            return ResponseEntity.ok(responseMessage);
-        }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+    public ResponseEntity<Boolean> validToken(@RequestBody String token){
+        final boolean isTokenValid = service.isTokenValid(token);
+        return ResponseEntity.status(HttpStatus.OK).body(isTokenValid);
     }
 
     //Utilizzato per reperire i dati del profilo dell
     @Operation(description = "Ottieni il profilo utente",security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/profile")
-    public ResponseEntity<?> getUserProfile(HttpServletRequest request){
-         final User user = service.getUserProfile(request);
-         if(user != null)
-             return ResponseEntity.ok(user);
-         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+    public ResponseEntity<UserProfile> getUserProfile(HttpServletRequest request){
+         final UserProfile user = service.getUserProfile(request);
+         return ResponseEntity.ok(user);
     }
 
     //Implementare il metodo di aggiornamento
     @Operation(description = "Modifica le credenziali del profilo utente", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping("/profile")
-    public ResponseEntity<?> updateUserProfile(@RequestBody User updatedUserProfile){
-        System.out.println("MESSAGGIO DA PUT UPDATE:: " + updatedUserProfile);
-        Map<String, Object> responseMessage = new HashMap<>();
-        UserProfile newProfile = service.updateUserProfile(updatedUserProfile);
-        if(newProfile == null){
-            responseMessage.put("message", "Impossibile aggiornare profilo dell'utente");
-            return ResponseEntity.status((HttpStatus.BAD_REQUEST)).body(responseMessage);
-        }
-        responseMessage.put("message", "Utente aggiornato correttamente");
-        responseMessage.put("new_creds",  newProfile);
-        return ResponseEntity.ok(responseMessage);
+    public ResponseEntity<UserProfile> updateUserProfile(@RequestBody User updatedUserProfile){
+        final UserProfile newProfile = service.updateUserProfile(updatedUserProfile);
+        return ResponseEntity.status(HttpStatus.OK).body(newProfile);
     }
 
     //Rotta raggiunta tramite la pagina di password dimenticata. genera l'email
@@ -112,11 +97,9 @@ public class UserController {
 
     @Operation(description = "Ottenimento dell'email interna al token indicato", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping("/getEmail")
-    public ResponseEntity<?> getEmailFromTkn(@RequestBody String token){
+    public ResponseEntity<String> getEmailFromTkn(@RequestBody String token){
         System.out.println("AO GUARDA: " + token);
         String userEmail = this.service.getEmailFromTkn(token);
-        if(this.service.getEmailFromTkn(token) == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         return ResponseEntity.ok(userEmail);
     }
 }

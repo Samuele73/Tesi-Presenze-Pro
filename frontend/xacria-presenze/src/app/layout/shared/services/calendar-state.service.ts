@@ -13,7 +13,7 @@ import {
 } from '../models/calendar';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { CalendarService } from 'src/generated-client';
+import { CalendarResponseDto, CalendarService } from 'src/generated-client';
 
 @Injectable({
   providedIn: 'root',
@@ -35,8 +35,8 @@ export class CalendarStateService {
 
   loadCalendarByMonthYear(month: string, year: string): void {
     this.calendarApi.getCalendarEntitiesByMonthYear(month, year).subscribe({
-      next: (calendarData) => {
-        this.calendar$.next(calendarData);
+      next: (calendarData: CalendarResponseDto[]) => {
+        //this.calendar$.next();
       },
       error: (error) => {
         console.error('Error loading calendar:', error);
