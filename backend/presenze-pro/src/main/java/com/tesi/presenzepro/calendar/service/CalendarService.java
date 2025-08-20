@@ -1,9 +1,8 @@
 package com.tesi.presenzepro.calendar.service;
 
 import com.tesi.presenzepro.calendar.mapper.CalendarMapper;
-import com.tesi.presenzepro.calendar.model.CalendarEntry;
 import com.tesi.presenzepro.calendar.repository.CalendarRepository;
-import com.tesi.presenzepro.calendar.dto.CalendarResponseEntry;
+import com.tesi.presenzepro.calendar.dto.CalendarResponseDto;
 import com.tesi.presenzepro.calendar.model.CalendarEntity;
 import com.tesi.presenzepro.exception.CalendarEntityNotFound;
 import com.tesi.presenzepro.jwt.JwtUtils;
@@ -15,9 +14,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -31,8 +28,9 @@ public class CalendarService {
     private final CalendarMapper calendarMapper;
     private final MongoTemplate mongoTemplate;
 
-    public CalendarEntity saveNewCalendarEntry(CalendarEntity calendarEntityData){
-        return this.repository.save(calendarEntityData);
+    public CalendarResponseDto saveNewCalendarEntry(CalendarEntity calendarEntityData){
+        CalendarEntity calendarEntity =  this.repository.save(calendarEntityData);
+        return calendarMapper.fromCalendarToCalendarEntry(calendarEntity);
     }
 
     private String getUserEmailFromRequest(HttpServletRequest request){
@@ -43,7 +41,7 @@ public class CalendarService {
         return jwtUtils.getUsernameFromJwt(tkn);
     }
 
-    public List<CalendarResponseEntry> getAllUserEntries(HttpServletRequest request){
+    public List<CalendarResponseDto> getAllUserEntries(HttpServletRequest request){
         final String userEmail = this.getUserEmailFromRequest(request);
         List<CalendarEntity> calendarEntities = repository.findAllByUserEmail(userEmail);
         System.out.println("LOOK BEFORE" + calendarEntities);
@@ -74,7 +72,7 @@ public class CalendarService {
         return new Date[]{start, end};
     }
 
-    public List<CalendarResponseEntry> getUserEntriesByMonthYear(HttpServletRequest request, Integer month, Integer year) {
+    public List<CalendarResponseDto> getUserEntriesByMonthYear(HttpServletRequest request, Integer month, Integer year) {
         final String userEmail = this.getUserEmailFromRequest(request);
         final Date[] monthStartAndEnd = getMonthStartAndEnd(month, year);
         final List<CalendarEntity> calendarEntries = repository.findByUserEmailAndDateFromBetween(userEmail, monthStartAndEnd[0], monthStartAndEnd[1]);
@@ -87,11 +85,11 @@ public class CalendarService {
                 .orElseThrow(() -> new CalendarEntityNotFound(entityId));
     }
 
-    public CalendarEntity deleteCalendarEntry(HttpServletRequest request ,String entityId) {
+    public CalendarResponseDto deleteCalendarEntry(HttpServletRequest request , String entityId) {
         final String userEmail = this.getUserEmailFromRequest(request);
         CalendarEntity entity = getCalendarEntity(entityId, userEmail);
         repository.delete(entity);
-        return entity;
+        return calendarMapper.fromCalendarToCalendarEntry(entity);
     }
 
     private CalendarEntity updateCalendarEntityById(String id, CalendarEntity calendarEntity){
@@ -115,9 +113,10 @@ public class CalendarService {
         return updated;
     }
 
-    public CalendarEntity updateCalendarEntity(HttpServletRequest request ,String entityId, CalendarEntity updatedCalendarEntity) {
+    public CalendarResponseDto updateCalendarEntity(HttpServletRequest request , String entityId, CalendarEntity updatedCalendarEntity) {
         final String userEmail = this.getUserEmailFromRequest(request);
         //CalendarEntity entity = getCalendarEntity(entityId, userEmail);
-        return this.updateCalendarEntityById(entityId, updatedCalendarEntity);
+        final CalendarEntity newCalendarEntity = this.updateCalendarEntityById(entityId, updatedCalendarEntity);
+        return calendarMapper.fromCalendarToCalendarEntry(newCalendarEntity);
     }
 }

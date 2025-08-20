@@ -1,6 +1,6 @@
 package com.tesi.presenzepro.calendar.mapper;
 
-import com.tesi.presenzepro.calendar.dto.CalendarResponseEntry;
+import com.tesi.presenzepro.calendar.dto.CalendarResponseDto;
 import com.tesi.presenzepro.calendar.model.CalendarEntity;
 import org.springframework.stereotype.Service;
 
@@ -9,10 +9,14 @@ import java.util.stream.Collectors;
 
 @Service
 public class CalendarMapper {
-    public List<CalendarResponseEntry> fromCalendarsToCalendarEntries(List<CalendarEntity> entries){
+    public List<CalendarResponseDto> fromCalendarsToCalendarEntries(List<CalendarEntity> entries){
          return entries.stream().map(entry -> {
-                return new CalendarResponseEntry(entry.getId() ,entry.getEntryType(), entry.getCalendarEntry());
+                return new CalendarResponseDto(entry.getId() ,entry.getEntryType(), entry.getCalendarEntry());
             }
          ).collect(Collectors.toList());
+    }
+
+    public CalendarResponseDto fromCalendarToCalendarEntry(CalendarEntity entity){
+        return new CalendarResponseDto(entity.getId() ,entity.getEntryType(), entity.getCalendarEntry());
     }
 }
