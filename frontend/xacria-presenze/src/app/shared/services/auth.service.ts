@@ -1,12 +1,9 @@
 import { Injectable } from '@angular/core';
-import { ApiService } from './api.service';
 import { BehaviorSubject, throwError } from 'rxjs';
-import { UserCreds } from 'src/interfaces';
-import { UserProfile, userCredentials } from '../models/userModel';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { catchError, map, tap } from 'rxjs/operators';
-import { NewPasswordDto, User, UserService } from 'src/generated-client';
+import { catchError, tap } from 'rxjs/operators';
+import { LoginRequestDto, NewPasswordDto, SignInRequestDto, User, UserService } from 'src/generated-client';
 
 @Injectable({
   providedIn: 'root',
@@ -76,7 +73,7 @@ export class AuthService {
     return false;
   }
 
-  login(userCredentials: userCredentials) {
+  login(userCredentials: LoginRequestDto) {
     return this.userService.login(userCredentials).pipe(
       tap((resp: any) => {
         console.log('Login TAP: ', resp);
@@ -89,7 +86,7 @@ export class AuthService {
     );
   }
 
-  signin(userCredentials: userCredentials) {
+  signin(userCredentials: SignInRequestDto) {
     return this.userService
       .signIn(userCredentials)
       .pipe(catchError(this.handleSigninError));

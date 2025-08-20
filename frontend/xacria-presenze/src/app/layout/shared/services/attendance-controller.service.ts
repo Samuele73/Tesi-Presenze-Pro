@@ -1,6 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ApiService } from 'src/app/shared/services/api.service';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { environment } from 'src/environments/environment';
 import {
@@ -23,7 +22,6 @@ export class AttendanceControllerService {
 
   constructor(
     private authService: AuthService,
-    private apiService: ApiService,
     private http: HttpClient,
     private dateFormatter: DateFormatService
   ) {

@@ -1,8 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { Form, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { UserProfile } from 'src/app/shared/models/userModel';
 import { AuthService } from 'src/app/shared/services/auth.service';
-import { UserCreds } from 'src/interfaces';
 import { Username } from '../shared/models/username';
 import { UsernameService } from '../shared/services/username.service';
 import { User } from 'src/generated-client';

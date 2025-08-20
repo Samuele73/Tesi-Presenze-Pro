@@ -5,10 +5,9 @@ import {
   FormBuilder,
   Validators,
 } from '@angular/forms';
-import { ApiService } from '../shared/services/api.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../shared/services/auth.service';
-import { userCredentials } from '../shared/models/userModel';
+import { LoginRequestDto } from 'src/generated-client';
 
 @Component({
   selector: 'app-login',
@@ -50,14 +49,14 @@ export class LoginComponent {
   loginFormSubmit(): void {
     if (this.loginForm.invalid) return;
     console.log('LoginForm submitted!');
-    const userCredentials: userCredentials = {
+    const userCredentials: LoginRequestDto = {
       email: this.loginForm.value.email,
       password: this.loginForm.value.password,
     };
     this.makeLoginRequest(userCredentials);
   }
 
-  makeLoginRequest(userCredentials: any) {
+  makeLoginRequest(userCredentials: LoginRequestDto) {
     /* console.log(this.authService.login(userCredentials)); */
     this.authService.login(userCredentials).subscribe({
       next: (resp: any) => {

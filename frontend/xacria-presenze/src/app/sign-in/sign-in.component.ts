@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { AuthService } from '../shared/services/auth.service';
 import { Router } from '@angular/router';
-import { userCredentials } from '../shared/models/userModel';
+import { SignInRequestDto } from 'src/generated-client';
 
 @Component({
   selector: 'app-sign-in',
@@ -57,7 +57,7 @@ export class SignInComponent {
   signinFormSubmit(): void {
     if (this.signinForm.invalid) return;
     console.log('Singin form submitted!');
-    const userCredentials: userCredentials = {
+    const userCredentials: SignInRequestDto = {
       name: this.signinForm.value.name,
       surname: this.signinForm.value.surname,
       email: this.signinForm.value.email,
@@ -66,7 +66,7 @@ export class SignInComponent {
     this.makeSigninRequest(userCredentials);
   }
 
-  makeSigninRequest(userCredentials: userCredentials) {
+  makeSigninRequest(userCredentials: SignInRequestDto) {
     this.authService.signin(userCredentials).subscribe({
       next: (resp: any) => {
         console.log('Signin response:', resp);
