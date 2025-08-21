@@ -1,4 +1,13 @@
-import { ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { projects } from '../../const-vars';
 import { ModalComponent } from '../modalComponent';
@@ -11,12 +20,14 @@ import { CalendarWorkingDayEntry } from 'src/generated-client';
 @Component({
   selector: 'app-daywork-modal',
   templateUrl: './daywork-modal.component.html',
-  styleUrls: ['./daywork-modal.component.scss']
+  styleUrls: ['./daywork-modal.component.scss'],
 })
-export class DayworkModalComponent implements ModalComponent, OnChanges, OnInit {
+export class DayworkModalComponent
+  implements ModalComponent, OnChanges, OnInit
+{
   form!: FormGroup;
   validProjects: string[] = projects;
-  @ViewChild("modal", {static: true}) modalElement!: ElementRef;
+  @ViewChild('modal', { static: true }) modalElement!: ElementRef;
   @Input() date!: Date;
   @Input() dateString!: string;
   @Input() isModifyMode!: boolean;
@@ -25,65 +36,75 @@ export class DayworkModalComponent implements ModalComponent, OnChanges, OnInit 
   faIcons: any = faIcons;
   toDeleteEntries: CalendarDayWorkEntry[] = [];
 
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private cdr: ChangeDetectorRef, private dateFormat: DateFormatService){
+  constructor(
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private cdr: ChangeDetectorRef,
+    private dateFormat: DateFormatService
+  ) {}
 
+  get hourFrom() {
+    return this.form.get('hour_from');
   }
-
-  get hourFrom(){return this.form.get("hour_from");}
-  get hourTo(){return this.form.get("hour_to");}
-  get project(){return this.form.get("project");}
-  get dayWorks(){return this.form.get("day_works") as FormArray;}
+  get hourTo() {
+    return this.form.get('hour_to');
+  }
+  get project() {
+    return this.form.get('project');
+  }
+  get dayWorks() {
+    return this.form.get('day_works') as FormArray;
+  }
 
   ngOnInit(): void {
-      this.initializeForm();
+    this.initializeForm();
   }
 
-  initializeForm(): void{
-    if(!this.isModifyMode)
+  initializeForm(): void {
+    if (!this.isModifyMode)
       this.form = this.fb.group({
         hour_from: [null, Validators.required],
         hour_to: [null, Validators.required],
         project: [this.validProjects[0], Validators.required],
-        day_works: this.fb.array([])
-      })
-    else
-      this.initializeModifyForm();
+        day_works: this.fb.array([]),
+      });
+    else this.initializeModifyForm();
   }
 
-  initializeModifyForm(){
+  initializeModifyForm() {
     let entries: any[] = [];
     this.calendarEntries.forEach((entry: CalendarWorkingDayEntry) => {
       entries.push(this.createNewDayWork(entry));
-    })
+    });
     this.form = this.fb.group({
-      day_works: this.fb.array(entries)
+      day_works: this.fb.array(entries),
     });
   }
 
   //Aggiunge un nuovo formGroup per la selezione di un nuovo lavoro nel form daywork.
   createNewDayWork(entry?: CalendarWorkingDayEntry): FormGroup {
     let group: FormGroup;
-    if(!entry)
+    if (!entry)
       group = this.fb.group({
         hour_from: [null, Validators.required],
         hour_to: [null, Validators.required],
-        project: [this.validProjects[0], Validators.required]
+        project: [this.validProjects[0], Validators.required],
       });
-    else{
+    else {
       group = this.fb.group({
         hour_from: [entry.hourFrom, Validators.required],
         hour_to: [entry.hourTo, Validators.required],
-        project: [entry.project, Validators.required]
-      })
+        project: [entry.project, Validators.required],
+      });
     }
     return group;
   }
 
-  addNewDayWork(){
+  addNewDayWork() {
     this.dayWorks.push(this.createNewDayWork());
   }
 
-  removeDayWork(i: number): void{
+  removeDayWork(i: number): void {
     this.dayWorks.removeAt(i);
   }
 
@@ -92,54 +113,61 @@ export class DayworkModalComponent implements ModalComponent, OnChanges, OnInit 
     /* this.hourFrom?.setValue(this.parseDate(this.date)); */
   }
 
-  private parseDate(date: Date): string{
+  private parseDate(date: Date): string {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0'); // Mesi da 0 a 11
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`; //si è risolto per metà
   }
 
-  submitForm(): void{
-    if(this.form.valid)
-      console.log(this.form.value);
-    else
-      console.error("Form invalido");
+  submitForm(): void {
+    if (this.form.valid) console.log(this.form.value);
+    else console.error('Form invalido');
   }
 
-  open(): void{
-    if(!this.calendarEntries.length)
-        return;
-    this.modalService.open(this.modalElement, { ariaLabelledBy: 'modal-basic-title', windowClass: "custom-modal"}).result.then(
-      (result) => {
-        this.closeResult = `Closed with: ${result}`;
-      },
-      (reason) => {
-        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        this.dayWorks.clear();
-      },
-    );
+  open(): void {
+    if (!this.calendarEntries || !this.calendarEntries.length) return;
 
-    /* this.dateFrom?.setValue(this.parseDate(this.date));
-    this.cdr.detectChanges(); */
+    if (this.isModifyMode) {
+      this.initializeModifyForm();
+    } else {
+      this.initializeForm();
+    }
+
+    this.modalService
+      .open(this.modalElement, {
+        ariaLabelledBy: 'modal-basic-title',
+        windowClass: 'custom-modal',
+      })
+      .result.then(
+        (result) => {
+          this.closeResult = `Closed with: ${result}`;
+        },
+        (reason) => {
+          this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+          this.initializeForm();
+        }
+      );
   }
 
-
-  private getDismissReason(reason: any): string{
-      if (reason === ModalDismissReasons.ESC) {
-        return 'by pressing ESC';
-      } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
-        return 'by clicking on a backdrop';
-      } else {
-        return `with: ${reason}`;
-      }
+  private getDismissReason(reason: any): string {
+    if (reason === ModalDismissReasons.ESC) {
+      return 'by pressing ESC';
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      return 'by clicking on a backdrop';
+    } else {
+      return `with: ${reason}`;
     }
+  }
 
-    toggleEntryDelete(entry: any, i: number){
-      console.log("CONTROLLA IL VALORE", entry, i);
-      if (this.toDeleteEntries.includes(entry)) {
-        this.toDeleteEntries = this.toDeleteEntries.filter((value: CalendarDayWorkEntry) => value !== entry);
-      } else {
-        this.toDeleteEntries.push(entry);
-      }
+  toggleEntryDelete(entry: any, i: number) {
+    console.log('CONTROLLA IL VALORE', entry, i);
+    if (this.toDeleteEntries.includes(entry)) {
+      this.toDeleteEntries = this.toDeleteEntries.filter(
+        (value: CalendarDayWorkEntry) => value !== entry
+      );
+    } else {
+      this.toDeleteEntries.push(entry);
     }
+  }
 }

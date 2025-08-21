@@ -10,11 +10,11 @@ import { CalendarRequestEntry } from 'src/generated-client';
 @Component({
   selector: 'app-request-modal',
   templateUrl: './request-modal.component.html',
-  styleUrls: ['./request-modal.component.scss']
+  styleUrls: ['./request-modal.component.scss'],
 })
-export class RequestModalComponent implements ModalComponent, OnInit{
+export class RequestModalComponent implements ModalComponent, OnInit {
   request_types: any = request_types;
-  @ViewChild("modal", {static: true}) modalElement!: ElementRef;
+  @ViewChild('modal', { static: true }) modalElement!: ElementRef;
   closeResult = '';
   form!: FormGroup;
   @Input() isModifyMode!: boolean;
@@ -22,59 +22,78 @@ export class RequestModalComponent implements ModalComponent, OnInit{
   faIcons = faIcons;
   toDeleteEntries: CalendarRequestEntry[] = [];
 
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private dateFormat: DateFormatService) {
+  constructor(
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private dateFormat: DateFormatService
+  ) {}
 
+  get requestType() {
+    return this.form.get('request_type');
   }
-
-  get requestType(){return this.form.get("request_type");}
-  get dateFrom(){return this.form.get("date_from");}
-  get dateTo(){return this.form.get("date_to");}
-  get timeFrom(){return this.form.get("time_from");}
-  get timeTo(){return this.form.get("time_to");}
-  get requests(){return this.form.get("requests") as FormArray;}
+  get dateFrom() {
+    return this.form.get('date_from');
+  }
+  get dateTo() {
+    return this.form.get('date_to');
+  }
+  get timeFrom() {
+    return this.form.get('time_from');
+  }
+  get timeTo() {
+    return this.form.get('time_to');
+  }
+  get requests() {
+    return this.form.get('requests') as FormArray;
+  }
 
   ngOnInit(): void {
-      this.initializeForm();
+    this.initializeForm();
   }
 
-  initializeForm(): void{
-    if(!this.isModifyMode)
+  initializeForm(): void {
+    if (!this.isModifyMode)
       this.form = this.fb.group({
         request_type: [null, Validators.required],
         date_from: [null, Validators.required],
         date_to: [null, Validators.required],
         time_from: [null, Validators.required],
-        time_to: [null, Validators.required]
-      })
-    else
+        time_to: [null, Validators.required],
+      });
+    else this.initializeModifyForm();
+  }
+
+  submitForm(): void {
+    if (this.form.valid) console.log(this.form.value);
+    else console.error('Form invalido');
+  }
+
+  open(): void {
+    if (!this.calendarEntries || !this.calendarEntries.length) return;
+
+    if (this.isModifyMode) {
       this.initializeModifyForm();
+    } else {
+      this.initializeForm();
+    }
+
+    this.modalService
+      .open(this.modalElement, {
+        ariaLabelledBy: 'modal-basic-title',
+        windowClass: 'custom-modal',
+      })
+      .result.then(
+        (result) => {
+          this.closeResult = `Closed with: ${result}`;
+        },
+        (reason) => {
+          this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+          this.initializeForm();
+        }
+      );
   }
 
-  submitForm(): void{
-    if(this.form.valid)
-      console.log(this.form.value);
-    else
-      console.error("Form invalido");
-  }
-
-  open(): void{
-    if(!this.calendarEntries.length)
-        return;
-    this.modalService.open(this.modalElement, { ariaLabelledBy: 'modal-basic-title', windowClass: "custom-modal"}).result.then(
-      (result) => {
-        this.closeResult = `Closed with: ${result}`;
-      },
-      (reason) => {
-        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        this.initializeForm();
-      },
-    );
-
-    /* this.dateFrom?.setValue(this.parseDate(this.date));
-    this.cdr.detectChanges(); */
-  }
-
-  private getDismissReason(reason: any): string{
+  private getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) {
       return 'by pressing ESC';
     } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
@@ -84,32 +103,36 @@ export class RequestModalComponent implements ModalComponent, OnInit{
     }
   }
 
-  initializeModifyForm(): void{
+  initializeModifyForm(): void {
     let entries: any[] = [];
     this.calendarEntries.forEach((entry) => {
-      entries.push(this.createRequestGroup(entry))
-    })
+      entries.push(this.createRequestGroup(entry));
+    });
     this.form = this.fb.group({
-      requests: this.fb.array(entries)
-    })
+      requests: this.fb.array(entries),
+    });
   }
 
-  createRequestGroup(entry: CalendarRequestEntry){
-    const from = this.dateFormat.formatToDateInput(entry.dateFrom ?? new Date());
+  createRequestGroup(entry: CalendarRequestEntry) {
+    const from = this.dateFormat.formatToDateInput(
+      entry.dateFrom ?? new Date()
+    );
     const to = this.dateFormat.formatToDateInput(entry.dateTo ?? new Date());
     return this.fb.group({
       date_from: [from, Validators.required],
       date_to: [to, Validators.required],
       time_from: [entry.timeFrom, Validators.required],
       time_to: [entry.timeTo, Validators.required],
-      request_type: [entry.requestType, Validators.required]
-    })
+      request_type: [entry.requestType, Validators.required],
+    });
   }
 
-  toggleEntryDelete(entry: CalendarRequestEntry, i: number){
-    console.log("CONTROLLA IL VALORE", entry, i);
+  toggleEntryDelete(entry: CalendarRequestEntry, i: number) {
+    console.log('CONTROLLA IL VALORE', entry, i);
     if (this.toDeleteEntries.includes(entry)) {
-      this.toDeleteEntries = this.toDeleteEntries.filter((value: CalendarRequestEntry) => value !== entry);
+      this.toDeleteEntries = this.toDeleteEntries.filter(
+        (value: CalendarRequestEntry) => value !== entry
+      );
     } else {
       this.toDeleteEntries.push(entry);
     }

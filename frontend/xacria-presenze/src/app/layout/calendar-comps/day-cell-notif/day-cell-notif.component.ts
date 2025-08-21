@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   Input,
   OnChanges,
@@ -23,20 +24,33 @@ import {
   CalendarWorkingTripEntry,
 } from 'src/generated-client';
 
+// ... (imports remain the same)
+
 @Component({
   selector: 'app-day-cell-notif',
   templateUrl: './day-cell-notif.component.html',
   styleUrls: ['./day-cell-notif.component.scss'],
 })
-export class DayCellNotifComponent implements OnInit, OnChanges {
+export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit  {
   @Input() icon!: IconDefinition;
   @Input() text!: string;
   @Input() notifType!: CalendarEntryType;
-  @Input() date?: Date;
   @Input() dateString?: string;
-  @Input() modalCalendarEntries!: Array<CalendarWorkingDayEntry | CalendarRequestEntry | CalendarWorkingTripEntry | CalendarAvailabilityEntry>;
   @Input() modalModify!: boolean;
-  //utilizzati per la selezione della corretta modale
+
+  // Usa dei setter per catturare i cambiamenti degli input
+  @Input() set modalCalendarEntries(value: Array<CalendarWorkingDayEntry | CalendarRequestEntry | CalendarWorkingTripEntry | CalendarAvailabilityEntry> | undefined) {
+    this._allEntries = value ?? [];
+    this.recompute();
+  }
+  @Input() set date(value: Date | undefined) {
+    this._date = value ? new Date(value) : undefined;
+    this.recompute();
+  }
+
+  private _allEntries: Array<CalendarWorkingDayEntry | CalendarRequestEntry | CalendarWorkingTripEntry | CalendarAvailabilityEntry> = [];
+  private _date?: Date;
+
   @ViewChild('modal') modal!: ModalComponent;
   @ViewChild('dayworkTemplate')
   dayworkTemplate!: TemplateRef<DayworkModalComponent>;
@@ -46,26 +60,43 @@ export class DayCellNotifComponent implements OnInit, OnChanges {
   workingTripTemplate!: TemplateRef<WorkingTripModalComponent>;
   @ViewChild('availabilityTemplate')
   availabilityTemplate!: TemplateRef<AvailabilityModalComponent>;
+  isTemplateReady = false;
+
   CalendarEntryType = CalendarEntryType;
   notifs: number = 0;
+  filteredEntries: Array<CalendarWorkingDayEntry | CalendarRequestEntry | CalendarWorkingTripEntry | CalendarAvailabilityEntry> = [];
 
   constructor(private dateFormat: DateFormatService) {}
-
-  get currentDay() {
-    return this.date!.getDate();
-  }
-  get currentMonth() {
-    return this.date!.getMonth();
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.isTemplateReady = true;
+    }, 0); // Ensure templates are ready after view init. It fixes a bug where templates are not ready immediately while anguular is on change detection.
   }
 
+  // L'hook ngOnChanges non è più necessario se usi i setter
+  ngOnChanges(changes: SimpleChanges): void {}
   ngOnInit(): void {}
 
-  //Necessario che sia onChanges dato che se cambia l'array in input deve essere effettuato un ulteriore controllo
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['modalCalendarEntries']) {
-      console.log("Modal calendar entries changed:", this.modalCalendarEntries);
-      this.syncNotifs();
+  private recompute(): void {
+    if (!this._date || !this._allEntries) {
+      this.filteredEntries = [];
+      this.notifs = 0;
+      return;
     }
+
+    const current = this.dateFormat.normalizeDate(this._date);
+    this.filteredEntries = this._allEntries.filter((entry) => {
+      if (!this.hasDateRange(entry)) return false;
+      const from = this.dateFormat.normalizeDate(entry.dateFrom);
+      const to = this.dateFormat.normalizeDate(entry.dateTo);
+      return current >= from && current <= to;
+    });
+    this.notifs = this.filteredEntries.length;
+  }
+
+  openModifyModal(): void {
+    if (!this.filteredEntries.length) return;
+    this.modal?.open();
   }
 
   getTemplate(): TemplateRef<any> {
@@ -81,60 +112,7 @@ export class DayCellNotifComponent implements OnInit, OnChanges {
     }
   }
 
-  //Il setTimeout viene usato per dar modo ad anuglar di inizzializzare ViewChild della modale, valorizzato quando angular completa il ciclo di rendering della visita
-  openModifyModal(): void {
-    setTimeout(() => {
-      if (this.modal) {
-        this.modal.open();
-      } else {
-        console.warn('La modale non è ancora stata inizializzata!');
-      }
-    });
-  }
-
   private hasDateRange(entry: any): entry is { dateFrom: any; dateTo: any } {
     return entry && 'dateFrom' in entry && 'dateTo' in entry;
-  }
-
-  //Filtraggio delle entries del calendario per selezionare quelle da fare visualizzare alla modale associate, in sincronia con la data corrente, di inizio e di fine
-  filterEntries(): void {
-    if (!this.modalCalendarEntries || !this.date) {
-      return;
-    }
-    const current = this.dateFormat.normalizeDate(this.date);
-    console.log("filtro prima", this.modalCalendarEntries);
-    this.modalCalendarEntries = this.modalCalendarEntries.filter(
-      (entry: CalendarAvailabilityEntry | CalendarWorkingDayEntry | CalendarWorkingTripEntry | CalendarRequestEntry) =>{
-        if (this.hasDateRange(entry)) {
-          const dateFrom = this.dateFormat.normalizeDate(entry.dateFrom);
-          const dateTo = this.dateFormat.normalizeDate(entry.dateTo);
-          return current >= dateFrom && current <= dateTo;
-        }
-        return false; // Se l'entry non ha un intervallo di date, non viene inclusa
-      }
-
-    );
-    console.log("filtro dopo", this.modalCalendarEntries);
-  }
-
-  generateNotifs(): void {
-    /* if(!this.modalCalendarEntries)
-      return;
-    this.modalCalendarEntries.forEach((entry) => {
-      console.log("la data", this.date);
-      const from = entry.date_from.getDate();
-      const to = entry.date_to.getDate();
-      if(this.currentDay >= from && this.currentDay <= to)
-        this.notifs++;
-      console.log("CONTROLLA valore:::::", from, to, this.currentDay)
-    }) */
-    if (this.modalCalendarEntries)
-      this.notifs = this.modalCalendarEntries.length;
-  }
-
-  //filtra l'array in entrata ed aggiorna il numero di notifiche
-  syncNotifs(): void {
-    this.filterEntries();
-    this.generateNotifs();
   }
 }

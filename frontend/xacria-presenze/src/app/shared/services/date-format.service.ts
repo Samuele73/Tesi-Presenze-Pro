@@ -17,7 +17,7 @@ export class DateFormatService {
     return date.split('T')[0];
   }
 
-  normalizeDate(date: Date): Date {
+  normalizeDate(date: Date | string): Date {
     // Make sure it is of type Date
     const d = (date instanceof Date) ? date : new Date(date);
     return new Date(d.getFullYear(), d.getMonth(), d.getDate());
