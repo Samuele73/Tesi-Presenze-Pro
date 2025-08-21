@@ -63,7 +63,7 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit{
     return this.fb.group({
       date_from: [from, Validators.required],
       date_to: [to, Validators.required],
-      project: [!entry.project ? this.validProjects[0] : "", Validators.required]
+      project: [!entry.project ? this.validProjects[0] : entry.project, Validators.required]
     })
   }
 
