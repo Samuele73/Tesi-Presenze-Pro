@@ -86,7 +86,14 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit  
 
     const current = this.dateFormat.normalizeDate(this._date);
     this.filteredEntries = this._allEntries.filter((entry) => {
-      if (!this.hasDateRange(entry)) return false;
+      if (!this.hasDateRange(entry)){
+        if(this.areWorkingDayEntries(entry)) {
+          const from = this.dateFormat.normalizeDate(entry.dateFrom);
+          console.log('Current date:', current, 'From date:', from, "result", current === from);
+          return current.getTime() === from.getTime();
+        }
+        return false;
+      }
       const from = this.dateFormat.normalizeDate(entry.dateFrom);
       const to = this.dateFormat.normalizeDate(entry.dateTo);
       return current >= from && current <= to;
@@ -114,5 +121,10 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit  
 
   private hasDateRange(entry: any): entry is { dateFrom: any; dateTo: any } {
     return entry && 'dateFrom' in entry && 'dateTo' in entry;
+  }
+
+  //To check if the entry is a WORKING_DAY entry
+  private areWorkingDayEntries(entry: any): entry is { dateFrom: any } {
+    return entry && 'dateFrom' in entry;
   }
 }
