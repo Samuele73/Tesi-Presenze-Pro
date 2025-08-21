@@ -19,6 +19,7 @@ import { ModalComponent } from '../modals/modalComponent';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
 import {
   CalendarAvailabilityEntry,
+  CalendarEntity,
   CalendarRequestEntry,
   CalendarWorkingDayEntry,
   CalendarWorkingTripEntry,
@@ -34,7 +35,7 @@ import {
 export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit  {
   @Input() icon!: IconDefinition;
   @Input() text!: string;
-  @Input() notifType!: CalendarEntryType;
+  @Input() notifType!: CalendarEntity.EntryTypeEnum;
   @Input() dateString?: string;
   @Input() modalModify!: boolean;
 
@@ -117,13 +118,13 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit  
 
   getTemplate(): TemplateRef<any> {
     switch (this.notifType) {
-      case CalendarEntryType.WORKING_DAY:
+      case 'WORKING_DAY':
         return this.dayworkTemplate;
-      case CalendarEntryType.REQUEST:
+      case 'REQUEST':
         return this.requestTemplate;
-      case CalendarEntryType.WORKING_TRIP:
+      case 'WORKING_TRIP':
         return this.workingTripTemplate;
-      case CalendarEntryType.AVAILABILITY:
+      case 'AVAILABILITY':
         return this.availabilityTemplate;
     }
   }

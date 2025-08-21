@@ -13,10 +13,10 @@
     <div class="text-center mb-3 fw-bold text-capitalize">{{('Ore lavorate' | translate) + ': 0'}}</div>
     <div>
       <div class="d-flex flex-column gap-3">
-        <app-day-cell-notif [icon]="faIcons.briefcase" [text]="'incarichi' | translate" [notifType]="CalendarEntryType.WORKING_DAY" [date]="day.date" [dateString]="fromDateToModalTitle(dayClicked)" [modalCalendarEntries]="calendarEntries.day_works" [modalModify]="true"></app-day-cell-notif>
-        <app-day-cell-notif [icon]="faIcons.request" [text]="'richieste' | translate" [notifType]="CalendarEntryType.REQUEST" [date]="day.date" [modalCalendarEntries]="calendarEntries.requests" [modalModify]="true"></app-day-cell-notif>
-        <app-day-cell-notif [icon]="faIcons.route" [text]="'trasferte' | translate" [notifType]="CalendarEntryType.WORKING_TRIP" [date]="day.date" [modalCalendarEntries]="calendarEntries.working_trips" [modalModify]="true"></app-day-cell-notif>
-        <app-day-cell-notif [icon]="faIcons.bell" [text]="'reperibilità' | translate" [notifType]="CalendarEntryType.AVAILABILITY" [date]="day.date" [modalCalendarEntries]="calendarEntries.availabilities" [modalModify]="true"></app-day-cell-notif>
+        <app-day-cell-notif [icon]="faIcons.briefcase" [text]="'incarichi' | translate" [notifType]="'WORKING_DAY'" [date]="day.date" [dateString]="fromDateToModalTitle(dayClicked)" [modalCalendarEntries]="calendarEntries.day_works" [modalModify]="true"></app-day-cell-notif>
+        <app-day-cell-notif [icon]="faIcons.request" [text]="'richieste' | translate" [notifType]="'REQUEST'" [date]="day.date" [modalCalendarEntries]="calendarEntries.requests" [modalModify]="true"></app-day-cell-notif>
+        <app-day-cell-notif [icon]="faIcons.route" [text]="'trasferte' | translate" [notifType]="'WORKING_TRIP'" [date]="day.date" [modalCalendarEntries]="calendarEntries.working_trips" [modalModify]="true"></app-day-cell-notif>
+        <app-day-cell-notif [icon]="faIcons.bell" [text]="'reperibilità' | translate" [notifType]="'AVAILABILITY'" [date]="day.date" [modalCalendarEntries]="calendarEntries.availabilities" [modalModify]="true"></app-day-cell-notif>
       </div>
     </div>
   </div>
@@ -72,7 +72,7 @@
   </div>
 </div>
 <app-working-trip-modal #working_trip_modal></app-working-trip-modal>
-<app-availability-modal #availability_modal></app-availability-modal>
+<app-availability-modal #availability_modal (saveAvailability)="handleSave($event, 'WORKING_DAY')"></app-availability-modal>
 <app-request-modal #request_modal></app-request-modal>
 <app-daywork-modal #daywork_modal [date]="dayClicked" [dateString]="fromDateToModalTitle(dayClicked)"></app-daywork-modal>
 

@@ -48,7 +48,7 @@ import { DayworkModalComponent } from '../modals/daywork-modal/daywork-modal.com
 import { weekDayNamesIt, weekDayNamesEn } from '../const-vars';
 import { CalendarStateService } from '../../shared/services/calendar-state.service';
 import { calendar } from '../../shared/models/calendar';
-import { CalendarEntryType } from '../../interfaces';
+import { CalendarAvailabilityEntry, CalendarEntity, CalendarEntry } from 'src/generated-client';
 
 @Component({
   selector: 'app-attendance',
@@ -69,7 +69,7 @@ export class AttendanceComponent implements OnInit {
   faIcons: any = faIcons;
   weekDayNames!: string[];
   monthNames!: string[];
-  CalendarEntryType = CalendarEntryType;
+  CalendarEntryType = CalendarEntity.EntryTypeEnum;
 
   //varibili per server mock
   /* availabilityEntries: CalendarAvailabilityEntry[] = [
@@ -193,6 +193,10 @@ export class AttendanceComponent implements OnInit {
     const year: string = date.getFullYear().toString();
     const dayWord: string = this.weekDayNames[date.getDay()];
     return day + ' ' + month + ' ' + year + ' - ' + dayWord;
+  }
+
+  handleSave(calendarEntry: CalendarEntry, entryType: CalendarEntity.EntryTypeEnum): void {
+    console.log('Saving availability:',);
   }
 }
 

@@ -1,8 +1,10 @@
 import {
   Component,
   ElementRef,
+  EventEmitter,
   Input,
   OnInit,
+  Output,
   QueryList,
   Renderer2,
   SimpleChanges,
@@ -33,6 +35,7 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
   faIcons = faIcons;
   toDeleteEntries: CalendarAvailabilityEntry[] = [];
   @ViewChildren('entry') entryElements!: QueryList<ElementRef>;
+  @Output() saveAvailability = new EventEmitter<CalendarAvailabilityEntry>();
 
   constructor(
     private modalService: NgbModal,
@@ -107,7 +110,11 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
   }
 
   open(): void {
-    if ((!this.calendarEntries || !this.calendarEntries.length) && this.isModifyMode) return;
+    if (
+      (!this.calendarEntries || !this.calendarEntries.length) &&
+      this.isModifyMode
+    )
+      return;
 
     if (this.isModifyMode) {
       this.initializeModifyForm();
@@ -151,6 +158,19 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
     } else {
       this.toDeleteEntries.push(entry);
     }
+  }
+
+  submitNewEntry(): void {
+    if(this.form.valid){
+      const newEntry: CalendarAvailabilityEntry = {
+        dateFrom: this.dateFrom?.value,
+        dateTo: this.dateFrom?.value,
+        project: this.project?.value,
+      }
+      this.saveAvailability.emit(newEntry);
+      this.form.reset();
+    }
+    else console.error('Availability new entry form is invalid');
   }
 }
 
