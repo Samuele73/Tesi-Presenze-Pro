@@ -69,7 +69,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
   }
 
   open(): void {
-    if (!this.calendarEntries || !this.calendarEntries.length) return;
+    if ((!this.calendarEntries || !this.calendarEntries.length) && this.isModifyMode) return;
 
     if (this.isModifyMode) {
       this.initializeModifyForm();
