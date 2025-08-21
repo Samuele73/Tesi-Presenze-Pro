@@ -73,10 +73,19 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit  
     }, 0); // Ensure templates are ready after view init. It fixes a bug where templates are not ready immediately while anguular is on change detection.
   }
 
-  // L'hook ngOnChanges non è più necessario se usi i setter
   ngOnChanges(changes: SimpleChanges): void {}
   ngOnInit(): void {}
 
+  private hasDateRange(entry: any): entry is { dateFrom: any; dateTo: any } {
+    return entry && 'dateFrom' in entry && 'dateTo' in entry;
+  }
+
+  //To check if the entry is a WORKING_DAY entry
+  private areWorkingDayEntries(entry: any): entry is { dateFrom: any } {
+    return entry && 'dateFrom' in entry;
+  }
+
+  // Recompute the filtered entries based on the current date and all entries
   private recompute(): void {
     if (!this._date || !this._allEntries) {
       this.filteredEntries = [];
@@ -119,12 +128,16 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit  
     }
   }
 
-  private hasDateRange(entry: any): entry is { dateFrom: any; dateTo: any } {
-    return entry && 'dateFrom' in entry && 'dateTo' in entry;
+  handleSaveEntry(event: any, calenarEntryType: CalendarEntryType): void {
+
   }
 
-  //To check if the entry is a WORKING_DAY entry
-  private areWorkingDayEntries(entry: any): entry is { dateFrom: any } {
-    return entry && 'dateFrom' in entry;
+  handleDeleteEntry(event: any, calenarEntryType: CalendarEntryType): void {
+
   }
+
+  handleModifyEntries(event: any, calenarEntryType: CalendarEntryType): void {
+
+  }
+
 }
