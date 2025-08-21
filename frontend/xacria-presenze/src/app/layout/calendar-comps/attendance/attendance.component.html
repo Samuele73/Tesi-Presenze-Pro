@@ -13,10 +13,10 @@
     <div class="text-center mb-3 fw-bold text-capitalize">{{('Ore lavorate' | translate) + ': 0'}}</div>
     <div>
       <div class="d-flex flex-column gap-3">
-        <app-day-cell-notif [icon]="faIcons.briefcase" [text]="'incarichi' | translate" [notifType]="CalendarEntryType.WORKING_DAY" [date]="day.date" [dateString]="fromDateToModalTitle(dayClicked)" [modalCalendarEntries]="dayWorkEntries" [modalModify]="true"></app-day-cell-notif>
-        <app-day-cell-notif [icon]="faIcons.request" [text]="'richieste' | translate" [notifType]="CalendarEntryType.REQUEST" [date]="day.date" [modalCalendarEntries]="requestEntries" [modalModify]="true"></app-day-cell-notif>
-        <app-day-cell-notif [icon]="faIcons.route" [text]="'trasferte' | translate" [notifType]="CalendarEntryType.WORKING_TRIP" [date]="day.date" [modalCalendarEntries]="workingTripEntries" [modalModify]="true"></app-day-cell-notif>
-        <app-day-cell-notif [icon]="faIcons.bell" [text]="'reperibilità' | translate" [notifType]="CalendarEntryType.AVAILABILITY" [date]="day.date" [modalCalendarEntries]="availabilityEntries" [modalModify]="true"></app-day-cell-notif>
+        <app-day-cell-notif [icon]="faIcons.briefcase" [text]="'incarichi' | translate" [notifType]="CalendarEntryType.WORKING_DAY" [date]="day.date" [dateString]="fromDateToModalTitle(dayClicked)" [modalCalendarEntries]="calendarEntries.day_works" [modalModify]="true"></app-day-cell-notif>
+        <app-day-cell-notif [icon]="faIcons.request" [text]="'richieste' | translate" [notifType]="CalendarEntryType.REQUEST" [date]="day.date" [modalCalendarEntries]="calendarEntries.requests" [modalModify]="true"></app-day-cell-notif>
+        <app-day-cell-notif [icon]="faIcons.route" [text]="'trasferte' | translate" [notifType]="CalendarEntryType.WORKING_TRIP" [date]="day.date" [modalCalendarEntries]="calendarEntries.working_trips" [modalModify]="true"></app-day-cell-notif>
+        <app-day-cell-notif [icon]="faIcons.bell" [text]="'reperibilità' | translate" [notifType]="CalendarEntryType.AVAILABILITY" [date]="day.date" [modalCalendarEntries]="calendarEntries.availabilities" [modalModify]="true"></app-day-cell-notif>
       </div>
     </div>
   </div>

@@ -8,8 +8,9 @@ export class DateFormatService {
   constructor() { }
 
   // Estrae solo YYYY-MM-DD
-  formatToDateInput(date: Date): string {
-    return date.toISOString().split('T')[0];
+  formatToDateInput(date: Date | string): string {
+    const d = (date instanceof Date) ? date : new Date(date);
+    return d.toISOString().split('T')[0];
   }
 
   formatDateString(date: string): string{
@@ -17,6 +18,8 @@ export class DateFormatService {
   }
 
   normalizeDate(date: Date): Date {
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    // Make sure it is of type Date
+    const d = (date instanceof Date) ? date : new Date(date);
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
   }
 }

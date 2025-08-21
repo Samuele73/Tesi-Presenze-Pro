@@ -14,9 +14,9 @@ import java.util.Date;
 @Builder
 @Schema(description = "Rappresenta una entry di una richiesta nel calendario")
 public class CalendarRequestEntry implements CalendarEntry {
-    private String request_type;
-    private Date date_from;
-    private Date date_to;
-    private String time_from;
-    private String time_to;
+    private String requestType;
+    private Date dateFrom;
+    private Date dateTo;
+    private String timeFrom;
+    private String timeTo;
 }

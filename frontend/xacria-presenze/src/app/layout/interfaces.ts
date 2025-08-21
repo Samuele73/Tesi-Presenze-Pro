@@ -16,13 +16,13 @@ export interface CalendarAvailabilityEntry {
   project: string
 }
 
-export interface CalendarRequestEntry{
+/* export interface CalendarRequestEntry{
   request_type: string,
   date_from: Date,
   date_to: Date,
   time_from: string,
   time_to: string
-}
+} */
 
 
 //Date_from e date_to sono necessari per essere visualizzati nelle notifiche del calendario

@@ -15,7 +15,7 @@ import java.util.Date;
 @Schema(description = "Rappresenta una entry riguardante una task giornaliera nel calendario")
 public class CalendarWorkingDayEntry implements CalendarEntry{
     private String project;
-    private String hour_from;
-    private String hour_to;
-    private Date date_from;
+    private String hourFrom;
+    private String hourTo;
+    private Date dateFrom;
 }

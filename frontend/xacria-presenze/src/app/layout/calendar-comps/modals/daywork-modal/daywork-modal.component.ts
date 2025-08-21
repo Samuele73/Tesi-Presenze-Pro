@@ -6,6 +6,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { faIcons } from '../../attendance/attendance.component';
 import { CalendarDayWorkEntry } from 'src/app/layout/interfaces';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
+import { CalendarWorkingDayEntry } from 'src/generated-client';
 
 @Component({
   selector: 'app-daywork-modal',
@@ -19,7 +20,7 @@ export class DayworkModalComponent implements ModalComponent, OnChanges, OnInit 
   @Input() date!: Date;
   @Input() dateString!: string;
   @Input() isModifyMode!: boolean;
-  @Input() calendarEntries!: CalendarDayWorkEntry[];
+  @Input() calendarEntries!: CalendarWorkingDayEntry[];
   closeResult = '';
   faIcons: any = faIcons;
   toDeleteEntries: CalendarDayWorkEntry[] = [];
@@ -51,7 +52,7 @@ export class DayworkModalComponent implements ModalComponent, OnChanges, OnInit 
 
   initializeModifyForm(){
     let entries: any[] = [];
-    this.calendarEntries.forEach((entry: CalendarDayWorkEntry) => {
+    this.calendarEntries.forEach((entry: CalendarWorkingDayEntry) => {
       entries.push(this.createNewDayWork(entry));
     })
     this.form = this.fb.group({
@@ -60,7 +61,7 @@ export class DayworkModalComponent implements ModalComponent, OnChanges, OnInit 
   }
 
   //Aggiunge un nuovo formGroup per la selezione di un nuovo lavoro nel form daywork.
-  createNewDayWork(entry?: CalendarDayWorkEntry){
+  createNewDayWork(entry?: CalendarWorkingDayEntry): FormGroup {
     let group: FormGroup;
     if(!entry)
       group = this.fb.group({
@@ -70,8 +71,8 @@ export class DayworkModalComponent implements ModalComponent, OnChanges, OnInit 
       });
     else{
       group = this.fb.group({
-        hour_from: [entry.hour_from, Validators.required],
-        hour_to: [entry.hour_to, Validators.required],
+        hour_from: [entry.hourFrom, Validators.required],
+        hour_to: [entry.hourTo, Validators.required],
         project: [entry.project, Validators.required]
       })
     }
@@ -106,6 +107,8 @@ export class DayworkModalComponent implements ModalComponent, OnChanges, OnInit 
   }
 
   open(): void{
+    if(!this.calendarEntries.length)
+        return;
     this.modalService.open(this.modalElement, { ariaLabelledBy: 'modal-basic-title', windowClass: "custom-modal"}).result.then(
       (result) => {
         this.closeResult = `Closed with: ${result}`;

@@ -14,7 +14,7 @@ import java.util.Date;
 @Builder
 @Schema(description = "Rappresenta una entry di una trasferta nel calendario")
 public class CalendarWorkingTripEntry implements CalendarEntry{
-    private Date date_from;
-    private Date date_to;
+    private Date dateFrom;
+    private Date dateTo;
 
 }

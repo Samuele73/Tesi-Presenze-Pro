@@ -1,3 +1,5 @@
+import { CalendarAvailabilityEntry, CalendarRequestEntry, CalendarWorkingDayEntry, CalendarWorkingTripEntry } from "src/generated-client";
+
 export interface day_work {
   project: string;
   hour_from: string;
@@ -25,10 +27,10 @@ export interface availability {
 }
 
 export interface calendar {
-  day_works: day_work[];
-  requests: request[];
-  working_trips: working_trip[];
-  availabilities: availability[];
+  day_works: CalendarWorkingDayEntry[];
+  requests: CalendarRequestEntry[];
+  working_trips: CalendarWorkingTripEntry[];
+  availabilities: CalendarAvailabilityEntry[];
 }
 
 export interface apiEntry {

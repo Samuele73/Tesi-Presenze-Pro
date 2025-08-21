@@ -46,18 +46,13 @@ import { AvailabilityModalComponent } from '../modals/availability-modal/availab
 import { RequestModalComponent } from '../modals/request-modal/request-modal.component';
 import { DayworkModalComponent } from '../modals/daywork-modal/daywork-modal.component';
 import { weekDayNamesIt, weekDayNamesEn } from '../const-vars';
-import {
-  CalendarAvailabilityEntry,
-  CalendarDayWorkEntry,
-  CalendarEntryType,
-  CalendarRequestEntry,
-  CalendarWorkingTripEntry,
-} from '../../interfaces';
 import { CalendarStateService } from '../../shared/services/calendar-state.service';
+import { calendar } from '../../shared/models/calendar';
+import { CalendarEntryType } from '../../interfaces';
 
 @Component({
   selector: 'app-attendance',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  //changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./attendance.component.scss'],
   templateUrl: './attendance.component.html',
 })
@@ -74,11 +69,10 @@ export class AttendanceComponent implements OnInit {
   faIcons: any = faIcons;
   weekDayNames!: string[];
   monthNames!: string[];
-  calendarEntries!: any[];
   CalendarEntryType = CalendarEntryType;
 
   //varibili per server mock
-  availabilityEntries: CalendarAvailabilityEntry[] = [
+  /* availabilityEntries: CalendarAvailabilityEntry[] = [
     {
       date_from: new Date('2025-02-18'),
       date_to: new Date('2025-02-21'),
@@ -130,14 +124,38 @@ export class AttendanceComponent implements OnInit {
       hour_to: '12:00',
       project: 'X2',
     },
-  ];
+  ]; */
+  calendarEntries: calendar = {
+    day_works: [],
+    requests: [],
+    working_trips: [],
+    availabilities: []
+  } as calendar;
+
+  errorMessage: string | null = null;
 
   constructor(private calendarStateService: CalendarStateService) {
     this.weekDayNames = weekDayNamesIt;
     this.monthNames = monthNamesIt;
   }
 
-  ngOnInit(): void {}
+  private subscriteToCalendarStateServices() {
+    this.calendarStateService.calendar.subscribe((calendar: calendar) => {
+      this.calendarEntries = calendar;
+      console.log('Calendar entries updated:', this.calendarEntries);
+    });
+    this.calendarStateService.error.subscribe((error) => {
+      this.errorMessage = error;
+    });
+  }
+
+  ngOnInit(): void {
+    this.subscriteToCalendarStateServices();
+    this.calendarStateService.loadCalendarByMonthYear(
+      (this.viewDate.getMonth() + 1).toString(),
+      this.viewDate.getFullYear().toString()
+    );
+  }
 
   private changeMonth(shift: number): Date {
     return new Date(this.viewDate.setMonth(this.viewDate.getMonth() + shift));
@@ -145,10 +163,18 @@ export class AttendanceComponent implements OnInit {
 
   previous(): void {
     this.viewDate = this.changeMonth(-1);
+    this.calendarStateService.loadCalendarByMonthYear(
+      (this.viewDate.getMonth() + 1).toString(),
+      this.viewDate.getFullYear().toString()
+    );
   }
 
   next(): void {
     this.viewDate = this.changeMonth(+1);
+    this.calendarStateService.loadCalendarByMonthYear(
+      (this.viewDate.getMonth() + 1).toString(),
+      this.viewDate.getFullYear().toString()
+    );
   }
 
   openAddModal(modal: ModalComponent): void {

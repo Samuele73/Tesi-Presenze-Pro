@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface CalendarRepository extends MongoRepository<CalendarEntity, String> {
     List<CalendarEntity> findAllByUserEmail(String userEmail);
 
-    @Query("{ 'userEmail': ?0, 'calendarEntry.date_from': { $gte: ?1, $lte: ?2 } }")
+    @Query("{ 'userEmail': ?0, 'calendarEntry.dateFrom': { $gte: ?1, $lte: ?2 } }")
     List<CalendarEntity> findByUserEmailAndDateFromBetween(String userEmail, Date start, Date end);
 
 //    Optional<CalendarEntity> deleteCalendarEntityByUserEmailAndId(String userEmail, String id);

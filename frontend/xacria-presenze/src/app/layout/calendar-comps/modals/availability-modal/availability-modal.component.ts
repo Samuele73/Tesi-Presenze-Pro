@@ -4,8 +4,8 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from '../modalComponent';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { faIcons } from '../../attendance/attendance.component';
-import { CalendarAvailabilityEntry } from 'src/app/layout/interfaces';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
+import { CalendarAvailabilityEntry } from 'src/generated-client';
 
 @Component({
   selector: 'app-availability-modal',
@@ -58,8 +58,8 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit{
   }
 
   createAvailabilityGroup(entry: CalendarAvailabilityEntry){
-    const from = this.dateFormat.formatToDateInput(entry.date_from);
-    const to = this.dateFormat.formatToDateInput(entry.date_to);
+    const from = this.dateFormat.formatToDateInput(entry.dateFrom ?? new Date());
+    const to = this.dateFormat.formatToDateInput(entry.dateTo ?? new Date());
     return this.fb.group({
       date_from: [from, Validators.required],
       date_to: [to, Validators.required],
@@ -75,6 +75,8 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit{
   }
 
   open(): void{
+    if(!this.calendarEntries.length)
+        return;
     this.modalService.open(this.modalElement, { ariaLabelledBy: 'modal-basic-title', windowClass: "custom-modal"}).result.then(
       (result) => {
         this.closeResult = `Closed with: ${result}`;
