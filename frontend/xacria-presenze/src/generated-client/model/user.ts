@@ -30,8 +30,8 @@ export interface User {
     password?: string;
     username?: string;
     authorities?: Array<GrantedAuthority>;
-    credentialsNonExpired?: boolean;
     accountNonExpired?: boolean;
+    credentialsNonExpired?: boolean;
     accountNonLocked?: boolean;
 }
 export namespace User {
