@@ -2,9 +2,11 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
@@ -36,6 +38,7 @@ export class DayworkModalComponent
   closeResult = '';
   faIcons: any = faIcons;
   toDeleteEntries: identifiableCalendarWorkingDay[] = [];
+  @Output() saveDayWorks = new EventEmitter<CalendarWorkingDayEntry[]>();
 
   constructor(
     private modalService: NgbModal,
@@ -171,4 +174,31 @@ export class DayworkModalComponent
       this.toDeleteEntries.push(entry);
     }
   }
+
+  submitNewEntries(): void {
+      if(this.form.valid){
+        const normalizedDate = this.dateFormat.normalizeDate(this.date);
+        const newDayWorkEntries: CalendarWorkingDayEntry[] = this.dayWorks.value.map(
+          (entry: CalendarDayWorkEntry) => {
+            return {
+              project: entry.project,
+              hourFrom: entry.hour_from,
+              hourTo: entry.hour_to,
+              dateFrom: normalizedDate
+            };
+          }
+        );
+        //To push the first entry which not from the form array
+        newDayWorkEntries.push(
+          {
+            project: this.project?.value,
+            hourFrom: this.hourFrom?.value,
+            hourTo: this.hourTo?.value,
+            dateFrom: normalizedDate
+          }
+        );
+        this.saveDayWorks.emit(newDayWorkEntries);
+      }
+      else console.error('Availability new entry form is invalid');
+    }
 }

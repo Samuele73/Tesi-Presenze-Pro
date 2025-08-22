@@ -74,5 +74,5 @@
 <app-working-trip-modal #working_trip_modal (saveWorkingTrip)="handleSave($event, 'WORKING_TRIP')"></app-working-trip-modal>
 <app-availability-modal #availability_modal (saveAvailability)="handleSave($event, 'AVAILABILITY')"></app-availability-modal>
 <app-request-modal #request_modal (saveRequest)="handleSave($event, 'REQUEST')"></app-request-modal>
-<app-daywork-modal #daywork_modal [date]="dayClicked" [dateString]="fromDateToModalTitle(dayClicked)"></app-daywork-modal>
+<app-daywork-modal #daywork_modal [date]="dayClicked" [dateString]="fromDateToModalTitle(dayClicked)" (saveDayWorks)="handleBulkSave($event, 'WORKING_DAY')"></app-daywork-modal>
 

@@ -62,9 +62,9 @@ export class CalendarStateService {
       switch (dto.entryType) {
         case CalendarResponseDto.EntryTypeEnum.WORKINGDAY: {
           const finalEntry = {
-              id: dto.id!,
-              calendarEntry: dto.calendarEntry as CalendarWorkingDayEntry,
-            }
+            id: dto.id!,
+            calendarEntry: dto.calendarEntry as CalendarWorkingDayEntry,
+          };
           newCalendarData.day_works.push(finalEntry);
           break;
         }
@@ -72,7 +72,7 @@ export class CalendarStateService {
           const finalEntry = {
             id: dto.id!,
             calendarEntry: dto.calendarEntry as CalendarRequestEntry,
-          }
+          };
           newCalendarData.requests.push(finalEntry);
           break;
         }
@@ -80,7 +80,7 @@ export class CalendarStateService {
           const finalEntry = {
             id: dto.id!,
             calendarEntry: dto.calendarEntry as CalendarWorkingTripEntry,
-          }
+          };
           newCalendarData.working_trips.push(finalEntry);
           break;
         }
@@ -88,7 +88,7 @@ export class CalendarStateService {
           const finalEntry = {
             id: dto.id!,
             calendarEntry: dto.calendarEntry as CalendarAvailabilityEntry,
-          }
+          };
           newCalendarData.availabilities.push(finalEntry);
           break;
         }
@@ -118,54 +118,106 @@ export class CalendarStateService {
   }
 
   saveCalendarEntry(
-  calendarEntry: CalendarEntry,
-  entryType: CalendarEntity.EntryTypeEnum
-) {
-  console.log("Sto salvandoooooo")
-  const saveCalendarEntityRequest: SaveCalendarEntityRequestDto = {
-    entryType: entryType,
-    calendarEntry: calendarEntry,
-  };
+    calendarEntry: CalendarEntry,
+    entryType: CalendarEntity.EntryTypeEnum
+  ) {
+    console.log('Sto salvandoooooo');
+    const saveCalendarEntityRequest: SaveCalendarEntityRequestDto = {
+      entryType: entryType,
+      calendarEntry: calendarEntry,
+    };
 
-  this.calendarApi.saveCalendarEntity(saveCalendarEntityRequest).subscribe({
-    next: (response: CalendarResponseDto) => {
-      console.log('Calendar entry saved successfully:', response);
+    this.calendarApi.saveCalendarEntity(saveCalendarEntityRequest).subscribe({
+      next: (response: CalendarResponseDto) => {
+        console.log('Calendar entry saved successfully:', response);
 
-      // Ottieni il calendario corrente
-      const currentCalendar = this.calendar$.getValue();
+        // Ottieni il calendario corrente
+        const currentCalendar = this.calendar$.getValue();
 
-      // Converti la response in un oggetto calendar (ma è una lista, quindi ti ritorna 1 solo entry mappata)
-      const newCalendarData = this.fromCalendarResponseDtoToCalendar([response]);
+        // Converti la response in un oggetto calendar (ma è una lista, quindi ti ritorna 1 solo entry mappata)
+        const newCalendarData = this.fromCalendarResponseDtoToCalendar([
+          response,
+        ]);
 
-      // Crea una copia immutabile unendo il nuovo dato allo stato attuale
-      const updatedCalendar: calendar = {
-        ...currentCalendar,
-        day_works: [
-          ...currentCalendar.day_works,
-          ...newCalendarData.day_works,
-        ],
-        requests: [
-          ...currentCalendar.requests,
-          ...newCalendarData.requests,
-        ],
-        working_trips: [
-          ...currentCalendar.working_trips,
-          ...newCalendarData.working_trips,
-        ],
-        availabilities: [
-          ...currentCalendar.availabilities,
-          ...newCalendarData.availabilities,
-        ],
-      };
+        // Crea una copia immutabile unendo il nuovo dato allo stato attuale
+        const updatedCalendar: calendar = {
+          ...currentCalendar,
+          day_works: [
+            ...currentCalendar.day_works,
+            ...newCalendarData.day_works,
+          ],
+          requests: [...currentCalendar.requests, ...newCalendarData.requests],
+          working_trips: [
+            ...currentCalendar.working_trips,
+            ...newCalendarData.working_trips,
+          ],
+          availabilities: [
+            ...currentCalendar.availabilities,
+            ...newCalendarData.availabilities,
+          ],
+        };
 
-      // Aggiorna lo stato
-      this.calendar$.next(updatedCalendar);
-    },
-    error: (error) => {
-      console.error('Error saving calendar entry:', error);
-      this.error$.next("Errore nel salvataggio dell'entry del calendario");
-    },
-  });
-}
+        // Aggiorna lo stato
+        this.calendar$.next(updatedCalendar);
+      },
+      error: (error) => {
+        console.error('Error saving calendar entry:', error);
+        this.error$.next("Errore nel salvataggio dell'entry del calendario");
+      },
+    });
+  }
 
+  saveCalendarEntities(
+    calendarEntry: CalendarEntry[],
+    entryType: CalendarEntity.EntryTypeEnum
+  ) {
+    const saveCalendarEntityRequest: SaveCalendarEntityRequestDto[] =
+      calendarEntry.map((entry) => ({
+        entryType: entryType,
+        calendarEntry: entry,
+      }));
+
+    this.calendarApi
+      .saveMultipleCalendarEntities(saveCalendarEntityRequest)
+      .subscribe({
+        next: (response: CalendarResponseDto[]) => {
+          console.log('Calendar entry saved successfully:', response);
+
+          // Ottieni il calendario corrente
+          const currentCalendar = this.calendar$.getValue();
+
+          // Converti la response in un oggetto calendar (ma è una lista, quindi ti ritorna 1 solo entry mappata)
+          const newCalendarData: calendar =
+            this.fromCalendarResponseDtoToCalendar(response);
+
+          // Crea una copia immutabile unendo il nuovo dato allo stato attuale
+          const updatedCalendar: calendar = {
+            ...currentCalendar,
+            day_works: [
+              ...currentCalendar.day_works,
+              ...newCalendarData.day_works,
+            ],
+            requests: [
+              ...currentCalendar.requests,
+              ...newCalendarData.requests,
+            ],
+            working_trips: [
+              ...currentCalendar.working_trips,
+              ...newCalendarData.working_trips,
+            ],
+            availabilities: [
+              ...currentCalendar.availabilities,
+              ...newCalendarData.availabilities,
+            ],
+          };
+
+          // Aggiorna lo stato
+          this.calendar$.next(updatedCalendar);
+        },
+        error: (error) => {
+          console.error('Error saving calendar entry:', error);
+          this.error$.next("Errore nel salvataggio dell'entry del calendario");
+        },
+      });
+  }
 }

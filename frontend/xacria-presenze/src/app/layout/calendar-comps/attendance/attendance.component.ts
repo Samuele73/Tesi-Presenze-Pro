@@ -198,6 +198,10 @@ export class AttendanceComponent implements OnInit {
   handleSave(calendarEntry: CalendarEntry, entryType: CalendarEntity.EntryTypeEnum): void {
     this.calendarStateService.saveCalendarEntry(calendarEntry, entryType);
   }
+
+  handleBulkSave(calendarEntries: CalendarEntry[], entryType: CalendarEntity.EntryTypeEnum): void {
+    this.calendarStateService.saveCalendarEntities(calendarEntries, entryType);
+  }
 }
 
 export const faIcons = {
