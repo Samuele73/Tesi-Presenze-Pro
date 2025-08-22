@@ -1,4 +1,12 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { request_types } from '../../const-vars';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from '../modalComponent';
@@ -22,6 +30,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
   @Input() calendarEntries!: identifiableCalendarRequest[];
   faIcons = faIcons;
   toDeleteEntries: identifiableCalendarRequest[] = [];
+  @Output() saveRequest = new EventEmitter<CalendarRequestEntry>();
 
   constructor(
     private modalService: NgbModal,
@@ -70,7 +79,11 @@ export class RequestModalComponent implements ModalComponent, OnInit {
   }
 
   open(): void {
-    if ((!this.calendarEntries || !this.calendarEntries.length) && this.isModifyMode) return;
+    if (
+      (!this.calendarEntries || !this.calendarEntries.length) &&
+      this.isModifyMode
+    )
+      return;
 
     if (this.isModifyMode) {
       this.initializeModifyForm();
@@ -118,7 +131,9 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     const from = this.dateFormat.formatToDateInput(
       entry.calendarEntry.dateFrom ?? new Date()
     );
-    const to = this.dateFormat.formatToDateInput(entry.calendarEntry.dateTo ?? new Date());
+    const to = this.dateFormat.formatToDateInput(
+      entry.calendarEntry.dateTo ?? new Date()
+    );
     return this.fb.group({
       date_from: [from, Validators.required],
       date_to: [to, Validators.required],
@@ -136,5 +151,19 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     } else {
       this.toDeleteEntries.push(entry);
     }
+  }
+
+  submitNewEntry(): void {
+    if (this.form.valid) {
+      const newEntry: CalendarRequestEntry = {
+        dateFrom: this.dateFrom?.value,
+        dateTo: this.dateTo?.value,
+        requestType: this.requestType?.value,
+        timeFrom: this.timeFrom?.value,
+        timeTo: this.timeTo?.value,
+      };
+      this.saveRequest.emit(newEntry);
+      this.form.reset();
+    } else console.error('Availability new entry form is invalid');
   }
 }

@@ -7,7 +7,7 @@
       </div>
       <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
-    <form [formGroup]="form" (ngSubmit)="submitForm()">
+    <form [formGroup]="form" (ngSubmit)="submitNewEntry()">
       <div class="modal-body">
         <div class="">
           <div class="row mb-3">
@@ -57,7 +57,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="px-4 py-0 rounded-4 bg-dark-subtle border-0 text-dark" (click)="modal.close('Save click')">Annulla</button>
-        <button type="button" class="px-4 py-0 rounded-4 bg-primary border-0 text-light" (click)="modal.close('Save click')" [disabled]="form.invalid" [class.disabled]="form.invalid" id="save-btn">Salva</button>
+        <button type="submit" class="px-4 py-0 rounded-4 bg-primary border-0 text-light" (click)="modal.close('Save click')" [disabled]="form.invalid" [class.disabled]="form.invalid" id="save-btn">Salva</button>
       </div>
     </form>
   </div>

@@ -80,7 +80,7 @@ public class CalendarService {
         final String userEmail = this.getUserEmailFromRequest(request);
         final Date[] monthStartAndEnd = getMonthStartAndEnd(month, year);
         final List<CalendarEntity> calendarEntries = repository.findByUserEmailAndDateFromBetween(userEmail, monthStartAndEnd[0], monthStartAndEnd[1]);
-        System.out.println("check entries: "  + calendarEntries);
+        //System.out.println("check entries: "  + calendarEntries);
         return calendarMapper.fromCalendarsToCalendarEntries(calendarEntries);
     }
 

@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { inject, TemplateRef } from '@angular/core';
 
 import {
@@ -26,6 +26,7 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
   @Input() calendarEntries!: identifiableCalendarWorkingTrip[];
   toDeleteEntries: identifiableCalendarWorkingTrip[] = [];
   faIcons = faIcons;
+  @Output() saveWorkingTrip = new EventEmitter<CalendarWorkingTripEntry>();
 
   constructor(
     private modalService: NgbModal,
@@ -127,4 +128,15 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
       this.toDeleteEntries.push(entry);
     }
   }
+
+  submitNewEntry(): void {
+      if (this.form.valid) {
+        const newEntry: CalendarWorkingTripEntry = {
+          dateFrom: this.dateFrom?.value,
+          dateTo: this.dateTo?.value,
+        };
+        this.saveWorkingTrip.emit(newEntry);
+        this.form.reset();
+      } else console.error('Availability new entry form is invalid');
+    }
 }
