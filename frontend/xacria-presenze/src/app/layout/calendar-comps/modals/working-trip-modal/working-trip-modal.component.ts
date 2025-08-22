@@ -11,6 +11,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
 import { faIcons } from '../../attendance/attendance.component';
 import { CalendarWorkingTripEntry } from 'src/generated-client';
+import { identifiableCalendarWorkingTrip } from 'src/app/layout/shared/models/calendar';
 
 @Component({
   selector: 'app-working-trip-modal',
@@ -22,8 +23,8 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
   closeResult = '';
   form!: FormGroup;
   @Input() isModifyMode!: boolean;
-  @Input() calendarEntries!: CalendarWorkingTripEntry[];
-  toDeleteEntries: CalendarWorkingTripEntry[] = [];
+  @Input() calendarEntries!: identifiableCalendarWorkingTrip[];
+  toDeleteEntries: identifiableCalendarWorkingTrip[] = [];
   faIcons = faIcons;
 
   constructor(
@@ -57,7 +58,7 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
 
   initializeModifyForm(): void {
     let entries: any[] = [];
-    this.calendarEntries.forEach((entry: CalendarWorkingTripEntry) => {
+    this.calendarEntries.forEach((entry: identifiableCalendarWorkingTrip) => {
       entries.push(this.createWorkingTripGroup(entry));
     });
     this.form = this.fb.group({
@@ -65,11 +66,11 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
     });
   }
 
-  createWorkingTripGroup(entry: CalendarWorkingTripEntry) {
+  createWorkingTripGroup(entry: identifiableCalendarWorkingTrip) {
     const from = this.dateFormat.formatToDateInput(
-      entry.dateFrom ?? new Date()
+      entry.calendarEntry.dateFrom ?? new Date()
     );
-    const to = this.dateFormat.formatToDateInput(entry.dateTo ?? new Date());
+    const to = this.dateFormat.formatToDateInput(entry.calendarEntry.dateTo ?? new Date());
     return this.fb.group({
       date_from: [from, Validators.required],
       date_to: [to, Validators.required],
@@ -116,11 +117,11 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
     }
   }
 
-  toggleEntryDelete(entry: any, i: number) {
+  toggleEntryDelete(entry: identifiableCalendarWorkingTrip, i: number) {
     console.log('CONTROLLA IL VALORE', entry, i);
     if (this.toDeleteEntries.includes(entry)) {
       this.toDeleteEntries = this.toDeleteEntries.filter(
-        (value: CalendarWorkingTripEntry) => value !== entry
+        (value: identifiableCalendarWorkingTrip) => value !== entry
       );
     } else {
       this.toDeleteEntries.push(entry);

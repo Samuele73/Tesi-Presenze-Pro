@@ -6,6 +6,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
 import { faIcons } from '../../attendance/attendance.component';
 import { CalendarRequestEntry } from 'src/generated-client';
+import { identifiableCalendarRequest } from 'src/app/layout/shared/models/calendar';
 
 @Component({
   selector: 'app-request-modal',
@@ -18,9 +19,9 @@ export class RequestModalComponent implements ModalComponent, OnInit {
   closeResult = '';
   form!: FormGroup;
   @Input() isModifyMode!: boolean;
-  @Input() calendarEntries!: CalendarRequestEntry[];
+  @Input() calendarEntries!: identifiableCalendarRequest[];
   faIcons = faIcons;
-  toDeleteEntries: CalendarRequestEntry[] = [];
+  toDeleteEntries: identifiableCalendarRequest[] = [];
 
   constructor(
     private modalService: NgbModal,
@@ -104,7 +105,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
   }
 
   initializeModifyForm(): void {
-    let entries: any[] = [];
+    let entries: FormGroup[] = [];
     this.calendarEntries.forEach((entry) => {
       entries.push(this.createRequestGroup(entry));
     });
@@ -113,25 +114,24 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     });
   }
 
-  createRequestGroup(entry: CalendarRequestEntry) {
+  createRequestGroup(entry: identifiableCalendarRequest) {
     const from = this.dateFormat.formatToDateInput(
-      entry.dateFrom ?? new Date()
+      entry.calendarEntry.dateFrom ?? new Date()
     );
-    const to = this.dateFormat.formatToDateInput(entry.dateTo ?? new Date());
+    const to = this.dateFormat.formatToDateInput(entry.calendarEntry.dateTo ?? new Date());
     return this.fb.group({
       date_from: [from, Validators.required],
       date_to: [to, Validators.required],
-      time_from: [entry.timeFrom, Validators.required],
-      time_to: [entry.timeTo, Validators.required],
-      request_type: [entry.requestType, Validators.required],
+      time_from: [entry.calendarEntry.timeFrom, Validators.required],
+      time_to: [entry.calendarEntry.timeTo, Validators.required],
+      request_type: [entry.calendarEntry.requestType, Validators.required],
     });
   }
 
-  toggleEntryDelete(entry: CalendarRequestEntry, i: number) {
-    console.log('CONTROLLA IL VALORE', entry, i);
+  toggleEntryDelete(entry: identifiableCalendarRequest, i: number) {
     if (this.toDeleteEntries.includes(entry)) {
       this.toDeleteEntries = this.toDeleteEntries.filter(
-        (value: CalendarRequestEntry) => value !== entry
+        (value: identifiableCalendarRequest) => value !== entry
       );
     } else {
       this.toDeleteEntries.push(entry);

@@ -26,12 +26,12 @@ export interface User {
     address?: string;
     phone?: string;
     role?: User.RoleEnum;
-    password?: string;
     enabled?: boolean;
+    password?: string;
     username?: string;
     authorities?: Array<GrantedAuthority>;
-    accountNonExpired?: boolean;
     credentialsNonExpired?: boolean;
+    accountNonExpired?: boolean;
     accountNonLocked?: boolean;
 }
 export namespace User {

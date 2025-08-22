@@ -19,6 +19,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { faIcons } from '../../attendance/attendance.component';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
 import { CalendarAvailabilityEntry } from 'src/generated-client';
+import { identifiableCalendarAvailability } from 'src/app/layout/shared/models/calendar';
 
 @Component({
   selector: 'app-availability-modal',
@@ -28,7 +29,7 @@ import { CalendarAvailabilityEntry } from 'src/generated-client';
 export class AvailabilityModalComponent implements ModalComponent, OnInit {
   validProjects: any = projects;
   @ViewChild('modal', { static: true }) modalElement!: TemplateRef<any>;
-  @Input() calendarEntries!: CalendarAvailabilityEntry[];
+  @Input() calendarEntries!: identifiableCalendarAvailability[];
   @Input() isModifyMode!: boolean;
   closeResult = '';
   form!: FormGroup;
@@ -80,7 +81,7 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
   } */
 
   initializeModifyForm() {
-    let entries: any[] = [];
+    let entries: FormGroup[] = [];
     this.calendarEntries.forEach((entry) => {
       entries.push(this.createAvailabilityGroup(entry));
     });
@@ -89,16 +90,16 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
     });
   }
 
-  createAvailabilityGroup(entry: CalendarAvailabilityEntry) {
+  createAvailabilityGroup(entry: identifiableCalendarAvailability) {
     const from = this.dateFormat.formatToDateInput(
-      entry.dateFrom ?? new Date()
+      entry.calendarEntry.dateFrom ?? new Date()
     );
-    const to = this.dateFormat.formatToDateInput(entry.dateTo ?? new Date());
+    const to = this.dateFormat.formatToDateInput(entry.calendarEntry.dateTo ?? new Date());
     return this.fb.group({
       date_from: [from, Validators.required],
       date_to: [to, Validators.required],
       project: [
-        !entry.project ? this.validProjects[0] : entry.project,
+        !entry.calendarEntry.project ? this.validProjects[0] : entry.calendarEntry.project,
         Validators.required,
       ],
     });

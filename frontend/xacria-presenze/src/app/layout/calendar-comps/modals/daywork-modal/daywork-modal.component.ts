@@ -16,6 +16,7 @@ import { faIcons } from '../../attendance/attendance.component';
 import { CalendarDayWorkEntry } from 'src/app/layout/interfaces';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
 import { CalendarWorkingDayEntry } from 'src/generated-client';
+import { identifiableCalendarWorkingDay } from 'src/app/layout/shared/models/calendar';
 
 @Component({
   selector: 'app-daywork-modal',
@@ -31,10 +32,10 @@ export class DayworkModalComponent
   @Input() date!: Date;
   @Input() dateString!: string;
   @Input() isModifyMode!: boolean;
-  @Input() calendarEntries!: CalendarWorkingDayEntry[];
+  @Input() calendarEntries!: identifiableCalendarWorkingDay[];
   closeResult = '';
   faIcons: any = faIcons;
-  toDeleteEntries: CalendarDayWorkEntry[] = [];
+  toDeleteEntries: identifiableCalendarWorkingDay[] = [];
 
   constructor(
     private modalService: NgbModal,
@@ -72,8 +73,8 @@ export class DayworkModalComponent
   }
 
   initializeModifyForm() {
-    let entries: any[] = [];
-    this.calendarEntries.forEach((entry: CalendarWorkingDayEntry) => {
+    let entries: FormGroup[] = [];
+    this.calendarEntries.forEach((entry: identifiableCalendarWorkingDay) => {
       entries.push(this.createNewDayWork(entry));
     });
     this.form = this.fb.group({
@@ -82,7 +83,7 @@ export class DayworkModalComponent
   }
 
   //Aggiunge un nuovo formGroup per la selezione di un nuovo lavoro nel form daywork.
-  createNewDayWork(entry?: CalendarWorkingDayEntry): FormGroup {
+  createNewDayWork(entry?: identifiableCalendarWorkingDay): FormGroup {
     let group: FormGroup;
     if (!entry)
       group = this.fb.group({
@@ -92,9 +93,9 @@ export class DayworkModalComponent
       });
     else {
       group = this.fb.group({
-        hour_from: [entry.hourFrom, Validators.required],
-        hour_to: [entry.hourTo, Validators.required],
-        project: [entry.project, Validators.required],
+        hour_from: [entry.calendarEntry.hourFrom, Validators.required],
+        hour_to: [entry.calendarEntry.hourTo, Validators.required],
+        project: [entry.calendarEntry.project, Validators.required],
       });
     }
     return group;
@@ -160,11 +161,11 @@ export class DayworkModalComponent
     }
   }
 
-  toggleEntryDelete(entry: any, i: number) {
+  toggleEntryDelete(entry: identifiableCalendarWorkingDay, i: number) {
     console.log('CONTROLLA IL VALORE', entry, i);
     if (this.toDeleteEntries.includes(entry)) {
       this.toDeleteEntries = this.toDeleteEntries.filter(
-        (value: CalendarDayWorkEntry) => value !== entry
+        (value: identifiableCalendarWorkingDay) => value !== entry
       );
     } else {
       this.toDeleteEntries.push(entry);

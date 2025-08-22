@@ -20,10 +20,12 @@ import { DateFormatService } from 'src/app/shared/services/date-format.service';
 import {
   CalendarAvailabilityEntry,
   CalendarEntity,
+  CalendarEntry,
   CalendarRequestEntry,
   CalendarWorkingDayEntry,
   CalendarWorkingTripEntry,
 } from 'src/generated-client';
+import { identifiableCalendarAvailability, identifiableCalendarEntry, identifiableCalendarRequest, identifiableCalendarWorkingDay, identifiableCalendarWorkingTrip } from '../../shared/models/calendar';
 
 // ... (imports remain the same)
 
@@ -40,7 +42,7 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit  
   @Input() modalModify!: boolean;
 
   // Usa dei setter per catturare i cambiamenti degli input
-  @Input() set modalCalendarEntries(value: Array<CalendarWorkingDayEntry | CalendarRequestEntry | CalendarWorkingTripEntry | CalendarAvailabilityEntry> | undefined) {
+  @Input() set modalCalendarEntries(value: Array<identifiableCalendarWorkingDay | identifiableCalendarRequest | identifiableCalendarWorkingTrip | identifiableCalendarAvailability> | undefined) {
     this._allEntries = value ?? [];
     this.recompute();
   }
@@ -49,7 +51,7 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit  
     this.recompute();
   }
 
-  private _allEntries: Array<CalendarWorkingDayEntry | CalendarRequestEntry | CalendarWorkingTripEntry | CalendarAvailabilityEntry> = [];
+  private _allEntries: Array<identifiableCalendarWorkingDay | identifiableCalendarRequest | identifiableCalendarWorkingTrip | identifiableCalendarAvailability> = [];
   private _date?: Date;
 
   @ViewChild('modal') modal!: ModalComponent;
@@ -65,7 +67,7 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit  
 
   CalendarEntryType = CalendarEntryType;
   notifs: number = 0;
-  filteredEntries: Array<CalendarWorkingDayEntry | CalendarRequestEntry | CalendarWorkingTripEntry | CalendarAvailabilityEntry> = [];
+  filteredEntries: Array<identifiableCalendarEntry> = [];
 
   constructor(private dateFormat: DateFormatService) {}
   ngAfterViewInit(): void {
@@ -91,21 +93,23 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit  
     if (!this._date || !this._allEntries) {
       this.filteredEntries = [];
       this.notifs = 0;
+      //console.log('No date or entries provided');
       return;
     }
 
     const current = this.dateFormat.normalizeDate(this._date);
-    this.filteredEntries = this._allEntries.filter((entry) => {
-      if (!this.hasDateRange(entry)){
-        if(this.areWorkingDayEntries(entry)) {
-          const from = this.dateFormat.normalizeDate(entry.dateFrom);
-          console.log('Current date:', current, 'From date:', from, "result", current === from);
+    this.filteredEntries = this._allEntries.filter((entry: identifiableCalendarEntry) => {
+      const calendarEntry: CalendarEntry = entry.calendarEntry;
+      if (!this.hasDateRange(calendarEntry)){
+        if(this.areWorkingDayEntries(calendarEntry)) {
+          const from = this.dateFormat.normalizeDate(calendarEntry.dateFrom);
+          //console.log('Current date:', current, 'From date:', from, "result", current === from);
           return current.getTime() === from.getTime();
         }
         return false;
       }
-      const from = this.dateFormat.normalizeDate(entry.dateFrom);
-      const to = this.dateFormat.normalizeDate(entry.dateTo);
+      const from = this.dateFormat.normalizeDate(calendarEntry.dateFrom);
+      const to = this.dateFormat.normalizeDate(calendarEntry.dateTo);
       return current >= from && current <= to;
     });
     this.notifs = this.filteredEntries.length;

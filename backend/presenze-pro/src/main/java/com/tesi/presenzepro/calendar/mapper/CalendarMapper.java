@@ -1,6 +1,7 @@
 package com.tesi.presenzepro.calendar.mapper;
 
 import com.tesi.presenzepro.calendar.dto.CalendarResponseDto;
+import com.tesi.presenzepro.calendar.dto.SaveCalendarEntityRequestDto;
 import com.tesi.presenzepro.calendar.model.CalendarEntity;
 import org.springframework.stereotype.Service;
 
@@ -18,5 +19,9 @@ public class CalendarMapper {
 
     public CalendarResponseDto fromCalendarToCalendarEntry(CalendarEntity entity){
         return new CalendarResponseDto(entity.getId() ,entity.getEntryType(), entity.getCalendarEntry());
+    }
+
+    public CalendarEntity fromCalendarSaveRequestToEntity(SaveCalendarEntityRequestDto requestDto){
+        return CalendarEntity.builder().calendarEntry(requestDto.getCalendarEntry()).entryType(requestDto.getEntryType()).build();
     }
 }

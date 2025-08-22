@@ -8,6 +8,7 @@ export * from './calendarWorkingTripEntry';
 export * from './grantedAuthority';
 export * from './loginRequestDto';
 export * from './newPasswordDto';
+export * from './saveCalendarEntityRequestDto';
 export * from './signInRequestDto';
 export * from './user';
 export * from './userAuthResponseDto';

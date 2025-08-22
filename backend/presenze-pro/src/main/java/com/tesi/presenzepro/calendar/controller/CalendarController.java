@@ -1,6 +1,7 @@
 package com.tesi.presenzepro.calendar.controller;
 
 import com.tesi.presenzepro.calendar.dto.CalendarResponseDto;
+import com.tesi.presenzepro.calendar.dto.SaveCalendarEntityRequestDto;
 import com.tesi.presenzepro.calendar.model.CalendarEntity;
 import com.tesi.presenzepro.calendar.service.CalendarService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,7 +39,7 @@ public class CalendarController {
 
     @Operation(description = "Save a new calendar entry", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping("")
-    ResponseEntity<CalendarResponseDto> saveCalendarEntity(@RequestBody CalendarEntity calendarEntityEntry){
+    ResponseEntity<CalendarResponseDto> saveCalendarEntity(@RequestBody SaveCalendarEntityRequestDto calendarEntityEntry){
         final CalendarResponseDto savedCalendarEntityEntry = calendarService.saveNewCalendarEntry(calendarEntityEntry);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCalendarEntityEntry);
     }

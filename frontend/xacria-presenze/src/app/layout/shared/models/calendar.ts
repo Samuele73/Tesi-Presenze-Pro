@@ -26,11 +26,34 @@ export interface availability {
   project: string;
 }
 
+export interface identifiableCalendarWorkingDay{
+  id: string;
+  calendarEntry: CalendarWorkingDayEntry;
+}
+
+export interface identifiableCalendarRequest{
+  id: string;
+  calendarEntry: CalendarRequestEntry;
+}
+
+export interface identifiableCalendarWorkingTrip{
+  id: string;
+  calendarEntry: CalendarWorkingTripEntry;
+}
+
+export interface identifiableCalendarAvailability{
+  id: string;
+  calendarEntry: CalendarAvailabilityEntry;
+}
+
+export type identifiableCalendarEntry = identifiableCalendarWorkingDay | identifiableCalendarRequest | identifiableCalendarWorkingTrip | identifiableCalendarAvailability;
+
+//({id: string} & CalendarWorkingDayEntry)[]
 export interface calendar {
-  day_works: CalendarWorkingDayEntry[];
-  requests: CalendarRequestEntry[];
-  working_trips: CalendarWorkingTripEntry[];
-  availabilities: CalendarAvailabilityEntry[];
+  day_works: identifiableCalendarWorkingDay[];
+  requests: identifiableCalendarRequest[];
+  working_trips: identifiableCalendarWorkingTrip[];
+  availabilities: identifiableCalendarAvailability[];
 }
 
 export interface apiEntry {

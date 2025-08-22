@@ -11,16 +11,11 @@
  */
 import { CalendarEntry } from './calendarEntry';
 
-/**
- * Rappresenta una entry del calendario nella sua interezza, cioè quella che viene visualizzata nel DB
- */
-export interface CalendarEntity { 
-    entryType?: CalendarEntity.EntryTypeEnum;
+export interface SaveCalendarEntityRequestDto { 
+    entryType?: SaveCalendarEntityRequestDto.EntryTypeEnum;
     calendarEntry?: CalendarEntry;
-    id?: string;
-    userEmail?: string;
 }
-export namespace CalendarEntity {
+export namespace SaveCalendarEntityRequestDto {
     export type EntryTypeEnum = 'WORKING_DAY' | 'REQUEST' | 'WORKING_TRIP' | 'AVAILABILITY';
     export const EntryTypeEnum = {
         WORKINGDAY: 'WORKING_DAY' as EntryTypeEnum,

@@ -1,5 +1,6 @@
 package com.tesi.presenzepro.calendar.service;
 
+import com.tesi.presenzepro.calendar.dto.SaveCalendarEntityRequestDto;
 import com.tesi.presenzepro.calendar.mapper.CalendarMapper;
 import com.tesi.presenzepro.calendar.repository.CalendarRepository;
 import com.tesi.presenzepro.calendar.dto.CalendarResponseDto;
@@ -28,8 +29,9 @@ public class CalendarService {
     private final CalendarMapper calendarMapper;
     private final MongoTemplate mongoTemplate;
 
-    public CalendarResponseDto saveNewCalendarEntry(CalendarEntity calendarEntityData){
-        CalendarEntity calendarEntity =  this.repository.save(calendarEntityData);
+    public CalendarResponseDto saveNewCalendarEntry(SaveCalendarEntityRequestDto calendarEntityData){
+        CalendarEntity newCalendarEntity = calendarMapper.fromCalendarSaveRequestToEntity(calendarEntityData);
+        CalendarEntity calendarEntity =  this.repository.save(newCalendarEntity);
         return calendarMapper.fromCalendarToCalendarEntry(calendarEntity);
     }
 

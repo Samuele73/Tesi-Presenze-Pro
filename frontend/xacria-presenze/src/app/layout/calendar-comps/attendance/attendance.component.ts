@@ -142,7 +142,6 @@ export class AttendanceComponent implements OnInit {
   private subscriteToCalendarStateServices() {
     this.calendarStateService.calendar.subscribe((calendar: calendar) => {
       this.calendarEntries = calendar;
-      console.log('Calendar entries updated:', this.calendarEntries);
     });
     this.calendarStateService.error.subscribe((error) => {
       this.errorMessage = error;
@@ -151,7 +150,7 @@ export class AttendanceComponent implements OnInit {
 
   ngOnInit(): void {
     this.subscriteToCalendarStateServices();
-    this.calendarStateService.loadCalendarByMonthYear(
+    this.calendarStateService.getCalendarByMonthYear(
       (this.viewDate.getMonth() + 1).toString(),
       this.viewDate.getFullYear().toString()
     );
@@ -163,7 +162,7 @@ export class AttendanceComponent implements OnInit {
 
   previous(): void {
     this.viewDate = this.changeMonth(-1);
-    this.calendarStateService.loadCalendarByMonthYear(
+    this.calendarStateService.getCalendarByMonthYear(
       (this.viewDate.getMonth() + 1).toString(),
       this.viewDate.getFullYear().toString()
     );
@@ -171,7 +170,7 @@ export class AttendanceComponent implements OnInit {
 
   next(): void {
     this.viewDate = this.changeMonth(+1);
-    this.calendarStateService.loadCalendarByMonthYear(
+    this.calendarStateService.getCalendarByMonthYear(
       (this.viewDate.getMonth() + 1).toString(),
       this.viewDate.getFullYear().toString()
     );
@@ -196,7 +195,7 @@ export class AttendanceComponent implements OnInit {
   }
 
   handleSave(calendarEntry: CalendarEntry, entryType: CalendarEntity.EntryTypeEnum): void {
-    console.log('Saving availability:',);
+
   }
 }
 

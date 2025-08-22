@@ -15,6 +15,8 @@ import { DateFormatService } from 'src/app/shared/services/date-format.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import {
   CalendarAvailabilityEntry,
+  CalendarEntity,
+  CalendarEntry,
   CalendarRequestEntry,
   CalendarResponseDto,
   CalendarService,
@@ -22,6 +24,7 @@ import {
   CalendarWorkingTripEntry,
 } from 'src/generated-client';
 import { en } from '@fullcalendar/core/internal-common';
+import { id } from 'date-fns/locale';
 
 @Injectable({
   providedIn: 'root',
@@ -57,27 +60,35 @@ export class CalendarStateService {
     calendarResponseDto.forEach((dto: CalendarResponseDto) => {
       switch (dto.entryType) {
         case CalendarResponseDto.EntryTypeEnum.WORKINGDAY: {
-          newCalendarData.day_works.push(
-            dto.calendarEntry as CalendarWorkingDayEntry
-          );
+          const finalEntry = {
+              id: dto.id!,
+              calendarEntry: dto.calendarEntry as CalendarWorkingDayEntry,
+            }
+          newCalendarData.day_works.push(finalEntry);
           break;
         }
         case CalendarResponseDto.EntryTypeEnum.REQUEST: {
-          newCalendarData.requests.push(
-            dto.calendarEntry as CalendarRequestEntry
-          );
+          const finalEntry = {
+            id: dto.id!,
+            calendarEntry: dto.calendarEntry as CalendarRequestEntry,
+          }
+          newCalendarData.requests.push(finalEntry);
           break;
         }
         case CalendarResponseDto.EntryTypeEnum.WORKINGTRIP: {
-          newCalendarData.working_trips.push(
-            dto.calendarEntry as CalendarWorkingTripEntry
-          );
+          const finalEntry = {
+            id: dto.id!,
+            calendarEntry: dto.calendarEntry as CalendarWorkingTripEntry,
+          }
+          newCalendarData.working_trips.push(finalEntry);
           break;
         }
         case CalendarResponseDto.EntryTypeEnum.AVAILABILITY: {
-          newCalendarData.availabilities.push(
-            dto.calendarEntry as CalendarAvailabilityEntry
-          );
+          const finalEntry = {
+            id: dto.id!,
+            calendarEntry: dto.calendarEntry as CalendarAvailabilityEntry,
+          }
+          newCalendarData.availabilities.push(finalEntry);
           break;
         }
         default: {
@@ -90,10 +101,10 @@ export class CalendarStateService {
     return newCalendarData;
   }
 
-  loadCalendarByMonthYear(month: string, year: string): void {
+  getCalendarByMonthYear(month: string, year: string): void {
     this.calendarApi.getCalendarEntitiesByMonthYear(month, year).subscribe({
       next: (calendarData: CalendarResponseDto[]) => {
-        console.log("GUARDAAA", calendarData);
+        console.log('GUARDAAA', calendarData);
         const newCalendarData: calendar =
           this.fromCalendarResponseDtoToCalendar(calendarData);
         this.calendar$.next(newCalendarData);
@@ -103,5 +114,23 @@ export class CalendarStateService {
         this.error$.next('Errore nella raccolta dati del calendario');
       },
     });
+  }
+
+  saveCalendarEntry(calendarEntry: CalendarEntry, entryType: CalendarEntity.EntryTypeEnum){
+    /* const newCalendarEntity: CalendarEntity = {}
+    this.calendarApi.saveCalendarEntity(calendarEntry, entryType).subscribe({
+      next: (response) => {
+        console.log('Calendar entry saved successfully:', response);
+        // Optionally, you can refresh the calendar data after saving
+        this.getCalendarByMonthYear(
+          new Date().getMonth().toString(),
+          new Date().getFullYear().toString()
+        );
+      },
+      error: (error) => {
+        console.error('Error saving calendar entry:', error);
+        this.error$.next('Errore nel salvataggio dell\'entry del calendario');
+      },
+    }); */
   }
 }

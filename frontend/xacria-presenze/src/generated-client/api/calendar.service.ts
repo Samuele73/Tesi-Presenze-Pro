@@ -19,6 +19,7 @@ import { Observable }                                        from 'rxjs';
 
 import { CalendarEntity } from '../model/calendarEntity';
 import { CalendarResponseDto } from '../model/calendarResponseDto';
+import { SaveCalendarEntityRequestDto } from '../model/saveCalendarEntityRequestDto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -216,10 +217,10 @@ export class CalendarService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public saveCalendarEntity(body: CalendarEntity, observe?: 'body', reportProgress?: boolean): Observable<CalendarResponseDto>;
-    public saveCalendarEntity(body: CalendarEntity, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<CalendarResponseDto>>;
-    public saveCalendarEntity(body: CalendarEntity, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<CalendarResponseDto>>;
-    public saveCalendarEntity(body: CalendarEntity, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public saveCalendarEntity(body: SaveCalendarEntityRequestDto, observe?: 'body', reportProgress?: boolean): Observable<CalendarResponseDto>;
+    public saveCalendarEntity(body: SaveCalendarEntityRequestDto, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<CalendarResponseDto>>;
+    public saveCalendarEntity(body: SaveCalendarEntityRequestDto, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<CalendarResponseDto>>;
+    public saveCalendarEntity(body: SaveCalendarEntityRequestDto, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
             throw new Error('Required parameter body was null or undefined when calling saveCalendarEntity.');
