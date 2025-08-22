@@ -39,8 +39,8 @@ public class CalendarController {
 
     @Operation(description = "Save a new calendar entry", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping("")
-    ResponseEntity<CalendarResponseDto> saveCalendarEntity(@RequestBody SaveCalendarEntityRequestDto calendarEntityEntry){
-        final CalendarResponseDto savedCalendarEntityEntry = calendarService.saveNewCalendarEntry(calendarEntityEntry);
+    ResponseEntity<CalendarResponseDto> saveCalendarEntity(HttpServletRequest request, @RequestBody SaveCalendarEntityRequestDto calendarEntityEntry){
+        final CalendarResponseDto savedCalendarEntityEntry = calendarService.saveNewCalendarEntry(request, calendarEntityEntry);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCalendarEntityEntry);
     }
 

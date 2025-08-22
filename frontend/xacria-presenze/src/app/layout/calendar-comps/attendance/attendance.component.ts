@@ -142,6 +142,7 @@ export class AttendanceComponent implements OnInit {
   private subscriteToCalendarStateServices() {
     this.calendarStateService.calendar.subscribe((calendar: calendar) => {
       this.calendarEntries = calendar;
+      console.log('CALENDAR SUBSCRIPTION, calendar on client', this.calendarEntries, "calendar from server", calendar);
     });
     this.calendarStateService.error.subscribe((error) => {
       this.errorMessage = error;
@@ -195,7 +196,7 @@ export class AttendanceComponent implements OnInit {
   }
 
   handleSave(calendarEntry: CalendarEntry, entryType: CalendarEntity.EntryTypeEnum): void {
-
+    this.calendarStateService.saveCalendarEntry(calendarEntry, entryType);
   }
 }
 

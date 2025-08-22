@@ -165,7 +165,7 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
     if(this.form.valid){
       const newEntry: CalendarAvailabilityEntry = {
         dateFrom: this.dateFrom?.value,
-        dateTo: this.dateFrom?.value,
+        dateTo: this.dateTo?.value,
         project: this.project?.value,
       }
       this.saveAvailability.emit(newEntry);

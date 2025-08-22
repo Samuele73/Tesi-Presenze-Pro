@@ -29,8 +29,10 @@ public class CalendarService {
     private final CalendarMapper calendarMapper;
     private final MongoTemplate mongoTemplate;
 
-    public CalendarResponseDto saveNewCalendarEntry(SaveCalendarEntityRequestDto calendarEntityData){
+    public CalendarResponseDto saveNewCalendarEntry(HttpServletRequest request ,SaveCalendarEntityRequestDto calendarEntityData){
         CalendarEntity newCalendarEntity = calendarMapper.fromCalendarSaveRequestToEntity(calendarEntityData);
+        String userEmail = this.getUserEmailFromRequest(request);
+        newCalendarEntity.setUserEmail(userEmail);
         CalendarEntity calendarEntity =  this.repository.save(newCalendarEntity);
         return calendarMapper.fromCalendarToCalendarEntry(calendarEntity);
     }
@@ -78,6 +80,7 @@ public class CalendarService {
         final String userEmail = this.getUserEmailFromRequest(request);
         final Date[] monthStartAndEnd = getMonthStartAndEnd(month, year);
         final List<CalendarEntity> calendarEntries = repository.findByUserEmailAndDateFromBetween(userEmail, monthStartAndEnd[0], monthStartAndEnd[1]);
+        System.out.println("check entries: "  + calendarEntries);
         return calendarMapper.fromCalendarsToCalendarEntries(calendarEntries);
     }
 

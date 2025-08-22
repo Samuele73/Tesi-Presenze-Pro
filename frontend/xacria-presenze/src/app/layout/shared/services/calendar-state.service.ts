@@ -22,6 +22,7 @@ import {
   CalendarService,
   CalendarWorkingDayEntry,
   CalendarWorkingTripEntry,
+  SaveCalendarEntityRequestDto,
 } from 'src/generated-client';
 import { en } from '@fullcalendar/core/internal-common';
 import { id } from 'date-fns/locale';
@@ -116,21 +117,55 @@ export class CalendarStateService {
     });
   }
 
-  saveCalendarEntry(calendarEntry: CalendarEntry, entryType: CalendarEntity.EntryTypeEnum){
-    /* const newCalendarEntity: CalendarEntity = {}
-    this.calendarApi.saveCalendarEntity(calendarEntry, entryType).subscribe({
-      next: (response) => {
-        console.log('Calendar entry saved successfully:', response);
-        // Optionally, you can refresh the calendar data after saving
-        this.getCalendarByMonthYear(
-          new Date().getMonth().toString(),
-          new Date().getFullYear().toString()
-        );
-      },
-      error: (error) => {
-        console.error('Error saving calendar entry:', error);
-        this.error$.next('Errore nel salvataggio dell\'entry del calendario');
-      },
-    }); */
-  }
+  saveCalendarEntry(
+  calendarEntry: CalendarEntry,
+  entryType: CalendarEntity.EntryTypeEnum
+) {
+  console.log("Sto salvandoooooo")
+  const saveCalendarEntityRequest: SaveCalendarEntityRequestDto = {
+    entryType: entryType,
+    calendarEntry: calendarEntry,
+  };
+
+  this.calendarApi.saveCalendarEntity(saveCalendarEntityRequest).subscribe({
+    next: (response: CalendarResponseDto) => {
+      console.log('Calendar entry saved successfully:', response);
+
+      // Ottieni il calendario corrente
+      const currentCalendar = this.calendar$.getValue();
+
+      // Converti la response in un oggetto calendar (ma è una lista, quindi ti ritorna 1 solo entry mappata)
+      const newCalendarData = this.fromCalendarResponseDtoToCalendar([response]);
+
+      // Crea una copia immutabile unendo il nuovo dato allo stato attuale
+      const updatedCalendar: calendar = {
+        ...currentCalendar,
+        day_works: [
+          ...currentCalendar.day_works,
+          ...newCalendarData.day_works,
+        ],
+        requests: [
+          ...currentCalendar.requests,
+          ...newCalendarData.requests,
+        ],
+        working_trips: [
+          ...currentCalendar.working_trips,
+          ...newCalendarData.working_trips,
+        ],
+        availabilities: [
+          ...currentCalendar.availabilities,
+          ...newCalendarData.availabilities,
+        ],
+      };
+
+      // Aggiorna lo stato
+      this.calendar$.next(updatedCalendar);
+    },
+    error: (error) => {
+      console.error('Error saving calendar entry:', error);
+      this.error$.next("Errore nel salvataggio dell'entry del calendario");
+    },
+  });
+}
+
 }
