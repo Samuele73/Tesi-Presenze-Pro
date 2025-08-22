@@ -17,11 +17,23 @@ public class CalendarMapper {
          ).collect(Collectors.toList());
     }
 
-    public CalendarResponseDto fromCalendarToCalendarEntry(CalendarEntity entity){
+    public CalendarResponseDto fromCalendarEntityToCalendarEntry(CalendarEntity entity){
         return new CalendarResponseDto(entity.getId() ,entity.getEntryType(), entity.getCalendarEntry());
+    }
+
+    public List<CalendarResponseDto> fromCalendarEntitiesToCalendarEntries(List<CalendarEntity> entities){
+        return entities.stream()
+                .map(this::fromCalendarEntityToCalendarEntry)
+                .collect(Collectors.toList());
     }
 
     public CalendarEntity fromCalendarSaveRequestToEntity(SaveCalendarEntityRequestDto requestDto){
         return CalendarEntity.builder().calendarEntry(requestDto.getCalendarEntry()).entryType(requestDto.getEntryType()).build();
+    }
+
+    public List<CalendarEntity> fromCalendarSaveRequestToEntities(List<SaveCalendarEntityRequestDto> requestDtos){
+        return requestDtos.stream()
+                .map(this::fromCalendarSaveRequestToEntity)
+                .collect(Collectors.toList());
     }
 }

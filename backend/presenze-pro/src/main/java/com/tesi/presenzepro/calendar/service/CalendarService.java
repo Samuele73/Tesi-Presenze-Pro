@@ -34,7 +34,15 @@ public class CalendarService {
         String userEmail = this.getUserEmailFromRequest(request);
         newCalendarEntity.setUserEmail(userEmail);
         CalendarEntity calendarEntity =  this.repository.save(newCalendarEntity);
-        return calendarMapper.fromCalendarToCalendarEntry(calendarEntity);
+        return calendarMapper.fromCalendarEntityToCalendarEntry(calendarEntity);
+    }
+
+    public List<CalendarResponseDto> saveCalendarEntities(HttpServletRequest request, List<SaveCalendarEntityRequestDto> calendarEntities) {
+        List<CalendarEntity> newCalendarEntities = calendarMapper.fromCalendarSaveRequestToEntities(calendarEntities);
+        final String userEmail = this.getUserEmailFromRequest(request);
+        newCalendarEntities.forEach(calendarEntity -> {calendarEntity.setUserEmail(userEmail);});
+        final List<CalendarEntity> savedCalendarEntities = this.repository.saveAll(newCalendarEntities);
+        return calendarMapper.fromCalendarEntitiesToCalendarEntries(savedCalendarEntities);
     }
 
     private String getUserEmailFromRequest(HttpServletRequest request){
@@ -94,7 +102,7 @@ public class CalendarService {
         final String userEmail = this.getUserEmailFromRequest(request);
         CalendarEntity entity = getCalendarEntity(entityId, userEmail);
         repository.delete(entity);
-        return calendarMapper.fromCalendarToCalendarEntry(entity);
+        return calendarMapper.fromCalendarEntityToCalendarEntry(entity);
     }
 
     private CalendarEntity updateCalendarEntityById(String id, CalendarEntity calendarEntity){
@@ -122,6 +130,8 @@ public class CalendarService {
         final String userEmail = this.getUserEmailFromRequest(request);
         //CalendarEntity entity = getCalendarEntity(entityId, userEmail);
         final CalendarEntity newCalendarEntity = this.updateCalendarEntityById(entityId, updatedCalendarEntity);
-        return calendarMapper.fromCalendarToCalendarEntry(newCalendarEntity);
+        return calendarMapper.fromCalendarEntityToCalendarEntry(newCalendarEntity);
     }
+
+
 }

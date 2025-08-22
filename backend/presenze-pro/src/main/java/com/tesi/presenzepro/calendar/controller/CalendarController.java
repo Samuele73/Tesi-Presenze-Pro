@@ -44,6 +44,12 @@ public class CalendarController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCalendarEntityEntry);
     }
 
+    @PostMapping("/bulk")
+    ResponseEntity<List<CalendarResponseDto>> saveMultipleCalendarEntities(HttpServletRequest request, @RequestBody List<SaveCalendarEntityRequestDto> calendarEntities){
+        final List<CalendarResponseDto> savedCalendarEntities = calendarService.saveCalendarEntities(request, calendarEntities);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedCalendarEntities);
+    }
+
     @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping("/{id}")
     ResponseEntity<CalendarResponseDto> deleteCalendarEntity(HttpServletRequest request, @PathVariable String id){
