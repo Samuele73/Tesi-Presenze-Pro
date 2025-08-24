@@ -37,10 +37,10 @@
       </div>
       <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
-    <form action="" [formGroup]="form" (ngSubmit)="submitForm()">
+    <form action="" [formGroup]="form" (ngSubmit)="submitModifyModeForm()">
       <div class="modal-body" formArrayName="working_trips">
         <div *ngFor="let workingTrip of workingTrips.controls; let i = index" formGroupName="{{i}}">
-          <div class="mb-3 d-flex gap-4 text-primary" [ngClass]="{'delete-mode': toDeleteEntries.includes(workingTrip.value)}">
+          <div class="mb-3 d-flex gap-4 text-primary" [ngClass]="{'delete-mode': toDeleteEntries.includes(workingTrip.value.id)}">
             <div>
               <label for="date-from" class="form-label h5">{{"Da" | translate}}</label>
               <input type="date" class="form-control" id="date_from" formControlName="date_from">
@@ -60,7 +60,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="px-4 py-0 rounded-4 bg-dark-subtle border-0 text-dark" (click)="modal.close('Save click')">Annulla</button>
-        <button type="button" class="px-4 py-0 rounded-4 bg-primary border-0 text-light" (click)="modal.close('Save click')" [disabled]="form.invalid" [class.disabled]="form.invalid">Salva</button>
+        <button type="submit" class="px-4 py-0 rounded-4 bg-primary border-0 text-light" (click)="modal.close('Save click')" [disabled]="form.invalid" [class.disabled]="form.invalid">Salva</button>
       </div>
     </form>
   </ng-template>

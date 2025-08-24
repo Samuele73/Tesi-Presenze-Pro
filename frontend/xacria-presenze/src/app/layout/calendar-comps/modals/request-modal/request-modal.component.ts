@@ -29,8 +29,9 @@ export class RequestModalComponent implements ModalComponent, OnInit {
   @Input() isModifyMode!: boolean;
   @Input() calendarEntries!: identifiableCalendarRequest[];
   faIcons = faIcons;
-  toDeleteEntries: identifiableCalendarRequest[] = [];
+  toDeleteEntries: string[] = [];
   @Output() saveRequest = new EventEmitter<CalendarRequestEntry>();
+  @Output() deleteRequests = new EventEmitter<string[]>();
 
   constructor(
     private modalService: NgbModal,
@@ -73,9 +74,15 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     else this.initializeModifyForm();
   }
 
-  submitForm(): void {
-    if (this.form.valid) console.log(this.form.value);
-    else console.error('Form invalido');
+  submitModifyModeForm(): void {
+    if (!this.form.valid) {
+      console.error('Availability modify form is invalid');
+      return;
+    }
+    if (this.toDeleteEntries.length) {
+      this.deleteRequests.emit(this.toDeleteEntries);
+      this.toDeleteEntries = [];
+    }
   }
 
   open(): void {
@@ -144,13 +151,15 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     });
   }
 
-  toggleEntryDelete(entry: identifiableCalendarRequest, i: number) {
-    if (this.toDeleteEntries.includes(entry)) {
+  toggleEntryDelete(entry: identifiableCalendarRequest, i: number): void {
+    const entryId = entry.id;
+    console.log('CONTROLLA IL VALORE ava', entryId, i);
+    if (this.toDeleteEntries.includes(entryId)) {
       this.toDeleteEntries = this.toDeleteEntries.filter(
-        (value: identifiableCalendarRequest) => value !== entry
+        (value: string) => value !== entryId
       );
     } else {
-      this.toDeleteEntries.push(entry);
+      this.toDeleteEntries.push(entryId);
     }
   }
 

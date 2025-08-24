@@ -24,9 +24,10 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
   form!: FormGroup;
   @Input() isModifyMode!: boolean;
   @Input() calendarEntries!: identifiableCalendarWorkingTrip[];
-  toDeleteEntries: identifiableCalendarWorkingTrip[] = [];
+  toDeleteEntries: string[] = [];
   faIcons = faIcons;
   @Output() saveWorkingTrip = new EventEmitter<CalendarWorkingTripEntry>();
+  @Output() deleteWorkingTrips = new EventEmitter<string[]>();
 
   constructor(
     private modalService: NgbModal,
@@ -79,9 +80,15 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
     });
   }
 
-  submitForm(): void {
-    if (this.form.valid) console.log(this.form.value);
-    else console.error('Form invalido');
+  submitModifyModeForm(): void {
+    if (!this.form.valid) {
+      console.error('Availability modify form is invalid');
+      return;
+    }
+    if (this.toDeleteEntries.length) {
+      this.deleteWorkingTrips.emit(this.toDeleteEntries);
+      this.toDeleteEntries = [];
+    }
   }
 
   open(): void {
@@ -119,16 +126,17 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
     }
   }
 
-  toggleEntryDelete(entry: identifiableCalendarWorkingTrip, i: number) {
-    console.log('CONTROLLA IL VALORE', entry, i);
-    if (this.toDeleteEntries.includes(entry)) {
-      this.toDeleteEntries = this.toDeleteEntries.filter(
-        (value: identifiableCalendarWorkingTrip) => value !== entry
-      );
-    } else {
-      this.toDeleteEntries.push(entry);
+  toggleEntryDelete(entry: identifiableCalendarWorkingTrip, i: number): void {
+      const entryId = entry.id;
+      console.log('CONTROLLA IL VALORE ava', entryId, i);
+      if (this.toDeleteEntries.includes(entryId)) {
+        this.toDeleteEntries = this.toDeleteEntries.filter(
+          (value: string) => value !== entryId
+        );
+      } else {
+        this.toDeleteEntries.push(entryId);
+      }
     }
-  }
 
   submitNewEntry(): void {
       if (this.form.valid) {

@@ -28,6 +28,7 @@
     #modal
     [calendarEntries]="filteredEntries"
     [isModifyMode]="modalModify"
+    (deleteRequests)="handleBulkDelete($event, 'REQUEST')"
   ></app-request-modal>
 </ng-template>
 
@@ -36,6 +37,7 @@
     #modal
     [calendarEntries]="filteredEntries"
     [isModifyMode]="modalModify"
+    (deleteWorkingTrips)="handleBulkDelete($event, 'WORKING_TRIP')"
   ></app-working-trip-modal>
 </ng-template>
 

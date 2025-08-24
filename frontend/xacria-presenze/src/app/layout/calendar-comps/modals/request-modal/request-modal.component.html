@@ -70,11 +70,11 @@
       </div>
       <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
-    <form [formGroup]="form" (ngSubmit)="submitForm()">
+    <form [formGroup]="form" (ngSubmit)="submitModifyModeForm()">
       <div class="modal-body accordion" formArrayName="requests" id="requests_accordion">
         <div *ngFor="let request of requests.controls; let i = index" formGroupName="{{i}}" > <!-- prima c'era class = {{i}}. se noti cambiamenti rimettilo e controlla il bug -->
           <div class="accordion-header">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#' + i" [ngClass]="{'delete-mode': toDeleteEntries.includes(request.value)}">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#' + i" [ngClass]="{'delete-mode': toDeleteEntries.includes(request.value.id)}">
               <strong>#{{i + 1}} {{"Richiesta" | translate}}</strong>
             </button>
           </div>

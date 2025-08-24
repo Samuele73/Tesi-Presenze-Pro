@@ -127,18 +127,22 @@ export class DayworkModalComponent
   }
 
   submitModifyModeForm(): void {
-    if(!this.form.valid) {
+    if (!this.form.valid) {
       console.error('Availability modify form is invalid');
       return;
     }
-    if(this.toDeleteEntries.length) {
+    if (this.toDeleteEntries.length) {
       this.deleteDayWorks.emit(this.toDeleteEntries);
       this.toDeleteEntries = [];
     }
   }
 
   open(): void {
-    if ((!this.calendarEntries || !this.calendarEntries.length) && this.isModifyMode) return;
+    if (
+      (!this.calendarEntries || !this.calendarEntries.length) &&
+      this.isModifyMode
+    )
+      return;
 
     if (this.isModifyMode) {
       this.initializeModifyForm();
@@ -173,42 +177,38 @@ export class DayworkModalComponent
   }
 
   toggleEntryDelete(entry: identifiableCalendarWorkingDay, i: number): void {
-      const entryId = entry.id;
-      console.log('CONTROLLA IL VALORE ava', entryId, i);
-      if (this.toDeleteEntries.includes(entryId)) {
-        this.toDeleteEntries = this.toDeleteEntries.filter(
-          (value: string) => value !== entryId
-        );
-      } else {
-        this.toDeleteEntries.push(entryId);
-      }
+    const entryId = entry.id;
+    console.log('CONTROLLA IL VALORE ava', entryId, i);
+    if (this.toDeleteEntries.includes(entryId)) {
+      this.toDeleteEntries = this.toDeleteEntries.filter(
+        (value: string) => value !== entryId
+      );
+    } else {
+      this.toDeleteEntries.push(entryId);
     }
+  }
 
   submitNewEntries(): void {
-      if(this.form.valid){
-        console.log("check date:", this.dateFormat.normalizeDate(this.date));
-        const normalizedDate = this.dateFormat.normalizeDate(this.date);
-        const newDayWorkEntries: CalendarWorkingDayEntry[] = this.dayWorks.value.map(
-          (entry: CalendarDayWorkEntry) => {
-            return {
-              project: entry.project,
-              hourFrom: entry.hour_from,
-              hourTo: entry.hour_to,
-              dateFrom: normalizedDate
-            };
-          }
-        );
-        //To push the first entry which not from the form array
-        newDayWorkEntries.push(
-          {
-            project: this.project?.value,
-            hourFrom: this.hourFrom?.value,
-            hourTo: this.hourTo?.value,
-            dateFrom: normalizedDate
-          }
-        );
-        this.saveDayWorks.emit(newDayWorkEntries);
-      }
-      else console.error('Availability new entry form is invalid');
-    }
+    if (this.form.valid) {
+      console.log('check date:', this.dateFormat.normalizeDate(this.date));
+      const normalizedDate = this.dateFormat.normalizeDate(this.date);
+      const newDayWorkEntries: CalendarWorkingDayEntry[] =
+        this.dayWorks.value.map((entry: CalendarDayWorkEntry) => {
+          return {
+            project: entry.project,
+            hourFrom: entry.hour_from,
+            hourTo: entry.hour_to,
+            dateFrom: normalizedDate,
+          };
+        });
+      //To push the first entry which not from the form array
+      newDayWorkEntries.push({
+        project: this.project?.value,
+        hourFrom: this.hourFrom?.value,
+        hourTo: this.hourTo?.value,
+        dateFrom: normalizedDate,
+      });
+      this.saveDayWorks.emit(newDayWorkEntries);
+    } else console.error('Availability new entry form is invalid');
+  }
 }
