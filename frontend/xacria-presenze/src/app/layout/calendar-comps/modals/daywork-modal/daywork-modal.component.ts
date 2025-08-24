@@ -15,10 +15,11 @@ import { projects } from '../../const-vars';
 import { ModalComponent } from '../modalComponent';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { faIcons } from '../../attendance/attendance.component';
-import { CalendarDayWorkEntry } from 'src/app/layout/interfaces';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
 import { CalendarWorkingDayEntry } from 'src/generated-client';
 import { identifiableCalendarWorkingDay } from 'src/app/layout/shared/models/calendar';
+import { parse } from 'date-fns';
+import { it as itLocale } from 'date-fns/locale';
 
 @Component({
   selector: 'app-daywork-modal',
@@ -40,6 +41,10 @@ export class DayworkModalComponent
   toDeleteEntries: string[] = [];
   @Output() saveDayWorks = new EventEmitter<CalendarWorkingDayEntry[]>();
   @Output() deleteDayWorks = new EventEmitter<string[]>();
+  @Output() updateDayWorks = new EventEmitter<
+    identifiableCalendarWorkingDay[]
+  >();
+  initialWorkingDays: identifiableCalendarWorkingDay[] = [];
 
   constructor(
     private modalService: NgbModal,
@@ -91,15 +96,15 @@ export class DayworkModalComponent
     let group: FormGroup;
     if (!entry)
       group = this.fb.group({
-        hour_from: [null, Validators.required],
-        hour_to: [null, Validators.required],
+        hourFrom: [null, Validators.required],
+        hourTo: [null, Validators.required],
         project: [this.validProjects[0], Validators.required],
       });
     else {
       group = this.fb.group({
         id: [entry.id],
-        hour_from: [entry.calendarEntry.hourFrom, Validators.required],
-        hour_to: [entry.calendarEntry.hourTo, Validators.required],
+        hourFrom: [entry.calendarEntry.hourFrom, Validators.required],
+        hourTo: [entry.calendarEntry.hourTo, Validators.required],
         project: [entry.calendarEntry.project, Validators.required],
       });
     }
@@ -126,15 +131,21 @@ export class DayworkModalComponent
     return `${year}-${month}-${day}`; //si è risolto per metà
   }
 
+  private deleteEntries(): void {
+    if (this.toDeleteEntries.length) {
+      console.log('To delete entries', this.toDeleteEntries);
+      this.deleteDayWorks.emit(this.toDeleteEntries);
+      this.toDeleteEntries = [];
+    }
+  }
+
   submitModifyModeForm(): void {
     if (!this.form.valid) {
       console.error('Availability modify form is invalid');
       return;
     }
-    if (this.toDeleteEntries.length) {
-      this.deleteDayWorks.emit(this.toDeleteEntries);
-      this.toDeleteEntries = [];
-    }
+    this.deleteEntries();
+    this.updateEntries();
   }
 
   open(): void {
@@ -188,16 +199,49 @@ export class DayworkModalComponent
     }
   }
 
+  private updateEntries(): void {
+    const currentEntries: ({ id: string } & CalendarWorkingDayEntry)[] =
+      this.dayWorks.value;
+    const changedEntries: identifiableCalendarWorkingDay[] = currentEntries
+      .filter((entry: { id: string } & CalendarWorkingDayEntry, i) => {
+        const initial = this.initialWorkingDays[i];
+        return JSON.stringify(entry) !== JSON.stringify(initial);
+      })
+      .map((entry: { id: string } & CalendarWorkingDayEntry) => {
+        return {
+          id: entry.id,
+          calendarEntry: {
+            dateFrom: this.parseItalianDate(this.dateString),
+            hourFrom: entry.hourFrom,
+            hourTo: entry.hourTo,
+            project: entry.project,
+          },
+        };
+      });
+    console.log('la data', this.parseItalianDate(this.dateString));
+    console.log('To updated entries', changedEntries);
+    this.updateDayWorks.emit(changedEntries);
+    this.initialWorkingDays = this.dayWorks.value;
+  }
+
+  parseItalianDate(input: string): Date {
+    // Rimuovo la parte del giorno della settimana
+    const cleaned = input.split('-')[0].trim();
+
+    // Parsing in formato "26 Agosto 2025"
+    return parse(cleaned, 'd MMMM yyyy', new Date(), { locale: itLocale });
+  }
+
   submitNewEntries(): void {
     if (this.form.valid) {
       console.log('check date:', this.dateFormat.normalizeDate(this.date));
       const normalizedDate = this.dateFormat.normalizeDate(this.date);
       const newDayWorkEntries: CalendarWorkingDayEntry[] =
-        this.dayWorks.value.map((entry: CalendarDayWorkEntry) => {
+        this.dayWorks.value.map((entry: CalendarWorkingDayEntry) => {
           return {
             project: entry.project,
-            hourFrom: entry.hour_from,
-            hourTo: entry.hour_to,
+            hourFrom: entry.hourFrom,
+            hourTo: entry.hourFrom,
             dateFrom: normalizedDate,
           };
         });

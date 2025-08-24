@@ -20,6 +20,7 @@
     [calendarEntries]="filteredEntries"
     [isModifyMode]="modalModify"
     (deleteDayWorks)="handleBulkDelete($event, 'WORKING_DAY')"
+    (updateDayWorks)="handleBulkUpdate($event, 'WORKING_DAY')"
   ></app-daywork-modal>
 </ng-template>
 
