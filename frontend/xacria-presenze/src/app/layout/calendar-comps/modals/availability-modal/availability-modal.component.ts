@@ -18,7 +18,10 @@ import { ModalComponent } from '../modalComponent';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { faIcons } from '../../attendance/attendance.component';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
-import { CalendarAvailabilityEntry } from 'src/generated-client';
+import {
+  CalendarAvailabilityEntry,
+  CalendarEntity,
+} from 'src/generated-client';
 import { identifiableCalendarAvailability } from 'src/app/layout/shared/models/calendar';
 
 @Component({
@@ -38,6 +41,10 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
   @ViewChildren('entry') entryElements!: QueryList<ElementRef>;
   @Output() saveAvailability = new EventEmitter<CalendarAvailabilityEntry>();
   @Output() deleteAvailabilies = new EventEmitter<string[]>();
+  @Output() updateAvailabilities = new EventEmitter<
+    identifiableCalendarAvailability[]
+  >();
+  initialCalendarentries: identifiableCalendarAvailability[] = [];
 
   constructor(
     private modalService: NgbModal,
@@ -111,11 +118,35 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
     });
   }
 
+  private updateEntries(): void {
+    const currentEntries: ({ id: string } & CalendarAvailabilityEntry)[] =
+      this.availabilities.value;
+    const updatedEntries: identifiableCalendarAvailability[] =
+      currentEntries
+        .filter((entry: { id: string } & CalendarAvailabilityEntry, i) => {
+          const initial = this.initialCalendarentries[i];
+          return JSON.stringify(entry) !== JSON.stringify(initial);
+        })
+        .map((entry: { id: string } & CalendarAvailabilityEntry) => {
+          return {
+            id: entry.id,
+            calendarEntry: {
+              dateFrom: entry.dateFrom,
+              dateTo: entry.dateTo,
+              project: entry.project,
+            },
+          };
+        });
+    this.updateAvailabilities.emit(updatedEntries);
+    this.initialCalendarentries = this.availabilities.value;
+  }
+
   submitModifyModeForm(): void {
     if (!this.form.valid) {
       console.error('Availability modify form is invalid');
       return;
     }
+    this.updateEntries();
     if (this.toDeleteEntries.length) {
       this.deleteAvailabilies.emit(this.toDeleteEntries);
       this.toDeleteEntries = [];
@@ -131,6 +162,8 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
 
     if (this.isModifyMode) {
       this.initializeModifyForm();
+      this.initialCalendarentries = this.availabilities.value;
+      //console.log('INITIAL', this.initialCalendarentries);
     } else {
       this.initializeForm();
     }
