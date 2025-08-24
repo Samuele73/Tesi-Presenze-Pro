@@ -37,8 +37,9 @@ export class DayworkModalComponent
   @Input() calendarEntries!: identifiableCalendarWorkingDay[];
   closeResult = '';
   faIcons: any = faIcons;
-  toDeleteEntries: identifiableCalendarWorkingDay[] = [];
+  toDeleteEntries: string[] = [];
   @Output() saveDayWorks = new EventEmitter<CalendarWorkingDayEntry[]>();
+  @Output() deleteDayWorks = new EventEmitter<string[]>();
 
   constructor(
     private modalService: NgbModal,
@@ -125,9 +126,15 @@ export class DayworkModalComponent
     return `${year}-${month}-${day}`; //si è risolto per metà
   }
 
-  submitForm(): void {
-    if (this.form.valid) console.log(this.form.value);
-    else console.error('Form invalido');
+  submitModifyModeForm(): void {
+    if(!this.form.valid) {
+      console.error('Availability modify form is invalid');
+      return;
+    }
+    if(this.toDeleteEntries.length) {
+      this.deleteDayWorks.emit(this.toDeleteEntries);
+      this.toDeleteEntries = [];
+    }
   }
 
   open(): void {
@@ -165,16 +172,17 @@ export class DayworkModalComponent
     }
   }
 
-  toggleEntryDelete(entry: identifiableCalendarWorkingDay, i: number) {
-    console.log('CONTROLLA IL VALORE', entry, i);
-    if (this.toDeleteEntries.includes(entry)) {
-      this.toDeleteEntries = this.toDeleteEntries.filter(
-        (value: identifiableCalendarWorkingDay) => value !== entry
-      );
-    } else {
-      this.toDeleteEntries.push(entry);
+  toggleEntryDelete(entry: identifiableCalendarWorkingDay, i: number): void {
+      const entryId = entry.id;
+      console.log('CONTROLLA IL VALORE ava', entryId, i);
+      if (this.toDeleteEntries.includes(entryId)) {
+        this.toDeleteEntries = this.toDeleteEntries.filter(
+          (value: string) => value !== entryId
+        );
+      } else {
+        this.toDeleteEntries.push(entryId);
+      }
     }
-  }
 
   submitNewEntries(): void {
       if(this.form.valid){

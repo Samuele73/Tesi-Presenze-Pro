@@ -76,10 +76,10 @@
       </div>
       <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
-    <form action="" [formGroup]="form" (ngSubmit)="submitForm()">
+    <form action="" [formGroup]="form" (ngSubmit)="submitModifyModeForm()">
       <div class="modal-body" formArrayName="day_works">
         <div *ngFor="let dayWork of dayWorks.controls; let i = index" formGroupName="{{i}}">
-          <div class="mb-4 d-flex gap-4 text-primary" [ngClass]="{'delete-mode': toDeleteEntries.includes(dayWork.value)}">
+          <div class="mb-4 d-flex gap-4 text-primary" [ngClass]="{'delete-mode': toDeleteEntries.includes(dayWork.value.id)}">
             <div>
               <label for="date-from" class="form-label h5">{{"Da" | translate}}</label>
               <input type="time" class="form-control" id="hour-from" formControlName="hour_from">
@@ -106,7 +106,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="px-4 py-0 rounded-4 bg-dark-subtle border-0 text-dark" (click)="modal.close('Save click')">Annulla</button>
-        <button type="button" class="px-4 py-0 rounded-4 bg-primary border-0 text-light" (click)="modal.close('Save click')" [disabled]="form.invalid" [class.disabled]="form.invalid">Salva</button>
+        <button type="submit" class="px-4 py-0 rounded-4 bg-primary border-0 text-light" (click)="modal.close('Save click')" [disabled]="form.invalid" [class.disabled]="form.invalid">Salva</button>
       </div>
     </form>
   </ng-template>
