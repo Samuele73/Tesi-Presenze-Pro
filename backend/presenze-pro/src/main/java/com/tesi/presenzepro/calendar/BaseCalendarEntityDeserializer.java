@@ -30,6 +30,7 @@ public class BaseCalendarEntityDeserializer extends JsonDeserializer<BaseCalenda
             calendarEntity.setUserEmail(node.get("userEmail").asText());
             calendarEntity.setEntryType(CalendarEntryType.valueOf(entryType));
             calendarEntity.setCalendarEntry(calendarEntry);
+            calendarEntity.setId(node.get("id").asText());
             return calendarEntity;
         } else {
             // È un SaveCalendarEntityRequestDto
@@ -40,7 +41,6 @@ public class BaseCalendarEntityDeserializer extends JsonDeserializer<BaseCalenda
         }
     }
 
-    // Questo metodo rimane uguale
     private CalendarEntry deserializeCalendarEntry(ObjectMapper mapper, JsonNode calendarEntryNode, String entryType) throws IOException {
         if ("WORKING_TRIP".equals(entryType)) {
             return mapper.treeToValue(calendarEntryNode, CalendarWorkingTripEntry.class);

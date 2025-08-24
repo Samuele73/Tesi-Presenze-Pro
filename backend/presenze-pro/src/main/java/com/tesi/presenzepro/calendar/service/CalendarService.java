@@ -147,6 +147,7 @@ public class CalendarService {
 
     public List<CalendarResponseDto> updateCalendarEntities(HttpServletRequest request, List<CalendarEntity> calendarEntities) {
         final String userEmail = this.getUserEmailFromRequest(request);
+        System.out.println("CHECK THIS: " + calendarEntities);
         List<CalendarEntity> updatedCalendarEntities = calendarEntities.stream().map(entity -> this.updateCalendarEntityById(entity.getId(), entity)).toList();
         return calendarMapper.fromCalendarEntitiesToCalendarEntries(updatedCalendarEntities);
     }

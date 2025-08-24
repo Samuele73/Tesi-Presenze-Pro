@@ -28,10 +28,10 @@ export interface User {
     role?: User.RoleEnum;
     password?: string;
     enabled?: boolean;
-    username?: string;
     authorities?: Array<GrantedAuthority>;
-    accountNonExpired?: boolean;
+    username?: string;
     credentialsNonExpired?: boolean;
+    accountNonExpired?: boolean;
     accountNonLocked?: boolean;
 }
 export namespace User {

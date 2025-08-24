@@ -76,6 +76,7 @@ public class CalendarController {
     @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping("/batchUpdate") //maybe change it to PUT
     ResponseEntity<List<CalendarResponseDto>> updateCalendarEntities(HttpServletRequest request, @RequestBody List<CalendarEntity> calendarEntities){
+        System.out.println("sfdsdfsdffds: " + calendarEntities.toString());
         final List<CalendarResponseDto> updatedCalendarEntities = calendarService.updateCalendarEntities(request, calendarEntities);
         return ResponseEntity.status(HttpStatus.OK).body(updatedCalendarEntities);
     }

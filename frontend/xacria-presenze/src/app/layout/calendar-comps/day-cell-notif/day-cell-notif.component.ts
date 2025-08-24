@@ -140,7 +140,7 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit  
   }
 
   handleBulkUpdate(entries: identifiableCalendarEntry[], calenarEntryType: CalendarEntity.EntryTypeEnum): void {
-    //this.calendarStateService.updateCalendarEntries(entries, calenarEntryType);
+    this.calendarStateService.updateCalendarEntries(entries, calenarEntryType);
   }
 
 }
