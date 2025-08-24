@@ -13,7 +13,7 @@
           <div class="row mb-3">
             <div class="col-10">
               <h4>{{"Tipo di richiesta" | translate}}</h4>
-              <select name="form-select" class="form-select" formControlName="request_type">
+              <select name="form-select" class="form-select" formControlName="requestType">
                 <option value="{{request_type}}" *ngFor="let request_type of request_types">{{request_type | translate}}</option>
               </select>
               <app-form-error [formControlRef]="requestType" [validator]="'required'" [errorText]="'Seleziona il tipo di richiesta'"></app-form-error>
@@ -25,12 +25,12 @@
               <div class="row text-primary">
                 <div class="col-6">
                   <label for="date-from" class="form-label h5">{{"Da" | translate}}</label>
-                  <input type="date" class="form-control" formControlName="date_from">
+                  <input type="date" class="form-control" formControlName="dateFrom">
                   <app-form-error [formControlRef]="dateFrom" [validator]="'required'" [errorText]="'Seleziona la data di inizio'"></app-form-error>
                 </div>
                 <div class="col-6">
                   <label for="date-from" class="form-label h5">{{"A" | translate}}</label>
-                  <input type="date" class="form-control" formControlName="date_to">
+                  <input type="date" class="form-control" formControlName="dateTo">
                   <app-form-error [formControlRef]="dateTo" [validator]="'required'" [errorText]="'Seleziona la data di fine'"></app-form-error>
                 </div>
               </div>
@@ -41,13 +41,13 @@
               <h4>{{"Ora" | translate}}</h4>
               <div class="row gap-0">
                 <div class="col-6">
-                  <label for="time-from" class="form-label h5">{{"Da" | translate}}</label>
-                  <input type="time" class="form-control w-100" id="time-from" formControlName="time_from">
+                  <label for="timeFrom" class="form-label h5">{{"Da" | translate}}</label>
+                  <input type="time" class="form-control w-100" id="timeFrom" formControlName="timeFrom">
                   <app-form-error [formControlRef]="timeFrom" [validator]="'required'" [errorText]="'Seleziona l orario di inizio'"></app-form-error>
                 </div>
                 <div class="col-6">
-                  <label for="time-from" class="form-label h5">{{"A" | translate}}</label>
-                  <input type="time" class="form-control w-100" id="time-to" formControlName="time_to">
+                  <label for="timeTo" class="form-label h5">{{"A" | translate}}</label>
+                  <input type="time" class="form-control w-100" id="timeTo" formControlName="timeTo">
                   <app-form-error [formControlRef]="timeTo" [validator]="'required'" [errorText]="'Seleziona l orario di fine'"></app-form-error>
                 </div>
               </div>

@@ -13,12 +13,12 @@
         <div class="mb-4 d-flex gap-4 text-primary">
           <div>
             <label for="date-from" class="form-label h5">{{"Da" | translate}}</label>
-            <input type="time" class="form-control" id="hour-from" formControlName="hour_from">
+            <input type="time" class="form-control" id="hour-from" formControlName="hourFrom">
             <app-form-error [formControlRef]="hourFrom" [validator]="'required'" [errorText]="'Seleziona la data di inizio'"></app-form-error>
           </div>
           <div>
             <label for="date-to" class="form-label h5">{{"A" | translate}}</label>
-            <input type="time" class="form-control" id="hour-to" formControlName="hour_to">
+            <input type="time" class="form-control" id="hour-to" formControlName="hourTo">
             <app-form-error [formControlRef]="hourTo" [validator]="'required'" [errorText]="'Seleziona la data di fine'"></app-form-error>
           </div>
           <div>

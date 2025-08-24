@@ -40,6 +40,7 @@
     [calendarEntries]="filteredEntries"
     [isModifyMode]="modalModify"
     (deleteWorkingTrips)="handleBulkDelete($event, 'WORKING_TRIP')"
+    (updateWorkingTrips)="handleBulkUpdate($event, 'WORKING_TRIP')"
   ></app-working-trip-modal>
 </ng-template>
 

@@ -54,10 +54,10 @@ export class DayworkModalComponent
   ) {}
 
   get hourFrom() {
-    return this.form.get('hour_from');
+    return this.form.get('hourFrom');
   }
   get hourTo() {
-    return this.form.get('hour_to');
+    return this.form.get('hourTo');
   }
   get project() {
     return this.form.get('project');
@@ -73,8 +73,8 @@ export class DayworkModalComponent
   initializeForm(): void {
     if (!this.isModifyMode)
       this.form = this.fb.group({
-        hour_from: [null, Validators.required],
-        hour_to: [null, Validators.required],
+        hourFrom: [null, Validators.required],
+        hourTo: [null, Validators.required],
         project: [this.validProjects[0], Validators.required],
         day_works: this.fb.array([]),
       });

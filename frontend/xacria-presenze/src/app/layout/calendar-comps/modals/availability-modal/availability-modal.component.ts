@@ -54,10 +54,10 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
   ) {}
 
   get dateFrom() {
-    return this.form.get('date_from');
+    return this.form.get('dateFrom');
   }
   get dateTo() {
-    return this.form.get('date_to');
+    return this.form.get('dateTo');
   }
   get project() {
     return this.form.get('project');
@@ -73,8 +73,8 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
   initializeForm(): void {
     if (!this.isModifyMode)
       this.form = this.fb.group({
-        date_from: [null, Validators.required],
-        date_to: [null, Validators.required],
+        dateFrom: [null, Validators.required],
+        dateTo: [null, Validators.required],
         project: [this.validProjects[0], Validators.required],
       });
     else this.initializeModifyForm();

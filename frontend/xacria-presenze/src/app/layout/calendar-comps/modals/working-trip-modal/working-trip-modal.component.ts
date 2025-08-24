@@ -1,4 +1,12 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { inject, TemplateRef } from '@angular/core';
 
 import {
@@ -28,6 +36,10 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
   faIcons = faIcons;
   @Output() saveWorkingTrip = new EventEmitter<CalendarWorkingTripEntry>();
   @Output() deleteWorkingTrips = new EventEmitter<string[]>();
+  initialWorkingTrips: identifiableCalendarWorkingTrip[] = [];
+  @Output() updateWorkingTrips = new EventEmitter<
+    identifiableCalendarWorkingTrip[]
+  >();
 
   constructor(
     private modalService: NgbModal,
@@ -36,10 +48,10 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
   ) {}
 
   get dateFrom() {
-    return this.form.get('date_from');
+    return this.form.get('dateFrom');
   }
   get dateTo() {
-    return this.form.get('date_to');
+    return this.form.get('dateTo');
   }
   get workingTrips() {
     return this.form.get('working_trips') as FormArray;
@@ -52,8 +64,8 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
   initializeForm(): void {
     if (!this.isModifyMode)
       this.form = this.fb.group({
-        date_from: [null, Validators.required],
-        date_to: [null, Validators.required],
+        dateFrom: [null, Validators.required],
+        dateTo: [null, Validators.required],
       });
     else this.initializeModifyForm();
   }
@@ -72,12 +84,43 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
     const from = this.dateFormat.formatToDateInput(
       entry.calendarEntry.dateFrom ?? new Date()
     );
-    const to = this.dateFormat.formatToDateInput(entry.calendarEntry.dateTo ?? new Date());
+    const to = this.dateFormat.formatToDateInput(
+      entry.calendarEntry.dateTo ?? new Date()
+    );
     return this.fb.group({
       id: [entry.id],
-      date_from: [from, Validators.required],
-      date_to: [to, Validators.required],
+      dateFrom: [from, Validators.required],
+      dateTo: [to, Validators.required],
     });
+  }
+
+  private updateEntries(): void {
+    const currentEntries: ({ id: string } & CalendarWorkingTripEntry)[] =
+      this.workingTrips.value;
+    const changedEntries: identifiableCalendarWorkingTrip[] = currentEntries
+      .filter((entry: { id: string } & CalendarWorkingTripEntry, i) => {
+        const initial = this.initialWorkingTrips[i];
+        return JSON.stringify(entry) !== JSON.stringify(initial);
+      })
+      .map((entry: { id: string } & CalendarWorkingTripEntry) => {
+        return {
+          id: entry.id,
+          calendarEntry: {
+            dateFrom: entry.dateFrom,
+            dateTo: entry.dateTo,
+          },
+        };
+      });
+    console.log('To updated entries', changedEntries);
+    this.updateWorkingTrips.emit(changedEntries);
+    this.initialWorkingTrips = this.workingTrips.value;
+  }
+
+  private deleteEntries(): void {
+    if (this.toDeleteEntries.length) {
+      this.deleteWorkingTrips.emit(this.toDeleteEntries);
+      this.toDeleteEntries = [];
+    }
   }
 
   submitModifyModeForm(): void {
@@ -85,14 +128,16 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
       console.error('Availability modify form is invalid');
       return;
     }
-    if (this.toDeleteEntries.length) {
-      this.deleteWorkingTrips.emit(this.toDeleteEntries);
-      this.toDeleteEntries = [];
-    }
+    this.deleteEntries();
+    this.updateEntries();
   }
 
   open(): void {
-    if ((!this.calendarEntries || !this.calendarEntries.length) && this.isModifyMode) return;
+    if (
+      (!this.calendarEntries || !this.calendarEntries.length) &&
+      this.isModifyMode
+    )
+      return;
 
     if (this.isModifyMode) {
       this.initializeModifyForm();
@@ -127,25 +172,25 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
   }
 
   toggleEntryDelete(entry: identifiableCalendarWorkingTrip, i: number): void {
-      const entryId = entry.id;
-      console.log('CONTROLLA IL VALORE ava', entryId, i);
-      if (this.toDeleteEntries.includes(entryId)) {
-        this.toDeleteEntries = this.toDeleteEntries.filter(
-          (value: string) => value !== entryId
-        );
-      } else {
-        this.toDeleteEntries.push(entryId);
-      }
+    const entryId = entry.id;
+    console.log('CONTROLLA IL VALORE ava', entryId, i);
+    if (this.toDeleteEntries.includes(entryId)) {
+      this.toDeleteEntries = this.toDeleteEntries.filter(
+        (value: string) => value !== entryId
+      );
+    } else {
+      this.toDeleteEntries.push(entryId);
     }
+  }
 
   submitNewEntry(): void {
-      if (this.form.valid) {
-        const newEntry: CalendarWorkingTripEntry = {
-          dateFrom: this.dateFrom?.value,
-          dateTo: this.dateTo?.value,
-        };
-        this.saveWorkingTrip.emit(newEntry);
-        this.form.reset();
-      } else console.error('Availability new entry form is invalid');
-    }
+    if (this.form.valid) {
+      const newEntry: CalendarWorkingTripEntry = {
+        dateFrom: this.dateFrom?.value,
+        dateTo: this.dateTo?.value,
+      };
+      this.saveWorkingTrip.emit(newEntry);
+      this.form.reset();
+    } else console.error('Availability new entry form is invalid');
+  }
 }
