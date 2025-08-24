@@ -17,6 +17,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.security.InvalidParameterException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -93,6 +94,7 @@ public class CalendarService {
     }
 
     private CalendarEntity getCalendarEntity(String entityId, String userEmail){
+        System.out.println("ids: " + entityId );
         return repository
                 .findByUserEmailAndId(userEmail, entityId)
                 .orElseThrow(() -> new CalendarEntityNotFound(entityId));
@@ -103,6 +105,16 @@ public class CalendarService {
         CalendarEntity entity = getCalendarEntity(entityId, userEmail);
         repository.delete(entity);
         return calendarMapper.fromCalendarEntityToCalendarEntry(entity);
+    }
+
+    public List<CalendarResponseDto> deleteCalendarEntries(HttpServletRequest request, List<String> ids) {
+        if(ids == null || ids.isEmpty()){
+            throw new InvalidParameterException("ids is null or empty");
+        }
+        final String userEmail = this.getUserEmailFromRequest(request);
+        List<CalendarEntity> entities = ids.stream().map(id -> this.getCalendarEntity(id, userEmail)).toList();
+        repository.deleteAll(entities);
+        return calendarMapper.fromCalendarEntitiesToCalendarEntries(entities);
     }
 
     private CalendarEntity updateCalendarEntityById(String id, CalendarEntity calendarEntity){
@@ -132,6 +144,5 @@ public class CalendarService {
         final CalendarEntity newCalendarEntity = this.updateCalendarEntityById(entityId, updatedCalendarEntity);
         return calendarMapper.fromCalendarEntityToCalendarEntry(newCalendarEntity);
     }
-
 
 }

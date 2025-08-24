@@ -26,8 +26,8 @@ export interface User {
     address?: string;
     phone?: string;
     role?: User.RoleEnum;
-    enabled?: boolean;
     password?: string;
+    enabled?: boolean;
     username?: string;
     authorities?: Array<GrantedAuthority>;
     accountNonExpired?: boolean;

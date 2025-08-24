@@ -220,4 +220,52 @@ export class CalendarStateService {
         },
       });
   }
+
+  deleteCalendarEntities(entryIds: string[], entryType: CalendarEntity.EntryTypeEnum) {
+    this.calendarApi.deleteMultipleCalendarEntities(entryIds).subscribe({
+      next: () => {
+        console.log('Calendar entries deleted successfully');
+
+        // Ottieni il calendario corrente
+        const currentCalendar = this.calendar$.getValue();
+
+        // Crea una copia immutabile rimuovendo le entry cancellate dallo stato attuale
+        let updatedCalendar: calendar = { ...currentCalendar };
+
+        switch (entryType) {
+          case CalendarEntity.EntryTypeEnum.WORKINGDAY:
+            updatedCalendar.day_works = currentCalendar.day_works.filter(
+              (entry) => !entryIds.includes(entry.id)
+            );
+            break;
+          case CalendarEntity.EntryTypeEnum.REQUEST:
+            updatedCalendar.requests = currentCalendar.requests.filter(
+              (entry) => !entryIds.includes(entry.id)
+            );
+            break;
+          case CalendarEntity.EntryTypeEnum.WORKINGTRIP:
+            updatedCalendar.working_trips = currentCalendar.working_trips.filter(
+              (entry) => !entryIds.includes(entry.id)
+            );
+            break;
+          case CalendarEntity.EntryTypeEnum.AVAILABILITY:
+            updatedCalendar.availabilities = currentCalendar.availabilities.filter(
+              (entry) => !entryIds.includes(entry.id)
+            );
+            break;
+          default:
+            console.warn(
+              `Unknown calendar entry type for deletion: ${entryType}`
+            );
+        }
+
+        // Aggiorna lo stato
+        this.calendar$.next(updatedCalendar);
+      },
+      error: (error) => {
+        console.error('Error deleting calendar entries:', error);
+        this.error$.next("Errore nella cancellazione dell'entry del calendario");
+      },
+    })
+  }
 }

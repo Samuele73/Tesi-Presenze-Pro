@@ -26,6 +26,7 @@ import {
   CalendarWorkingTripEntry,
 } from 'src/generated-client';
 import { identifiableCalendarAvailability, identifiableCalendarEntry, identifiableCalendarRequest, identifiableCalendarWorkingDay, identifiableCalendarWorkingTrip } from '../../shared/models/calendar';
+import { CalendarStateService } from '../../shared/services/calendar-state.service';
 
 // ... (imports remain the same)
 
@@ -69,7 +70,7 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit  
   notifs: number = 0;
   filteredEntries: Array<identifiableCalendarEntry> = [];
 
-  constructor(private dateFormat: DateFormatService) {}
+  constructor(private dateFormat: DateFormatService, private calendarStateService: CalendarStateService) {}
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.isTemplateReady = true;
@@ -133,12 +134,9 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit  
     }
   }
 
-  handleSaveEntry(event: any, calenarEntryType: CalendarEntryType): void {
-
-  }
-
-  handleDeleteEntry(event: any, calenarEntryType: CalendarEntryType): void {
-
+  handleBulkDelete(entryIds: string[], entryType: CalendarEntity.EntryTypeEnum): void {
+    console.log('BULK DELETE', entryIds, entryType);
+    this.calendarStateService.deleteCalendarEntities(entryIds, entryType);
   }
 
   handleModifyEntries(event: any, calenarEntryType: CalendarEntryType): void {

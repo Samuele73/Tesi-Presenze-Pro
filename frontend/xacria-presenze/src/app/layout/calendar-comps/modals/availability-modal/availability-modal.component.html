@@ -45,10 +45,10 @@
         </div>
         <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
       </div>
-      <form [formGroup]="form" (ngSubmit)="submitForm()">
+      <form [formGroup]="form" (ngSubmit)="submitModifyModeForm()">
         <div class="modal-body" formArrayName="availabilities">
           <div *ngFor="let availability of availabilities.controls; let i = index" formGroupName="{{i}}">
-            <div class="mb-3 d-flex gap-4 text-primary" #entry [ngClass]="{'delete-mode': toDeleteEntries.includes(availability.value)}">
+            <div class="mb-3 d-flex gap-4 text-primary" #entry [ngClass]="{'delete-mode': toDeleteEntries.includes(availability.value.id)}">
               <div>
                 <label for="date-from" class="form-label h5">{{"Da" | translate}}</label>
                 <input type="date" class="form-control" id="date-from" formControlName="date_from">
