@@ -32,6 +32,8 @@ export class RequestModalComponent implements ModalComponent, OnInit {
   toDeleteEntries: string[] = [];
   @Output() saveRequest = new EventEmitter<CalendarRequestEntry>();
   @Output() deleteRequests = new EventEmitter<string[]>();
+  initialRequests: identifiableCalendarRequest[] = [];
+  @Output() updateRequests = new EventEmitter<identifiableCalendarRequest[]>();
 
   constructor(
     private modalService: NgbModal,
@@ -40,19 +42,19 @@ export class RequestModalComponent implements ModalComponent, OnInit {
   ) {}
 
   get requestType() {
-    return this.form.get('request_type');
+    return this.form.get('requestType');
   }
   get dateFrom() {
-    return this.form.get('date_from');
+    return this.form.get('dateFrom');
   }
   get dateTo() {
-    return this.form.get('date_to');
+    return this.form.get('dateTo');
   }
   get timeFrom() {
-    return this.form.get('time_from');
+    return this.form.get('timeFrom');
   }
   get timeTo() {
-    return this.form.get('time_to');
+    return this.form.get('timeTo');
   }
   get requests() {
     return this.form.get('requests') as FormArray;
@@ -65,13 +67,45 @@ export class RequestModalComponent implements ModalComponent, OnInit {
   initializeForm(): void {
     if (!this.isModifyMode)
       this.form = this.fb.group({
-        request_type: [null, Validators.required],
-        date_from: [null, Validators.required],
-        date_to: [null, Validators.required],
-        time_from: [null, Validators.required],
-        time_to: [null, Validators.required],
+        requestType: [null, Validators.required],
+        dateFrom: [null, Validators.required],
+        dateTo: [null, Validators.required],
+        timeFrom: [null, Validators.required],
+        timeTo: [null, Validators.required],
       });
     else this.initializeModifyForm();
+  }
+
+  private updateEntries(): void {
+    const currentEntries: ({ id: string } & CalendarRequestEntry)[] =
+      this.requests.value;
+    const changedEntries: identifiableCalendarRequest[] = currentEntries
+      .filter((entry: { id: string } & CalendarRequestEntry, i) => {
+        const initial = this.initialRequests[i];
+        return JSON.stringify(entry) !== JSON.stringify(initial);
+      })
+      .map((entry: { id: string } & CalendarRequestEntry) => {
+        return {
+          id: entry.id,
+          calendarEntry: {
+            dateFrom: entry.dateFrom,
+            dateTo: entry.dateTo,
+            timeFrom: entry.timeFrom,
+            timeTo: entry.timeTo,
+            requestType: entry.requestType,
+          },
+        };
+      });
+    console.log('To updated entries', changedEntries);
+    this.updateRequests.emit(changedEntries);
+    this.initialRequests = this.requests.value;
+  }
+
+  private deleteEntries(): void {
+    if (this.toDeleteEntries.length) {
+      this.deleteRequests.emit(this.toDeleteEntries);
+      this.toDeleteEntries = [];
+    }
   }
 
   submitModifyModeForm(): void {
@@ -79,10 +113,8 @@ export class RequestModalComponent implements ModalComponent, OnInit {
       console.error('Availability modify form is invalid');
       return;
     }
-    if (this.toDeleteEntries.length) {
-      this.deleteRequests.emit(this.toDeleteEntries);
-      this.toDeleteEntries = [];
-    }
+    this.deleteEntries();
+    this.updateEntries();
   }
 
   open(): void {
@@ -143,11 +175,11 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     );
     return this.fb.group({
       id: [entry.id],
-      date_from: [from, Validators.required],
-      date_to: [to, Validators.required],
-      time_from: [entry.calendarEntry.timeFrom, Validators.required],
-      time_to: [entry.calendarEntry.timeTo, Validators.required],
-      request_type: [entry.calendarEntry.requestType, Validators.required],
+      dateFrom: [from, Validators.required],
+      dateTo: [to, Validators.required],
+      timeFrom: [entry.calendarEntry.timeFrom, Validators.required],
+      timeTo: [entry.calendarEntry.timeTo, Validators.required],
+      requestType: [entry.calendarEntry.requestType, Validators.required],
     });
   }
 

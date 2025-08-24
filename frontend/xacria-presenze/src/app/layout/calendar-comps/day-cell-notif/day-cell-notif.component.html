@@ -30,6 +30,7 @@
     [calendarEntries]="filteredEntries"
     [isModifyMode]="modalModify"
     (deleteRequests)="handleBulkDelete($event, 'REQUEST')"
+    (updateRequests)="handleBulkUpdate($event, 'REQUEST')"
   ></app-request-modal>
 </ng-template>
 
