@@ -94,12 +94,17 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
     const from = this.dateFormat.formatToDateInput(
       entry.calendarEntry.dateFrom ?? new Date()
     );
-    const to = this.dateFormat.formatToDateInput(entry.calendarEntry.dateTo ?? new Date());
+    const to = this.dateFormat.formatToDateInput(
+      entry.calendarEntry.dateTo ?? new Date()
+    );
     return this.fb.group({
+      id: [entry.id],
       date_from: [from, Validators.required],
       date_to: [to, Validators.required],
       project: [
-        !entry.calendarEntry.project ? this.validProjects[0] : entry.calendarEntry.project,
+        !entry.calendarEntry.project
+          ? this.validProjects[0]
+          : entry.calendarEntry.project,
         Validators.required,
       ],
     });
@@ -162,16 +167,15 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
   }
 
   submitNewEntry(): void {
-    if(this.form.valid){
+    if (this.form.valid) {
       const newEntry: CalendarAvailabilityEntry = {
         dateFrom: this.dateFrom?.value,
         dateTo: this.dateTo?.value,
         project: this.project?.value,
-      }
+      };
       this.saveAvailability.emit(newEntry);
       this.form.reset();
-    }
-    else console.error('Availability new entry form is invalid');
+    } else console.error('Availability new entry form is invalid');
   }
 }
 

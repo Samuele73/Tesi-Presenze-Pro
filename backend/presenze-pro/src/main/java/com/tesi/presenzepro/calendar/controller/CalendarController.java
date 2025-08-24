@@ -47,6 +47,7 @@ public class CalendarController {
     @PostMapping("/bulk")
     ResponseEntity<List<CalendarResponseDto>> saveMultipleCalendarEntities(HttpServletRequest request, @RequestBody List<SaveCalendarEntityRequestDto> calendarEntities){
         final List<CalendarResponseDto> savedCalendarEntities = calendarService.saveCalendarEntities(request, calendarEntities);
+        System.out.println("saved calendar entities: " + savedCalendarEntities);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCalendarEntities);
     }
 

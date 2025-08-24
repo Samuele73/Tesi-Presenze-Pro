@@ -73,6 +73,7 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
     );
     const to = this.dateFormat.formatToDateInput(entry.calendarEntry.dateTo ?? new Date());
     return this.fb.group({
+      id: [entry.id],
       date_from: [from, Validators.required],
       date_to: [to, Validators.required],
     });

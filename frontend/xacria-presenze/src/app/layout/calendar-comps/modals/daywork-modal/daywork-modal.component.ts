@@ -96,6 +96,7 @@ export class DayworkModalComponent
       });
     else {
       group = this.fb.group({
+        id: [entry.id],
         hour_from: [entry.calendarEntry.hourFrom, Validators.required],
         hour_to: [entry.calendarEntry.hourTo, Validators.required],
         project: [entry.calendarEntry.project, Validators.required],
@@ -177,6 +178,7 @@ export class DayworkModalComponent
 
   submitNewEntries(): void {
       if(this.form.valid){
+        console.log("check date:", this.dateFormat.normalizeDate(this.date));
         const normalizedDate = this.dateFormat.normalizeDate(this.date);
         const newDayWorkEntries: CalendarWorkingDayEntry[] = this.dayWorks.value.map(
           (entry: CalendarDayWorkEntry) => {

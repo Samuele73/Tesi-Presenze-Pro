@@ -135,6 +135,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
       entry.calendarEntry.dateTo ?? new Date()
     );
     return this.fb.group({
+      id: [entry.id],
       date_from: [from, Validators.required],
       date_to: [to, Validators.required],
       time_from: [entry.calendarEntry.timeFrom, Validators.required],

@@ -200,6 +200,7 @@ export class AttendanceComponent implements OnInit {
   }
 
   handleBulkSave(calendarEntries: CalendarEntry[], entryType: CalendarEntity.EntryTypeEnum): void {
+    console.log('BULK SAVE', calendarEntries, entryType);
     this.calendarStateService.saveCalendarEntities(calendarEntries, entryType);
   }
 }
