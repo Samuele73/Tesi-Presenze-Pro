@@ -59,6 +59,7 @@ public class CalendarController {
         return ResponseEntity.status(HttpStatus.OK).body(deletedCalendarEntry);
     }
 
+    @Operation( security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping("/batchDelete")
     ResponseEntity<List<CalendarResponseDto>> deleteMultipleCalendarEntities(HttpServletRequest request, @RequestBody List<String> ids){
         final List<CalendarResponseDto> deletedCalendarEntities = calendarService.deleteCalendarEntries(request, ids);

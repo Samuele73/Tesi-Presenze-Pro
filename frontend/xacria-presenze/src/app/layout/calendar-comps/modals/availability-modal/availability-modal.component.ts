@@ -112,11 +112,11 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
   }
 
   submitModifyModeForm(): void {
-    if(!this.form.valid) {
+    if (!this.form.valid) {
       console.error('Availability modify form is invalid');
       return;
     }
-    if(this.toDeleteEntries.length) {
+    if (this.toDeleteEntries.length) {
       this.deleteAvailabilies.emit(this.toDeleteEntries);
       this.toDeleteEntries = [];
     }
