@@ -11,7 +11,7 @@
       <div class="modal-body">
         <div class="mb-3 d-flex gap-4 text-primary">
           <div>
-            <label for="date-from" class="form-label h5">{{"Da" | translate}}</label>
+            <label for="dateFrom" class="form-label h5">{{"Da" | translate}}</label>
             <input type="date" class="form-control" id="date_from" formControlName="date_from">
             <app-form-error [formControlRef]="dateFrom" [validator]="'required'" [errorText]="'Seleziona la data di inizio'"></app-form-error>
           </div>
@@ -50,14 +50,14 @@
           <div *ngFor="let availability of availabilities.controls; let i = index" formGroupName="{{i}}">
             <div class="mb-3 d-flex gap-4 text-primary" #entry [ngClass]="{'delete-mode': toDeleteEntries.includes(availability.value.id)}">
               <div>
-                <label for="date-from" class="form-label h5">{{"Da" | translate}}</label>
-                <input type="date" class="form-control" id="date-from" formControlName="date_from">
-                <app-form-error [formControlRef]="availabilities.at(i).get('date_from')" [validator]="'required'" [errorText]="'Seleziona la data di inizio'"></app-form-error>
+                <label for="dateFrom" class="form-label h5">{{"Da" | translate}}</label>
+                <input type="date" class="form-control" id="dateFrom" formControlName="dateFrom">
+                <app-form-error [formControlRef]="availabilities.at(i).get('dateFrom')" [validator]="'required'" [errorText]="'Seleziona la data di inizio'"></app-form-error>
               </div>
               <div>
-                <label for="date-to" class="form-label h5">{{"A" | translate}}</label>
-                <input type="date" class="form-control" id="date-to" formControlName="date_to">
-                <app-form-error [formControlRef]="availabilities.at(i).get('date_to')" [validator]="'required'" [errorText]="'Seleziona la data di fine'"></app-form-error>
+                <label for="dateTo" class="form-label h5">{{"A" | translate}}</label>
+                <input type="date" class="form-control" id="dateTo" formControlName="dateTo">
+                <app-form-error [formControlRef]="availabilities.at(i).get('dateTo')" [validator]="'required'" [errorText]="'Seleziona la data di fine'"></app-form-error>
               </div>
               <div>
                 <label for="projects" class="form-label h5">{{"Progetto" | translate}}</label>

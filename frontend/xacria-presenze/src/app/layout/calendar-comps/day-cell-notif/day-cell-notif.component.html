@@ -47,5 +47,6 @@
     [calendarEntries]="filteredEntries"
     [isModifyMode]="modalModify"
     (deleteAvailabilies)="handleBulkDelete($event, 'AVAILABILITY')"
+    (updateAvailabilities)="handleBulkUpdate($event, 'AVAILABILITY')"
   ></app-availability-modal>
 </ng-template>

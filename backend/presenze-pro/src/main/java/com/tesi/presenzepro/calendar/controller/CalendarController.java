@@ -60,7 +60,7 @@ public class CalendarController {
     }
 
     @Operation( security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping("/batchDelete")
+    @PostMapping("/batchDelete") //maybe change it to DELETE
     ResponseEntity<List<CalendarResponseDto>> deleteMultipleCalendarEntities(HttpServletRequest request, @RequestBody List<String> ids){
         final List<CalendarResponseDto> deletedCalendarEntities = calendarService.deleteCalendarEntries(request, ids);
         return ResponseEntity.status(HttpStatus.OK).body(deletedCalendarEntities);
@@ -71,5 +71,12 @@ public class CalendarController {
     ResponseEntity<CalendarResponseDto> updateCalendarEntity(HttpServletRequest request , @RequestBody CalendarEntity newCalendarEntity, @PathVariable String id){
         final CalendarResponseDto updatedCalendarEntity = calendarService.updateCalendarEntity(request, id, newCalendarEntity);
         return ResponseEntity.status(HttpStatus.OK).body(updatedCalendarEntity);
+    }
+
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping("/batchUpdate") //maybe change it to PUT
+    ResponseEntity<List<CalendarResponseDto>> updateCalendarEntities(HttpServletRequest request, @RequestBody List<CalendarEntity> calendarEntities){
+        final List<CalendarResponseDto> updatedCalendarEntities = calendarService.updateCalendarEntities(request, calendarEntities);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedCalendarEntities);
     }
 }

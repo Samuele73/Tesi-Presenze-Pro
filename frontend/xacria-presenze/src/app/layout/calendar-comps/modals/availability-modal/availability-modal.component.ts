@@ -107,8 +107,8 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
     );
     return this.fb.group({
       id: [entry.id],
-      date_from: [from, Validators.required],
-      date_to: [to, Validators.required],
+      dateFrom: [from, Validators.required],
+      dateTo: [to, Validators.required],
       project: [
         !entry.calendarEntry.project
           ? this.validProjects[0]
@@ -121,24 +121,31 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
   private updateEntries(): void {
     const currentEntries: ({ id: string } & CalendarAvailabilityEntry)[] =
       this.availabilities.value;
-    const updatedEntries: identifiableCalendarAvailability[] =
-      currentEntries
-        .filter((entry: { id: string } & CalendarAvailabilityEntry, i) => {
-          const initial = this.initialCalendarentries[i];
-          return JSON.stringify(entry) !== JSON.stringify(initial);
-        })
-        .map((entry: { id: string } & CalendarAvailabilityEntry) => {
-          return {
-            id: entry.id,
-            calendarEntry: {
-              dateFrom: entry.dateFrom,
-              dateTo: entry.dateTo,
-              project: entry.project,
-            },
-          };
-        });
-    this.updateAvailabilities.emit(updatedEntries);
+    const changedEntries: identifiableCalendarAvailability[] = currentEntries
+      .filter((entry: { id: string } & CalendarAvailabilityEntry, i) => {
+        const initial = this.initialCalendarentries[i];
+        return JSON.stringify(entry) !== JSON.stringify(initial);
+      })
+      .map((entry: { id: string } & CalendarAvailabilityEntry) => {
+        return {
+          id: entry.id,
+          calendarEntry: {
+            dateFrom: entry.dateFrom,
+            dateTo: entry.dateTo,
+            project: entry.project,
+          },
+        };
+      });
+    console.log('To updated entries', changedEntries);
+    this.updateAvailabilities.emit(changedEntries);
     this.initialCalendarentries = this.availabilities.value;
+  }
+
+  private deleteEntries(): void {
+    if (this.toDeleteEntries.length) {
+      this.deleteAvailabilies.emit(this.toDeleteEntries);
+      this.toDeleteEntries = [];
+    }
   }
 
   submitModifyModeForm(): void {
@@ -146,11 +153,8 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
       console.error('Availability modify form is invalid');
       return;
     }
+    this.deleteEntries();
     this.updateEntries();
-    if (this.toDeleteEntries.length) {
-      this.deleteAvailabilies.emit(this.toDeleteEntries);
-      this.toDeleteEntries = [];
-    }
   }
 
   open(): void {
