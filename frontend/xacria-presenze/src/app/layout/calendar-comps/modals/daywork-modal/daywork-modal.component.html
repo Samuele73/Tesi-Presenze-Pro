@@ -37,14 +37,14 @@
           <div *ngFor="let daywork of dayWorks.controls; let i = index" formGroupName="{{i}}">
             <div class="mb-3 d-flex gap-4 text-primary w-100">
               <div>
-                <label for="hour-from" class="form-label h5">{{"Da" | translate}}</label>
-                <input type="time" class="form-control" id="hour-from" formControlName="hour_from">
-                <app-form-error [formControlRef]="dayWorks.at(i).get('hour_from')" [validator]="'required'" [errorText]="'Seleziona la data di inizio'"></app-form-error>
+                <label for="hourFrom" class="form-label h5">{{"Da" | translate}}</label>
+                <input type="time" class="form-control" id="hourFrom" formControlName="hourFrom">
+                <app-form-error [formControlRef]="dayWorks.at(i).get('hourFrom')" [validator]="'required'" [errorText]="'Seleziona la data di inizio'"></app-form-error>
               </div>
               <div>
-                <label for="hour-to" class="form-label h5">{{"A" | translate}}</label>
-                <input type="time" class="form-control" id="hour-to" formControlName="hour_to">
-                <app-form-error [formControlRef]="dayWorks.at(i).get('hour_to')" [validator]="'required'" [errorText]="'Seleziona la data di fine'"></app-form-error>
+                <label for="hourTo" class="form-label h5">{{"A" | translate}}</label>
+                <input type="time" class="form-control" id="hourTo" formControlName="hourTo">
+                <app-form-error [formControlRef]="dayWorks.at(i).get('hourTo')" [validator]="'required'" [errorText]="'Seleziona la data di fine'"></app-form-error>
               </div>
               <div>
                 <label for="projects" class="form-label h5">{{"Progetto" | translate}}</label>
