@@ -3,44 +3,110 @@
   <div class="p-2">
     <div class="mb-3">
       <div class="d-flex justify-content-between">
-        <span class="h4 day-number">{{ day.date | calendarDate:'monthViewDayNumber':locale }}</span>
+        <span class="h4 day-number">{{
+          day.date | calendarDate : "monthViewDayNumber" : locale
+        }}</span>
         <div class="d-flex gap-1">
-          <button class="rounded-circle bg-primary btn btn-icon" (click)="openAddModal(dayworkModal)"><fa-icon [icon]="faIcons.plus" class="fa-sm text-light"></fa-icon></button>
-          <button class="rounded-circle bg-danger btn btn-icon"><fa-icon [icon]="faIcons.minus" class="fa-sm text-light"></fa-icon></button>
+          <div class="dropdown-center">
+            <button
+            class="rounded-circle bg-primary btn btn-icon dropdown-toggle no-caret"
+            data-bs-toggle="dropdown" aria-expanded="false"
+          >
+            <fa-icon [icon]="faIcons.plus" class="fa-sm text-light"></fa-icon>
+          </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" (click)="openAddModal(dayworkModal)">{{"Incarico" | translate}}</a></li>
+              <li><a class="dropdown-item" (click)="openAddModal(requestModal, day.date)">{{"Richiesta" | translate}}</a></li>
+              <li><a class="dropdown-item" (click)="openAddModal(availabilityModal, day.date)">{{"Reperibilità" | translate}}</a></li>
+              <li><a class="dropdown-item" (click)="openAddModal(workingTripModal, day.date)">{{"Trasferta" | translate}}</a></li>
+            </ul>
+          </div>
+          <button class="rounded-circle bg-danger btn btn-icon">
+            <fa-icon [icon]="faIcons.minus" class="fa-sm text-light"></fa-icon>
+          </button>
         </div>
       </div>
     </div>
-    <div class="text-center mb-3 fw-bold text-capitalize">{{('Ore lavorate' | translate) + ': 0'}}</div>
+    <div class="text-center mb-3 fw-bold text-capitalize">
+      {{ ("Ore lavorate" | translate) + ": 0" }}
+    </div>
     <div>
       <div class="d-flex flex-column gap-3">
-        <app-day-cell-notif [icon]="faIcons.briefcase" [text]="'incarichi' | translate" [notifType]="'WORKING_DAY'" [date]="day.date" [dateString]="fromDateToModalTitle(dayClicked)" [modalCalendarEntries]="calendarEntries.day_works" [modalModify]="true"></app-day-cell-notif>
-        <app-day-cell-notif [icon]="faIcons.request" [text]="'richieste' | translate" [notifType]="'REQUEST'" [date]="day.date" [modalCalendarEntries]="calendarEntries.requests" [modalModify]="true"></app-day-cell-notif>
-        <app-day-cell-notif [icon]="faIcons.route" [text]="'trasferte' | translate" [notifType]="'WORKING_TRIP'" [date]="day.date" [modalCalendarEntries]="calendarEntries.working_trips" [modalModify]="true"></app-day-cell-notif>
-        <app-day-cell-notif [icon]="faIcons.bell" [text]="'reperibilità' | translate" [notifType]="'AVAILABILITY'" [date]="day.date" [modalCalendarEntries]="calendarEntries.availabilities" [modalModify]="true"></app-day-cell-notif>
+        <app-day-cell-notif
+          [icon]="faIcons.briefcase"
+          [text]="'incarichi' | translate"
+          [notifType]="'WORKING_DAY'"
+          [date]="day.date"
+          [dateString]="fromDateToModalTitle(dayClicked)"
+          [modalCalendarEntries]="calendarEntries.day_works"
+          [modalModify]="true"
+        ></app-day-cell-notif>
+        <app-day-cell-notif
+          [icon]="faIcons.request"
+          [text]="'richieste' | translate"
+          [notifType]="'REQUEST'"
+          [date]="day.date"
+          [modalCalendarEntries]="calendarEntries.requests"
+          [modalModify]="true"
+        ></app-day-cell-notif>
+        <app-day-cell-notif
+          [icon]="faIcons.route"
+          [text]="'trasferte' | translate"
+          [notifType]="'WORKING_TRIP'"
+          [date]="day.date"
+          [modalCalendarEntries]="calendarEntries.working_trips"
+          [modalModify]="true"
+        ></app-day-cell-notif>
+        <app-day-cell-notif
+          [icon]="faIcons.bell"
+          [text]="'reperibilità' | translate"
+          [notifType]="'AVAILABILITY'"
+          [date]="day.date"
+          [modalCalendarEntries]="calendarEntries.availabilities"
+          [modalModify]="true"
+        ></app-day-cell-notif>
       </div>
     </div>
   </div>
 </ng-template>
 
 <!-- template customizzato per il calendar header -->
-<ng-template #customHedaerTemplate let-days="days" >
+<ng-template #customHedaerTemplate let-days="days">
   <div class="d-flex justify-content-around bg-primary p-1 text-light fw-bold">
     <div *ngFor="let day of days" class="custom-header text-truncate">
-      {{ weekDayNames[day.day] | translate  }}
+      {{ weekDayNames[day.day] | translate }}
     </div>
   </div>
 </ng-template>
 
 <!-- Impostazione calendario all'interno della pagina -->
-<div class=""> <!-- se metto h-100 da lo scroll ma comunque non completo   . overflow-scroll h-50-->
-  <div class="row mb-2"> <!-- soluzione temporanea scroll calendario (vedi anche scss) -->
+<div class="">
+  <!-- se metto h-100 da lo scroll ma comunque non completo   . overflow-scroll h-50-->
+  <div class="row mb-2">
+    <!-- soluzione temporanea scroll calendario (vedi anche scss) -->
     <div class="col-10">
-        <div class=" d-flex justify-content-center gap-4">
-          <button (click)="previous()" class="bg-transparent border-0"><fa-icon [icon]="faIcons.arrowLeft" class="text-primary fa-lg"></fa-icon></button>
-          <!-- <h2>{{ viewDate | date: 'MMMM yyyy' : 'it-IT' }}</h2> -->
-          <h2>{{ (monthNames[viewDate.getMonth()] | translate) + " " + viewDate.getFullYear() }}</h2>
-          <button (click)="next()" class="bg-transparent border-0"><fa-icon [icon]="faIcons.arrowRight" class="text-primary fa-lg"></fa-icon></button>
-        </div>
+      <div class="d-flex justify-content-center gap-4">
+        <button (click)="previous()" class="bg-transparent border-0">
+          <fa-icon
+            [icon]="faIcons.arrowLeft"
+            class="text-primary fa-lg"
+          ></fa-icon>
+        </button>
+        <!-- <h2>{{ viewDate | date: 'MMMM yyyy' : 'it-IT' }}</h2> -->
+        <h2>
+          {{
+            (monthNames[viewDate.getMonth()] | translate) +
+              " " +
+              viewDate.getFullYear()
+          }}
+        </h2>
+        <button (click)="next()" class="bg-transparent border-0">
+          <fa-icon
+            [icon]="faIcons.arrowRight"
+            class="text-primary fa-lg"
+          ></fa-icon>
+        </button>
+      </div>
     </div>
   </div>
   <div class="row">
@@ -52,27 +118,49 @@
         [headerTemplate]="customHedaerTemplate"
         [locale]="'en'"
         (dayClicked)="setDateForModals($event)"
-        >
+      >
       </mwl-calendar-month-view>
     </div>
     <div class="col-2 d-flex flex-column gap-1 add-content-container">
-      <div class="d-flex gap-2 align-items-center" (click)="openAddModal(requestModal)">
+      <div
+        class="d-flex gap-2 align-items-center"
+        (click)="openAddModal(requestModal)"
+      >
         <fa-icon [icon]="faIcons.plus" class="fa-lg"></fa-icon>
-        <span>{{'Richiesta' | translate}}</span>
+        <span>{{ "Richiesta" | translate }}</span>
       </div>
-      <div class="d-flex gap-2 align-items-center" (click)="openAddModal(availabilityModal)">
+      <div
+        class="d-flex gap-2 align-items-center"
+        (click)="openAddModal(availabilityModal)"
+      >
         <fa-icon [icon]="faIcons.plus" class="fa-lg"></fa-icon>
-        <span>{{'Reperibilità' | translate}}</span>
+        <span>{{ "Reperibilità" | translate }}</span>
       </div>
-      <div class="d-flex gap-2 align-items-center" (click)="openAddModal(workingTripModal)">
+      <div
+        class="d-flex gap-2 align-items-center"
+        (click)="openAddModal(workingTripModal)"
+      >
         <fa-icon [icon]="faIcons.plus" class="fa-lg"></fa-icon>
-        <span>{{'Trasferta' | translate}}</span>
+        <span>{{ "Trasferta" | translate }}</span>
       </div>
     </div>
   </div>
 </div>
-<app-working-trip-modal #working_trip_modal (saveWorkingTrip)="handleSave($event, 'WORKING_TRIP')"></app-working-trip-modal>
-<app-availability-modal #availability_modal (saveAvailability)="handleSave($event, 'AVAILABILITY')"></app-availability-modal>
-<app-request-modal #request_modal (saveRequest)="handleSave($event, 'REQUEST')"></app-request-modal>
-<app-daywork-modal #daywork_modal [date]="dayClicked" [dateString]="fromDateToModalTitle(dayClicked)" (saveDayWorks)="handleBulkSave($event, 'WORKING_DAY')"></app-daywork-modal>
-
+<app-working-trip-modal
+  #working_trip_modal
+  (saveWorkingTrip)="handleSave($event, 'WORKING_TRIP')"
+></app-working-trip-modal>
+<app-availability-modal
+  #availability_modal
+  (saveAvailability)="handleSave($event, 'AVAILABILITY')"
+></app-availability-modal>
+<app-request-modal
+  #request_modal
+  (saveRequest)="handleSave($event, 'REQUEST')"
+></app-request-modal>
+<app-daywork-modal
+  #daywork_modal
+  [date]="dayClicked"
+  [dateString]="fromDateToModalTitle(dayClicked)"
+  (saveDayWorks)="handleBulkSave($event, 'WORKING_DAY')"
+></app-daywork-modal>

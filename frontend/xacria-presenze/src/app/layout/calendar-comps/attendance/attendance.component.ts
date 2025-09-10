@@ -50,6 +50,9 @@ import { CalendarStateService } from '../../shared/services/calendar-state.servi
 import { calendar } from '../../shared/models/calendar';
 import { CalendarAvailabilityEntry, CalendarEntity, CalendarEntry } from 'src/generated-client';
 
+type DistributedModalComponent =  AvailabilityModalComponent | RequestModalComponent | WorkingTripModalComponent;
+type ModalComponentType =  DistributedModalComponent | DayworkModalComponent;
+
 @Component({
   selector: 'app-attendance',
   //changeDetection: ChangeDetectionStrategy.OnPush,
@@ -177,7 +180,14 @@ export class AttendanceComponent implements OnInit {
     );
   }
 
-  openAddModal(modal: ModalComponent): void {
+  openAddModal(modal: ModalComponentType, date?: Date): void {
+    //dayworkmodal does not have currentDate input
+    if(date && !(modal instanceof DayworkModalComponent)){
+      console.log("date:", date);
+      modal.currentDate = date;
+      console.log("modal date:", modal.currentDate);
+    }
+
     modal.open();
   }
 

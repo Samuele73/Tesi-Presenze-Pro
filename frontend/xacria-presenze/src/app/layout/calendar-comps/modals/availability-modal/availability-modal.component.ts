@@ -34,6 +34,7 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
   @ViewChild('modal', { static: true }) modalElement!: TemplateRef<any>;
   @Input() calendarEntries!: identifiableCalendarAvailability[];
   @Input() isModifyMode!: boolean;
+  @Input() currentDate?: Date;
   closeResult = '';
   form!: FormGroup;
   faIcons = faIcons;
@@ -71,12 +72,17 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
   }
 
   initializeForm(): void {
-    if (!this.isModifyMode)
+    if (!this.isModifyMode){
+      const formattedCurrentDate = this.dateFormat.manuallyFormatToDateInput(
+        this.currentDate ?? new Date()
+      );
       this.form = this.fb.group({
-        dateFrom: [null, Validators.required],
+        dateFrom: [formattedCurrentDate, Validators.required],
         dateTo: [null, Validators.required],
         project: [this.validProjects[0], Validators.required],
       });
+    }
+
     else this.initializeModifyForm();
   }
 

@@ -32,6 +32,7 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
   form!: FormGroup;
   @Input() isModifyMode!: boolean;
   @Input() calendarEntries!: identifiableCalendarWorkingTrip[];
+  @Input() currentDate?: Date;
   toDeleteEntries: string[] = [];
   faIcons = faIcons;
   @Output() saveWorkingTrip = new EventEmitter<CalendarWorkingTripEntry>();
@@ -62,12 +63,15 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
   }
 
   initializeForm(): void {
-    if (!this.isModifyMode)
+    if (!this.isModifyMode) {
+      const formattedCurrentDate = this.dateFormat.manuallyFormatToDateInput(
+        this.currentDate ?? new Date()
+      );
       this.form = this.fb.group({
-        dateFrom: [null, Validators.required],
+        dateFrom: [formattedCurrentDate, Validators.required],
         dateTo: [null, Validators.required],
       });
-    else this.initializeModifyForm();
+    } else this.initializeModifyForm();
   }
 
   initializeModifyForm(): void {

@@ -28,6 +28,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
   form!: FormGroup;
   @Input() isModifyMode!: boolean;
   @Input() calendarEntries!: identifiableCalendarRequest[];
+  @Input() currentDate?: Date;
   faIcons = faIcons;
   toDeleteEntries: string[] = [];
   @Output() saveRequest = new EventEmitter<CalendarRequestEntry>();
@@ -65,15 +66,19 @@ export class RequestModalComponent implements ModalComponent, OnInit {
   }
 
   initializeForm(): void {
-    if (!this.isModifyMode)
+    console.log('initialized date', this.currentDate);
+    if (!this.isModifyMode) {
+      const formattedCurrentDate = this.dateFormat.manuallyFormatToDateInput(
+        this.currentDate ?? new Date()
+      );
       this.form = this.fb.group({
-        requestType: [null, Validators.required],
-        dateFrom: [null, Validators.required],
+        requestType: [request_types[0], Validators.required],
+        dateFrom: [formattedCurrentDate, Validators.required],
         dateTo: [null, Validators.required],
         timeFrom: [null, Validators.required],
         timeTo: [null, Validators.required],
       });
-    else this.initializeModifyForm();
+    } else this.initializeModifyForm();
   }
 
   private updateEntries(): void {

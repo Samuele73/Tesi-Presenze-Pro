@@ -45,4 +45,6 @@
   border-radius: 5px;
 }
 
-
+.no-caret::after {
+  display: none !important;
+}
