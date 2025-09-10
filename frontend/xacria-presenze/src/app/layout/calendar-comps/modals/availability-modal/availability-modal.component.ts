@@ -78,7 +78,7 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
       );
       this.form = this.fb.group({
         dateFrom: [formattedCurrentDate, Validators.required],
-        dateTo: [null, Validators.required],
+        dateTo: [formattedCurrentDate, Validators.required],
         project: [this.validProjects[0], Validators.required],
       });
     }

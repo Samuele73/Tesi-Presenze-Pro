@@ -74,7 +74,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
       this.form = this.fb.group({
         requestType: [request_types[0], Validators.required],
         dateFrom: [formattedCurrentDate, Validators.required],
-        dateTo: [null, Validators.required],
+        dateTo: [formattedCurrentDate, Validators.required],
         timeFrom: [null, Validators.required],
         timeTo: [null, Validators.required],
       });

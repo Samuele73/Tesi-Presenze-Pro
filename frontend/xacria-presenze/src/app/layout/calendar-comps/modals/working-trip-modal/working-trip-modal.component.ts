@@ -69,7 +69,7 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
       );
       this.form = this.fb.group({
         dateFrom: [formattedCurrentDate, Validators.required],
-        dateTo: [null, Validators.required],
+        dateTo: [formattedCurrentDate, Validators.required],
       });
     } else this.initializeModifyForm();
   }
