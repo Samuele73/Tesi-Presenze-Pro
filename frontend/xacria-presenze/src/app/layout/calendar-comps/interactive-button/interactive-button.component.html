@@ -6,11 +6,12 @@
   data-bs-custom-class="custom-tooltip"
 >
   <button
-    class="rounded-circle bg-primary btn btn-icon dropdown-toggle no-caret"
+    class="rounded-circle btn btn-icon dropdown-toggle no-caret"
+    [ngClass]="{ 'bg-primary': this.mode === 'ADD', 'bg-danger': this.mode === 'DELETE' }"
     data-bs-toggle="dropdown"
     aria-expanded="false"
   >
-    <fa-icon [icon]="faIcons.plus" class="fa-sm text-light"></fa-icon>
+    <fa-icon [icon]="this.mode === 'ADD' ? this.faIcons.plus : this.faIcons.minus" class="fa-sm text-light"></fa-icon>
   </button>
   <ul class="dropdown-menu">
     <li>
