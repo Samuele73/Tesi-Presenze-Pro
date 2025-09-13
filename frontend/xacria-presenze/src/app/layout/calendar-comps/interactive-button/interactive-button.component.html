@@ -1,4 +1,4 @@
-<!-- <div
+<div
   class="dropdown-center tt"
   data-bs-toggle="tooltip"
   title="{{ 'Aggiungi una nuova entry alla giornata' | translate }}"
@@ -54,20 +54,19 @@
 
 <app-working-trip-modal
   #working_trip_modal
-  (saveWorkingTrip)="handleSave($event, 'WORKING_TRIP')"
+  [isModifyMode]="isModalsModifyMode"
 ></app-working-trip-modal>
 <app-availability-modal
   #availability_modal
-  (saveAvailability)="handleSave($event, 'AVAILABILITY')"
+  [isModifyMode]="isModalsModifyMode"
 ></app-availability-modal>
 <app-request-modal
   #request_modal
-  (saveRequest)="handleSave($event, 'REQUEST')"
+  [isModifyMode]="isModalsModifyMode"
 ></app-request-modal>
 <app-daywork-modal
   #daywork_modal
   [date]="dayClicked"
-  [dateString]="fromDateToModalTitle(dayClicked)"
-  (saveDayWorks)="handleBulkSave($event, 'WORKING_DAY')"
+  [dateString]="dayWorkDateTitle"
+  [isModifyMode]="isModalsModifyMode"
 ></app-daywork-modal>
- -->

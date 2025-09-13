@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
 import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 import { AvailabilityModalComponent } from '../modals/availability-modal/availability-modal.component';
 import { RequestModalComponent } from '../modals/request-modal/request-modal.component';
@@ -7,11 +7,13 @@ import { DayworkModalComponent } from '../modals/daywork-modal/daywork-modal.com
 
 declare var bootstrap: any;
 const faIcons = { plus: faPlus, minus: faMinus };
+
 type DistributedModalComponent =
   | AvailabilityModalComponent
   | RequestModalComponent
   | WorkingTripModalComponent;
 type ModalComponentType = DistributedModalComponent | DayworkModalComponent;
+type buttonMode = 'ADD' | 'DELETE';
 
 @Component({
   selector: 'app-interactive-button',
@@ -20,6 +22,19 @@ type ModalComponentType = DistributedModalComponent | DayworkModalComponent;
 })
 export class InteractiveButtonComponent implements AfterViewInit {
   faIcons: any = faIcons;
+  @Input() day!: { date: Date };
+  @Input() dayClicked: Date = new Date();
+  @Input() dayWorkDateTitle!: string;
+  @Input() mode: buttonMode = 'ADD';
+  @ViewChild('working_trip_modal') workingTripModal!: WorkingTripModalComponent;
+  @ViewChild('availability_modal')
+  availabilityModal!: AvailabilityModalComponent;
+  @ViewChild('request_modal') requestModal!: RequestModalComponent;
+  @ViewChild('daywork_modal') dayworkModal!: DayworkModalComponent;
+
+  get isModalsModifyMode() : boolean {
+    return this.mode === 'DELETE';
+  }
 
   ngAfterViewInit(): void {
     this.initializeBootstrapTooltips();
@@ -43,7 +58,6 @@ export class InteractiveButtonComponent implements AfterViewInit {
       modal.currentDate = date;
       console.log('modal date:', modal.currentDate);
     }
-
     modal.open();
   }
 }
