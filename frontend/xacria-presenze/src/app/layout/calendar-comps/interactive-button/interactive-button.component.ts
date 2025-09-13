@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
-import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faMinus, faBriefcase, faCalendarMinus, faX, faRoute, faPenToSquare, faBell, faArrowRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { AvailabilityModalComponent } from '../modals/availability-modal/availability-modal.component';
 import { RequestModalComponent } from '../modals/request-modal/request-modal.component';
 import { WorkingTripModalComponent } from '../modals/working-trip-modal/working-trip-modal.component';
@@ -10,12 +10,24 @@ import {
   identifiableCalendarRequest,
   identifiableCalendarWorkingDay,
   identifiableCalendarWorkingTrip,
+  calendar
 } from '../../shared/models/calendar';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
-import { CalendarEntry } from 'src/generated-client';
+import { CalendarAvailabilityEntry, CalendarRequestEntry, CalendarWorkingDayEntry, CalendarWorkingTripEntry } from 'src/generated-client';
 
 declare var bootstrap: any;
-const faIcons = { plus: faPlus, minus: faMinus };
+const faIcons = {
+  plus: faPlus,
+  minus: faMinus,
+  briefcase: faBriefcase,
+  calendar: faCalendarMinus,
+  xSimbol: faX,
+  route: faRoute,
+  request: faPenToSquare,
+  bell: faBell,
+  arrowRight: faArrowRight,
+  arrowLeft: faArrowLeft,
+};
 
 type DistributedModalComponent =
   | AvailabilityModalComponent
@@ -31,39 +43,36 @@ type buttonMode = 'ADD' | 'DELETE';
 })
 export class InteractiveButtonComponent implements AfterViewInit {
   faIcons: any = faIcons;
+
   @Input() set date(value: Date | undefined) {
     this._date = value ? new Date(value) : undefined;
     this.recompute();
   }
   private _date?: Date;
+
   @Input() dayClicked: Date = new Date();
   @Input() dayWorkDateTitle!: string;
   @Input() mode: buttonMode = 'ADD';
-  @Input() set modalCalendarEntries(
-    value:
-      | Array<
-          | identifiableCalendarWorkingDay
-          | identifiableCalendarRequest
-          | identifiableCalendarWorkingTrip
-          | identifiableCalendarAvailability
-        >
-      | undefined
-  ) {
-    this._allEntries = value ?? [];
+
+  @Input() set modalCalendarEntries(value: calendar | undefined) {
+    this._allEntries = value;
     this.recompute();
   }
-  private _allEntries: Array<
-    | identifiableCalendarWorkingDay
-    | identifiableCalendarRequest
-    | identifiableCalendarWorkingTrip
-    | identifiableCalendarAvailability
-  > = [];
+  private _allEntries: calendar | undefined;
+
   @ViewChild('working_trip_modal') workingTripModal!: WorkingTripModalComponent;
-  @ViewChild('availability_modal')
-  availabilityModal!: AvailabilityModalComponent;
+  @ViewChild('availability_modal') availabilityModal!: AvailabilityModalComponent;
   @ViewChild('request_modal') requestModal!: RequestModalComponent;
   @ViewChild('daywork_modal') dayworkModal!: DayworkModalComponent;
-  filteredEntries: Array<identifiableCalendarEntry> = [];
+
+  // Arrays filtrati per ciascun tipo di entry
+  filteredDayWorks: identifiableCalendarWorkingDay[] = [];
+  filteredRequests: identifiableCalendarRequest[] = [];
+  filteredWorkingTrips: identifiableCalendarWorkingTrip[] = [];
+  filteredAvailabilities: identifiableCalendarAvailability[] = [];
+
+  // Array combinato per retrocompatibilità
+  filteredEntries: identifiableCalendarEntry[] = [];
 
   constructor(private dateFormat: DateFormatService) {}
 
@@ -87,47 +96,96 @@ export class InteractiveButtonComponent implements AfterViewInit {
   }
 
   openModal(modal: ModalComponentType, date?: Date): void {
-    //dayworkmodal does not have currentDate input
+    // dayworkmodal does not have currentDate input
     if (date && !(modal instanceof DayworkModalComponent)) {
       console.log('date:', date);
       modal.currentDate = date;
       console.log('modal date:', modal.currentDate);
     }
+    console.log("WANT TO OPEN MODAL", modal, this.modalCalendarEntries);
     modal.open();
   }
 
-  private hasDateRange(entry: any): entry is { dateFrom: any; dateTo: any } {
-    return entry && 'dateFrom' in entry && 'dateTo' in entry;
+  private hasDateRange(entry: CalendarAvailabilityEntry | CalendarRequestEntry | CalendarWorkingDayEntry | CalendarWorkingTripEntry):
+    entry is CalendarAvailabilityEntry | CalendarRequestEntry | CalendarWorkingTripEntry {
+    return 'dateFrom' in entry && 'dateTo' in entry;
   }
 
-  private areWorkingDayEntries(entry: any): entry is { dateFrom: any } {
-    return entry && 'dateFrom' in entry;
+  private isWorkingDayEntry(entry: CalendarAvailabilityEntry | CalendarRequestEntry | CalendarWorkingDayEntry | CalendarWorkingTripEntry):
+    entry is CalendarWorkingDayEntry {
+    return 'dateFrom' in entry && !('dateTo' in entry);
   }
 
-  // Recompute the filtered entries based on the current date and all entries
-  private recompute(): void {
-    if (!this._date || !this._allEntries || this.isModalsModifyMode) {
-      this.filteredEntries = [];
-      //console.log('No date or entries provided');
-      return;
-    }
+  private filterEntriesByDate<T extends identifiableCalendarEntry>(
+    entries: T[],
+    currentDate: Date
+  ): T[] {
+    return entries.filter((entry: T) => {
+      const calendarEntry = entry.calendarEntry;
 
-    const current = this.dateFormat.normalizeDate(this._date);
-    this.filteredEntries = this._allEntries.filter(
-      (entry: identifiableCalendarEntry) => {
-        const calendarEntry: CalendarEntry = entry.calendarEntry;
-        if (!this.hasDateRange(calendarEntry)) {
-          if (this.areWorkingDayEntries(calendarEntry)) {
-            const from = this.dateFormat.normalizeDate(calendarEntry.dateFrom);
-            //console.log('Current date:', current, 'From date:', from, "result", current === from);
-            return current.getTime() === from.getTime();
-          }
+      if (this.hasDateRange(calendarEntry)) {
+        // Controlla che dateFrom e dateTo non siano undefined
+        if (!calendarEntry.dateFrom || !calendarEntry.dateTo) {
           return false;
         }
         const from = this.dateFormat.normalizeDate(calendarEntry.dateFrom);
         const to = this.dateFormat.normalizeDate(calendarEntry.dateTo);
-        return current >= from && current <= to;
+        return currentDate >= from && currentDate <= to;
+      } else if (this.isWorkingDayEntry(calendarEntry)) {
+        // Controlla che dateFrom non sia undefined
+        if (!calendarEntry.dateFrom) {
+          return false;
+        }
+        const from = this.dateFormat.normalizeDate(calendarEntry.dateFrom);
+        return currentDate.getTime() === from.getTime();
       }
+
+      return false;
+    });
+  }
+
+  // Recompute the filtered entries based on the current date and all entries
+  private recompute(): void {
+    // Reset tutti gli array filtrati
+    this.filteredDayWorks = [];
+    this.filteredRequests = [];
+    this.filteredWorkingTrips = [];
+    this.filteredAvailabilities = [];
+    this.filteredEntries = [];
+
+    if (!this._date || !this._allEntries || this.isModalsModifyMode) {
+      return;
+    }
+
+    const current = this.dateFormat.normalizeDate(this._date);
+
+    // Filtra ciascun tipo di entry
+    this.filteredDayWorks = this.filterEntriesByDate(
+      this._allEntries.day_works,
+      current
     );
+
+    this.filteredRequests = this.filterEntriesByDate(
+      this._allEntries.requests,
+      current
+    );
+
+    this.filteredWorkingTrips = this.filterEntriesByDate(
+      this._allEntries.working_trips,
+      current
+    );
+
+    this.filteredAvailabilities = this.filterEntriesByDate(
+      this._allEntries.availabilities,
+      current
+    );
+
+    // Combina tutti gli array filtrati per retrocompatibilità
+    this.filteredEntries = [
+      ...this.filteredDayWorks,
+      ...this.filteredRequests,
+      ...this.filteredWorkingTrips,
+      ...this.filteredAvailabilities
+    ];
   }
 }

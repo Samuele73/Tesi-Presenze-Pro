@@ -1,7 +1,7 @@
 <div
   class="dropdown-center tt"
   data-bs-toggle="tooltip"
-  title="{{ 'Aggiungi una nuova entry alla giornata' | translate }}"
+  title="{{ this.mode === 'ADD' ? 'Aggiungi una nuova entry alla giornata' : 'Elimina una entry relativa alla giornata' | translate }}"
   data-bs-placement="top"
   data-bs-custom-class="custom-tooltip"
 >
@@ -56,18 +56,22 @@
 <app-working-trip-modal
   #working_trip_modal
   [isModifyMode]="isModalsModifyMode"
+  [calendarEntries]="modalCalendarEntries?.working_trips || []"
 ></app-working-trip-modal>
 <app-availability-modal
   #availability_modal
   [isModifyMode]="isModalsModifyMode"
+  [calendarEntries]="modalCalendarEntries?.availabilities || []"
 ></app-availability-modal>
 <app-request-modal
   #request_modal
   [isModifyMode]="isModalsModifyMode"
+  [calendarEntries]="modalCalendarEntries?.requests || []"
 ></app-request-modal>
 <app-daywork-modal
   #daywork_modal
   [date]="dayClicked"
   [dateString]="dayWorkDateTitle"
   [isModifyMode]="isModalsModifyMode"
+  [calendarEntries]="modalCalendarEntries?.day_works || []"
 ></app-daywork-modal>
