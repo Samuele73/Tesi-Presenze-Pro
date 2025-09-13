@@ -4,6 +4,7 @@ import {
   ViewChild,
   TemplateRef,
   OnInit,
+  AfterViewInit,
 } from '@angular/core';
 import { NgbAlert, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
@@ -53,13 +54,15 @@ import { CalendarAvailabilityEntry, CalendarEntity, CalendarEntry } from 'src/ge
 type DistributedModalComponent =  AvailabilityModalComponent | RequestModalComponent | WorkingTripModalComponent;
 type ModalComponentType =  DistributedModalComponent | DayworkModalComponent;
 
+declare var bootstrap: any;
+
 @Component({
   selector: 'app-attendance',
   //changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./attendance.component.scss'],
   templateUrl: './attendance.component.html',
 })
-export class AttendanceComponent implements OnInit {
+export class AttendanceComponent implements OnInit, AfterViewInit {
   viewDate: Date = new Date();
   events = [];
   view: CalendarView = CalendarView.Month;
@@ -158,6 +161,21 @@ export class AttendanceComponent implements OnInit {
       (this.viewDate.getMonth() + 1).toString(),
       this.viewDate.getFullYear().toString()
     );
+  }
+
+
+  ngAfterViewInit(): void {
+    this.initializeBootstrapTooltips();
+  }
+
+  initializeBootstrapTooltips(): void {
+      const tooltipTriggerList = document.querySelectorAll(
+        '.tt'
+      );
+      tooltipTriggerList.forEach((el) => new bootstrap.Tooltip(el, {
+        container: 'body',
+        customClass: 'custom-tooltip'
+      }));
   }
 
   private changeMonth(shift: number): Date {

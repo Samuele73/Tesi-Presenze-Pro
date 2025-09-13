@@ -7,30 +7,51 @@
           day.date | calendarDate : "monthViewDayNumber" : locale
         }}</span>
         <div class="d-flex gap-1">
-          <div class="dropdown-center">
+          <div class="dropdown-center tt" data-bs-toggle="tooltip" title="{{'Aggiungi una nuova entry alla giornata' | translate}}" data-bs-placement="top" data-bs-custom-class="custom-tooltip">
             <button
-            class="rounded-circle bg-primary btn btn-icon dropdown-toggle no-caret"
-            data-bs-toggle="dropdown" aria-expanded="false"
-          >
-            <fa-icon [icon]="faIcons.plus" class="fa-sm text-light"></fa-icon>
-          </button>
+              class="rounded-circle bg-primary btn btn-icon dropdown-toggle no-caret"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <fa-icon [icon]="faIcons.plus" class="fa-sm text-light"></fa-icon>
+            </button>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item d-flex align-items-center gap-2" (click)="openAddModal(dayworkModal)">
-                <fa-icon [icon]="faIcons.briefcase" class="fa-lg"></fa-icon>
-                <span>{{"Incarico" | translate}}</span>
-              </a></li>
-              <li><a class="dropdown-item d-flex align-items-center gap-2" (click)="openAddModal(requestModal, day.date)">
-                <fa-icon [icon]="faIcons.request" class="fa-lg"></fa-icon>
-                <span>{{"Richiesta" | translate}}</span>
-              </a></li>
-              <li><a class="dropdown-item d-flex align-items-center gap-2" (click)="openAddModal(availabilityModal, day.date)">
-                <fa-icon [icon]="faIcons.bell" class="fa-lg"></fa-icon>
-                <span>{{"Reperibilità" | translate}}</span>
-              </a></li>
-              <li><a class="dropdown-item d-flex align-items-center gap-2" (click)="openAddModal(workingTripModal, day.date)">
-                <fa-icon [icon]="faIcons.route" class="fa-lg"></fa-icon>
-                <span>{{"Trasferta" | translate}}</span>
-              </a></li>
+              <li>
+                <a
+                  class="dropdown-item d-flex align-items-center gap-2"
+                  (click)="openAddModal(dayworkModal)"
+                >
+                  <fa-icon [icon]="faIcons.briefcase" class="fa-lg"></fa-icon>
+                  <span>{{ "Incarico" | translate }}</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  class="dropdown-item d-flex align-items-center gap-2"
+                  (click)="openAddModal(requestModal, day.date)"
+                >
+                  <fa-icon [icon]="faIcons.request" class="fa-lg"></fa-icon>
+                  <span>{{ "Richiesta" | translate }}</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  class="dropdown-item d-flex align-items-center gap-2"
+                  (click)="openAddModal(availabilityModal, day.date)"
+                >
+                  <fa-icon [icon]="faIcons.bell" class="fa-lg"></fa-icon>
+                  <span>{{ "Reperibilità" | translate }}</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  class="dropdown-item d-flex align-items-center gap-2"
+                  (click)="openAddModal(workingTripModal, day.date)"
+                >
+                  <fa-icon [icon]="faIcons.route" class="fa-lg"></fa-icon>
+                  <span>{{ "Trasferta" | translate }}</span>
+                </a>
+              </li>
             </ul>
           </div>
           <button class="rounded-circle bg-danger btn btn-icon">
