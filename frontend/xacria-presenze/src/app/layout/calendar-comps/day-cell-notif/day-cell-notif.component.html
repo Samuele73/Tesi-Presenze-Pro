@@ -19,8 +19,6 @@
     [dateString]="dateString!"
     [calendarEntries]="filteredEntries"
     [isModifyMode]="modalModify"
-    (deleteDayWorks)="handleBulkDelete($event, 'WORKING_DAY')"
-    (updateDayWorks)="handleBulkUpdate($event, 'WORKING_DAY')"
   ></app-daywork-modal>
 </ng-template>
 
@@ -29,8 +27,6 @@
     #modal
     [calendarEntries]="filteredEntries"
     [isModifyMode]="modalModify"
-    (deleteRequests)="handleBulkDelete($event, 'REQUEST')"
-    (updateRequests)="handleBulkUpdate($event, 'REQUEST')"
   ></app-request-modal>
 </ng-template>
 
@@ -39,8 +35,6 @@
     #modal
     [calendarEntries]="filteredEntries"
     [isModifyMode]="modalModify"
-    (deleteWorkingTrips)="handleBulkDelete($event, 'WORKING_TRIP')"
-    (updateWorkingTrips)="handleBulkUpdate($event, 'WORKING_TRIP')"
   ></app-working-trip-modal>
 </ng-template>
 
@@ -49,7 +43,5 @@
     #modal
     [calendarEntries]="filteredEntries"
     [isModifyMode]="modalModify"
-    (deleteAvailabilies)="handleBulkDelete($event, 'AVAILABILITY')"
-    (updateAvailabilities)="handleBulkUpdate($event, 'AVAILABILITY')"
   ></app-availability-modal>
 </ng-template>

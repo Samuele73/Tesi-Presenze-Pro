@@ -20,6 +20,7 @@ import { DateFormatService } from 'src/app/shared/services/date-format.service';
 import { faIcons } from '../../attendance/attendance.component';
 import { CalendarWorkingTripEntry } from 'src/generated-client';
 import { identifiableCalendarWorkingTrip } from 'src/app/layout/shared/models/calendar';
+import { CalendarStateService } from 'src/app/layout/shared/services/calendar-state.service';
 
 @Component({
   selector: 'app-working-trip-modal',
@@ -35,17 +36,13 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
   @Input() currentDate?: Date;
   toDeleteEntries: string[] = [];
   faIcons = faIcons;
-  @Output() saveWorkingTrip = new EventEmitter<CalendarWorkingTripEntry>();
-  @Output() deleteWorkingTrips = new EventEmitter<string[]>();
   initialWorkingTrips: identifiableCalendarWorkingTrip[] = [];
-  @Output() updateWorkingTrips = new EventEmitter<
-    identifiableCalendarWorkingTrip[]
-  >();
 
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
-    private dateFormat: DateFormatService
+    private dateFormat: DateFormatService,
+    private calendarStateService: CalendarStateService
   ) {}
 
   get dateFrom() {
@@ -116,13 +113,13 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
         };
       });
     console.log('To updated entries', changedEntries);
-    this.updateWorkingTrips.emit(changedEntries);
+    this.calendarStateService.updateCalendarEntries(changedEntries, 'WORKING_TRIP');
     this.initialWorkingTrips = this.workingTrips.value;
   }
 
   private deleteEntries(): void {
     if (this.toDeleteEntries.length) {
-      this.deleteWorkingTrips.emit(this.toDeleteEntries);
+      this.calendarStateService.deleteCalendarEntities(this.toDeleteEntries, 'WORKING_TRIP');
       this.toDeleteEntries = [];
     }
   }
@@ -193,7 +190,7 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
         dateFrom: this.dateFrom?.value,
         dateTo: this.dateTo?.value,
       };
-      this.saveWorkingTrip.emit(newEntry);
+      this.calendarStateService.saveCalendarEntry(newEntry, 'WORKING_TRIP');
       this.form.reset();
     } else console.error('Availability new entry form is invalid');
   }

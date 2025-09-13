@@ -15,6 +15,7 @@ import { DateFormatService } from 'src/app/shared/services/date-format.service';
 import { faIcons } from '../../attendance/attendance.component';
 import { CalendarRequestEntry } from 'src/generated-client';
 import { identifiableCalendarRequest } from 'src/app/layout/shared/models/calendar';
+import { CalendarStateService } from 'src/app/layout/shared/services/calendar-state.service';
 
 @Component({
   selector: 'app-request-modal',
@@ -31,15 +32,13 @@ export class RequestModalComponent implements ModalComponent, OnInit {
   @Input() currentDate?: Date;
   faIcons = faIcons;
   toDeleteEntries: string[] = [];
-  @Output() saveRequest = new EventEmitter<CalendarRequestEntry>();
-  @Output() deleteRequests = new EventEmitter<string[]>();
   initialRequests: identifiableCalendarRequest[] = [];
-  @Output() updateRequests = new EventEmitter<identifiableCalendarRequest[]>();
 
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
-    private dateFormat: DateFormatService
+    private dateFormat: DateFormatService,
+    private calendarStateService: CalendarStateService
   ) {}
 
   get requestType() {
@@ -102,13 +101,13 @@ export class RequestModalComponent implements ModalComponent, OnInit {
         };
       });
     console.log('To updated entries', changedEntries);
-    this.updateRequests.emit(changedEntries);
+    this.calendarStateService.updateCalendarEntries(changedEntries, 'REQUEST');
     this.initialRequests = this.requests.value;
   }
 
   private deleteEntries(): void {
     if (this.toDeleteEntries.length) {
-      this.deleteRequests.emit(this.toDeleteEntries);
+      this.calendarStateService.deleteCalendarEntities(this.toDeleteEntries, 'REQUEST');
       this.toDeleteEntries = [];
     }
   }
@@ -209,7 +208,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
         timeFrom: this.timeFrom?.value,
         timeTo: this.timeTo?.value,
       };
-      this.saveRequest.emit(newEntry);
+      this.calendarStateService.saveCalendarEntry(newEntry, 'REQUEST');
       this.form.reset();
     } else console.error('Availability new entry form is invalid');
   }

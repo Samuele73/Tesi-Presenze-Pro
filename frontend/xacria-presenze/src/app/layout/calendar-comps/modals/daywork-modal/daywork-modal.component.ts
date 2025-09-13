@@ -20,6 +20,7 @@ import { CalendarWorkingDayEntry } from 'src/generated-client';
 import { identifiableCalendarWorkingDay } from 'src/app/layout/shared/models/calendar';
 import { parse } from 'date-fns';
 import { it as itLocale } from 'date-fns/locale';
+import { CalendarStateService } from 'src/app/layout/shared/services/calendar-state.service';
 
 @Component({
   selector: 'app-daywork-modal',
@@ -39,18 +40,14 @@ export class DayworkModalComponent
   closeResult = '';
   faIcons: any = faIcons;
   toDeleteEntries: string[] = [];
-  @Output() saveDayWorks = new EventEmitter<CalendarWorkingDayEntry[]>();
-  @Output() deleteDayWorks = new EventEmitter<string[]>();
-  @Output() updateDayWorks = new EventEmitter<
-    identifiableCalendarWorkingDay[]
-  >();
   initialWorkingDays: identifiableCalendarWorkingDay[] = [];
 
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private dateFormat: DateFormatService
+    private dateFormat: DateFormatService,
+    private calendarStateService: CalendarStateService
   ) {}
 
   get hourFrom() {
@@ -134,7 +131,7 @@ export class DayworkModalComponent
   private deleteEntries(): void {
     if (this.toDeleteEntries.length) {
       console.log('To delete entries', this.toDeleteEntries);
-      this.deleteDayWorks.emit(this.toDeleteEntries);
+      this.calendarStateService.deleteCalendarEntities(this.toDeleteEntries, "WORKING_DAY");
       this.toDeleteEntries = [];
     }
   }
@@ -220,7 +217,7 @@ export class DayworkModalComponent
       });
     console.log('la data', this.parseItalianDate(this.dateString));
     console.log('To updated entries', changedEntries);
-    this.updateDayWorks.emit(changedEntries);
+    this.calendarStateService.updateCalendarEntries(changedEntries, "WORKING_DAY");
     this.initialWorkingDays = this.dayWorks.value;
   }
 
@@ -252,7 +249,7 @@ export class DayworkModalComponent
         hourTo: this.hourTo?.value,
         dateFrom: normalizedDate,
       });
-      this.saveDayWorks.emit(newDayWorkEntries);
+      this.calendarStateService.saveCalendarEntities(newDayWorkEntries, "WORKING_DAY");
     } else console.error('Availability new entry form is invalid');
   }
 }

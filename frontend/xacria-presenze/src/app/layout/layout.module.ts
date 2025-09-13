@@ -25,6 +25,7 @@ import { DayworkModalComponent } from './calendar-comps/modals/daywork-modal/day
 import { WorkingTripModalComponent } from './calendar-comps/modals/working-trip-modal/working-trip-modal.component';
 import { AvailabilityModalComponent } from './calendar-comps/modals/availability-modal/availability-modal.component';
 import { RequestModalComponent } from './calendar-comps/modals/request-modal/request-modal.component';
+import { InteractiveButtonComponent } from './calendar-comps/interactive-button/interactive-button.component';;
 
 
 @NgModule({
@@ -41,7 +42,8 @@ import { RequestModalComponent } from './calendar-comps/modals/request-modal/req
     DayworkModalComponent,
     WorkingTripModalComponent,
     AvailabilityModalComponent,
-    RequestModalComponent
+    RequestModalComponent,
+    InteractiveButtonComponent
   ],
   imports: [
     CommonModule,

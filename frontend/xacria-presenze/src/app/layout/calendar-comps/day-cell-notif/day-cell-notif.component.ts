@@ -134,13 +134,4 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit  
     }
   }
 
-  handleBulkDelete(entryIds: string[], entryType: CalendarEntity.EntryTypeEnum): void {
-    console.log('BULK DELETE', entryIds, entryType);
-    this.calendarStateService.deleteCalendarEntities(entryIds, entryType);
-  }
-
-  handleBulkUpdate(entries: identifiableCalendarEntry[], calenarEntryType: CalendarEntity.EntryTypeEnum): void {
-    this.calendarStateService.updateCalendarEntries(entries, calenarEntryType);
-  }
-
 }

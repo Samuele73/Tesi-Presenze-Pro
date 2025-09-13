@@ -23,6 +23,7 @@ import {
   CalendarEntity,
 } from 'src/generated-client';
 import { identifiableCalendarAvailability } from 'src/app/layout/shared/models/calendar';
+import { CalendarStateService } from 'src/app/layout/shared/services/calendar-state.service';
 
 @Component({
   selector: 'app-availability-modal',
@@ -40,18 +41,14 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
   faIcons = faIcons;
   toDeleteEntries: string[] = [];
   @ViewChildren('entry') entryElements!: QueryList<ElementRef>;
-  @Output() saveAvailability = new EventEmitter<CalendarAvailabilityEntry>();
-  @Output() deleteAvailabilies = new EventEmitter<string[]>();
-  @Output() updateAvailabilities = new EventEmitter<
-    identifiableCalendarAvailability[]
-  >();
   initialCalendarentries: identifiableCalendarAvailability[] = [];
 
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
     private renderer: Renderer2,
-    private dateFormat: DateFormatService
+    private dateFormat: DateFormatService,
+    private calendarStateService: CalendarStateService
   ) {}
 
   get dateFrom() {
@@ -143,13 +140,13 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
         };
       });
     console.log('To updated entries', changedEntries);
-    this.updateAvailabilities.emit(changedEntries);
+    this.calendarStateService.updateCalendarEntries(changedEntries, 'AVAILABILITY');
     this.initialCalendarentries = this.availabilities.value;
   }
 
   private deleteEntries(): void {
     if (this.toDeleteEntries.length) {
-      this.deleteAvailabilies.emit(this.toDeleteEntries);
+      this.calendarStateService.deleteCalendarEntities(this.toDeleteEntries, 'AVAILABILITY');
       this.toDeleteEntries = [];
     }
   }
@@ -224,7 +221,7 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
         dateTo: this.dateTo?.value,
         project: this.project?.value,
       };
-      this.saveAvailability.emit(newEntry);
+      this.calendarStateService.saveCalendarEntry(newEntry, 'AVAILABILITY');
       this.form.reset();
     } else console.error('Availability new entry form is invalid');
   }

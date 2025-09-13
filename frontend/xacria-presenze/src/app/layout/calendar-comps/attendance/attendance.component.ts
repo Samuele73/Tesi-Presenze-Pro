@@ -222,15 +222,6 @@ export class AttendanceComponent implements OnInit, AfterViewInit {
     const dayWord: string = this.weekDayNames[date.getDay()];
     return day + ' ' + month + ' ' + year + ' - ' + dayWord;
   }
-
-  handleSave(calendarEntry: CalendarEntry, entryType: CalendarEntity.EntryTypeEnum): void {
-    this.calendarStateService.saveCalendarEntry(calendarEntry, entryType);
-  }
-
-  handleBulkSave(calendarEntries: CalendarEntry[], entryType: CalendarEntity.EntryTypeEnum): void {
-    console.log('BULK SAVE', calendarEntries, entryType);
-    this.calendarStateService.saveCalendarEntities(calendarEntries, entryType);
-  }
 }
 
 export const faIcons = {
