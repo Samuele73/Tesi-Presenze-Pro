@@ -56,22 +56,22 @@
 <app-working-trip-modal
   #working_trip_modal
   [isModifyMode]="isModalsModifyMode"
-  [calendarEntries]="modalCalendarEntries?.working_trips || []"
+  [calendarEntries]="filteredEntries.working_trips || []"
 ></app-working-trip-modal>
 <app-availability-modal
   #availability_modal
   [isModifyMode]="isModalsModifyMode"
-  [calendarEntries]="modalCalendarEntries?.availabilities || []"
+  [calendarEntries]="filteredEntries.availabilities || []"
 ></app-availability-modal>
 <app-request-modal
   #request_modal
   [isModifyMode]="isModalsModifyMode"
-  [calendarEntries]="modalCalendarEntries?.requests || []"
+  [calendarEntries]="filteredEntries.requests || []"
 ></app-request-modal>
 <app-daywork-modal
   #daywork_modal
   [date]="dayClicked"
   [dateString]="dayWorkDateTitle"
   [isModifyMode]="isModalsModifyMode"
-  [calendarEntries]="modalCalendarEntries?.day_works || []"
+  [calendarEntries]="filteredEntries.day_works || []"
 ></app-daywork-modal>

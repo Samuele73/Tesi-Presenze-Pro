@@ -72,7 +72,12 @@ export class InteractiveButtonComponent implements AfterViewInit {
   filteredAvailabilities: identifiableCalendarAvailability[] = [];
 
   // Array combinato per retrocompatibilità
-  filteredEntries: identifiableCalendarEntry[] = [];
+  filteredEntries: calendar = {
+    day_works: [],
+    requests: [],
+    working_trips: [],
+    availabilities: []
+  };
 
   constructor(private dateFormat: DateFormatService) {}
 
@@ -144,6 +149,19 @@ export class InteractiveButtonComponent implements AfterViewInit {
     });
   }
 
+  /* onDropdownToggle(event: Event): void {
+    // Chiudi tutti gli altri dropdown aperti
+    const allDropdowns = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+    allDropdowns.forEach((dropdown) => {
+      if (dropdown !== event.target) {
+        const dropdownInstance = bootstrap.Dropdown.getInstance(dropdown);
+        if (dropdownInstance) {
+          dropdownInstance.hide();
+        }
+      }
+    });
+  } */
+
   // Recompute the filtered entries based on the current date and all entries
   private recompute(): void {
     // Reset tutti gli array filtrati
@@ -151,15 +169,21 @@ export class InteractiveButtonComponent implements AfterViewInit {
     this.filteredRequests = [];
     this.filteredWorkingTrips = [];
     this.filteredAvailabilities = [];
-    this.filteredEntries = [];
+    this.filteredEntries = {
+      day_works: [],
+      requests: [],
+      working_trips: [],
+      availabilities: []
+    };
 
-    if (!this._date || !this._allEntries || this.isModalsModifyMode) {
+    if (!this._date || !this._allEntries || !this.isModalsModifyMode) {
+      console.log('No date or entries provided, or in modify mode');
       return;
     }
+    console.log('Date and entries provided:', this._date, this._allEntries);
 
     const current = this.dateFormat.normalizeDate(this._date);
 
-    // Filtra ciascun tipo di entry
     this.filteredDayWorks = this.filterEntriesByDate(
       this._allEntries.day_works,
       current
@@ -181,11 +205,12 @@ export class InteractiveButtonComponent implements AfterViewInit {
     );
 
     // Combina tutti gli array filtrati per retrocompatibilità
-    this.filteredEntries = [
-      ...this.filteredDayWorks,
-      ...this.filteredRequests,
-      ...this.filteredWorkingTrips,
-      ...this.filteredAvailabilities
-    ];
+    this.filteredEntries = {
+      day_works: this.filteredDayWorks,
+      requests: this.filteredRequests,
+      working_trips: this.filteredWorkingTrips,
+      availabilities: this.filteredAvailabilities,
+    }
+    console.log('Filtered Entries:', this.filteredEntries);
   }
 }
