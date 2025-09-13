@@ -25,7 +25,7 @@
     <li>
       <a
         class="dropdown-item d-flex align-items-center gap-2"
-        (click)="openModal(requestModal, day.date)"
+        (click)="openModal(requestModal, date)"
       >
         <fa-icon [icon]="faIcons.request" class="fa-lg"></fa-icon>
         <span>{{ "Richiesta" | translate }}</span>
@@ -34,7 +34,7 @@
     <li>
       <a
         class="dropdown-item d-flex align-items-center gap-2"
-        (click)="openModal(availabilityModal, day.date)"
+        (click)="openModal(availabilityModal, date)"
       >
         <fa-icon [icon]="faIcons.bell" class="fa-lg"></fa-icon>
         <span>{{ "Reperibilità" | translate }}</span>
@@ -43,7 +43,7 @@
     <li>
       <a
         class="dropdown-item d-flex align-items-center gap-2"
-        (click)="openModal(workingTripModal, day.date)"
+        (click)="openModal(workingTripModal, date)"
       >
         <fa-icon [icon]="faIcons.route" class="fa-lg"></fa-icon>
         <span>{{ "Trasferta" | translate }}</span>
