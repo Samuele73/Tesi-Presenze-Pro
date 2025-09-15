@@ -103,7 +103,7 @@ export class InteractiveButtonComponent implements AfterViewInit {
     return this.mode === 'DELETE';
   }
 
-  ngAfterViewInit() {
+  private hideOtherDropdowns(): void {
     document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach((el) => {
       el.addEventListener('show.bs.dropdown', () => {
         document.querySelectorAll('.dropdown-menu.show').forEach((openMenu) => {
@@ -119,6 +119,10 @@ export class InteractiveButtonComponent implements AfterViewInit {
         });
       });
     });
+  }
+
+  ngAfterViewInit() {
+    this.hideOtherDropdowns();
   }
 
   initializeBootstrapTooltips(): void {
