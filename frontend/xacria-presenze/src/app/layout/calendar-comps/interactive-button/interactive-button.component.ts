@@ -123,17 +123,18 @@ export class InteractiveButtonComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.hideOtherDropdowns();
+    this.initializeBootstrapTooltips();
   }
 
   initializeBootstrapTooltips(): void {
-    const tooltipTriggerList = document.querySelectorAll('.tt');
-    tooltipTriggerList.forEach(
-      (el) =>
-        new bootstrap.Tooltip(el, {
-          container: 'body',
-          customClass: 'custom-tooltip',
-        })
-    );
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('.tt'));
+    tooltipTriggerList.map((el: HTMLElement) => {
+      new bootstrap.Tooltip(el, {
+        trigger: 'hover',
+        placement: 'top',
+        customClass: 'custom-tooltip',
+      });
+    });
   }
 
   openModal(modal: ModalComponentType): void {
