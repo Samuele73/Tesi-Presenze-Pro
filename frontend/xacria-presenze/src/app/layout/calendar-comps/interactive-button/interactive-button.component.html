@@ -8,6 +8,7 @@
   }}"
   data-bs-placement="top"
   data-bs-custom-class="custom-tooltip"
+  [attr.id]="'dropdown-' + this._date?.toISOString()"
 >
   <button
     class="rounded-circle btn btn-icon dropdown-toggle no-caret"
@@ -16,6 +17,7 @@
       'bg-danger': this.mode === 'DELETE'
     }"
     data-bs-toggle="dropdown"
+    [attr.data-bs-target]="'#dropdownMenu-' + this._date?.toISOString()"
     aria-expanded="false"
   >
     <fa-icon
@@ -23,7 +25,7 @@
       class="fa-sm text-light"
     ></fa-icon>
   </button>
-  <ul class="dropdown-menu">
+  <ul class="dropdown-menu" [attr.id]="'dropdownMenu-' + this._date?.toISOString()">
     <li>
       <a
         class="dropdown-item d-flex align-items-center gap-2"

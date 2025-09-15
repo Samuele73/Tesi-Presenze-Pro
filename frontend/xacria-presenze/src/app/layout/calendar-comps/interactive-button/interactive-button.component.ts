@@ -1,5 +1,16 @@
 import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
-import { faPlus, faMinus, faBriefcase, faCalendarMinus, faX, faRoute, faPenToSquare, faBell, faArrowRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import {
+  faPlus,
+  faMinus,
+  faBriefcase,
+  faCalendarMinus,
+  faX,
+  faRoute,
+  faPenToSquare,
+  faBell,
+  faArrowRight,
+  faArrowLeft,
+} from '@fortawesome/free-solid-svg-icons';
 import { AvailabilityModalComponent } from '../modals/availability-modal/availability-modal.component';
 import { RequestModalComponent } from '../modals/request-modal/request-modal.component';
 import { WorkingTripModalComponent } from '../modals/working-trip-modal/working-trip-modal.component';
@@ -10,10 +21,15 @@ import {
   identifiableCalendarRequest,
   identifiableCalendarWorkingDay,
   identifiableCalendarWorkingTrip,
-  calendar
+  calendar,
 } from '../../shared/models/calendar';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
-import { CalendarAvailabilityEntry, CalendarRequestEntry, CalendarWorkingDayEntry, CalendarWorkingTripEntry } from 'src/generated-client';
+import {
+  CalendarAvailabilityEntry,
+  CalendarRequestEntry,
+  CalendarWorkingDayEntry,
+  CalendarWorkingTripEntry,
+} from 'src/generated-client';
 
 declare var bootstrap: any;
 const faIcons = {
@@ -46,10 +62,10 @@ export class InteractiveButtonComponent implements AfterViewInit {
 
   @Input() set date(value: Date | undefined) {
     this._date = value ? new Date(value) : undefined;
-    console.log("DATE SETTER CALLED", this._date, value);
+    console.log('DATE SETTER CALLED', this._date, value);
     this.recompute();
   }
-  private _date?: Date;
+  public _date?: Date;
 
   @Input() dayClicked: Date = new Date();
   @Input() dayWorkDateTitle!: string;
@@ -62,7 +78,8 @@ export class InteractiveButtonComponent implements AfterViewInit {
   private _allEntries: calendar | undefined;
 
   @ViewChild('working_trip_modal') workingTripModal!: WorkingTripModalComponent;
-  @ViewChild('availability_modal') availabilityModal!: AvailabilityModalComponent;
+  @ViewChild('availability_modal')
+  availabilityModal!: AvailabilityModalComponent;
   @ViewChild('request_modal') requestModal!: RequestModalComponent;
   @ViewChild('daywork_modal') dayworkModal!: DayworkModalComponent;
 
@@ -77,7 +94,7 @@ export class InteractiveButtonComponent implements AfterViewInit {
     day_works: [],
     requests: [],
     working_trips: [],
-    availabilities: []
+    availabilities: [],
   };
 
   constructor(private dateFormat: DateFormatService) {}
@@ -86,8 +103,22 @@ export class InteractiveButtonComponent implements AfterViewInit {
     return this.mode === 'DELETE';
   }
 
-  ngAfterViewInit(): void {
-    this.initializeBootstrapTooltips();
+  ngAfterViewInit() {
+    document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach((el) => {
+      el.addEventListener('show.bs.dropdown', () => {
+        document.querySelectorAll('.dropdown-menu.show').forEach((openMenu) => {
+          // se il menu aperto non è quello del trigger attuale → chiudi
+          if (!el.nextElementSibling?.isSameNode(openMenu)) {
+            const instance = bootstrap.Dropdown.getInstance(
+              openMenu.previousElementSibling as Element
+            );
+            if (instance) {
+              instance.hide();
+            }
+          }
+        });
+      });
+    });
   }
 
   initializeBootstrapTooltips(): void {
@@ -109,13 +140,26 @@ export class InteractiveButtonComponent implements AfterViewInit {
     modal.open();
   }
 
-  private hasDateRange(entry: CalendarAvailabilityEntry | CalendarRequestEntry | CalendarWorkingDayEntry | CalendarWorkingTripEntry):
-    entry is CalendarAvailabilityEntry | CalendarRequestEntry | CalendarWorkingTripEntry {
+  private hasDateRange(
+    entry:
+      | CalendarAvailabilityEntry
+      | CalendarRequestEntry
+      | CalendarWorkingDayEntry
+      | CalendarWorkingTripEntry
+  ): entry is
+    | CalendarAvailabilityEntry
+    | CalendarRequestEntry
+    | CalendarWorkingTripEntry {
     return 'dateFrom' in entry && 'dateTo' in entry;
   }
 
-  private isWorkingDayEntry(entry: CalendarAvailabilityEntry | CalendarRequestEntry | CalendarWorkingDayEntry | CalendarWorkingTripEntry):
-    entry is CalendarWorkingDayEntry {
+  private isWorkingDayEntry(
+    entry:
+      | CalendarAvailabilityEntry
+      | CalendarRequestEntry
+      | CalendarWorkingDayEntry
+      | CalendarWorkingTripEntry
+  ): entry is CalendarWorkingDayEntry {
     return 'dateFrom' in entry && !('dateTo' in entry);
   }
 
@@ -171,7 +215,7 @@ export class InteractiveButtonComponent implements AfterViewInit {
       day_works: [],
       requests: [],
       working_trips: [],
-      availabilities: []
+      availabilities: [],
     };
 
     if (!this._date || !this._allEntries || !this.isModalsModifyMode) {
@@ -208,7 +252,7 @@ export class InteractiveButtonComponent implements AfterViewInit {
       requests: this.filteredRequests,
       working_trips: this.filteredWorkingTrips,
       availabilities: this.filteredAvailabilities,
-    }
+    };
     console.log('Filtered Entries:', this.filteredEntries);
   }
 }
