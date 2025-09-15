@@ -46,6 +46,7 @@ export class InteractiveButtonComponent implements AfterViewInit {
 
   @Input() set date(value: Date | undefined) {
     this._date = value ? new Date(value) : undefined;
+    console.log("DATE SETTER CALLED", this._date, value);
     this.recompute();
   }
   private _date?: Date;
@@ -100,14 +101,11 @@ export class InteractiveButtonComponent implements AfterViewInit {
     );
   }
 
-  openModal(modal: ModalComponentType, date?: Date): void {
+  openModal(modal: ModalComponentType): void {
     // dayworkmodal does not have currentDate input
-    if (date && !(modal instanceof DayworkModalComponent)) {
-      console.log('date:', date);
-      modal.currentDate = date;
-      console.log('modal date:', modal.currentDate);
+    if (this._date && !(modal instanceof DayworkModalComponent)) {
+      modal.currentDate = this._date;
     }
-    console.log("WANT TO OPEN MODAL", modal, this.modalCalendarEntries);
     modal.open();
   }
 

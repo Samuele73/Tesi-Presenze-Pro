@@ -58,6 +58,12 @@
             <fa-icon [icon]="faIcons.minus" class="fa-sm text-light"></fa-icon>
           </button> -->
           <app-interactive-button
+            [mode]="'ADD'"
+            [date]="day.date"
+            [dayWorkDateTitle]="fromDateToModalTitle(dayClicked)"
+            [dayClicked]="dayClicked"
+          ></app-interactive-button>
+          <app-interactive-button
             [mode]="'DELETE'"
             [date]="day.date"
             [modalCalendarEntries]="calendarEntries"
