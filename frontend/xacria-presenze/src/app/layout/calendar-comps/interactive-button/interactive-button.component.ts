@@ -127,14 +127,17 @@ export class InteractiveButtonComponent implements AfterViewInit {
   }
 
   initializeBootstrapTooltips(): void {
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('.tt'));
-    tooltipTriggerList.map((el: HTMLElement) => {
-      new bootstrap.Tooltip(el, {
-        trigger: 'hover',
-        placement: 'top',
-        customClass: 'custom-tooltip',
-      });
+    const tooltipTriggerList = [].slice.call(
+    document.querySelectorAll('.tt')
+  );
+
+  tooltipTriggerList.map((el: HTMLElement) => {
+    new bootstrap.Tooltip(el, {
+      trigger: 'hover',  // solo hover, no focus/click
+      placement: 'top',
+      customClass: 'custom-tooltip'
     });
+  });
   }
 
   openModal(modal: ModalComponentType): void {

@@ -2,10 +2,16 @@
   display: none !important;
 }
 .btn-icon{
-  width: 2em; /* Dimensione del bottone */
-  height: 2em; /* Dimensione del bottone */
-  display: flex; /* Per centrare l'icona */
+  width: 2em;
+  height: 2em;
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0; /* Rimuove il padding interno */
+  padding: 0;
+}
+.disabled-item {
+  pointer-events: none;
+  opacity: 0.5;
+  background-color: transparent !important;
+  color: #6c757d !important;
 }
