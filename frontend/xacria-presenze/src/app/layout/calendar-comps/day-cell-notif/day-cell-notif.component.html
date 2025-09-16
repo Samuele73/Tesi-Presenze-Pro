@@ -2,12 +2,12 @@
   <fa-icon [icon]="icon" class="fa-lg"></fa-icon>
   <button
     class="border-0 rounded-2 text-light calendar-button"
-    [ngClass]="{ 'bg-primary': notifs > 0, 'bg-secondary': notifs <= 0 }"
+    [ngClass]="buttonClasses"
   >
-    {{ notifs + " " + text }}
+    {{ buttonText }}
   </button>
 </div>
-<!-- Selezione della corretta modale -->
+
 <ng-container *ngIf="isTemplateReady">
   <ng-container *ngTemplateOutlet="getTemplate()"></ng-container>
 </ng-container>
@@ -15,7 +15,7 @@
 <ng-template #dayworkTemplate>
   <app-daywork-modal
     #modal
-    [date]="date!"
+    [date]="_date!"
     [dateString]="dateString!"
     [calendarEntries]="filteredEntries"
     [isModifyMode]="modalModify"

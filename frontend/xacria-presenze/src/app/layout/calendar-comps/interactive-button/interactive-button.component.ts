@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import {
   faPlus,
   faMinus,
@@ -56,14 +56,35 @@ type buttonMode = 'ADD' | 'DELETE';
   selector: 'app-interactive-button',
   templateUrl: './interactive-button.component.html',
   styleUrls: ['./interactive-button.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class InteractiveButtonComponent implements AfterViewInit {
+export class InteractiveButtonComponent implements AfterViewInit, OnDestroy {
   faIcons: any = faIcons;
 
+  // Cache per evitare ricalcoli
+  private _cachedDropdownId: string = '';
+  private _cachedTargetId: string = '';
+  private _cachedMenuId: string = '';
+
   @Input() set date(value: Date | undefined) {
-    this._date = value ? new Date(value) : undefined;
-    console.log('DATE SETTER CALLED', this._date, value);
-    this.recompute();
+    const newDate = value ? new Date(value) : undefined;
+    const dateChanged = !this._date || !newDate || this._date.getTime() !== newDate.getTime();
+
+    this._date = newDate;
+
+    // Aggiorna cache ID solo se la data è cambiata
+    if (dateChanged && this._date) {
+      const isoString = this._date.toISOString();
+      this._cachedDropdownId = 'dropdown-' + isoString;
+      this._cachedTargetId = '#dropdownMenu-' + isoString;
+      this._cachedMenuId = 'dropdownMenu-' + isoString;
+    }
+
+    // Recompute solo se necessario
+    if (dateChanged) {
+      this.recompute();
+      this.cdr.markForCheck();
+    }
   }
   public _date?: Date;
 
@@ -72,8 +93,12 @@ export class InteractiveButtonComponent implements AfterViewInit {
   @Input() mode: buttonMode = 'ADD';
 
   @Input() set modalCalendarEntries(value: calendar | undefined) {
-    this._allEntries = value;
-    this.recompute();
+    // Verifica se i dati sono effettivamente cambiati
+    if (this._allEntries !== value) {
+      this._allEntries = value;
+      this.recompute();
+      this.cdr.markForCheck();
+    }
   }
   private _allEntries: calendar | undefined;
 
@@ -97,12 +122,56 @@ export class InteractiveButtonComponent implements AfterViewInit {
     availabilities: [],
   };
 
-  constructor(private dateFormat: DateFormatService) {}
+  // Flags precalcolati per il template
+  isDayWorksDisabled = false;
+  isRequestsDisabled = false;
+  isWorkingTripsDisabled = false;
+  isAvailabilitiesDisabled = false;
+
+  constructor(
+    private dateFormat: DateFormatService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  get tooltipTitle(): string {
+    return this.mode === 'ADD'
+      ? 'Aggiungi una nuova entry alla giornata'
+      : 'Elimina una entry relativa alla giornata';
+  }
+
+  get buttonClasses(): any {
+    return {
+      'bg-primary': this.mode === 'ADD',
+      'bg-danger': this.mode === 'DELETE'
+    };
+  }
+
+  get buttonIcon(): any {
+    return this.mode === 'ADD' ? this.faIcons.plus : this.faIcons.minus;
+  }
+
+  get dropdownId(): string {
+    return this._cachedDropdownId;
+  }
+
+  get dropdownTargetId(): string {
+    return this._cachedTargetId;
+  }
+
+  get dropdownMenuId(): string {
+    return this._cachedMenuId;
+  }
 
   get isModalsModifyMode(): boolean {
     return this.mode === 'DELETE';
   }
 
+  // TrackBy function per eventuali *ngFor
+  trackByEntryId(index: number, item: any): any {
+    return item.id || item.calendarEntry?.id || index;
+  }
+
+  // Metodo utilizzato per chiudere altri dropdown aperti quando se ne apre uno nuovo
   private hideOtherDropdowns(): void {
     document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach((el) => {
       el.addEventListener('show.bs.dropdown', () => {
@@ -123,21 +192,25 @@ export class InteractiveButtonComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.hideOtherDropdowns();
-    this.initializeBootstrapTooltips();
+    /* this.initializeBootstrapTooltips(); */
+  }
+
+  ngOnDestroy(): void {
+    // Cleanup se necessario
   }
 
   initializeBootstrapTooltips(): void {
     const tooltipTriggerList = [].slice.call(
-    document.querySelectorAll('.tt')
-  );
+      document.querySelectorAll('.tt')
+    );
 
-  tooltipTriggerList.map((el: HTMLElement) => {
-    new bootstrap.Tooltip(el, {
-      trigger: 'hover',  // solo hover, no focus/click
-      placement: 'top',
-      customClass: 'custom-tooltip'
+    tooltipTriggerList.map((el: HTMLElement) => {
+      new bootstrap.Tooltip(el, {
+        trigger: 'hover',  // solo hover, no focus/click
+        placement: 'top',
+        customClass: 'custom-tooltip'
+      });
     });
-  });
   }
 
   openModal(modal: ModalComponentType): void {
@@ -171,50 +244,93 @@ export class InteractiveButtonComponent implements AfterViewInit {
     return 'dateFrom' in entry && !('dateTo' in entry);
   }
 
-  private filterEntriesByDate<T extends identifiableCalendarEntry>(
+  // Versione ottimizzata del filtering
+  private filterEntriesByDateOptimized<T extends identifiableCalendarEntry>(
     entries: T[],
-    currentDate: Date
+    currentDate: Date,
+    currentTime: number
   ): T[] {
+    if (!entries?.length) return [];
+
     return entries.filter((entry: T) => {
       const calendarEntry = entry.calendarEntry;
 
       if (this.hasDateRange(calendarEntry)) {
-        // Controlla che dateFrom e dateTo non siano undefined
-        if (!calendarEntry.dateFrom || !calendarEntry.dateTo) {
-          return false;
-        }
-        const from = this.dateFormat.normalizeDate(calendarEntry.dateFrom);
-        const to = this.dateFormat.normalizeDate(calendarEntry.dateTo);
-        return currentDate >= from && currentDate <= to;
+        if (!calendarEntry.dateFrom || !calendarEntry.dateTo) return false;
+
+        // Usa operazioni più veloci sulle date
+        const fromTime = new Date(calendarEntry.dateFrom).setHours(0, 0, 0, 0);
+        const toTime = new Date(calendarEntry.dateTo).setHours(23, 59, 59, 999);
+
+        return currentTime >= fromTime && currentTime <= toTime;
+
       } else if (this.isWorkingDayEntry(calendarEntry)) {
-        // Controlla che dateFrom non sia undefined
-        if (!calendarEntry.dateFrom) {
-          return false;
-        }
-        const from = this.dateFormat.normalizeDate(calendarEntry.dateFrom);
-        return currentDate.getTime() === from.getTime();
+        if (!calendarEntry.dateFrom) return false;
+
+        const fromTime = new Date(calendarEntry.dateFrom).setHours(0, 0, 0, 0);
+        return currentTime === fromTime;
       }
 
       return false;
     });
   }
 
-  /* onDropdownToggle(event: Event): void {
-    // Chiudi tutti gli altri dropdown aperti
-    const allDropdowns = document.querySelectorAll('[data-bs-toggle="dropdown"]');
-    allDropdowns.forEach((dropdown) => {
-      if (dropdown !== event.target) {
-        const dropdownInstance = bootstrap.Dropdown.getInstance(dropdown);
-        if (dropdownInstance) {
-          dropdownInstance.hide();
-        }
-      }
-    });
-  } */
-
-  // Recompute the filtered entries based on the current date and all entries
+  // Metodo recompute ottimizzato
   private recompute(): void {
-    // Reset tutti gli array filtrati
+    if (!this._date || !this._allEntries || !this.isModalsModifyMode) {
+      this.resetFilteredArrays();
+      this.updateDisabledFlags();
+      return;
+    }
+
+    const current = this.dateFormat.normalizeDate(this._date);
+    const currentTime = current.getTime();
+
+    // Usa la versione ottimizzata del filtering
+    this.filteredDayWorks = this.filterEntriesByDateOptimized(
+      this._allEntries.day_works,
+      current,
+      currentTime
+    );
+
+    this.filteredRequests = this.filterEntriesByDateOptimized(
+      this._allEntries.requests,
+      current,
+      currentTime
+    );
+
+    this.filteredWorkingTrips = this.filterEntriesByDateOptimized(
+      this._allEntries.working_trips,
+      current,
+      currentTime
+    );
+
+    this.filteredAvailabilities = this.filterEntriesByDateOptimized(
+      this._allEntries.availabilities,
+      current,
+      currentTime
+    );
+
+    // Aggiorna l'oggetto combinato
+    this.filteredEntries = {
+      day_works: this.filteredDayWorks,
+      requests: this.filteredRequests,
+      working_trips: this.filteredWorkingTrips,
+      availabilities: this.filteredAvailabilities,
+    };
+
+    this.updateDisabledFlags();
+  }
+
+  // Precalcola i flag per il template
+  private updateDisabledFlags(): void {
+    this.isDayWorksDisabled = this.filteredEntries.day_works.length === 0 && this.mode === 'DELETE';
+    this.isRequestsDisabled = this.filteredEntries.requests.length === 0 && this.mode === 'DELETE';
+    this.isWorkingTripsDisabled = this.filteredEntries.working_trips.length === 0 && this.mode === 'DELETE';
+    this.isAvailabilitiesDisabled = this.filteredEntries.availabilities.length === 0 && this.mode === 'DELETE';
+  }
+
+  private resetFilteredArrays(): void {
     this.filteredDayWorks = [];
     this.filteredRequests = [];
     this.filteredWorkingTrips = [];
@@ -225,42 +341,5 @@ export class InteractiveButtonComponent implements AfterViewInit {
       working_trips: [],
       availabilities: [],
     };
-
-    if (!this._date || !this._allEntries || !this.isModalsModifyMode) {
-      console.log('No date or entries provided, or in modify mode');
-      return;
-    }
-    console.log('Date and entries provided:', this._date, this._allEntries);
-
-    const current = this.dateFormat.normalizeDate(this._date);
-
-    this.filteredDayWorks = this.filterEntriesByDate(
-      this._allEntries.day_works,
-      current
-    );
-
-    this.filteredRequests = this.filterEntriesByDate(
-      this._allEntries.requests,
-      current
-    );
-
-    this.filteredWorkingTrips = this.filterEntriesByDate(
-      this._allEntries.working_trips,
-      current
-    );
-
-    this.filteredAvailabilities = this.filterEntriesByDate(
-      this._allEntries.availabilities,
-      current
-    );
-
-    // Combina tutti gli array filtrati per retrocompatibilità
-    this.filteredEntries = {
-      day_works: this.filteredDayWorks,
-      requests: this.filteredRequests,
-      working_trips: this.filteredWorkingTrips,
-      availabilities: this.filteredAvailabilities,
-    };
-    console.log('Filtered Entries:', this.filteredEntries);
   }
 }

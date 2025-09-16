@@ -1,39 +1,32 @@
 <div
   class="dropdown-center tt"
   data-bs-toggle="tooltip"
-  title="{{
-    this.mode === 'ADD'
-      ? 'Aggiungi una nuova entry alla giornata'
-      : ('Elimina una entry relativa alla giornata' | translate)
-  }}"
+  [title]="tooltipTitle"
   data-bs-placement="top"
   data-bs-custom-class="custom-tooltip"
-  [attr.id]="'dropdown-' + this._date?.toISOString()"
+  [attr.id]="dropdownId"
 >
   <button
     class="rounded-circle btn btn-icon dropdown-toggle no-caret"
-    [ngClass]="{
-      'bg-primary': this.mode === 'ADD',
-      'bg-danger': this.mode === 'DELETE'
-    }"
+    [ngClass]="buttonClasses"
     data-bs-toggle="dropdown"
-    [attr.data-bs-target]="'#dropdownMenu-' + this._date?.toISOString()"
+    [attr.data-bs-target]="dropdownTargetId"
     aria-expanded="false"
   >
     <fa-icon
-      [icon]="this.mode === 'ADD' ? this.faIcons.plus : this.faIcons.minus"
+      [icon]="buttonIcon"
       class="fa-sm text-light"
     ></fa-icon>
   </button>
   <ul
     class="dropdown-menu"
-    [attr.id]="'dropdownMenu-' + this._date?.toISOString()"
+    [attr.id]="dropdownMenuId"
   >
     <li>
       <a
         class="dropdown-item d-flex align-items-center gap-2"
         (click)="openModal(dayworkModal)"
-        [ngClass]="{ 'disabled-item': this.filteredEntries.day_works.length === 0 && mode === 'DELETE' }"
+        [ngClass]="{ 'disabled-item': isDayWorksDisabled }"
       >
         <fa-icon [icon]="faIcons.briefcase" class="fa-lg"></fa-icon>
         <span>{{ "Incarico" | translate }}</span>
@@ -43,7 +36,7 @@
       <a
         class="dropdown-item d-flex align-items-center gap-2"
         (click)="openModal(requestModal)"
-        [ngClass]="{ 'disabled-item': this.filteredEntries.requests.length === 0 && mode === 'DELETE' }"
+        [ngClass]="{ 'disabled-item': isRequestsDisabled }"
       >
         <fa-icon [icon]="faIcons.request" class="fa-lg"></fa-icon>
         <span>{{ "Richiesta" | translate }}</span>
@@ -53,7 +46,7 @@
       <a
         class="dropdown-item d-flex align-items-center gap-2"
         (click)="openModal(workingTripModal)"
-        [ngClass]="{ 'disabled-item': this.filteredEntries.working_trips.length === 0 && mode === 'DELETE' }"
+        [ngClass]="{ 'disabled-item': isWorkingTripsDisabled }"
       >
         <fa-icon [icon]="faIcons.route" class="fa-lg"></fa-icon>
         <span>{{ "Trasferta" | translate }}</span>
@@ -63,7 +56,7 @@
       <a
         class="dropdown-item d-flex align-items-center gap-2"
         (click)="openModal(availabilityModal)"
-        [ngClass]="{ 'disabled-item': this.filteredEntries.availabilities.length === 0 && mode === 'DELETE' }"
+        [ngClass]="{ 'disabled-item': isAvailabilitiesDisabled }"
       >
         <fa-icon [icon]="faIcons.bell" class="fa-lg"></fa-icon>
         <span>{{ "Reperibilità" | translate }}</span>

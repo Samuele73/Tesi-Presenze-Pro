@@ -5,6 +5,8 @@ import {
   TemplateRef,
   OnInit,
   AfterViewInit,
+  OnDestroy,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { NgbAlert, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
@@ -16,7 +18,6 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { Renderer2, ElementRef } from '@angular/core';
 import { FullCalendarComponent } from '@fullcalendar/angular';
-import { ChangeDetectorRef } from '@angular/core';
 import {
   faPlus,
   faCalendarMinus,
@@ -39,7 +40,6 @@ import {
   monthNamesIt,
   monthNamesEn,
 } from '../const-vars';
-/* import { fi } from 'date-fns/locale'; */
 import { CalendarView } from 'angular-calendar';
 import { WorkingTripModalComponent } from '../modals/working-trip-modal/working-trip-modal.component';
 import { ModalComponent } from '../modals/modalComponent';
@@ -50,87 +50,54 @@ import { weekDayNamesIt, weekDayNamesEn } from '../const-vars';
 import { CalendarStateService } from '../../shared/services/calendar-state.service';
 import { calendar } from '../../shared/models/calendar';
 import { CalendarAvailabilityEntry, CalendarEntity, CalendarEntry } from 'src/generated-client';
+import { Subject, takeUntil } from 'rxjs';
 
-type DistributedModalComponent =  AvailabilityModalComponent | RequestModalComponent | WorkingTripModalComponent;
-type ModalComponentType =  DistributedModalComponent | DayworkModalComponent;
+type DistributedModalComponent = AvailabilityModalComponent | RequestModalComponent | WorkingTripModalComponent;
+type ModalComponentType = DistributedModalComponent | DayworkModalComponent;
 
 declare var bootstrap: any;
 
 @Component({
   selector: 'app-attendance',
-  //changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush, // Abilitato OnPush
   styleUrls: ['./attendance.component.scss'],
   templateUrl: './attendance.component.html',
 })
-export class AttendanceComponent implements OnInit, AfterViewInit {
+export class AttendanceComponent implements OnInit, AfterViewInit, OnDestroy {
+  // Subject per gestire l'unsubscribe
+  private destroy$ = new Subject<void>();
+
   viewDate: Date = new Date();
   events = [];
   view: CalendarView = CalendarView.Month;
+
   @ViewChild('working_trip_modal') workingTripModal!: WorkingTripModalComponent;
-  @ViewChild('availability_modal')
-  availabilityModal!: AvailabilityModalComponent;
+  @ViewChild('availability_modal') availabilityModal!: AvailabilityModalComponent;
   @ViewChild('request_modal') requestModal!: RequestModalComponent;
   @ViewChild('daywork_modal') dayworkModal!: DayworkModalComponent;
+
   dayClicked: Date = new Date();
   faIcons: any = faIcons;
   weekDayNames!: string[];
   monthNames!: string[];
   CalendarEntryType = CalendarEntity.EntryTypeEnum;
 
-  //varibili per server mock
-  /* availabilityEntries: CalendarAvailabilityEntry[] = [
-    {
-      date_from: new Date('2025-02-18'),
-      date_to: new Date('2025-02-21'),
-      project: '',
-    },
-    {
-      date_from: new Date('2025-02-17'),
-      date_to: new Date('2025-02-20'),
-      project: '',
-    },
-    {
-      date_from: new Date('2025-02-28'),
-      date_to: new Date('2025-03-02'),
-      project: '',
-    },
-  ];
-  requestEntries: CalendarRequestEntry[] = [
-    {
-      date_from: new Date('2025-02-18'),
-      date_to: new Date('2025-02-21'),
-      request_type: 'Malattia',
-      time_from: '10:00',
-      time_to: '12:00',
-    },
-    {
-      date_from: new Date('2025-02-14'),
-      date_to: new Date('2025-02-19'),
-      request_type: 'Congedo',
-      time_from: '09:00',
-      time_to: '16:00',
-    },
-  ];
-  workingTripEntries: CalendarWorkingTripEntry[] = [
-    { date_from: new Date('2025-02-18'), date_to: new Date('2025-02-21') },
-    { date_from: new Date('2025-02-14'), date_to: new Date('2025-02-19') },
-  ];
-  dayWorkEntries: CalendarDayWorkEntry[] = [
-    {
-      date_from: new Date('2025-02-13'),
-      date_to: new Date('2025-02-19'),
-      hour_from: '10:00',
-      hour_to: '12:00',
-      project: 'X2',
-    },
-    {
-      date_from: new Date('2025-02-17'),
-      date_to: new Date('2025-02-24'),
-      hour_from: '10:00',
-      hour_to: '12:00',
-      project: 'X2',
-    },
-  ]; */
+  // Valori pre-calcolati per evitare chiamate di funzione nei template
+  dayWorkDateTitle: string = '';
+  currentMonthYear: string = '';
+  currentMonth: string = '';
+  currentYear: string = '';
+  hoursWorked: string = 'Ore lavorate: 0';
+
+  // Cache per i calcoli costosi
+  private dateToTitleCache = new Map<string, string>();
+
+  // Oggetti pre-estratti per evitare accesso a proprietà nei template
+  dayWorksEntries: any[] = [];
+  requestsEntries: any[] = [];
+  workingTripsEntries: any[] = [];
+  availabilitiesEntries: any[] = [];
+
   calendarEntries: calendar = {
     day_works: [],
     requests: [],
@@ -140,87 +107,153 @@ export class AttendanceComponent implements OnInit, AfterViewInit {
 
   errorMessage: string | null = null;
 
-  constructor(private calendarStateService: CalendarStateService) {
+  constructor(
+    private calendarStateService: CalendarStateService,
+    private cdr: ChangeDetectorRef
+  ) {
     this.weekDayNames = weekDayNamesIt;
     this.monthNames = monthNamesIt;
+    this.updatePreCalculatedValues();
   }
 
-  private subscriteToCalendarStateServices() {
-    this.calendarStateService.calendar.subscribe((calendar: calendar) => {
-      this.calendarEntries = calendar;
-      console.log('CALENDAR SUBSCRIPTION, calendar on client', this.calendarEntries, "calendar from server", calendar);
-    });
-    this.calendarStateService.error.subscribe((error) => {
-      this.errorMessage = error;
-    });
+  private subscriteToCalendarStateServices(): void {
+    this.calendarStateService.calendar
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((calendar: calendar) => {
+        this.calendarEntries = calendar;
+        this.updateEntriesReferences();
+        console.log('CALENDAR SUBSCRIPTION, calendar on client', this.calendarEntries, "calendar from server", calendar);
+        this.cdr.markForCheck();
+      });
+
+    this.calendarStateService.error
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((error) => {
+        this.errorMessage = error;
+        this.cdr.markForCheck();
+      });
+  }
+
+  // Aggiorna i riferimenti agli array per evitare accesso a proprietà nei template
+  private updateEntriesReferences(): void {
+    this.dayWorksEntries = this.calendarEntries.day_works || [];
+    this.requestsEntries = this.calendarEntries.requests || [];
+    this.workingTripsEntries = this.calendarEntries.working_trips || [];
+    this.availabilitiesEntries = this.calendarEntries.availabilities || [];
+  }
+
+  // Pre-calcola i valori che vengono utilizzati nei template
+  private updatePreCalculatedValues(): void {
+    this.currentMonth = (this.viewDate.getMonth() + 1).toString();
+    this.currentYear = this.viewDate.getFullYear().toString();
+    this.currentMonthYear = `${this.monthNames[this.viewDate.getMonth()]} ${this.currentYear}`;
+    this.dayWorkDateTitle = this.fromDateToModalTitle(this.dayClicked);
   }
 
   ngOnInit(): void {
     this.subscriteToCalendarStateServices();
     this.calendarStateService.getCalendarByMonthYear(
-      (this.viewDate.getMonth() + 1).toString(),
-      this.viewDate.getFullYear().toString()
+      this.currentMonth,
+      this.currentYear
     );
   }
-
 
   ngAfterViewInit(): void {
     this.initializeBootstrapTooltips();
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.dateToTitleCache.clear();
+  }
+
   initializeBootstrapTooltips(): void {
-      const tooltipTriggerList = document.querySelectorAll(
-        '.tt'
-      );
+    // Usa requestAnimationFrame per evitare problemi di performance
+    requestAnimationFrame(() => {
+      const tooltipTriggerList = document.querySelectorAll('.tt');
       tooltipTriggerList.forEach((el) => new bootstrap.Tooltip(el, {
         container: 'body',
         customClass: 'custom-tooltip'
       }));
+    });
   }
 
   private changeMonth(shift: number): Date {
-    return new Date(this.viewDate.setMonth(this.viewDate.getMonth() + shift));
+    const newDate = new Date(this.viewDate);
+    newDate.setMonth(newDate.getMonth() + shift);
+    return newDate;
   }
 
   previous(): void {
     this.viewDate = this.changeMonth(-1);
+    this.updatePreCalculatedValues();
     this.calendarStateService.getCalendarByMonthYear(
-      (this.viewDate.getMonth() + 1).toString(),
-      this.viewDate.getFullYear().toString()
+      this.currentMonth,
+      this.currentYear
     );
+    this.cdr.markForCheck();
   }
 
   next(): void {
     this.viewDate = this.changeMonth(+1);
+    this.updatePreCalculatedValues();
     this.calendarStateService.getCalendarByMonthYear(
-      (this.viewDate.getMonth() + 1).toString(),
-      this.viewDate.getFullYear().toString()
+      this.currentMonth,
+      this.currentYear
     );
+    this.cdr.markForCheck();
   }
 
   openAddModal(modal: ModalComponentType, date?: Date): void {
-    //dayworkmodal does not have currentDate input
-    if(date && !(modal instanceof DayworkModalComponent)){
+    if (date && !(modal instanceof DayworkModalComponent)) {
       console.log("date:", date);
       modal.currentDate = date;
       console.log("modal date:", modal.currentDate);
     }
-
     modal.open();
   }
 
-  setDateForModals(dayEvent: any) {
+  setDateForModals(dayEvent: any): void {
     console.log('PROVA', dayEvent);
     this.dayClicked = dayEvent.day.date;
+    this.dayWorkDateTitle = this.fromDateToModalTitle(this.dayClicked);
     console.log('CONTROLLA IL DAYCLICKED', this.dayClicked);
+    this.cdr.markForCheck();
   }
 
-  fromDateToModalTitle(date: Date) {
+  fromDateToModalTitle(date: Date): string {
+    if (!date) return '';
+
+    const key = date.toDateString();
+    if (this.dateToTitleCache.has(key)) {
+      return this.dateToTitleCache.get(key) as string;
+    }
+
     const month: string = monthNamesIt[date.getMonth()];
     const day: string = date.getDate().toString();
     const year: string = date.getFullYear().toString();
     const dayWord: string = this.weekDayNames[date.getDay()];
-    return day + ' ' + month + ' ' + year + ' - ' + dayWord;
+    const result: string = `${day} ${month} ${year} - ${dayWord}`;
+
+    // Limita la cache a 50 elementi per evitare memory leaks
+    if (this.dateToTitleCache.size > 50) {
+      const firstKey: string | undefined = this.dateToTitleCache.keys().next().value;
+      if (firstKey) {
+        this.dateToTitleCache.delete(firstKey);
+      }
+    }
+
+    this.dateToTitleCache.set(key, result);
+    return result;
+  }
+
+  trackByDate(index: number, item: any): any {
+    return item?.date?.getTime() || index;
+  }
+
+  trackByDateFrom(index: number, item: any): any {
+    return item?.date_from?.getTime() || index;
   }
 }
 
