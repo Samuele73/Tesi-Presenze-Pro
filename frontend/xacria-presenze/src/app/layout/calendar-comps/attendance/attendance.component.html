@@ -1,6 +1,6 @@
-<!-- template della cella di ogni singolo giorno del calendario -->
+<!-- Template modificato per risolvere l'overflow -->
 <ng-template #customCellTemplate let-day="day" let-locale="locale">
-  <div class="p-2">
+  <div class="p-2 custom-cell-template">
     <div class="mb-3">
       <div class="d-flex justify-content-between">
         <span class="h4 day-number">{{
@@ -26,8 +26,8 @@
     <div class="text-center mb-3 fw-bold text-capitalize">
       {{ hoursWorked | translate }}
     </div>
-    <div>
-      <div class="d-flex flex-column gap-3">
+    <div class="flex-grow-1 overflow-auto">
+      <div class="d-flex flex-column gap-2">
         <app-day-cell-notif
           [icon]="faIcons.briefcase"
           [text]="'incarichi' | translate"
@@ -66,84 +66,100 @@
   </div>
 </ng-template>
 
-<!-- template customizzato per il calendar header -->
 <ng-template #customHedaerTemplate let-days="days">
   <div class="d-flex justify-content-around bg-primary p-1 text-light fw-bold">
-    <div *ngFor="let day of days; trackBy: trackByDate" class="custom-header text-truncate">
+    <div
+      *ngFor="let day of days; trackBy: trackByDate"
+      class="custom-header text-truncate"
+    >
       {{ weekDayNames[day.day] | translate }}
     </div>
   </div>
 </ng-template>
 
-<!-- Impostazione calendario all'interno della pagina -->
-<div class="">
-  <!-- se metto h-100 da lo scroll ma comunque non completo   . overflow-scroll h-50-->
-  <div class="row mb-2">
-    <!-- soluzione temporanea scroll calendario (vedi anche scss) -->
-    <div class="col-10">
-      <div class="d-flex justify-content-center gap-4">
-        <button (click)="previous()" class="bg-transparent border-0" type="button">
-          <fa-icon
-            [icon]="faIcons.arrowLeft"
-            class="text-primary fa-lg"
-          ></fa-icon>
-        </button>
-        <!-- Usa valore pre-calcolato invece di calcolo nel template -->
-        <h2>{{ currentMonthYear | translate }}</h2>
-        <button (click)="next()" class="bg-transparent border-0" type="button">
-          <fa-icon
-            [icon]="faIcons.arrowRight"
-            class="text-primary fa-lg"
-          ></fa-icon>
-        </button>
+<!-- Layout calendario modificato -->
+<div class="calendar-container">
+  <div class="calendar-header-section">
+    <div class="row mb-2">
+      <div class="col-10">
+        <div class="d-flex justify-content-center gap-4">
+          <button
+            (click)="previous()"
+            class="bg-transparent border-0"
+            type="button"
+          >
+            <fa-icon
+              [icon]="faIcons.arrowLeft"
+              class="text-primary fa-lg"
+            ></fa-icon>
+          </button>
+          <h2>{{ currentMonthYear | translate }}</h2>
+          <button
+            (click)="next()"
+            class="bg-transparent border-0"
+            type="button"
+          >
+            <fa-icon
+              [icon]="faIcons.arrowRight"
+              class="text-primary fa-lg"
+            ></fa-icon>
+          </button>
+        </div>
       </div>
     </div>
   </div>
-  <div class="row">
-    <div class="col-10">
-      <mwl-calendar-month-view
-        [viewDate]="viewDate"
-        [events]="events"
-        [cellTemplate]="customCellTemplate"
-        [headerTemplate]="customHedaerTemplate"
-        [locale]="'en'"
-        (dayClicked)="setDateForModals($event)"
-      >
-      </mwl-calendar-month-view>
+
+  <div class="calendar-content">
+    <div class="calendar-main-view">
+      <div class="row calendar-row">
+        <div class=" calendar-col p-0">
+          <mwl-calendar-month-view
+            [viewDate]="viewDate"
+            [events]="events"
+            [cellTemplate]="customCellTemplate"
+            [headerTemplate]="customHedaerTemplate"
+            [locale]="'en'"
+            (dayClicked)="setDateForModals($event)"
+          >
+          </mwl-calendar-month-view>
+        </div>
+      </div>
     </div>
-    <div class="col-2 d-flex flex-column gap-1 add-content-container">
-      <div
-        class="d-flex gap-2 align-items-center"
-        (click)="openAddModal(requestModal)"
-        role="button"
-        tabindex="0"
-        (keydown.enter)="openAddModal(requestModal)"
-        (keydown.space)="openAddModal(requestModal)"
-      >
-        <fa-icon [icon]="faIcons.plus" class="fa-lg"></fa-icon>
-        <span>{{ "Richiesta" | translate }}</span>
-      </div>
-      <div
-        class="d-flex gap-2 align-items-center"
-        (click)="openAddModal(availabilityModal)"
-        role="button"
-        tabindex="0"
-        (keydown.enter)="openAddModal(availabilityModal)"
-        (keydown.space)="openAddModal(availabilityModal)"
-      >
-        <fa-icon [icon]="faIcons.plus" class="fa-lg"></fa-icon>
-        <span>{{ "Reperibilità" | translate }}</span>
-      </div>
-      <div
-        class="d-flex gap-2 align-items-center"
-        (click)="openAddModal(workingTripModal)"
-        role="button"
-        tabindex="0"
-        (keydown.enter)="openAddModal(workingTripModal)"
-        (keydown.space)="openAddModal(workingTripModal)"
-      >
-        <fa-icon [icon]="faIcons.plus" class="fa-lg"></fa-icon>
-        <span>{{ "Trasferta" | translate }}</span>
+    <div class=" calendar-sidebar mx-2">
+      <div class="d-flex flex-column gap-1 add-content-container">
+        <div
+          class="d-flex gap-2 align-items-center"
+          (click)="openAddModal(requestModal)"
+          role="button"
+          tabindex="0"
+          (keydown.enter)="openAddModal(requestModal)"
+          (keydown.space)="openAddModal(requestModal)"
+        >
+          <fa-icon [icon]="faIcons.plus" class="fa-lg"></fa-icon>
+          <span>{{ "Richiesta" | translate }}</span>
+        </div>
+        <div
+          class="d-flex gap-2 align-items-center"
+          (click)="openAddModal(availabilityModal)"
+          role="button"
+          tabindex="0"
+          (keydown.enter)="openAddModal(availabilityModal)"
+          (keydown.space)="openAddModal(availabilityModal)"
+        >
+          <fa-icon [icon]="faIcons.plus" class="fa-lg"></fa-icon>
+          <span>{{ "Reperibilità" | translate }}</span>
+        </div>
+        <div
+          class="d-flex gap-2 align-items-center"
+          (click)="openAddModal(workingTripModal)"
+          role="button"
+          tabindex="0"
+          (keydown.enter)="openAddModal(workingTripModal)"
+          (keydown.space)="openAddModal(workingTripModal)"
+        >
+          <fa-icon [icon]="faIcons.plus" class="fa-lg"></fa-icon>
+          <span>{{ "Trasferta" | translate }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -152,4 +168,3 @@
 <app-working-trip-modal #working_trip_modal></app-working-trip-modal>
 <app-availability-modal #availability_modal></app-availability-modal>
 <app-request-modal #request_modal></app-request-modal>
-

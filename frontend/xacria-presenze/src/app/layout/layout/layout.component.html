@@ -1,29 +1,20 @@
-<!-- <div class="d-flex flex-column min-vh-100">
-  <app-navbar></app-navbar>
-  <div class="d-flex flex-grow-1">
-    <div class="col-auto p-0">
+<div class="d-flex flex-column vh-100">
+  <!-- Navbar sempre in alto -->
+  <app-navbar class="flex-shrink-0"></app-navbar>
+
+  <!-- Contenuto principale -->
+  <div class="d-flex flex-grow-1 overflow-hidden">
+    <!-- Sidebar fissa a sinistra -->
+    <aside class="p-0 flex-shrink-0">
       <app-sidebar></app-sidebar>
-    </div>
-    <div class="col px-4 py-4 d-flex flex-column ">
-      <app-profile-menu [username]="newUsername"></app-profile-menu>
-      <div class=" ">
+    </aside>
+
+    <!-- Contenuto dinamico -->
+    <main class="flex-grow-1 d-flex flex-column px-4 py-4 overflow-hidden">
+      <app-profile-menu [username]="newUsername" class="flex-shrink-0"></app-profile-menu>
+      <div class="flex-grow-1 router-outlet-container">
         <router-outlet></router-outlet>
       </div>
-    </div>
-  </div>
-</div>
- -->
-<div class="h-100 w-100">
-  <app-navbar></app-navbar>
-  <div class="row content-wrapper">
-    <div class="col-auto">
-      <app-sidebar></app-sidebar>
-    </div>
-    <div class="col-10 px-4 py-4 d-flex flex-column h-100 ">
-      <app-profile-menu [username]="newUsername"></app-profile-menu>
-      <div class=" overflow-x-hidden">
-        <router-outlet></router-outlet>
-      </div>
-    </div>
+    </main>
   </div>
 </div>

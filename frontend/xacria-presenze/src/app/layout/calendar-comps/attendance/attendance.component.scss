@@ -49,3 +49,97 @@
   display: none !important;
 }
 
+
+/* Relativi al contenimento del calendario */
+
+
+/* Aggiungi questi stili al tuo file SCSS globale o del componente calendario */
+
+/* Fix per il layout principale - modifica nel tuo app.component */
+.main-content {
+  height: 100vh; /* Altezza fissa per il viewport */
+  overflow: hidden; /* Evita lo scroll sul body */
+}
+
+.router-outlet-container {
+  height: calc(100vh - 120px); /* Sottrai altezza navbar e profile-menu */
+  overflow: hidden;
+}
+
+/* Stili specifici per il calendario */
+.calendar-container {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-header-section {
+  flex-shrink: 0; /* Non si riduce */
+}
+
+.calendar-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+}
+
+.calendar-main-view {
+  flex: 1;
+  overflow: auto; /* Solo qui avremo lo scroll */
+  max-height: calc(100vh - 345px); /* Regola in base ai tuoi header */
+}
+
+.calendar-sidebar {
+  flex-shrink: 0;
+}
+
+/* Stili specifici per angular-calendar */
+mwl-calendar-month-view {
+  height: 100%;
+  overflow: auto;
+}
+
+/* Fix per le celle del calendario */
+.cal-month-view {
+  height: 100%;
+}
+
+.cal-days {
+  overflow: auto;
+  max-height: calc(100% - 50px); /* Sottrai altezza header calendario */
+}
+
+/* Migliora la visualizzazione delle celle */
+.cal-day-cell {
+  min-height: 120px; /* Altezza minima per le celle */
+  overflow-y: auto; /* Scroll interno se necessario */
+}
+
+/* Stili per i tuoi template customizzati */
+.custom-cell-template {
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* Fix per container bootstrap se necessario */
+.row.calendar-row {
+  height: 100%;
+  margin: 0;
+}
+
+.col-10.calendar-col {
+  height: 100%;
+  padding: 0;
+}
+
+/* Media query per dispositivi più piccoli */
+@media (max-width: 768px) {
+  .calendar-main-view {
+    max-height: calc(100vh - 150px);
+  }
+
+  .cal-day-cell {
+    min-height: 100px;
+  }
+}
