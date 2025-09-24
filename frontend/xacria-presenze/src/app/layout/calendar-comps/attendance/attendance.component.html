@@ -85,23 +85,23 @@
         <div class="d-flex justify-content-center gap-4">
           <button
             (click)="previous()"
-            class="bg-transparent border-0"
+            class="calendar-button"
             type="button"
           >
             <fa-icon
               [icon]="faIcons.arrowLeft"
-              class="text-primary fa-lg"
+              class="fa-lg"
             ></fa-icon>
           </button>
           <h2>{{ currentMonthYear | translate }}</h2>
           <button
             (click)="next()"
-            class="bg-transparent border-0"
+            class="calendar-button"
             type="button"
           >
             <fa-icon
               [icon]="faIcons.arrowRight"
-              class="text-primary fa-lg"
+              class="fa-lg"
             ></fa-icon>
           </button>
         </div>
