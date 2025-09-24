@@ -22,17 +22,23 @@
   color: black;
   transition: all 0.2s ease;
 
-   &:hover, &:focus {
-    color: var(--bs-primary);
+  &:hover{
     transform: scale(1.1);
+    color: var(--bs-primary);
+  }
+
+  &:focus {
+    transform: scale(1.1);
+    color: var(--bs-primary);
+    filter: brightness(85%);
   }
 
   &.btn-remove:hover, &.btn-remove:focus {
-    color: red;
+    color: var(--bs-danger);
   }
 
-  &:active {
-    color: var(--bs-primary-darker);
+  &.btn-remove:focus{
+    filter: brightness(85%);
   }
 }
 
