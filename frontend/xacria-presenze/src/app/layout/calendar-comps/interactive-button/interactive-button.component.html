@@ -7,15 +7,16 @@
   [attr.id]="dropdownId"
 >
   <button
-    class="rounded-circle btn btn-icon dropdown-toggle no-caret"
+    class=" calendar-btn dropdown-toggle no-caret"
     [ngClass]="buttonClasses"
     data-bs-toggle="dropdown"
     [attr.data-bs-target]="dropdownTargetId"
     aria-expanded="false"
+    [ngClass]="{'btn-remove': mode === 'DELETE'}"
   >
     <fa-icon
       [icon]="buttonIcon"
-      class="fa-sm text-light"
+      class="fa-lg "
     ></fa-icon>
   </button>
   <ul

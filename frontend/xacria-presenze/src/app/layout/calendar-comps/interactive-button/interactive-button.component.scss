@@ -15,3 +15,24 @@
   background-color: transparent !important;
   color: #6c757d !important;
 }
+
+.calendar-btn{
+  background-color: transparent;
+  border: none;
+  color: black;
+  transition: all 0.2s ease;
+
+   &:hover, &:focus {
+    color: var(--bs-primary);
+    transform: scale(1.1);
+  }
+
+  &.btn-remove:hover, &.btn-remove:focus {
+    color: red;
+  }
+
+  &:active {
+    color: var(--bs-primary-darker);
+  }
+}
+

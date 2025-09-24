@@ -139,11 +139,8 @@ export class InteractiveButtonComponent implements AfterViewInit, OnDestroy {
       : 'Elimina una entry relativa alla giornata';
   }
 
-  get buttonClasses(): any {
-    return {
-      'bg-primary': this.mode === 'ADD',
-      'bg-danger': this.mode === 'DELETE'
-    };
+  get buttonClasses(): any {  
+    return {'btn-remove': this.mode === 'DELETE'}
   }
 
   get buttonIcon(): any {

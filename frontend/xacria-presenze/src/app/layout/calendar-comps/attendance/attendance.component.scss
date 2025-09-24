@@ -133,7 +133,7 @@ mwl-calendar-month-view {
   padding: 0;
 }
 
-.calendar-button{
+.calendar-btn{
   background-color: transparent;
   border: none;
   color: black;
@@ -142,6 +142,10 @@ mwl-calendar-month-view {
    &:hover {
     color: var(--bs-primary);
     transform: scale(1.1);
+  }
+
+  &.remove-button:hover {
+    color: red;
   }
 
   &:active {
