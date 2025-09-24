@@ -83,26 +83,12 @@
     <div class="row mb-2">
       <div class="col-11">
         <div class="d-flex justify-content-center gap-4">
-          <button
-            (click)="previous()"
-            class="calendar-btn"
-            type="button"
-          >
-            <fa-icon
-              [icon]="faIcons.arrowLeft"
-              class="fa-lg"
-            ></fa-icon>
+          <button (click)="previous()" class="calendar-btn" type="button">
+            <fa-icon [icon]="faIcons.arrowLeft" class="fa-lg"></fa-icon>
           </button>
           <h2>{{ currentMonthYear | translate }}</h2>
-          <button
-            (click)="next()"
-            class="calendar-btn"
-            type="button"
-          >
-            <fa-icon
-              [icon]="faIcons.arrowRight"
-              class="fa-lg"
-            ></fa-icon>
+          <button (click)="next()" class="calendar-btn" type="button">
+            <fa-icon [icon]="faIcons.arrowRight" class="fa-lg"></fa-icon>
           </button>
         </div>
       </div>
@@ -112,7 +98,7 @@
   <div class="calendar-content">
     <div class="calendar-main-view">
       <div class="row calendar-row">
-        <div class=" calendar-col p-0">
+        <div class="calendar-col p-0">
           <mwl-calendar-month-view
             [viewDate]="viewDate"
             [events]="events"
@@ -125,10 +111,10 @@
         </div>
       </div>
     </div>
-    <div class=" calendar-sidebar mx-2">
-      <div class="d-flex flex-column gap-1 add-content-container">
-        <div
-          class="d-flex gap-2 align-items-center"
+    <div class="calendar-sidebar mx-2">
+      <div class="d-flex flex-column gap-1">
+        <button
+          class="d-flex gap-2 align-items-center calendar-btn"
           (click)="openAddModal(requestModal)"
           role="button"
           tabindex="0"
@@ -137,9 +123,9 @@
         >
           <fa-icon [icon]="faIcons.plus" class="fa-lg"></fa-icon>
           <span>{{ "Richiesta" | translate }}</span>
-        </div>
-        <div
-          class="d-flex gap-2 align-items-center"
+        </button>
+        <button
+          class="d-flex gap-2 align-items-center calendar-btn"
           (click)="openAddModal(availabilityModal)"
           role="button"
           tabindex="0"
@@ -148,9 +134,9 @@
         >
           <fa-icon [icon]="faIcons.plus" class="fa-lg"></fa-icon>
           <span>{{ "Reperibilità" | translate }}</span>
-        </div>
-        <div
-          class="d-flex gap-2 align-items-center"
+        </button>
+        <button
+          class="d-flex gap-2 align-items-center calendar-btn"
           (click)="openAddModal(workingTripModal)"
           role="button"
           tabindex="0"
@@ -159,7 +145,7 @@
         >
           <fa-icon [icon]="faIcons.plus" class="fa-lg"></fa-icon>
           <span>{{ "Trasferta" | translate }}</span>
-        </div>
+        </button>
       </div>
     </div>
   </div>

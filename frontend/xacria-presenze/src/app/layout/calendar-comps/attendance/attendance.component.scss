@@ -17,7 +17,7 @@
   color: gray;
 }
 
-.add-content-container .d-flex:hover  {
+/* .add-content-container .d-flex:hover  {
   cursor: pointer;
 
   fa-icon{
@@ -26,7 +26,7 @@
     padding-left: 4px;
     transition: all 0.3s ease;
   }
-}
+} */
 
 .btn-icon:hover{
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
@@ -132,27 +132,6 @@ mwl-calendar-month-view {
   height: 100%;
   padding: 0;
 }
-
-.calendar-btn{
-  background-color: transparent;
-  border: none;
-  color: black;
-  transition: all 0.2s ease;
-
-   &:hover {
-    color: var(--bs-primary);
-    transform: scale(1.1);
-  }
-
-  &.remove-button:hover {
-    color: red;
-  }
-
-  &:active {
-    color: var(--bs-primary-darker);
-  }
-}
-
 
 /* Media query per dispositivi più piccoli */
 @media (max-width: 768px) {
