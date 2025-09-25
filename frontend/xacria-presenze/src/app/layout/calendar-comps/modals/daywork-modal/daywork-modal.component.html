@@ -29,9 +29,9 @@
             <app-form-error [formControlRef]="project" [validator]="'required'" [errorText]="'Seleziona il progetto'"></app-form-error>
           </div>
         </div>
-        <div class="d-flex gap-2 ">
-          <button class="rounded-circle bg-primary btn btn-icon" type="button" (click)="addNewDayWork()"><fa-icon [icon]="faIcons.plus" class="fa-sm text-light"></fa-icon></button>
+        <div class="d-flex gap-2 align-items-center ">
           <h4>{{"Aggiungi orario lavorativo" | translate}}</h4>
+          <button class="calendar-btn mb-1" type="button" (click)="addNewDayWork()"><fa-icon [icon]="faIcons.plus" class="fa-lg "></fa-icon></button>
         </div>
         <div formArrayName="day_works">
           <div *ngFor="let daywork of dayWorks.controls; let i = index" formGroupName="{{i}}">
@@ -54,7 +54,7 @@
                 <app-form-error [formControlRef]="dayWorks.at(i).get('project')" [validator]="'required'" [errorText]="'Seleziona il progetto'"></app-form-error>
               </div>
               <div class="d-flex align-items-end">
-                <button class="rounded-circle bg-danger btn btn-icon" (click)="removeDayWork(i)"><fa-icon [icon]="faIcons.xSimbol" class="fa-sm text-light"></fa-icon></button>
+                <button class="rounded-2 bg-danger btn btn-icon" (click)="removeDayWork(i)"><fa-icon [icon]="faIcons.xSimbol" class="fa-sm text-light"></fa-icon></button>
               </div>
             </div>
             <hr class="my-4 border-1" *ngIf="i != (dayWorks.controls.length - 1)">
