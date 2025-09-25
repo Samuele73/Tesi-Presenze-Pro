@@ -67,7 +67,7 @@
                 <app-form-error [formControlRef]="availabilities.at(i).get('project')" [validator]="'required'" [errorText]="'Seleziona il progetto'"></app-form-error>
               </div>
               <div class="d-flex align-items-end">
-                <button class="rounded-circle bg-danger btn btn-icon" type="button" (click)="toggleEntryDelete(availability.value, i)"><fa-icon [icon]="faIcons.xSimbol" class="fa-sm text-light"></fa-icon></button>
+                <button class="rounded-2 bg-danger btn btn-icon" type="button" (click)="toggleEntryDelete(availability.value, i)"><fa-icon [icon]="faIcons.xSimbol" class="fa-sm text-light"></fa-icon></button>
               </div>
             </div>
             <hr class="my-4 border-1" *ngIf="i != (availabilities.controls.length - 1)">

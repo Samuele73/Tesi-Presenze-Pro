@@ -2,11 +2,10 @@
   font-size: 0.9em;
 }
 
-.calendar-button:hover{
+.calendar-button-hover:hover{
   cursor: pointer;
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
   scale: (1.02);
-  transition: all 0.3s ease;
+  transition: all 0.1s ease;
 }
 
 /* .add-content-container .d-flex:hover  {

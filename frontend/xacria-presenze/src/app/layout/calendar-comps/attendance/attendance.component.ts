@@ -48,7 +48,7 @@ import { RequestModalComponent } from '../modals/request-modal/request-modal.com
 import { DayworkModalComponent } from '../modals/daywork-modal/daywork-modal.component';
 import { weekDayNamesIt, weekDayNamesEn } from '../const-vars';
 import { CalendarStateService } from '../../shared/services/calendar-state.service';
-import { calendar } from '../../shared/models/calendar';
+import { calendar, identifiableCalendarWorkingDay } from '../../shared/models/calendar';
 import { CalendarAvailabilityEntry, CalendarEntity, CalendarEntry } from 'src/generated-client';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -122,6 +122,7 @@ export class AttendanceComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((calendar: calendar) => {
         this.calendarEntries = calendar;
         this.updateEntriesReferences();
+        this.hoursWorked = `Ore lavorate: ${this.calculateHoursWorked(this.viewDate)}`;
         console.log('CALENDAR SUBSCRIPTION, calendar on client', this.calendarEntries, "calendar from server", calendar);
         this.cdr.markForCheck();
       });
@@ -255,6 +256,38 @@ export class AttendanceComponent implements OnInit, AfterViewInit, OnDestroy {
   trackByDateFrom(index: number, item: any): any {
     return item?.date_from?.getTime() || index;
   }
+
+  calculateHoursWorked(date: Date): number {
+  if (!date || !this.calendarEntries.day_works) return 0;
+
+  const totalHours = this.calendarEntries.day_works
+    .filter((entry: identifiableCalendarWorkingDay) => {
+      const entryDate = new Date(entry.calendarEntry.dateFrom || '');
+      return (
+        entryDate.getDate() === date.getDate() &&
+        entryDate.getMonth() === date.getMonth() &&
+        entryDate.getFullYear() === date.getFullYear()
+      );
+    })
+    .reduce((sum, entry) => {
+      const from = entry.calendarEntry.hourFrom;
+      const to = entry.calendarEntry.hourTo;
+
+      if (!from || !to) return sum;
+
+      const [fh, fm] = from.split(':').map(Number);
+      const [th, tm] = to.split(':').map(Number);
+
+      const fromMinutes = fh * 60 + fm;
+      const toMinutes = th * 60 + tm;
+
+      const diffHours = (toMinutes - fromMinutes) / 60;
+
+      return sum + (diffHours > 0 ? diffHours : 0);
+    }, 0);
+
+  return Math.floor(totalHours);
+}
 }
 
 export const faIcons = {

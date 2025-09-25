@@ -195,7 +195,7 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit, 
 
   // Aggiorna le proprietà cached per il template
   private updateCachedProperties(): void {
-    this._buttonText = this.notifs + " " + this.text;
+    this._buttonText = this.text;
     this._hasNotifications = this.notifs > 0;
     this._buttonClasses = {
       'bg-primary': this._hasNotifications,

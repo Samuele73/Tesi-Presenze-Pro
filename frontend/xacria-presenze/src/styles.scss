@@ -60,6 +60,15 @@
     filter: brightness(75%);
   }
 }
+
+.delete-mode{
+  border: 2px solid var(--bs-danger);
+  border-radius: 10px;
+  padding: 16px;
+  transition: all 0.1s ease;
+}
+
+
 /* FINE CALENDARIO */
 
 .green{

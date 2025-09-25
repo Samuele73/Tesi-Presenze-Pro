@@ -119,7 +119,8 @@ mwl-calendar-month-view {
 /* Stili per i tuoi template customizzati */
 .custom-cell-template {
   height: 100%;
-  overflow-y: auto;
+  max-width: 180px;
+  /* overflow-y: auto; */ //se vi è un problema di overflow controlla qui
 }
 
 /* Fix per container bootstrap se necessario */

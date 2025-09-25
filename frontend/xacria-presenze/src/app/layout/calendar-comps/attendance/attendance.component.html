@@ -23,8 +23,8 @@
         </div>
       </div>
     </div>
-    <div class="text-center mb-3 fw-bold text-capitalize">
-      {{ hoursWorked | translate }}
+    <div class="text-center mb-3 fw-semibold text-capitalize">
+      {{ "Ore lavorate: " + this.calculateHoursWorked(day.date) | translate }}
     </div>
     <div class="flex-grow-1 overflow-auto">
       <div class="d-flex flex-column gap-2">
@@ -122,7 +122,7 @@
           (keydown.space)="openAddModal(requestModal)"
         >
           <fa-icon [icon]="faIcons.plus" class="fa-lg"></fa-icon>
-          <span>{{ "Richiesta" | translate }}</span>
+          <span class="text-black">{{ "Richiesta" | translate }}</span>
         </button>
         <button
           class="d-flex gap-2 align-items-center calendar-btn"
@@ -133,7 +133,7 @@
           (keydown.space)="openAddModal(availabilityModal)"
         >
           <fa-icon [icon]="faIcons.plus" class="fa-lg"></fa-icon>
-          <span>{{ "Reperibilità" | translate }}</span>
+          <span class="text-black">{{ "Reperibilità" | translate }}</span>
         </button>
         <button
           class="d-flex gap-2 align-items-center calendar-btn"
@@ -144,7 +144,7 @@
           (keydown.space)="openAddModal(workingTripModal)"
         >
           <fa-icon [icon]="faIcons.plus" class="fa-lg"></fa-icon>
-          <span>{{ "Trasferta" | translate }}</span>
+          <span class="text-black">{{ "Trasferta" | translate }}</span>
         </button>
       </div>
     </div>
