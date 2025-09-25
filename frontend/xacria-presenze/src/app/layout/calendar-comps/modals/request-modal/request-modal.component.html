@@ -22,7 +22,7 @@
           <div class="row mb-3">
             <div class="col-10">
               <h4>{{"Data" | translate}}</h4>
-              <div class="row">
+              <div class="row text-primary">
                 <div class="col-6">
                   <label for="date-from" class="form-label h5">{{"Da" | translate}}</label>
                   <input type="date" class="form-control" formControlName="dateFrom">
@@ -39,7 +39,7 @@
           <div class="row">
             <div class="col-10">
               <h4>{{"Ora" | translate}}</h4>
-              <div class="row gap-0">
+              <div class="row gap-0 text-primary">
                 <div class="col-6">
                   <label for="timeFrom" class="form-label h5">{{"Da" | translate}}</label>
                   <input type="time" class="form-control w-100" id="timeFrom" formControlName="timeFrom">
@@ -80,7 +80,7 @@
           </div>
           <div class="accordion-collapse collapse"  id="{{i}}"> <!-- se vuoi che rimanga solo un item aperto rimetti data-bs-parent="#requests_accordion" -->
             <div class="accordion-body">
-              <div class="row mb-3">
+              <div class="row mb-3 ">
                 <div class="col-10">
                   <h4>{{"Tipo di richiesta" | translate}}</h4>
                   <select name="form-select" class="form-select" formControlName="requestType">
