@@ -1,5 +1,13 @@
 <div class="d-flex gap-2 align-items-center" (click)="openModifyModal()">
   <fa-icon [icon]="icon" class="fa-lg"></fa-icon>
+  <div *ngIf="this.notifs" class="d-flex align-items-center gap-1">
+    <span
+      class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+      style="width: 18px; height: 18px; font-size: 12px"
+      >{{ this.notifs }}</span
+    >
+    <!-- <span class="text-primary" style="line-height: 1">{{ this.notifs }}</span> -->
+  </div>
   <button
     class="border-0 rounded-2 text-light calendar-button calendar-button-hover bg-secondary"
     [ngClass]="{ 'calendar-button-hover': this.notifs }"
@@ -8,13 +16,7 @@
     {{ buttonText }}
   </button>
   <!-- entry notif. make a component for it -->
-  <div *ngIf="this.notifs" class="d-flex align-items-center gap-1">
-    <span
-      class="rounded-circle bg-primary d-inline-block shadow"
-      style="width: 10px; height: 10px"
-    ></span>
-    <span class="text-primary" style="line-height: 1">{{ this.notifs }}</span>
-  </div>
+
 </div>
 
 <ng-container *ngIf="isTemplateReady">

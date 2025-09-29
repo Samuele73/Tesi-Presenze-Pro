@@ -42,3 +42,24 @@
   }
 }
 
+
+.dropdown-menu a:hover {
+  cursor: pointer;
+}
+
+.dropdown-menu a:hover fa-icon{
+  color: var(--bs-primary);
+  transform: scale(1.1);
+  transition: all 0.2s ease;
+}
+
+.dropdown-menu a:active{
+  color: var(--bs-primary);
+  transform: scale(1.1);
+  background-color: white;
+  transition: all 0.2s ease;
+}
+
+.delete-dropdown a:hover fa-icon{
+  color: var(--bs-danger);
+}
