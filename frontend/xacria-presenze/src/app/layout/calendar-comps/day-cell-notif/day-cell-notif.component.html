@@ -1,11 +1,7 @@
 <div class="d-flex gap-2 align-items-center" (click)="openModifyModal()">
   <fa-icon [icon]="icon" class="fa-lg"></fa-icon>
   <div *ngIf="this.notifs" class="d-flex align-items-center gap-1">
-    <span
-      class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
-      style="width: 18px; height: 18px; font-size: 12px"
-      >{{ this.notifs }}</span
-    >
+    <app-status-badge [notifs]="this.notifs" [status]="'ACCEPTED'"></app-status-badge>
     <!-- <span class="text-primary" style="line-height: 1">{{ this.notifs }}</span> -->
   </div>
   <button
