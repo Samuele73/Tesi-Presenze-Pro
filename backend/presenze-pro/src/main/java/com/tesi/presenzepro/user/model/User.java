@@ -27,75 +27,9 @@ public class User implements UserDetails {
     private String email;
     private String pwd;
     //Altri dati
-    private String name;
-    private String surname;
-    private Long serialNum;
-    private String duty;
-    private String employmentType;
-    private Date hireDate;
-    private Long iban;
-    private Date birthDate;
-    private String address;
-    private String phone;
-
-
+    private UserProfile profile;
+    private UserData data;
     private Role role;
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPwd(String pwd) {
-        this.pwd = pwd;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public void setSerialNum(Long serialNum) {
-        this.serialNum = serialNum;
-    }
-
-    public void setDuty(String duty) {
-        this.duty = duty;
-    }
-
-    public void setEmploymentType(String employmentType) {
-        this.employmentType = employmentType;
-    }
-
-    public void setHireDate(Date hireDate) {
-        this.hireDate = hireDate;
-    }
-
-    public void setIban(Long iban) {
-        this.iban = iban;
-    }
-
-    public void setBirthDate(Date birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

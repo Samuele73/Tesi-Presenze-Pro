@@ -10,15 +10,6 @@
  * Do not edit the class manually.
  */
 
-export interface UserProfile { 
-    name?: string;
-    surname?: string;
-    serialNum?: number;
-    duty?: string;
-    employmentType?: string;
-    hireDate?: Date;
-    birthDate?: Date;
-    address?: string;
-    phone?: string;
-    iban?: number;
+export interface UserData { 
+    assignedProjects?: Array<string>;
 }

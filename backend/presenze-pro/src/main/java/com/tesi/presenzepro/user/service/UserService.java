@@ -3,10 +3,7 @@ package com.tesi.presenzepro.user.service;
 import com.mongodb.DuplicateKeyException;
 import com.tesi.presenzepro.exception.DuplicateEmailException;
 import com.tesi.presenzepro.jwt.JwtUtils;
-import com.tesi.presenzepro.user.dto.LoginRequestDto;
-import com.tesi.presenzepro.user.dto.NewPasswordDto;
-import com.tesi.presenzepro.user.dto.SignInRequestDto;
-import com.tesi.presenzepro.user.dto.UserAuthResponseDto;
+import com.tesi.presenzepro.user.dto.*;
 import com.tesi.presenzepro.user.mapper.UserMapper;
 import com.tesi.presenzepro.user.model.PasswordResetToken;
 import com.tesi.presenzepro.user.model.User;
@@ -101,13 +98,13 @@ public class UserService {
         return jwtUtils.getUsernameFromJwt(tkn);
     }
 
-    public UserProfile getUserProfile(HttpServletRequest request){
+    public ProfileResponseDto getUserProfile(HttpServletRequest request){
         String email = this.getUserEmailFromRequest(request);
         Optional<User> user = repository.findByEmail(email);
         return user.map(userMapper::fromUserToUserProfile).orElse(null);
     }
 
-    public UserProfile updateUserProfile(User updatedUserProfile){
+    public ProfileResponseDto updateUserProfile(User updatedUserProfile){
         System.out.println("AGGIORNAMENTO UTENTE PROFILO:" + repository.findByIdAndModify(updatedUserProfile));
         Optional<User> newUserProfile = repository.findByIdAndModify(updatedUserProfile);
         return newUserProfile.map(userMapper::fromUserToUserProfile).orElse(null);

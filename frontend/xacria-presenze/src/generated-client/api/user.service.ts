@@ -19,10 +19,10 @@ import { Observable }                                        from 'rxjs';
 
 import { LoginRequestDto } from '../model/loginRequestDto';
 import { NewPasswordDto } from '../model/newPasswordDto';
+import { ProfileResponseDto } from '../model/profileResponseDto';
 import { SignInRequestDto } from '../model/signInRequestDto';
 import { User } from '../model/user';
 import { UserAuthResponseDto } from '../model/userAuthResponseDto';
-import { UserProfile } from '../model/userProfile';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -120,9 +120,9 @@ export class UserService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getUserProfile(observe?: 'body', reportProgress?: boolean): Observable<UserProfile>;
-    public getUserProfile(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserProfile>>;
-    public getUserProfile(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserProfile>>;
+    public getUserProfile(observe?: 'body', reportProgress?: boolean): Observable<ProfileResponseDto>;
+    public getUserProfile(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<ProfileResponseDto>>;
+    public getUserProfile(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<ProfileResponseDto>>;
     public getUserProfile(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
@@ -147,7 +147,7 @@ export class UserService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<UserProfile>('get',`${this.basePath}/users/profile`,
+        return this.httpClient.request<ProfileResponseDto>('get',`${this.basePath}/users/profile`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -413,9 +413,9 @@ export class UserService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateUserProfile(body: User, observe?: 'body', reportProgress?: boolean): Observable<UserProfile>;
-    public updateUserProfile(body: User, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserProfile>>;
-    public updateUserProfile(body: User, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserProfile>>;
+    public updateUserProfile(body: User, observe?: 'body', reportProgress?: boolean): Observable<ProfileResponseDto>;
+    public updateUserProfile(body: User, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<ProfileResponseDto>>;
+    public updateUserProfile(body: User, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<ProfileResponseDto>>;
     public updateUserProfile(body: User, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
@@ -449,7 +449,7 @@ export class UserService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<UserProfile>('put',`${this.basePath}/users/profile`,
+        return this.httpClient.request<ProfileResponseDto>('put',`${this.basePath}/users/profile`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,

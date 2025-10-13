@@ -1,6 +1,7 @@
 package com.tesi.presenzepro.user.mapper;
 
 import com.tesi.presenzepro.user.dto.LoginRequestDto;
+import com.tesi.presenzepro.user.dto.ProfileResponseDto;
 import com.tesi.presenzepro.user.model.Role;
 import com.tesi.presenzepro.user.model.User;
 import com.tesi.presenzepro.user.model.UserProfile;
@@ -12,8 +13,7 @@ public class UserMapper {
 
     public User fromSigninToUser(SignInRequestDto dto){
         return User.builder()
-                .name(dto.name())
-                .surname(dto.surname())
+                .profile(new UserProfile(dto.name(), dto.surname()))
                 .email(dto.email())
                 .pwd(dto.password())
                 .role(Role.USER) //STIAMO ASSUMENDO SIANO TUTTI USER. TOGLIERE QUANDO SI AGGIUNGONO ALTRI RUOLI
@@ -29,7 +29,29 @@ public class UserMapper {
 
 
 
-    public UserProfile fromUserToUserProfile(User dto){
-        return new UserProfile(dto.getName(), dto.getSurname(), dto.getEmail(), dto.getSerialNum(), dto.getDuty(), dto.getEmploymentType(), dto.getHireDate(), dto.getBirthDate(), dto.getAddress(), dto.getPhone(), dto.getIban(), dto.getRole());
+    public ProfileResponseDto fromUserToUserProfile(User user){
+        final UserProfile userProfile = user.getProfile();
+        if (userProfile == null) {
+            return new ProfileResponseDto(
+                    null, null, null, null, null, null,
+                    null, null, null, null,
+                    user.getEmail(),
+                    user.getRole()
+            );
+        }
+        return new ProfileResponseDto(
+                userProfile.name(),
+                userProfile.surname(),
+                userProfile.serialNum(),
+                userProfile.duty(),
+                userProfile.employmentType(),
+                userProfile.hireDate(),
+                userProfile.birthDate(),
+                userProfile.address(),
+                userProfile.phone(),
+                userProfile.iban(),
+                user.getEmail(),
+                user.getRole()
+        );
     }
 }

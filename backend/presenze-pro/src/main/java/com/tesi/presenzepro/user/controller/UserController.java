@@ -1,12 +1,9 @@
 package com.tesi.presenzepro.user.controller;
 
-import com.tesi.presenzepro.user.dto.LoginRequestDto;
+import com.tesi.presenzepro.user.dto.*;
 import com.tesi.presenzepro.user.model.User;
 import com.tesi.presenzepro.user.model.UserProfile;
 import com.tesi.presenzepro.user.service.UserService;
-import com.tesi.presenzepro.user.dto.NewPasswordDto;
-import com.tesi.presenzepro.user.dto.SignInRequestDto;
-import com.tesi.presenzepro.user.dto.UserAuthResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -53,16 +50,17 @@ public class UserController {
     //Utilizzato per reperire i dati del profilo dell
     @Operation(description = "Ottieni il profilo utente",security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/profile")
-    public ResponseEntity<UserProfile> getUserProfile(HttpServletRequest request){
-         final UserProfile user = service.getUserProfile(request);
+    public ResponseEntity<ProfileResponseDto> getUserProfile(HttpServletRequest request){
+         final ProfileResponseDto user = service.getUserProfile(request);
+        System.out.println("profile user: " + user);
          return ResponseEntity.ok(user);
     }
 
     //Implementare il metodo di aggiornamento
     @Operation(description = "Modifica le credenziali del profilo utente", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping("/profile")
-    public ResponseEntity<UserProfile> updateUserProfile(@RequestBody User updatedUserProfile){
-        final UserProfile newProfile = service.updateUserProfile(updatedUserProfile);
+    public ResponseEntity<ProfileResponseDto> updateUserProfile(@RequestBody User updatedUserProfile){
+        final ProfileResponseDto newProfile = service.updateUserProfile(updatedUserProfile);
         return ResponseEntity.status(HttpStatus.OK).body(newProfile);
     }
 

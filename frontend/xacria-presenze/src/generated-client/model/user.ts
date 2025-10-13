@@ -10,28 +10,22 @@
  * Do not edit the class manually.
  */
 import { GrantedAuthority } from './grantedAuthority';
+import { UserData } from './userData';
+import { UserProfile } from './userProfile';
 
 export interface User { 
     id?: string;
     email?: string;
     pwd?: string;
-    name?: string;
-    surname?: string;
-    serialNum?: number;
-    duty?: string;
-    employmentType?: string;
-    hireDate?: Date;
-    iban?: number;
-    birthDate?: Date;
-    address?: string;
-    phone?: string;
+    profile?: UserProfile;
+    data?: UserData;
     role?: User.RoleEnum;
-    password?: string;
     enabled?: boolean;
+    password?: string;
     authorities?: Array<GrantedAuthority>;
     username?: string;
-    credentialsNonExpired?: boolean;
     accountNonExpired?: boolean;
+    credentialsNonExpired?: boolean;
     accountNonLocked?: boolean;
 }
 export namespace User {

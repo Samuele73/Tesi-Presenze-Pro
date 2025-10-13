@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-export interface UserProfile { 
+export interface ProfileResponseDto { 
     name?: string;
     surname?: string;
     serialNum?: number;
@@ -21,4 +21,13 @@ export interface UserProfile {
     address?: string;
     phone?: string;
     iban?: number;
+    email?: string;
+    role?: ProfileResponseDto.RoleEnum;
+}
+export namespace ProfileResponseDto {
+    export type RoleEnum = 'USER' | 'ADMIN';
+    export const RoleEnum = {
+        USER: 'USER' as RoleEnum,
+        ADMIN: 'ADMIN' as RoleEnum
+    };
 }

@@ -1,8 +1,10 @@
-package com.tesi.presenzepro.user.model;
+package com.tesi.presenzepro.user.dto;
+
+import com.tesi.presenzepro.user.model.Role;
 
 import java.util.Date;
 
-public record UserProfile(
+public record ProfileResponseDto(
         String name,
         String surname,
         Long serialNum,
@@ -12,9 +14,8 @@ public record UserProfile(
         Date birthDate,
         String address,
         String phone,
-        Long iban
+        Long iban,
+        String email,
+        Role role
 ) {
-    public UserProfile(String name, String surname) {
-        this(name, surname, null, null, null, null, null, null, null, null);
-    }
 }
