@@ -71,6 +71,10 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
     } else this.initializeModifyForm();
   }
 
+  private emptyToDeleteEntries(): void {
+    this.toDeleteEntries = [];
+  }
+
   initializeModifyForm(): void {
     let entries: any[] = [];
     this.calendarEntries.forEach((entry: identifiableCalendarWorkingTrip) => {
@@ -154,10 +158,12 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
       .result.then(
         (result) => {
           this.closeResult = `Closed with: ${result}`;
+          this.emptyToDeleteEntries();
         },
         (reason) => {
           this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
           this.initializeForm();
+          this.emptyToDeleteEntries();
         }
       );
   }

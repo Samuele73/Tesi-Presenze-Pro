@@ -183,12 +183,18 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
       .result.then(
         (result) => {
           this.closeResult = `Closed with: ${result}`;
+          this.emptyToDeleteEntries();
         },
         (reason) => {
           this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
           this.initializeForm();
+          this.emptyToDeleteEntries();
         }
       );
+  }
+
+  private emptyToDeleteEntries(): void {
+    this.toDeleteEntries = [];
   }
 
   private getDismissReason(reason: any): string {

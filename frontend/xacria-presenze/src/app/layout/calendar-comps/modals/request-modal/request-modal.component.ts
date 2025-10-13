@@ -80,6 +80,10 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     } else this.initializeModifyForm();
   }
 
+  private emptyToDeleteEntries(): void {
+    this.toDeleteEntries = [];
+  }
+
   private updateEntries(): void {
     const currentEntries: ({ id: string } & CalendarRequestEntry)[] =
       this.requests.value;
@@ -142,10 +146,12 @@ export class RequestModalComponent implements ModalComponent, OnInit {
       .result.then(
         (result) => {
           this.closeResult = `Closed with: ${result}`;
+          this.emptyToDeleteEntries();
         },
         (reason) => {
           this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
           this.initializeForm();
+          this.emptyToDeleteEntries();
         }
       );
   }

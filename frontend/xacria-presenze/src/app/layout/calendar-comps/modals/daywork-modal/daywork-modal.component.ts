@@ -88,6 +88,10 @@ export class DayworkModalComponent
     });
   }
 
+  private emptyToDeleteEntries(): void {
+    this.toDeleteEntries = [];
+  }
+
   //Aggiunge un nuovo formGroup per la selezione di un nuovo lavoro nel form daywork.
   createNewDayWork(entry?: identifiableCalendarWorkingDay): FormGroup {
     let group: FormGroup;
@@ -166,10 +170,12 @@ export class DayworkModalComponent
       .result.then(
         (result) => {
           this.closeResult = `Closed with: ${result}`;
+          this.emptyToDeleteEntries();
         },
         (reason) => {
           this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
           this.initializeForm();
+          this.emptyToDeleteEntries();
         }
       );
   }
