@@ -7,6 +7,7 @@ import com.tesi.presenzepro.user.dto.*;
 import com.tesi.presenzepro.user.mapper.UserMapper;
 import com.tesi.presenzepro.user.model.PasswordResetToken;
 import com.tesi.presenzepro.user.model.User;
+import com.tesi.presenzepro.user.model.UserData;
 import com.tesi.presenzepro.user.model.UserProfile;
 import com.tesi.presenzepro.user.repository.PasswordResetTokenRespository;
 import com.tesi.presenzepro.user.repository.UserRepository;
@@ -194,4 +195,9 @@ public class UserService {
         return jwtUtils.getUsernameFromJwt(tkn);
     }
 
+    public UserData getUserData(HttpServletRequest request) {
+        String email = this.getUserEmailFromRequest(request);
+        Optional<User> user = repository.findByEmail(email);
+        return user.map(userMapper::fromUserToUserData).orElse(null);
+    }
 }

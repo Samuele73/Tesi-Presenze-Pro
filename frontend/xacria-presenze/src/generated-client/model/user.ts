@@ -20,13 +20,13 @@ export interface User {
     profile?: UserProfile;
     data?: UserData;
     role?: User.RoleEnum;
-    enabled?: boolean;
     password?: string;
-    authorities?: Array<GrantedAuthority>;
+    enabled?: boolean;
     username?: string;
+    authorities?: Array<GrantedAuthority>;
+    accountNonLocked?: boolean;
     accountNonExpired?: boolean;
     credentialsNonExpired?: boolean;
-    accountNonLocked?: boolean;
 }
 export namespace User {
     export type RoleEnum = 'USER' | 'ADMIN';

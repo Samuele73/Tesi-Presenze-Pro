@@ -4,6 +4,7 @@ import com.tesi.presenzepro.user.dto.LoginRequestDto;
 import com.tesi.presenzepro.user.dto.ProfileResponseDto;
 import com.tesi.presenzepro.user.model.Role;
 import com.tesi.presenzepro.user.model.User;
+import com.tesi.presenzepro.user.model.UserData;
 import com.tesi.presenzepro.user.model.UserProfile;
 import com.tesi.presenzepro.user.dto.SignInRequestDto;
 import org.springframework.stereotype.Service;
@@ -26,8 +27,6 @@ public class UserMapper {
                 .pwd(dto.password())
                 .build();
     }
-
-
 
     public ProfileResponseDto fromUserToUserProfile(User user){
         final UserProfile userProfile = user.getProfile();
@@ -53,5 +52,9 @@ public class UserMapper {
                 user.getEmail(),
                 user.getRole()
         );
+    }
+
+    public UserData fromUserToUserData(User user){
+        return new UserData(user.getData().assignedProjects());
     }
 }

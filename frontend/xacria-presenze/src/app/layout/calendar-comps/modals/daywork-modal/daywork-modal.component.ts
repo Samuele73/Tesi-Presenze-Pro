@@ -31,7 +31,7 @@ export class DayworkModalComponent
   implements ModalComponent, OnChanges, OnInit
 {
   form!: FormGroup;
-  validProjects: string[] = projects;
+  validProjects: string[] = localStorage.getItem('user_projects') ? JSON.parse(localStorage.getItem('user_projects')!) : [];;
   @ViewChild('modal', { static: true }) modalElement!: ElementRef;
   @Input() date!: Date;
   @Input() dateString!: string;

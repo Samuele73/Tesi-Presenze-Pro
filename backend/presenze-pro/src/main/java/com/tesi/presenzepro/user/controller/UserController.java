@@ -2,6 +2,7 @@ package com.tesi.presenzepro.user.controller;
 
 import com.tesi.presenzepro.user.dto.*;
 import com.tesi.presenzepro.user.model.User;
+import com.tesi.presenzepro.user.model.UserData;
 import com.tesi.presenzepro.user.model.UserProfile;
 import com.tesi.presenzepro.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,6 +55,13 @@ public class UserController {
          final ProfileResponseDto user = service.getUserProfile(request);
         System.out.println("profile user: " + user);
          return ResponseEntity.ok(user);
+    }
+
+    @Operation(description = "Ottieni il campo dati dell'utente in base al tkn nell'headder", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/data")
+    public ResponseEntity<UserData> getUserData(HttpServletRequest request){
+        final UserData userData = service.getUserData(request);
+        return ResponseEntity.ok(userData);
     }
 
     //Implementare il metodo di aggiornamento

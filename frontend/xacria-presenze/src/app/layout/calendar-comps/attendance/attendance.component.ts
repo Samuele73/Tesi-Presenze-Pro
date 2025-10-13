@@ -49,7 +49,7 @@ import { DayworkModalComponent } from '../modals/daywork-modal/daywork-modal.com
 import { weekDayNamesIt, weekDayNamesEn } from '../const-vars';
 import { CalendarStateService } from '../../shared/services/calendar-state.service';
 import { calendar, identifiableCalendarWorkingDay } from '../../shared/models/calendar';
-import { CalendarAvailabilityEntry, CalendarEntity, CalendarEntry } from 'src/generated-client';
+import { CalendarAvailabilityEntry, CalendarEntity, CalendarEntry, UserData, UserService } from 'src/generated-client';
 import { Subject, takeUntil } from 'rxjs';
 
 type DistributedModalComponent = AvailabilityModalComponent | RequestModalComponent | WorkingTripModalComponent;
@@ -109,7 +109,8 @@ export class AttendanceComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private calendarStateService: CalendarStateService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private userService: UserService
   ) {
     this.weekDayNames = weekDayNamesIt;
     this.monthNames = monthNamesIt;
@@ -152,11 +153,24 @@ export class AttendanceComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.getUserProjects();
     this.subscriteToCalendarStateServices();
     this.calendarStateService.getCalendarByMonthYear(
       this.currentMonth,
       this.currentYear
     );
+  }
+
+  getUserProjects(): void{
+    /* const userProjects: string | null = localStorage.getItem('user_projects');
+    console.log("USER PROJ LS", userProjects);
+    if(JSON.parse(userProjects!).length > 0) return; */
+    this.userService.getUserData().subscribe({
+      next: (userData: UserData) => {
+        console.log("USER PROJ", userData);
+        localStorage.setItem('user_projects', JSON.stringify(userData.assignedProjects ?? []));
+      }
+    });
   }
 
   ngAfterViewInit(): void {
