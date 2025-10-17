@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Username } from '../shared/models/username';
+import { AuthService } from 'src/app/shared/services/auth.service';
 
 @Component({
   selector: 'app-profile-menu',
@@ -11,7 +12,7 @@ export class ProfileMenuComponent {
   surname!: string;
   @Input() username!: Username;
 
-  constructor(){
+  constructor(public authService: AuthService){
     console.log("USERNAEM: ", this.username)
   }
 }

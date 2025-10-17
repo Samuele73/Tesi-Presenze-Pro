@@ -73,11 +73,15 @@ export class AuthService {
     return;
   }
 
-  getUserRoles(): string[] {
+  getUserRole(): string | null {
     const token = this.token
-    if (!token) return [];
+    if (!token) return null;
     const decoded: any = jwtDecode(token);
-    return decoded.roles || [];
+    return decoded.role;
+  }
+
+  isAdmin(): boolean {
+    return this.getUserRole() === 'ADMIN';
   }
 
   getUserEmail() {
