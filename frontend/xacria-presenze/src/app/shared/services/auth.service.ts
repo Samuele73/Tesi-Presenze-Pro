@@ -3,14 +3,22 @@ import { BehaviorSubject, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { catchError, tap } from 'rxjs/operators';
-import { LoginRequestDto, NewPasswordDto, SignInRequestDto, User, UserService } from 'src/generated-client';
+import {
+  LoginRequestDto,
+  NewPasswordDto,
+  SignInRequestDto,
+  User,
+  UserService,
+} from 'src/generated-client';
+
+import {jwtDecode} from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private _isLoggedIn$ = new BehaviorSubject<boolean>(false);
-    $ = this._isLoggedIn$.asObservable();
+  $ = this._isLoggedIn$.asObservable();
   private readonly TOKEN_NAME: string = 'tkn';
   private userEmail: string = '';
 
@@ -65,6 +73,13 @@ export class AuthService {
     return;
   }
 
+  getUserRoles(): string[] {
+    const token = this.token
+    if (!token) return [];
+    const decoded: any = jwtDecode(token);
+    return decoded.roles || [];
+  }
+
   getUserEmail() {
     const tkn = this.token;
     if (tkn) {
@@ -97,11 +112,13 @@ export class AuthService {
       console.error('Client side or Network error occurred:', err.error);
     } else if (err.status === 409) {
       console.error('Email already exists:', err);
-      return throwError(() => new Error("Email già esistente"));
+      return throwError(() => new Error('Email già esistente'));
     } else {
       console.error('Server side error occurred:', err.error);
     }
-    return throwError(() => new Error('Errore con la registrazione dell utente'));
+    return throwError(
+      () => new Error('Errore con la registrazione dell utente')
+    );
   }
 
   changePassword(email: string) {
