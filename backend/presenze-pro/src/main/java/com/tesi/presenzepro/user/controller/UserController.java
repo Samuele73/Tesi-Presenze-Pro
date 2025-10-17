@@ -63,7 +63,7 @@ public class UserController {
         final UserData userData = service.getUserData(request);
         return ResponseEntity.ok(userData);
     }
-
+    
     //Implementare il metodo di aggiornamento
     @Operation(description = "Modifica le credenziali del profilo utente", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping("/profile")

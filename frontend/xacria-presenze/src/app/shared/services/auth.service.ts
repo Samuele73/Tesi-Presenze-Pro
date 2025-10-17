@@ -10,7 +10,7 @@ import { LoginRequestDto, NewPasswordDto, SignInRequestDto, User, UserService } 
 })
 export class AuthService {
   private _isLoggedIn$ = new BehaviorSubject<boolean>(false);
-  isLoggedIn$ = this._isLoggedIn$.asObservable();
+    $ = this._isLoggedIn$.asObservable();
   private readonly TOKEN_NAME: string = 'tkn';
   private userEmail: string = '';
 
