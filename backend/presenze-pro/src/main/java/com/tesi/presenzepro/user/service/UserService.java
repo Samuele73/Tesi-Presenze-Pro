@@ -211,4 +211,8 @@ public class UserService {
         Optional<User> user = repository.findByEmail(email);
         return user.map(userMapper::fromUserToUserData).orElse(null);
     }
+
+    public long updateProjectNameForAll(String projectName, String newProjectName){
+        return this.repositoryCustom.updateProjectNameForAllUsers(projectName, newProjectName);
+    }
 }

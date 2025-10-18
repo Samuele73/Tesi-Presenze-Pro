@@ -1,6 +1,7 @@
 package com.tesi.presenzepro.project.service;
 
 import com.tesi.presenzepro.project.dto.CreateProjectRequest;
+import com.tesi.presenzepro.project.exception.NoProjectFound;
 import com.tesi.presenzepro.project.exception.NoUserForProjectFound;
 import com.tesi.presenzepro.project.mapper.ProjectMapper;
 import com.tesi.presenzepro.project.model.Project;
@@ -32,6 +33,19 @@ public class ProjectService {
         }
         final Project finalProject = this.projectMapper.fromCreateRequestToProject(project);
         return this.projectRepository.save(finalProject);
+    }
+
+    public Project updateProject(Project project, String id){
+        //TODO: aggiungi un nuovo controllo fondamentale -> se cambio gli assignedTo
+        if(!project.getId().equals(id))
+            throw new IllegalArgumentException("Project id does not match");
+        String oldProjectName = this.projectRepository.findById(id).orElseThrow(() -> new NoProjectFound("")).getName();
+        project.setId(id);
+        final Project updatedProject = this.projectRepository.save(project);
+        final String updatedProjectName = updatedProject.getName();
+        if(!oldProjectName.equals(updatedProjectName))
+            this.userService.updateProjectNameForAll(oldProjectName, updatedProjectName);
+        return updatedProject;
     }
 
 

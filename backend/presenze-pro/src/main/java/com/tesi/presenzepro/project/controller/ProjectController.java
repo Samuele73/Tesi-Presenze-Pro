@@ -36,4 +36,10 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProjet);
     }
 
+    @PutMapping("/{id}")
+    @Operation(description = "Save a new project", security = @SecurityRequirement(name = "bearerAuth"))
+    ResponseEntity<Project> updateProject(@RequestBody Project project, @PathVariable String id) {
+        Project updatedProject = service.updateProject(project, id);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedProject);
+    }
 }

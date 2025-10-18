@@ -1,7 +1,9 @@
 package com.tesi.presenzepro.exception;
 
+import com.tesi.presenzepro.project.exception.NoProjectFound;
 import com.tesi.presenzepro.project.exception.NoUserForProjectFound;
 import com.tesi.presenzepro.user.exception.UserNotFoundException;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -47,6 +49,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoUserForProjectFound.class)
     public ResponseEntity<ErrorResponse> handleUserNotFound(NoUserForProjectFound ex) {
         ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Assigned user not found");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(NoProjectFound.class)
+    public ResponseEntity<ErrorResponse> handleNoProjectFound(NoProjectFound ex) {
+        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Project not found");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleBadRequestException(IllegalArgumentException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Bad argument");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 

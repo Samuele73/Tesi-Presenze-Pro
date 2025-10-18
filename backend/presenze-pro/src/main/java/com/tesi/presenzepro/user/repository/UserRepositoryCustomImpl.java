@@ -1,5 +1,6 @@
 package com.tesi.presenzepro.user.repository;
 
+import com.mongodb.client.result.UpdateResult;
 import com.tesi.presenzepro.user.model.User;
 import lombok.AllArgsConstructor;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
@@ -72,5 +73,18 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
         User updatedUser = mongoTemplate.findAndModify(query, update, options, User.class);
 
         return Optional.ofNullable(updatedUser);
+    }
+
+    public long updateProjectNameForAllUsers(String oldProjectName, String newProjectName) {
+        Query query = new Query().addCriteria(
+                Criteria.where("data.assignedProjects").is(oldProjectName)
+        );
+
+        Update update = new Update()
+                .set("data.assignedProjects.$", newProjectName);
+
+        UpdateResult result = mongoTemplate.updateMulti(query, update, User.class);
+
+        return result.getModifiedCount();
     }
 }
