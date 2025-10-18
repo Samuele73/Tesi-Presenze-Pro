@@ -63,4 +63,14 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
         return Optional.ofNullable(newUpdatedUser);
     }
+
+    public Optional<User> addProjectByEmail(String email, String projectName) {
+        Query query = new Query().addCriteria(Criteria.where("email").is(email));
+        Update update = new Update().addToSet("data.assignedProjects", projectName);
+
+        FindAndModifyOptions options = new FindAndModifyOptions().returnNew(true).upsert(false);
+        User updatedUser = mongoTemplate.findAndModify(query, update, options, User.class);
+
+        return Optional.ofNullable(updatedUser);
+    }
 }

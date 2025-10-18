@@ -3,6 +3,7 @@ package com.tesi.presenzepro.user.service;
 import com.mongodb.DuplicateKeyException;
 import com.tesi.presenzepro.exception.DuplicateEmailException;
 import com.tesi.presenzepro.jwt.JwtUtils;
+import com.tesi.presenzepro.project.model.Project;
 import com.tesi.presenzepro.user.dto.*;
 import com.tesi.presenzepro.user.mapper.UserMapper;
 import com.tesi.presenzepro.user.model.PasswordResetToken;
@@ -11,6 +12,7 @@ import com.tesi.presenzepro.user.model.UserData;
 import com.tesi.presenzepro.user.model.UserProfile;
 import com.tesi.presenzepro.user.repository.PasswordResetTokenRespository;
 import com.tesi.presenzepro.user.repository.UserRepository;
+import com.tesi.presenzepro.user.repository.UserRepositoryCustomImpl;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository repository;
+    private final UserRepositoryCustomImpl repositoryCustom;
     private final PasswordResetTokenRespository resetTokenRespository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
@@ -110,9 +113,13 @@ public class UserService {
     }
 
     public ProfileResponseDto updateUserProfile(User updatedUserProfile){
-        System.out.println("AGGIORNAMENTO UTENTE PROFILO:" + repository.findByIdAndModify(updatedUserProfile));
         Optional<User> newUserProfile = repository.findByIdAndModify(updatedUserProfile);
         return newUserProfile.map(userMapper::fromUserToUserProfile).orElse(null);
+    }
+
+    public boolean addUserProjectByEmail(String email, String projectName){
+        Optional<User> user = repositoryCustom.addProjectByEmail(email, projectName);
+        return user.isPresent();
     }
 
     public boolean resetPassword(String userEmail, HttpServletRequest request){

@@ -25,11 +25,14 @@ public class ProjectService {
     public Project saveProject(CreateProjectRequest project){
         if (project.assignedTo() != null && !project.assignedTo().isEmpty()) {
             project.assignedTo().forEach(email -> {
-                userService.findByEmail(email)
+                this.userService.findByEmail(email)
                         .orElseThrow(() -> new NoUserForProjectFound(email));
+                this.userService.addUserProjectByEmail(email, project.name());
             });
         }
         final Project finalProject = this.projectMapper.fromCreateRequestToProject(project);
         return this.projectRepository.save(finalProject);
     }
+
+
 }
