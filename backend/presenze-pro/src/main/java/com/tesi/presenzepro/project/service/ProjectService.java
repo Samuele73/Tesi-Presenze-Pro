@@ -10,7 +10,7 @@ import com.tesi.presenzepro.user.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 @AllArgsConstructor
 @Service
@@ -35,35 +35,61 @@ public class ProjectService {
         return this.projectRepository.save(finalProject);
     }
 
-    //Controlla se vi è bisogno di aggiornare il campoAssignedProjects nel doc User
-    private void updateUsersOnProjectUpdate(Project oldProject, Project newProject){
-        List<String> oldAssignedTo = oldProject.getAssignedTo();
-        List<String> newAssignedTo = newProject.getAssignedTo();
+    //Controlla se vi è bisogno di aggiornare il campo AssignedProjects nel doc User
+    private void updateUsersOnProjectUpdate(Project oldProject, Project newProject) {
+        List<String> oldAssignedTo = getAssignedToOrEmpty(oldProject);
+        List<String> newAssignedTo = getAssignedToOrEmpty(newProject);
 
-        // Utenti rimossi = quelli presenti in old ma non in new
-        List<String> removedUsers = oldAssignedTo.stream()
-                .filter(email -> !newAssignedTo.contains(email))
-                .toList();
+        Set<String> removedUsers = findRemovedUsers(oldAssignedTo, newAssignedTo);
+        Set<String> addedUsers = findAddedUsers(oldAssignedTo, newAssignedTo);
 
-        // Utenti aggiunti = quelli presenti in new ma non in oldc
-        final String oldProjectName =  oldProject.getName();
-        List<String> addedUsers = newAssignedTo.stream()
-                .filter(email -> !oldAssignedTo.contains(email))
-                .toList();
-        //Rimuovi progetto agli utenti alla quale non è più assegnato
-        if (!removedUsers.isEmpty()) {
-            userService.removeProjectFromUsers(removedUsers, oldProjectName);
+        String oldProjectName = oldProject.getName();
+        String newProjectName = newProject.getName();
+
+        removeProjectFromUsers(removedUsers, oldProjectName);
+        addProjectToUsers(addedUsers, newProjectName);
+        updateProjectNameIfChanged(oldProjectName, newProjectName);
+    }
+
+    private List<String> getAssignedToOrEmpty(Project project) {
+        return Optional.ofNullable(project.getAssignedTo()).orElse(List.of());
+    }
+
+    private Set<String> findRemovedUsers(List<String> oldAssignedTo, List<String> newAssignedTo) {
+        Set<String> oldSet = new HashSet<>(oldAssignedTo);
+        Set<String> newSet = new HashSet<>(newAssignedTo);
+
+        Set<String> removed = new HashSet<>(oldSet);
+        removed.removeAll(newSet);
+
+        return removed;
+    }
+
+    private Set<String> findAddedUsers(List<String> oldAssignedTo, List<String> newAssignedTo) {
+        Set<String> oldSet = new HashSet<>(oldAssignedTo);
+        Set<String> newSet = new HashSet<>(newAssignedTo);
+
+        Set<String> added = new HashSet<>(newSet);
+        added.removeAll(oldSet);
+
+        return added;
+    }
+
+    private void removeProjectFromUsers(Set<String> users, String projectName) {
+        if (!users.isEmpty()) {
+            userService.removeProjectFromUsers(new ArrayList<>(users), projectName);
         }
+    }
 
-        // Aggiungi progetto ai nuovi utenti assegnati
-        if (!addedUsers.isEmpty()) {
-            addedUsers.forEach(email ->
-                    userService.addUserProjectByEmail(email, oldProject.getName())
-            );
+    private void addProjectToUsers(Set<String> users, String projectName) {
+        if (!users.isEmpty()) {
+            users.forEach(email -> userService.addUserProjectByEmail(email, projectName));
         }
+    }
 
-        if (!oldProjectName.equals(newProject.getName())) {
-            userService.updateProjectNameForAll(oldProjectName, newProject.getName());
+    private void updateProjectNameIfChanged(String oldProjectName, String newProjectName) {
+        if (!oldProjectName.equals(newProjectName)) {
+            userService.updateProjectNameForAll(oldProjectName, newProjectName);
         }
     }
 
