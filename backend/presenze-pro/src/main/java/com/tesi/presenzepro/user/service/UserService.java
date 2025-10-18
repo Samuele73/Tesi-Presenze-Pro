@@ -25,10 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -120,6 +117,10 @@ public class UserService {
     public boolean addUserProjectByEmail(String email, String projectName){
         Optional<User> user = repositoryCustom.addProjectByEmail(email, projectName);
         return user.isPresent();
+    }
+
+    public long removeProjectFromUsers(List<String> emails, String projectName){
+        return repositoryCustom.removeProjectFromUsers(emails, projectName);
     }
 
     public boolean resetPassword(String userEmail, HttpServletRequest request){

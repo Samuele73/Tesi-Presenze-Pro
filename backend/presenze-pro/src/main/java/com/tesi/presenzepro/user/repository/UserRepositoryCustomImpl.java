@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
+import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -82,6 +83,19 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
         Update update = new Update()
                 .set("data.assignedProjects.$", newProjectName);
+
+        UpdateResult result = mongoTemplate.updateMulti(query, update, User.class);
+
+        return result.getModifiedCount();
+    }
+
+    public long removeProjectFromUsers(List<String> emails, String projectName) {
+        Query query = new Query().addCriteria(
+                Criteria.where("email").in(emails)
+        );
+
+        Update update = new Update()
+                .pull("data.assignedProjects", projectName);
 
         UpdateResult result = mongoTemplate.updateMulti(query, update, User.class);
 
