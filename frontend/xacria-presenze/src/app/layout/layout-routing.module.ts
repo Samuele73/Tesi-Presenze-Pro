@@ -4,6 +4,7 @@ import { LayoutComponent } from './layout/layout.component';
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
 import { AttendanceComponent } from './calendar-comps/attendance/attendance.component';
+import { ProjectPageComponent } from './project-page/project-page.component';
 
 const routes: Routes = [
   {path: "", redirectTo: "home", pathMatch: "full"},
@@ -13,7 +14,8 @@ const routes: Routes = [
     children: [
       {path: "home", pathMatch: "full", component: HomeComponent},
       {path: "profile", pathMatch: "full", component: ProfileComponent},
-      {path: "attendance", pathMatch: "full", component: AttendanceComponent}
+      {path: "attendance", pathMatch: "full", component: AttendanceComponent},
+      {path: "projects", pathMatch: "full", component: ProjectPageComponent}
     ]
   }
 ];

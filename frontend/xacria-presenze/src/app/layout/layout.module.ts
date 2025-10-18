@@ -26,7 +26,8 @@ import { WorkingTripModalComponent } from './calendar-comps/modals/working-trip-
 import { AvailabilityModalComponent } from './calendar-comps/modals/availability-modal/availability-modal.component';
 import { RequestModalComponent } from './calendar-comps/modals/request-modal/request-modal.component';
 import { InteractiveButtonComponent } from './calendar-comps/interactive-button/interactive-button.component';
-import { StatusBadgeComponent } from './status-badge/status-badge.component';;
+import { StatusBadgeComponent } from './status-badge/status-badge.component';
+import { ProjectPageComponent } from './project-page/project-page.component';;
 
 
 @NgModule({
@@ -45,7 +46,8 @@ import { StatusBadgeComponent } from './status-badge/status-badge.component';;
     AvailabilityModalComponent,
     RequestModalComponent,
     InteractiveButtonComponent,
-    StatusBadgeComponent
+    StatusBadgeComponent,
+    ProjectPageComponent
   ],
   imports: [
     CommonModule,

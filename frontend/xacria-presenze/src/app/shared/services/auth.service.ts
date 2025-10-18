@@ -81,6 +81,7 @@ export class AuthService {
   }
 
   isAdmin(): boolean {
+    console.log('User role: ', this.getUserRole());
     return this.getUserRole() === 'ADMIN';
   }
 
