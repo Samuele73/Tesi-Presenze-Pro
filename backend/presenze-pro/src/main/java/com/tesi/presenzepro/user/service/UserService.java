@@ -91,6 +91,10 @@ public class UserService {
         return false;
     }
 
+    public Optional<User> findByEmail(String email){
+        return repository.findByEmail(email);
+    }
+
     private String getUserEmailFromRequest(HttpServletRequest request){
         final String tkn = jwtUtils.getJwtFromHeader(request);
         if(tkn == null){

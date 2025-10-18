@@ -1,5 +1,7 @@
 package com.tesi.presenzepro.exception;
 
+import com.tesi.presenzepro.project.exception.NoUserForProjectFound;
+import com.tesi.presenzepro.user.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -40,6 +42,12 @@ public class GlobalExceptionHandler {
                 "message", "The requested endpoint does not exist",
                 "path", ex.getRequestURL()
         );
+    }
+
+    @ExceptionHandler(NoUserForProjectFound.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFound(NoUserForProjectFound ex) {
+        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Assigned user not found");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
 //    @ExceptionHandler(Exception.class)

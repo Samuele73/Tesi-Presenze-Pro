@@ -19,6 +19,6 @@ public class Project {
     private String name;
     private String description;
     private ProjectStatus status;
-    //Lista di utenti alla quale è assegnato (utente identificato per email)
+    //Lista di utenti alla quale è assegnato il progetto (utente identificato per email)
     private List<String> assignedTo;
 }

@@ -1,5 +1,6 @@
 package com.tesi.presenzepro.project.controller;
 
+import com.tesi.presenzepro.project.dto.CreateProjectRequest;
 import com.tesi.presenzepro.project.model.Project;
 import com.tesi.presenzepro.project.service.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -8,10 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,12 +20,20 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 @Tag(name = "Project", description = "Operazioni relative ai progetti")
 public class ProjectController {
-    private ProjectService service;
+    private final ProjectService service;
 
     @GetMapping("")
-    @Operation(description = "Obtain all entries from the provided user", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(description = "Obtain all projects", security = @SecurityRequirement(name = "bearerAuth"))
     ResponseEntity<List<Project>> getAllProjects() {
-        List<Project> projects = this.service.findAllProjects();
+        List<Project> projects = service.findAllProjects();
         return ResponseEntity.status(HttpStatus.OK).body(projects);
     }
+
+    @PostMapping("")
+    @Operation(description = "Save a new project", security = @SecurityRequirement(name = "bearerAuth"))
+    ResponseEntity<Project> saveProject(@RequestBody CreateProjectRequest project) {
+        Project savedProjet = service.saveProject(project);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedProjet);
+    }
+
 }
