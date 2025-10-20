@@ -27,7 +27,8 @@ import { AvailabilityModalComponent } from './calendar-comps/modals/availability
 import { RequestModalComponent } from './calendar-comps/modals/request-modal/request-modal.component';
 import { InteractiveButtonComponent } from './calendar-comps/interactive-button/interactive-button.component';
 import { StatusBadgeComponent } from './status-badge/status-badge.component';
-import { ProjectPageComponent } from './project-page/project-page.component';;
+import { ProjectPageComponent } from './project-page/project-page.component';import { FilterPipe } from './shared/pipes/filter.pipe';
+;
 
 
 @NgModule({
@@ -47,7 +48,8 @@ import { ProjectPageComponent } from './project-page/project-page.component';;
     RequestModalComponent,
     InteractiveButtonComponent,
     StatusBadgeComponent,
-    ProjectPageComponent
+    ProjectPageComponent,
+    FilterPipe
   ],
   imports: [
     CommonModule,

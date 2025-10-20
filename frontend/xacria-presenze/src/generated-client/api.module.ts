@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 
 
 import { CalendarService } from './api/calendar.service';
+import { ProjectService } from './api/project.service';
 import { UserService } from './api/user.service';
 
 @NgModule({
@@ -12,6 +13,7 @@ import { UserService } from './api/user.service';
   exports:      [],
   providers: [
     CalendarService,
+    ProjectService,
     UserService ]
 })
 export class ApiModule {

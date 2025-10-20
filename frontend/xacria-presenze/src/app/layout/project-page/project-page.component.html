@@ -1,1 +1,143 @@
-<p>project-page works!</p>
+<div class="container-fluid p-4">
+  <!-- Header -->
+
+
+  <!-- Filtri -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-8">
+          <label for="searchInput" class="form-label mb-2">
+            <i class="fa-solid fa-search"></i>
+            Cerca progetti
+          </label>
+            <input
+              id="searchInput"
+              type="text"
+              class="form-control"
+              placeholder="Cerca per nome o descrizione..."
+              [(ngModel)]="searchTerm"
+              (input)="onSearchChange()">
+        </div>
+        <div class="col-md-4">
+          <label for="statusFilter" class="form-label mb-2">
+            <i class="fa fa-filter me-1"></i>
+            Filtra per stato
+          </label>
+          <select
+            id="statusFilter"
+            class="form-select"
+            [(ngModel)]="selectedStatus"
+            (change)="onStatusChange()">
+            <option *ngFor="let status of projectStatuses" [value]="status.value">
+              {{ status.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lista Progetti -->
+  <div class="row">
+    <div class="col-12">
+      <div *ngIf="filteredProjects.length === 0" class="alert alert-info text-center">
+        <i class="bi bi-info-circle me-2"></i>
+        Nessun progetto trovato
+      </div>
+
+      <div class="row g-4">
+        <div class="col-lg-6 col-xl-4" *ngFor="let project of filteredProjects">
+          <div class="card h-100 shadow-sm hover-shadow transition" >
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+              <h5 class="mb-0 text-truncate" [title]="project.name">
+                <i class="bi bi-folder2-open me-2"></i>
+                {{ project.name }}
+              </h5>
+              <span class="badge" [ngClass]="getStatusClass(project.status)">
+                {{ getStatusLabel(project.status) }}
+              </span>
+            </div>
+
+            <div class="card-body">
+              <p class="card-text text-muted mb-3">
+                {{ project.description }}
+              </p>
+
+              <div class="mb-3">
+                <h6 class="mb-2">
+                  Assegnato a:
+                </h6>
+                <div class="d-flex flex-wrap gap-1">
+                  <span
+                    *ngFor="let email of project.assignedTo"
+                    class="badge bg-light text-dark border"
+                    [title]="email">
+                    <i class="fa-solid fa-user me-1"></i>
+                    {{ email }}
+                  </span>
+                </div>
+                <small class="text-muted d-block mt-1">
+                  {{ project.assignedTo!.length }} {{ project.assignedTo!.length === 1 ? 'utente' : 'utenti' }}
+                </small>
+              </div>
+            </div>
+
+            <div class="card-footer bg-white border-top">
+              <div class="d-flex justify-content-end">
+                <button
+                  class="btn btn-sm btn-primary text-white fw-semibold"
+                  (click)="viewProject(project)"
+                  title="Visualizza">
+                  Visualizza
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistiche -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div class="row text-center">
+            <div class="col-md-3 mb-3 mb-md-0">
+              <div class="stat-card">
+                <h3 class="text-black mb-1">{{ projects.length }}</h3>
+                <small class="text-muted">Totale Progetti</small>
+              </div>
+            </div>
+            <div class="col-md-3 mb-3 mb-md-0">
+              <div class="stat-card">
+                <h3 class="text-warning mb-1">
+                  {{ (projects | filter: 'status': 'IN_PROGRESS').length }}
+                </h3>
+                <small class="text-muted">In Corso</small>
+              </div>
+            </div>
+            <div class="col-md-3 mb-3 mb-md-0">
+              <div class="stat-card">
+                <h3 class="text-secondary mb-1">
+                  {{ (projects | filter: 'status': 'CREATED').length }}
+                </h3>
+                <small class="text-muted">Creati</small>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="stat-card">
+                <h3 class="text-success mb-1">
+                  {{ (projects | filter: 'status': 'COMPLETED').length }}
+                </h3>
+                <small class="text-muted">Completati</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

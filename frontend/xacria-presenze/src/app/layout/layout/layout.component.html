@@ -1,5 +1,4 @@
 <div class="d-flex flex-column vh-100">
-  <!-- Navbar sempre in alto -->
   <app-navbar class="flex-shrink-0"></app-navbar>
 
   <!-- Contenuto principale -->
@@ -12,7 +11,7 @@
     <!-- Contenuto dinamico -->
     <main class="flex-grow-1 d-flex flex-column px-4 py-4 overflow-hidden">
       <app-profile-menu [username]="newUsername" class="flex-shrink-0"></app-profile-menu>
-      <div class="flex-grow-1 router-outlet-container">
+      <div class="flex-grow-1 overflow-auto" >
         <router-outlet></router-outlet>
       </div>
     </main>
