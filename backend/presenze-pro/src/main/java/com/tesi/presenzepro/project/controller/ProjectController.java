@@ -42,4 +42,12 @@ public class ProjectController {
         Project updatedProject = service.updateProject(project, id);
         return ResponseEntity.status(HttpStatus.OK).body(updatedProject);
     }
+
+    @DeleteMapping("/{id}")
+    @Operation(description = "Delete the referred project", security = @SecurityRequirement(name = "bearerAuth"))
+    ResponseEntity<String> deleteProject(@PathVariable String id) {
+        String delProjectID = service.deleteProject(id);
+        return ResponseEntity.status(HttpStatus.OK).body(delProjectID);
+    }
+
 }

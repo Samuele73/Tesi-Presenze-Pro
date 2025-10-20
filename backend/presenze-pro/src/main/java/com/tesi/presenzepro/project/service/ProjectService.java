@@ -94,14 +94,21 @@ public class ProjectService {
     }
 
     public Project updateProject(Project project, String id){
-        //TODO: aggiungi un nuovo controllo fondamentale -> se cambio gli assignedTo
         if(!project.getId().equals(id))
             throw new IllegalArgumentException("Project id does not match");
-        Project oldProject = this.projectRepository.findById(id).orElseThrow(() -> new NoProjectFound(""));
+        Project oldProject = this.projectRepository.findById(id).orElseThrow(() -> new NoProjectFound(id));
         project.setId(id);
         final Project updatedProject = this.projectRepository.save(project);
         this.updateUsersOnProjectUpdate(oldProject, updatedProject);
         return updatedProject;
+    }
+
+    public String deleteProject(String id){
+        Project removedProject = this.projectRepository.removeById(id).orElseThrow(() -> new NoProjectFound(id));
+        List<String> assignedUsers = removedProject.getAssignedTo();
+        //Remove the project from all users assigned to
+        assignedUsers.forEach(email -> {this.userService.removeProjectFromUsers(new ArrayList<>(assignedUsers), removedProject.getName());});
+        return id;
     }
 
 
