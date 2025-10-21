@@ -30,6 +30,7 @@ export class ProjectPageComponent {
       next: (projects: Project[]) => {
         this.projects = projects;
         this.filteredProjects = [...this.projects];
+        console.log('Loaded projects:', this.projects);
       },
       error: (err) => {
         console.error('Error loading projects:', err);

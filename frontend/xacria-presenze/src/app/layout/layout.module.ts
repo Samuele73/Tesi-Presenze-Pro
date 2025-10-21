@@ -27,7 +27,8 @@ import { AvailabilityModalComponent } from './calendar-comps/modals/availability
 import { RequestModalComponent } from './calendar-comps/modals/request-modal/request-modal.component';
 import { InteractiveButtonComponent } from './calendar-comps/interactive-button/interactive-button.component';
 import { StatusBadgeComponent } from './status-badge/status-badge.component';
-import { ProjectPageComponent } from './project-page/project-page.component';import { FilterPipe } from './shared/pipes/filter.pipe';
+import { ProjectPageComponent } from './project-comps/project-page/project-page.component';import { FilterPipe } from './shared/pipes/filter.pipe';
+import { ProjectListComponent } from './project-comps/project-list/project-list.component';
 ;
 
 
@@ -49,7 +50,8 @@ import { ProjectPageComponent } from './project-page/project-page.component';imp
     InteractiveButtonComponent,
     StatusBadgeComponent,
     ProjectPageComponent,
-    FilterPipe
+    FilterPipe,
+    ProjectListComponent
   ],
   imports: [
     CommonModule,

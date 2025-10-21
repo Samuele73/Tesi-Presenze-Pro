@@ -4,7 +4,7 @@ import { LayoutComponent } from './layout/layout.component';
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
 import { AttendanceComponent } from './calendar-comps/attendance/attendance.component';
-import { ProjectPageComponent } from './project-page/project-page.component';
+import { ProjectPageComponent } from './project-comps/project-page/project-page.component';
 
 const routes: Routes = [
   {path: "", redirectTo: "home", pathMatch: "full"},
