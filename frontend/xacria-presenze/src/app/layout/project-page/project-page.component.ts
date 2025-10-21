@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Project } from 'src/generated-client';
+import { Project, ProjectService } from 'src/generated-client';
 
 @Component({
   selector: 'app-project-page',
@@ -19,13 +19,25 @@ export class ProjectPageComponent {
     { value: 'COMPLETED', label: 'Completato' }
   ];
 
-  constructor() { }
+  constructor(private projectService: ProjectService) { }
 
   ngOnInit(): void {
     this.loadProjects();
   }
 
   loadProjects(): void {
+    this.projectService.getMyProjects().subscribe({
+      next: (projects: Project[]) => {
+        this.projects = projects;
+        this.filteredProjects = [...this.projects];
+      },
+      error: (err) => {
+        console.error('Error loading projects:', err);
+      }
+    });
+  }
+
+  loadTemplateProjects(): void {
     // Simula il caricamento dei progetti
     // Sostituisci con una chiamata al tuo servizio
     this.projects = [
@@ -41,7 +53,7 @@ export class ProjectPageComponent {
         name: 'App Mobile',
         description: 'Applicazione mobile per il tracking delle presenze',
         status: "CREATED",
-        assignedTo: ['luca.verdi@example.com']
+        assignedTo: []
       },
       {
         id: '3',

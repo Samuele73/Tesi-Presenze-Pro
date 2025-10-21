@@ -1,6 +1,6 @@
 <div class="container-fluid p-4">
   <!-- Header -->
-
+  <!-- <H3>I miei progetti</H3> -->
 
   <!-- Filtri -->
   <div class="card shadow-sm mb-4">
@@ -11,13 +11,14 @@
             <i class="fa-solid fa-search"></i>
             Cerca progetti
           </label>
-            <input
-              id="searchInput"
-              type="text"
-              class="form-control"
-              placeholder="Cerca per nome..."
-              [(ngModel)]="searchTerm"
-              (input)="onSearchChange()">
+          <input
+            id="searchInput"
+            type="text"
+            class="form-control"
+            placeholder="Cerca per nome..."
+            [(ngModel)]="searchTerm"
+            (input)="onSearchChange()"
+          />
         </div>
         <div class="col-md-4">
           <label for="statusFilter" class="form-label mb-2">
@@ -28,8 +29,12 @@
             id="statusFilter"
             class="form-select"
             [(ngModel)]="selectedStatus"
-            (change)="onStatusChange()">
-            <option *ngFor="let status of projectStatuses" [value]="status.value">
+            (change)="onStatusChange()"
+          >
+            <option
+              *ngFor="let status of projectStatuses"
+              [value]="status.value"
+            >
               {{ status.label }}
             </option>
           </select>
@@ -41,15 +46,20 @@
   <!-- Lista Progetti -->
   <div class="row">
     <div class="col-12">
-      <div *ngIf="filteredProjects.length === 0" class="alert alert-info text-center">
+      <div
+        *ngIf="filteredProjects.length === 0"
+        class="alert alert-info text-center"
+      >
         <i class="bi bi-info-circle me-2"></i>
         Nessun progetto trovato
       </div>
 
       <div class="row g-4">
         <div class="col-lg-6 col-xl-4" *ngFor="let project of filteredProjects">
-          <div class="card h-100 shadow-sm hover-shadow transition" >
-            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <div class="card h-100 shadow-sm hover-shadow transition">
+            <div
+              class="card-header bg-white text-black d-flex justify-content-between align-items-center"
+            >
               <h5 class="mb-0 text-truncate" [title]="project.name">
                 <i class="bi bi-folder2-open me-2"></i>
                 {{ project.name }}
@@ -65,34 +75,46 @@
               </p>
 
               <div class="mb-3">
-                <h6 class="mb-2">
-                  Assegnato a:
-                </h6>
-                <div class="d-flex flex-wrap gap-1">
-                  <span
-                    *ngFor="let email of project.assignedTo"
-                    class="badge bg-light text-dark border"
-                    [title]="email">
-                    <i class="fa-solid fa-user me-1"></i>
-                    {{ email }}
-                  </span>
-                </div>
-                <small class="text-muted d-block mt-1">
-                  {{ project.assignedTo!.length }} {{ project.assignedTo!.length === 1 ? 'utente' : 'utenti' }}
-                </small>
+                <ng-container
+                  *ngIf="project.assignedTo?.length; else notAssigned"
+                >
+                  <h6 class="mb-2">Assegnato a:</h6>
+                  <div class="d-flex flex-wrap gap-1">
+                    <span
+                      *ngFor="let email of project.assignedTo"
+                      class="badge bg-light text-dark border"
+                      [title]="email"
+                    >
+                      <i class="fa-solid fa-user me-1"></i>
+                      {{ email }}
+                    </span>
+                  </div>
+                  <small class="text-muted d-block mt-1">
+                    {{ project.assignedTo!.length }}
+                    {{ project.assignedTo!.length === 1 ? "utente" : "utenti" }}
+                  </small>
+                </ng-container>
+
+                <ng-template #notAssigned>
+                  <h6 class="mb-2">Assegnato a:</h6>
+                  <div class="fst-italic text-muted">
+                    Ancora non assegnato
+                  </div>
+                </ng-template>
               </div>
             </div>
 
-            <div class="card-footer bg-white border-top">
+            <!-- <div class="card-footer bg-white border-top">
               <div class="d-flex justify-content-end">
                 <button
                   class="btn btn-sm btn-primary text-white fw-semibold"
                   (click)="viewProject(project)"
-                  title="Visualizza">
+                  title="Visualizza"
+                >
                   Visualizza
                 </button>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
