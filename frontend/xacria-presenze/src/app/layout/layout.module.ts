@@ -29,6 +29,7 @@ import { InteractiveButtonComponent } from './calendar-comps/interactive-button/
 import { StatusBadgeComponent } from './status-badge/status-badge.component';
 import { ProjectPageComponent } from './project-comps/project-page/project-page.component';import { FilterPipe } from './shared/pipes/filter.pipe';
 import { ProjectListComponent } from './project-comps/project-list/project-list.component';
+import { ProjectListItemComponent } from './project-comps/project-list-item/project-list-item.component';
 ;
 
 
@@ -51,7 +52,8 @@ import { ProjectListComponent } from './project-comps/project-list/project-list.
     StatusBadgeComponent,
     ProjectPageComponent,
     FilterPipe,
-    ProjectListComponent
+    ProjectListComponent,
+    ProjectListItemComponent
   ],
   imports: [
     CommonModule,
