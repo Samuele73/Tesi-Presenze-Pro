@@ -57,8 +57,7 @@ export class ProjectPageComponent {
 
   filterProjects(): void {
     this.filteredProjects = this.projects.filter((project: Project) => {
-      const matchesSearch = (project.name?.toLowerCase() || '').includes(this.searchTerm.toLowerCase()) ||
-                           (project.description?.toLowerCase() || '').includes(this.searchTerm.toLowerCase());
+      const matchesSearch = (project.name?.toLowerCase() || '').includes(this.searchTerm.toLowerCase());
       const matchesStatus = this.selectedStatus === 'ALL' || project.status === this.selectedStatus;
       return matchesSearch && matchesStatus;
     });

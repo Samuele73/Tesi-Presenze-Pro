@@ -23,6 +23,10 @@ public class ProjectService {
         return this.projectRepository.findAll();
     }
 
+    public List<Project> findProjectsByUserEmail(String email){
+        return this.projectRepository.findByAssignedToContaining(email).orElse(new ArrayList<>());
+    }
+
     public Project saveProject(CreateProjectRequest project){
         if (project.assignedTo() != null && !project.assignedTo().isEmpty()) {
             project.assignedTo().forEach(email -> {

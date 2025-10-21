@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -27,6 +28,23 @@ public class ProjectController {
     ResponseEntity<List<Project>> getAllProjects() {
         List<Project> projects = service.findAllProjects();
         return ResponseEntity.status(HttpStatus.OK).body(projects);
+    }
+
+    @GetMapping("/me")
+    @Operation(description = "Obtain all projects belonging to the authenticated user", security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<List<Project>> getMyProjects() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<Project> projects = service.findProjectsByUserEmail(email);
+        return ResponseEntity.ok(projects);
+    }
+
+    @GetMapping("/{email}")
+    @Operation(description = "Obtain all projects assigned to the specified user by email", security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<List<Project>> getProjectsByUserEmail(@PathVariable String email) {
+        List<Project> projects = service.findProjectsByUserEmail(email);
+        return projects.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(projects);
     }
 
     @PostMapping("")
