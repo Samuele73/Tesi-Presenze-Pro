@@ -30,7 +30,15 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.OK).body(projects);
     }
 
-    @GetMapping("/me")
+    @GetMapping("/{id}")
+    @Operation(description = "Obtain project by Id", security = @SecurityRequirement(name = "bearerAuth"))
+    ResponseEntity<Project> getProjectById(@PathVariable String id) {
+        Project project = service.findProjectById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(project);
+    }
+
+
+    @GetMapping("/user")
     @Operation(description = "Obtain all projects belonging to the authenticated user", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<List<Project>> getMyProjects() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -38,7 +46,7 @@ public class ProjectController {
         return ResponseEntity.ok(projects);
     }
 
-    @GetMapping("/{email}")
+    @GetMapping("/user/{email}")
     @Operation(description = "Obtain all projects assigned to the specified user by email", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<List<Project>> getProjectsByUserEmail(@PathVariable String email) {
         List<Project> projects = service.findProjectsByUserEmail(email);

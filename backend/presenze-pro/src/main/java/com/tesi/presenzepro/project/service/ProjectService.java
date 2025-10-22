@@ -8,7 +8,9 @@ import com.tesi.presenzepro.project.model.Project;
 import com.tesi.presenzepro.project.repository.ProjectRepository;
 import com.tesi.presenzepro.user.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
@@ -25,6 +27,10 @@ public class ProjectService {
 
     public List<Project> findProjectsByUserEmail(String email){
         return this.projectRepository.findByAssignedToContaining(email).orElse(new ArrayList<>());
+    }
+
+    public Project findProjectById(String id){
+        return this.projectRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found"));
     }
 
     public Project saveProject(CreateProjectRequest project){

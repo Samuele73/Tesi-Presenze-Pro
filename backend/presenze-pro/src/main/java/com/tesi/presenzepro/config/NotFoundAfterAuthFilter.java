@@ -4,10 +4,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.io.IOException;
@@ -34,6 +32,7 @@ public class NotFoundAfterAuthFilter extends OncePerRequestFilter {
         }
 
         try {
+            // Controllo per rotte non dichiarate
             if (handlerMapping.getHandler(request) == null) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 response.setContentType("application/json");
@@ -48,11 +47,8 @@ public class NotFoundAfterAuthFilter extends OncePerRequestFilter {
                 return;
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            logger.debug("Error checking handler for path: " + path, e);
         }
-
         filterChain.doFilter(request, response);
     }
 }
-
-

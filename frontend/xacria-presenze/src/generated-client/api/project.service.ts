@@ -180,7 +180,55 @@ export class ProjectService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<Array<Project>>('get',`${this.basePath}/project/me`,
+        return this.httpClient.request<Array<Project>>('get',`${this.basePath}/project/user`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * Obtain project by Id
+     * @param id 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getProjectById(id: string, observe?: 'body', reportProgress?: boolean): Observable<Project>;
+    public getProjectById(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Project>>;
+    public getProjectById(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Project>>;
+    public getProjectById(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling getProjectById.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<Project>('get',`${this.basePath}/project/${encodeURIComponent(String(id))}`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -228,7 +276,7 @@ export class ProjectService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<Array<Project>>('get',`${this.basePath}/project/${encodeURIComponent(String(email))}`,
+        return this.httpClient.request<Array<Project>>('get',`${this.basePath}/project/user/${encodeURIComponent(String(email))}`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
