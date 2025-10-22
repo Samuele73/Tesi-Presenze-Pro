@@ -30,6 +30,7 @@ import { StatusBadgeComponent } from './status-badge/status-badge.component';
 import { ProjectPageComponent } from './project-comps/project-page/project-page.component';import { FilterPipe } from './shared/pipes/filter.pipe';
 import { ProjectListComponent } from './project-comps/project-list/project-list.component';
 import { ProjectListItemComponent } from './project-comps/project-list-item/project-list-item.component';
+import { ProjectListFiltersComponent } from './project-comps/project-list-filters/project-list-filters.component';
 ;
 
 
@@ -53,7 +54,8 @@ import { ProjectListItemComponent } from './project-comps/project-list-item/proj
     ProjectPageComponent,
     FilterPipe,
     ProjectListComponent,
-    ProjectListItemComponent
+    ProjectListItemComponent,
+    ProjectListFiltersComponent
   ],
   imports: [
     CommonModule,
