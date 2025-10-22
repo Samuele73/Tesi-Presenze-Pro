@@ -5,6 +5,7 @@ import java.util.List;
 public record CreateProjectRequest(
         String name,
         String description,
+        String summary,
         List<String> assignedTo
 ) {
 }

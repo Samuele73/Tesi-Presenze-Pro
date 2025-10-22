@@ -17,6 +17,7 @@ public class Project {
     @Id
     private String id;
     private String name;
+    private String summary;
     private String description;
     private ProjectStatus status;
     //Lista di utenti alla quale è assegnato il progetto (utente identificato per email)

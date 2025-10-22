@@ -13,6 +13,7 @@
 export interface Project { 
     id?: string;
     name?: string;
+    summary?: string;
     description?: string;
     status?: Project.StatusEnum;
     assignedTo?: Array<string>;

@@ -13,5 +13,6 @@
 export interface CreateProjectRequest { 
     name?: string;
     description?: string;
+    summary?: string;
     assignedTo?: Array<string>;
 }
