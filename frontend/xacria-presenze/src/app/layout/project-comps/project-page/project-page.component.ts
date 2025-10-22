@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
+import { AuthService } from 'src/app/shared/services/auth.service';
 import { Project, ProjectService } from 'src/generated-client';
 
 @Component({
   selector: 'app-project-page',
   templateUrl: './project-page.component.html',
-  styleUrls: ['./project-page.component.scss']
+  styleUrls: ['./project-page.component.scss'],
 })
 export class ProjectPageComponent {
   projects: Project[] = [];
@@ -16,26 +17,42 @@ export class ProjectPageComponent {
     { value: 'ALL', label: 'Tutti' },
     { value: 'CREATED', label: 'Creato' },
     { value: 'IN_PROGRESS', label: 'In Corso' },
-    { value: 'COMPLETED', label: 'Completato' }
+    { value: 'COMPLETED', label: 'Completato' },
   ];
 
-  constructor(private projectService: ProjectService) { }
+  constructor(
+    private projectService: ProjectService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.loadProjects();
   }
 
   loadProjects(): void {
-    this.projectService.getMyProjects().subscribe({
-      next: (projects: Project[]) => {
-        this.projects = projects;
-        this.filteredProjects = [...this.projects];
-        console.log('Loaded projects:', this.projects);
-      },
-      error: (err) => {
-        console.error('Error loading projects:', err);
-      }
-    });
+    if (this.authService.isAdmin()) {
+      this.projectService.getAllProjects().subscribe({
+        next: (projects: Project[]) => {
+          this.projects = projects;
+          this.filteredProjects = [...this.projects];
+          console.log('Loaded projects with Admin privileges:', this.projects);
+        },
+        error: (err) => {
+          console.error('Error loading projects:', err);
+        },
+      });
+    } else if (!this.authService.isAdmin()) {
+      this.projectService.getMyProjects().subscribe({
+        next: (projects: Project[]) => {
+          this.projects = projects;
+          this.filteredProjects = [...this.projects];
+          console.log('Loaded projects with User privileges:', this.projects);
+        },
+        error: (err) => {
+          console.error('Error loading projects:', err);
+        },
+      });
+    }
   }
 
   loadTemplateProjects(): void {
@@ -45,24 +62,30 @@ export class ProjectPageComponent {
       {
         id: '1',
         name: 'Portale Clienti',
-        description: 'Sviluppo del nuovo portale per la gestione clienti con dashboard interattiva',
-        status: "IN_PROGRESS",
-        assignedTo: ['mario.rossi@example.com', 'giulia.bianchi@example.com']
+        description:
+          'Sviluppo del nuovo portale per la gestione clienti con dashboard interattiva',
+        status: 'IN_PROGRESS',
+        assignedTo: ['mario.rossi@example.com', 'giulia.bianchi@example.com'],
       },
       {
         id: '2',
         name: 'App Mobile',
         description: 'Applicazione mobile per il tracking delle presenze',
-        status: "CREATED",
-        assignedTo: []
+        status: 'CREATED',
+        assignedTo: [],
       },
       {
         id: '3',
         name: 'Sistema di Reporting',
-        description: 'Implementazione sistema avanzato di reportistica e analytics',
-        status: "COMPLETED",
-        assignedTo: ['anna.neri@example.com', 'paolo.gialli@example.com', 'sara.blu@example.com']
-      }
+        description:
+          'Implementazione sistema avanzato di reportistica e analytics',
+        status: 'COMPLETED',
+        assignedTo: [
+          'anna.neri@example.com',
+          'paolo.gialli@example.com',
+          'sara.blu@example.com',
+        ],
+      },
     ];
 
     this.filteredProjects = [...this.projects];
@@ -70,8 +93,11 @@ export class ProjectPageComponent {
 
   filterProjects(): void {
     this.filteredProjects = this.projects.filter((project: Project) => {
-      const matchesSearch = (project.name?.toLowerCase() || '').includes(this.searchTerm.toLowerCase());
-      const matchesStatus = this.selectedStatus === 'ALL' || project.status === this.selectedStatus;
+      const matchesSearch = (project.name?.toLowerCase() || '').includes(
+        this.searchTerm.toLowerCase()
+      );
+      const matchesStatus =
+        this.selectedStatus === 'ALL' || project.status === this.selectedStatus;
       return matchesSearch && matchesStatus;
     });
   }
@@ -85,25 +111,28 @@ export class ProjectPageComponent {
   }
 
   getStatusLabel(status: Project.StatusEnum | undefined): string {
-    if(!status)
-      return 'Sconosciuto';
+    if (!status) return 'Sconosciuto';
     const statusMap: { [key: string]: string } = {
-      'CREATED': 'Creato',
-      'IN_PROGRESS': 'In Corso',
-      'COMPLETED': 'Completato'
+      CREATED: 'Creato',
+      IN_PROGRESS: 'In Corso',
+      COMPLETED: 'Completato',
     };
     return statusMap[status] || status;
   }
 
   getStatusClass(status: Project.StatusEnum | undefined): string {
-    if(!status)
-      return 'bg-secondary';
+    if (!status) return 'bg-secondary';
     const classMap: { [key: string]: string } = {
-      'CREATED': 'bg-secondary',
-      'IN_PROGRESS': 'bg-warning',
-      'COMPLETED': 'bg-success'
+      CREATED: 'bg-secondary',
+      IN_PROGRESS: 'bg-warning',
+      COMPLETED: 'bg-success',
     };
-    console.log('Status class for', status, ':', classMap[status] || 'badge-secondary');
+    console.log(
+      'Status class for',
+      status,
+      ':',
+      classMap[status] || 'badge-secondary'
+    );
     return classMap[status] || 'bg-secondary';
   }
 
