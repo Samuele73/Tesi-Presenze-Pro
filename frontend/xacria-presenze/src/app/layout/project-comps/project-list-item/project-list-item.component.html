@@ -16,7 +16,7 @@
       {{ project?.summary }}
     </p>
 
-    <div class="mb-3">
+    <div class="mb-3" *ngIf="authService.isAdmin()">
       <ng-container *ngIf="project?.assignedTo?.length; else notAssigned">
         <h6 class="mb-2">Assegnato a:</h6>
         <div class="d-flex flex-wrap gap-1">

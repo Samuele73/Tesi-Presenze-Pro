@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 
 import java.util.Properties;
 
@@ -46,5 +47,10 @@ public class AppConfig {
         SimpleModule module = new SimpleModule();
         module.addDeserializer(BaseCalendarEntity.class, new BaseCalendarEntityDeserializer());
         return module;
+    }
+
+    @Bean
+    static GrantedAuthorityDefaults grantedAuthorityDefaults() {
+        return new GrantedAuthorityDefaults(""); // Rimuove il prefisso di default
     }
 }

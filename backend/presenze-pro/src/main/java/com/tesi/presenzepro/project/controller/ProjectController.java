@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ import java.util.List;
 public class ProjectController {
     private final ProjectService service;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("")
     @Operation(description = "Obtain all projects", security = @SecurityRequirement(name = "bearerAuth"))
     ResponseEntity<List<Project>> getAllProjects() {

@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { AuthService } from 'src/app/shared/services/auth.service';
 import { Project } from 'src/generated-client/model/models';
 
 @Component({
@@ -6,10 +7,13 @@ import { Project } from 'src/generated-client/model/models';
   templateUrl: './project-list-item.component.html',
   styleUrls: ['./project-list-item.component.scss'],
 })
-export class ProjectListItemComponent {
+export class ProjectListItemComponent implements OnInit {
   @Input() project: Project | null = null;
 
-  constructor() {}
+  constructor(public authService: AuthService) {}
+
+  ngOnInit(): void {
+  }
 
   getStatusLabel(status: Project.StatusEnum | undefined): string {
     if (!status) return 'Sconosciuto';
