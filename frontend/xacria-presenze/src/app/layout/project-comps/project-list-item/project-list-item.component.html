@@ -21,12 +21,16 @@
         <h6 class="mb-2">Assegnato a:</h6>
         <div class="d-flex flex-wrap gap-1">
           <span
-            *ngFor="let email of project?.assignedTo"
             class="badge bg-light text-dark border"
-            [title]="email"
           >
             <i class="fa-solid fa-user me-1"></i>
-            {{ email }}
+            {{ project?.assignedTo?.[0] }}
+          </span>
+          <span
+            *ngIf="project?.assignedTo!.length > 1"
+            class="badge bg-light text-dark border"
+          >
+            <i class="fa-solid fa-plus"></i>
           </span>
         </div>
         <small class="text-muted d-block mt-1">
