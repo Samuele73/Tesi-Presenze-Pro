@@ -97,5 +97,13 @@
   "Riepilogo" : "Riepilogo",
   "Descrizione" : "Descrizione",
   "Utenti Assegnati" : "Utenti Assegnati",
-  "Torna alla lista" : "Torna alla lista"
+  "Torna alla lista" : "Torna alla lista",
+  "Nessun utente assegnato a questo progetto" : "Nessun utente assegnato a questo progetto",
+  "Assegnato a" : "Assegnato a",
+  "Ancora non assegnato" : "Ancora non assegnato",
+  "Creato" : "Creato",
+  "In corso" : "In corso",
+  "Completato" : "Completato",
+  "Cerca Progetto" : "Cerca Progetto",
+  "Cerca per nome" : "Cerca per nome"
 }

@@ -4,13 +4,13 @@
         <div class="col-md-8">
           <label for="searchInput" class="form-label mb-2">
             <i class="fa-solid fa-search"></i>
-            Cerca progetti
+            {{"Cerca Progetto" | translate}}
           </label>
           <input
             id="searchInput"
             type="text"
             class="form-control"
-            placeholder="Cerca per nome..."
+            placeholder="{{'Cerca per nome...' | translate}}"
             [(ngModel)]="searchTerm"
             (input)="onSearchChange()"
           />

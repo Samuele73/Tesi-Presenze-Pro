@@ -1,5 +1,5 @@
 <ng-container *ngIf="project?.assignedTo?.length; else notAssigned">
-  <h6 class="mb-2">Assegnato a:</h6>
+  <h6 class="mb-2">{{"Assegnato a" | translate}}:</h6>
   <div class="d-flex flex-wrap gap-1">
     <span class="badge badge-light text-dark border">
       <i class="fa-solid fa-user me-1"></i>
@@ -26,6 +26,6 @@
 </ng-container>
 
 <ng-template #notAssigned>
-  <h6 class="mb-2">Assegnato a:</h6>
-  <div class="fst-italic text-muted">Ancora non assegnato</div>
+  <h6 class="mb-2">{{ "Assegnato a" | translate }}:</h6>
+  <div class="fst-italic text-muted">{{ "Ancora non assegnato" | translate }}</div>
 </ng-template>

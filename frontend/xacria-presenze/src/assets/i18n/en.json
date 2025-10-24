@@ -96,5 +96,13 @@
   "Riepilogo" : "Summary",
   "Descrizione" : "Description",
   "Utenti Assegnati" : "Assigned users",
-  "Torna alla lista" : "Back to list"
+  "Torna alla lista" : "Back to list",
+  "Nessun utente assegnato a questo progetto" : "No users assigned to this project",
+  "Assegnato a" : "Assigned to",
+  "Ancora non assegnato" : "Not assigned yet",
+  "Created" : "Created",
+  "In Progress" : "In Progress",
+  "Completed" : "Completed",
+  "Cerca Progetto" : "Search Project",
+  "Cerca per nome" : "Search by name"
 }

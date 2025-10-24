@@ -7,7 +7,7 @@
       {{ project?.name }}
     </h5>
     <span class="badge" [ngClass]="getStatusClass(project?.status)">
-      {{ getStatusLabel(project?.status) }}
+      {{ getStatusLabel(project?.status) | translate}}
     </span>
   </div>
 
