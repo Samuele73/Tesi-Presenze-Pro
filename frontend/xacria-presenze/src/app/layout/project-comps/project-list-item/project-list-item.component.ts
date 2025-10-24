@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { Project } from 'src/generated-client/model/models';
 
@@ -10,7 +11,7 @@ import { Project } from 'src/generated-client/model/models';
 export class ProjectListItemComponent implements OnInit {
   @Input() project: Project | null = null;
 
-  constructor(public authService: AuthService) {}
+  constructor(public authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
   }
@@ -39,5 +40,11 @@ export class ProjectListItemComponent implements OnInit {
       classMap[status] || 'badge-secondary'
     );
     return classMap[status] || 'bg-secondary';
+  }
+
+  goToProject(){
+    if(this.project){
+      this.router.navigate(['/app/detailed-project/'], { queryParams: { id: this.project.id } });
+    }
   }
 }

@@ -1,13 +1,13 @@
 <ng-container *ngIf="project?.assignedTo?.length; else notAssigned">
   <h6 class="mb-2">Assegnato a:</h6>
   <div class="d-flex flex-wrap gap-1">
-    <span class="badge bg-light text-dark border">
+    <span class="badge badge-light text-dark border">
       <i class="fa-solid fa-user me-1"></i>
       {{ project?.assignedTo?.[0] }}
     </span>
     <span
       *ngIf="(project?.assignedTo)!.length > 1"
-      class="badge bg-light text-dark border"
+      class="badge badge-light text-dark border"
       data-bs-toggle="tooltip"
         data-bs-placement="top"
         data-bs-custom-class="custom-tooltip2"
