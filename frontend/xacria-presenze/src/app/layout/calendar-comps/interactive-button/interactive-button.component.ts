@@ -139,7 +139,7 @@ export class InteractiveButtonComponent implements AfterViewInit, OnDestroy {
       : 'Elimina una entry relativa alla giornata';
   }
 
-  get buttonClasses(): any {  
+  get buttonClasses(): any {
     return {'btn-remove': this.mode === 'DELETE'}
   }
 
@@ -188,9 +188,39 @@ export class InteractiveButtonComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.hideOtherDropdowns();
-    /* this.initializeBootstrapTooltips(); */
-  }
+  this.hideOtherDropdowns();
+  this.configureDropdownPlacement();
+  /* this.initializeBootstrapTooltips(); */
+}
+
+private configureDropdownPlacement(): void {
+  setTimeout(() => {
+    const dropdownToggle = document.querySelector(`#${this.dropdownId} [data-bs-toggle="dropdown"]`);
+
+    if (dropdownToggle) {
+      // Inizializza il dropdown con configurazione custom
+      const dropdown = new bootstrap.Dropdown(dropdownToggle, {
+        popperConfig: {
+          placement: 'bottom-start',
+          strategy: 'fixed',
+          modifiers: [
+            {
+              name: 'flip',
+              enabled: false // Disabilita il flip automatico
+            },
+            {
+              name: 'preventOverflow',
+              options: {
+                boundary: 'clippingParents',
+                altAxis: false
+              }
+            }
+          ]
+        }
+      });
+    }
+  }, 0);
+}
 
   ngOnDestroy(): void {
     // Cleanup se necessario

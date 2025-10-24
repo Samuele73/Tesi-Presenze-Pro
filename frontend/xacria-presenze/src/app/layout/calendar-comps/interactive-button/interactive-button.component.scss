@@ -63,3 +63,25 @@
 .delete-dropdown a:hover fa-icon{
   color: var(--bs-danger);
 }
+
+
+//Togliere nel caso ci fossero problemi di overflow
+.dropdown-menu {
+  // Forza il posizionamento verso il basso
+  &[data-popper-placement] {
+    top: 100% !important;
+    bottom: auto !important;
+  }
+}
+
+// Assicura che il dropdown-center non interferisca
+.dropdown-center {
+  .dropdown-menu {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+
+    &[data-popper-placement] {
+      transform: translateX(-50%) !important;
+    }
+  }
+}

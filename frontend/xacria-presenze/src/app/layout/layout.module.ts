@@ -7,7 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HttpClient } from '@angular/common/http';
-import { NgbDatepickerModule, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDatepickerModule, NgbModalModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { LayoutComponent } from './layout/layout.component';
 import { HomeComponent } from './home/home.component';
@@ -31,6 +31,7 @@ import { ProjectPageComponent } from './project-comps/project-page/project-page.
 import { ProjectListComponent } from './project-comps/project-list/project-list.component';
 import { ProjectListItemComponent } from './project-comps/project-list-item/project-list-item.component';
 import { ProjectListFiltersComponent } from './project-comps/project-list-filters/project-list-filters.component';
+import { AssignmentBadgesComponent } from './project-comps/assignment-badges/assignment-badges.component';
 ;
 
 
@@ -55,7 +56,8 @@ import { ProjectListFiltersComponent } from './project-comps/project-list-filter
     FilterPipe,
     ProjectListComponent,
     ProjectListItemComponent,
-    ProjectListFiltersComponent
+    ProjectListFiltersComponent,
+    AssignmentBadgesComponent
   ],
   imports: [
     CommonModule,
@@ -66,6 +68,7 @@ import { ProjectListFiltersComponent } from './project-comps/project-list-filter
     FullCalendarModule,
     FontAwesomeModule,
     NgbModalModule,
+    NgbTooltipModule,
     NgbDatepickerModule,
     TranslateModule.forChild({
         loader: {
