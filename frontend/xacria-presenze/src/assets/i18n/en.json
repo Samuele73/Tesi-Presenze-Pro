@@ -92,5 +92,9 @@
   "Modifica la reperibilità dei progetti" : "Modify projects availability",
   "Email già esistente" : "Email already exists",
   "Incarico" : "Task",
-  "Projects" : "Projects"
+  "Projects" : "Projects",
+  "Riepilogo" : "Summary",
+  "Descrizione" : "Description",
+  "Utenti Assegnati" : "Assigned users",
+  "Torna alla lista" : "Back to list"
 }
