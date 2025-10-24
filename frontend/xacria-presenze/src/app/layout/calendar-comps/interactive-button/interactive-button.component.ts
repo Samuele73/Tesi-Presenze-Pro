@@ -1,4 +1,12 @@
-import { AfterViewInit, Component, Input, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  Input,
+  ViewChild,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  OnDestroy,
+} from '@angular/core';
 import {
   faPlus,
   faMinus,
@@ -56,7 +64,7 @@ type buttonMode = 'ADD' | 'DELETE';
   selector: 'app-interactive-button',
   templateUrl: './interactive-button.component.html',
   styleUrls: ['./interactive-button.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InteractiveButtonComponent implements AfterViewInit, OnDestroy {
   faIcons: any = faIcons;
@@ -68,7 +76,8 @@ export class InteractiveButtonComponent implements AfterViewInit, OnDestroy {
 
   @Input() set date(value: Date | undefined) {
     const newDate = value ? new Date(value) : undefined;
-    const dateChanged = !this._date || !newDate || this._date.getTime() !== newDate.getTime();
+    const dateChanged =
+      !this._date || !newDate || this._date.getTime() !== newDate.getTime();
 
     this._date = newDate;
 
@@ -140,7 +149,7 @@ export class InteractiveButtonComponent implements AfterViewInit, OnDestroy {
   }
 
   get buttonClasses(): any {
-    return {'btn-remove': this.mode === 'DELETE'}
+    return { 'btn-remove': this.mode === 'DELETE' };
   }
 
   get buttonIcon(): any {
@@ -188,54 +197,22 @@ export class InteractiveButtonComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-  this.hideOtherDropdowns();
-  this.configureDropdownPlacement();
-  /* this.initializeBootstrapTooltips(); */
-}
-
-private configureDropdownPlacement(): void {
-  setTimeout(() => {
-    const dropdownToggle = document.querySelector(`#${this.dropdownId} [data-bs-toggle="dropdown"]`);
-
-    if (dropdownToggle) {
-      // Inizializza il dropdown con configurazione custom
-      const dropdown = new bootstrap.Dropdown(dropdownToggle, {
-        popperConfig: {
-          placement: 'bottom-start',
-          strategy: 'fixed',
-          modifiers: [
-            {
-              name: 'flip',
-              enabled: false // Disabilita il flip automatico
-            },
-            {
-              name: 'preventOverflow',
-              options: {
-                boundary: 'clippingParents',
-                altAxis: false
-              }
-            }
-          ]
-        }
-      });
-    }
-  }, 0);
-}
+    this.hideOtherDropdowns();
+    this.initializeBootstrapTooltips();
+  }
 
   ngOnDestroy(): void {
     // Cleanup se necessario
   }
 
   initializeBootstrapTooltips(): void {
-    const tooltipTriggerList = [].slice.call(
-      document.querySelectorAll('.tt')
-    );
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('.tt'));
 
     tooltipTriggerList.map((el: HTMLElement) => {
       new bootstrap.Tooltip(el, {
-        trigger: 'hover',  // solo hover, no focus/click
+        trigger: 'hover', // solo hover, no focus/click
         placement: 'top',
-        customClass: 'custom-tooltip'
+        customClass: 'custom-tooltip',
       });
     });
   }
@@ -290,7 +267,6 @@ private configureDropdownPlacement(): void {
         const toTime = new Date(calendarEntry.dateTo).setHours(23, 59, 59, 999);
 
         return currentTime >= fromTime && currentTime <= toTime;
-
       } else if (this.isWorkingDayEntry(calendarEntry)) {
         if (!calendarEntry.dateFrom) return false;
 
@@ -351,10 +327,15 @@ private configureDropdownPlacement(): void {
 
   // Precalcola i flag per il template
   private updateDisabledFlags(): void {
-    this.isDayWorksDisabled = this.filteredEntries.day_works.length === 0 && this.mode === 'DELETE';
-    this.isRequestsDisabled = this.filteredEntries.requests.length === 0 && this.mode === 'DELETE';
-    this.isWorkingTripsDisabled = this.filteredEntries.working_trips.length === 0 && this.mode === 'DELETE';
-    this.isAvailabilitiesDisabled = this.filteredEntries.availabilities.length === 0 && this.mode === 'DELETE';
+    this.isDayWorksDisabled =
+      this.filteredEntries.day_works.length === 0 && this.mode === 'DELETE';
+    this.isRequestsDisabled =
+      this.filteredEntries.requests.length === 0 && this.mode === 'DELETE';
+    this.isWorkingTripsDisabled =
+      this.filteredEntries.working_trips.length === 0 && this.mode === 'DELETE';
+    this.isAvailabilitiesDisabled =
+      this.filteredEntries.availabilities.length === 0 &&
+      this.mode === 'DELETE';
   }
 
   private resetFilteredArrays(): void {

@@ -9,7 +9,13 @@
       *ngIf="(project?.assignedTo)!.length > 1"
       class="badge bg-light text-dark border"
     >
-      <i class="fa-solid fa-plus"></i>
+      <i
+        class="fa-solid fa-plus"
+        data-bs-toggle="tooltip"
+        data-bs-placement="top"
+        data-bs-custom-class="custom-tooltip2"
+        [title]="tooltipTitle"
+      ></i>
     </span>
   </div>
   <small class="text-muted d-block mt-1">
