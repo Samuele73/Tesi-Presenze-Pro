@@ -1,55 +1,11 @@
-<div class="container-fluid p-4">
-  <!-- Header -->
-  <!-- <H3>I miei progetti</H3> -->
-
-  <app-project-list-filters
-    [projects]="projects"
-    [(filteredProjects)]="filteredProjects"
-  ></app-project-list-filters>
-
-  <app-project-list
-    [projects]="filteredProjects"
-  ></app-project-list>
-
-  <!-- Statistiche -->
-  <!-- <div class="row mt-4">
-    <div class="col-12">
-      <div class="card shadow-sm">
-        <div class="card-body">
-          <div class="row text-center">
-            <div class="col-md-3 mb-3 mb-md-0">
-              <div class="stat-card">
-                <h3 class="text-black mb-1">{{ projects.length }}</h3>
-                <small class="text-muted">Totale Progetti</small>
-              </div>
-            </div>
-            <div class="col-md-3 mb-3 mb-md-0">
-              <div class="stat-card">
-                <h3 class="text-warning mb-1">
-                  {{ (projects | filter: 'status': 'IN_PROGRESS').length }}
-                </h3>
-                <small class="text-muted">In Corso</small>
-              </div>
-            </div>
-            <div class="col-md-3 mb-3 mb-md-0">
-              <div class="stat-card">
-                <h3 class="text-secondary mb-1">
-                  {{ (projects | filter: 'status': 'CREATED').length }}
-                </h3>
-                <small class="text-muted">Creati</small>
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="stat-card">
-                <h3 class="text-success mb-1">
-                  {{ (projects | filter: 'status': 'COMPLETED').length }}
-                </h3>
-                <small class="text-muted">Completati</small>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div> -->
+<div class="d-flex flex-column h-100">
+  <div class="flex-shrink-0">
+    <app-project-list-filters
+      [projects]="projects"
+      [(filteredProjects)]="filteredProjects"
+    ></app-project-list-filters>
+  </div>
+  <div class="flex-grow-1 overflow-auto overflow-x-hidden">
+    <app-project-list [projects]="filteredProjects"></app-project-list>
+  </div>
 </div>
