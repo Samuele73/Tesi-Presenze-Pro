@@ -1,5 +1,5 @@
 <ng-container *ngIf="project !== null; else noProject">
-  <div class="container">
+  <div class="container-fluid">
     <div class="mb-1">
       <a
         [routerLink]="['/app/projects']"
@@ -21,62 +21,64 @@
 
       <p class="text-muted">ID: {{ project.id }}</p>
     </div>
+    <!-- Other components -->
+    <div class="d-flex flex-column gap-2 mb-4">
+      <!-- Summary -->
+      <div>
+        <h5 class="mb-0">
+          <i class="bi bi-file-text"></i> {{ "Riepilogo" | translate }}
+        </h5>
+        <p class="mb-0">{{ project.summary }}</p>
+      </div>
 
-    <!-- Summary -->
-    <h5 class="mb-0">
-      <i class="bi bi-file-text"></i> {{ "Riepilogo" | translate }}
-    </h5>
-    <p class="mb-0">{{ project.summary }}</p>
+      <!-- Description -->
+      <div>
+        <h5 class="mb-0">
+          <i class="bi bi-card-text"></i> {{ "Descrizione" | translate }}
+        </h5>
+        <p class="mb-0" style="white-space: pre-wrap">
+          {{ project.description }}
+        </p>
+      </div>
 
-    <!-- Description -->
-    <h5 class="mb-0">
-      <i class="bi bi-card-text"></i> {{ "Descrizione" | translate }}
-    </h5>
-    <p class="mb-0" style="white-space: pre-wrap">
-      {{ project.description }}
-    </p>
+      <!-- Assigned Users -->
+      <div>
+        <h5 class="mb-2">
+          <span class="text-primary">{{
+            project.assignedTo?.length || 0
+          }}</span> {{ "Utenti Assegnati" | translate }}:
 
-    <!-- Assigned Users -->
-    <h5 class="mb-0">
-      <i class="bi bi-people"></i> {{ "Utenti Assegnati" | translate }}
-      <span class="badge bg-light text-dark ms-2">{{
-        project.assignedTo?.length || 0
-      }}</span>
-    </h5>
-    <div
-      *ngIf="
-        project?.assignedTo && project.assignedTo!.length > 0;
-        else noUsers
-      "
-    >
-      <ul class="list-group">
-        <li
-          class="list-group-item d-flex align-items-center"
-          *ngFor="let email of project.assignedTo"
+        </h5>
+        <div
+          *ngIf="
+            project?.assignedTo && project.assignedTo!.length > 0;
+            else noUsers
+          "
+          class="d-flex flex-wrap gap-2"
         >
-          <i class="bi bi-envelope me-2"></i>
-          <span>{{ email }}</span>
-        </li>
-      </ul>
+          <app-chips
+            *ngFor="let email of project.assignedTo"
+            [text]="email"
+            [mode]="'DELETE'"
+          ></app-chips>
+        </div>
+        <ng-template #noUsers>
+          <p class="text-muted mb-0">
+            <i class="bi bi-info-circle"></i>
+            {{ "Nessun utente assegnato a questo progetto" | translate }}
+          </p>
+        </ng-template>
+      </div>
     </div>
-    <ng-template #noUsers>
-      <p class="text-muted mb-0">
-        <i class="bi bi-info-circle"></i>
-        {{ "Nessun utente assegnato a questo progetto" | translate }}
-      </p>
-    </ng-template>
 
     <!-- Action Buttons -->
     <div class="row mb-4">
       <div class="col-12">
-        <button type="button" class="btn btn-primary me-2">
+        <button type="button" class="btn btn-primary me-2 text-white">
           <i class="bi bi-pencil"></i> Modifica
         </button>
         <button type="button" class="btn btn-danger me-2">
           <i class="bi bi-trash"></i> Elimina
-        </button>
-        <button type="button" class="btn btn-secondary">
-          <i class="bi bi-arrow-left"></i> Torna alla lista
         </button>
       </div>
     </div>

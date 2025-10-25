@@ -1,5 +1,5 @@
 <ng-container *ngIf="project?.assignedTo?.length; else notAssigned">
-  <h6 class="mb-2">{{"Assegnato a" | translate}}:</h6>
+  <h6 class="mb-2"><i class="fa fa-user me-2 "></i>{{"Utenti assegnati" | translate}}:</h6>
   <div class="d-flex flex-wrap gap-1">
     <app-chips
       *ngFor="let email of project?.assignedTo?.slice(0,1)"
@@ -28,6 +28,6 @@
 </ng-container>
 
 <ng-template #notAssigned>
-  <h6 class="mb-2">{{ "Assegnato a" | translate }}:</h6>
+  <h6 class="mb-2"><i class="fa fa-user me-2 "></i>{{"Utenti assegnati" | translate}}:</h6>
   <div class="fst-italic text-muted">{{ "Ancora non assegnato" | translate }}</div>
 </ng-template>
