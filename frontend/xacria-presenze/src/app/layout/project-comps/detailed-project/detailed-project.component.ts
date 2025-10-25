@@ -50,4 +50,25 @@ export class DetailedProjectComponent implements OnInit {
       }
     });
   }
+
+  getBadgesNgClass(): Record<string, boolean> {
+    const status = this.project?.status;
+    return {
+      'bg-success': status === 'COMPLETED',
+      'bg-warning': status === 'IN_PROGRESS',
+      'bg-secondary': status === 'CREATED',
+      'bg-danger':
+        status !== 'COMPLETED' && status !== 'IN_PROGRESS' && status !== 'CREATED',
+    };
+  }
+
+  getStatusLabel(status: Project.StatusEnum | undefined): string {
+    if (!status) return 'Sconosciuto';
+    const statusMap: { [key: string]: string } = {
+      CREATED: 'Creato',
+      IN_PROGRESS: 'In Corso',
+      COMPLETED: 'Completato',
+    };
+    return statusMap[status] || status;
+  }
 }

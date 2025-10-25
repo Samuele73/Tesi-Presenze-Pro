@@ -33,6 +33,7 @@ import { ProjectListItemComponent } from './project-comps/project-list-item/proj
 import { ProjectListFiltersComponent } from './project-comps/project-list-filters/project-list-filters.component';
 import { AssignmentBadgesComponent } from './project-comps/assignment-badges/assignment-badges.component';
 import { DetailedProjectComponent } from './project-comps/detailed-project/detailed-project.component';
+import { ProjectStatusComponent } from './project-comps/project-status/project-status.component';
 ;
 
 
@@ -59,7 +60,8 @@ import { DetailedProjectComponent } from './project-comps/detailed-project/detai
     ProjectListItemComponent,
     ProjectListFiltersComponent,
     AssignmentBadgesComponent,
-    DetailedProjectComponent
+    DetailedProjectComponent,
+    ProjectStatusComponent
   ],
   imports: [
     CommonModule,

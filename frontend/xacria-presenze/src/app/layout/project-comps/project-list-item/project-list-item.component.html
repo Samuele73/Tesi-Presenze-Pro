@@ -6,9 +6,7 @@
       <i class="bi bi-folder2-open me-2"></i>
       {{ project?.name }}
     </h5>
-    <span class="badge" [ngClass]="getStatusClass(project?.status)">
-      {{ getStatusLabel(project?.status) | translate}}
-    </span>
+    <app-project-status [project]="project"></app-project-status>
   </div>
 
   <div class="card-body">
