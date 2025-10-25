@@ -1,10 +1,5 @@
-.custom-tooltip.tooltip > .tooltip-inner {
-  --bs-tooltip-bg: blue;
-  --bs-tooltip-color: white;
-}
-
-/* .chip {
-  border-radius: 16px !important;
+.chip {
+  /* border-radius: 16px !important; */
   font-size: 0.875rem;
   font-weight: normal;
   transition: all 0.2s ease;
@@ -21,7 +16,7 @@
     }
   }
 
-  &:hover {
+  /* &:hover {
     background-color: var(--bs-gray-300) !important;
-  }
-} */
+  } */
+}

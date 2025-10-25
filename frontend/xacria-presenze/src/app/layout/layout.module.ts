@@ -34,6 +34,7 @@ import { ProjectListFiltersComponent } from './project-comps/project-list-filter
 import { AssignmentBadgesComponent } from './project-comps/assignment-badges/assignment-badges.component';
 import { DetailedProjectComponent } from './project-comps/detailed-project/detailed-project.component';
 import { ProjectStatusComponent } from './project-comps/project-status/project-status.component';
+import { ChipsComponent } from './chips/chips.component';
 ;
 
 
@@ -61,7 +62,8 @@ import { ProjectStatusComponent } from './project-comps/project-status/project-s
     ProjectListFiltersComponent,
     AssignmentBadgesComponent,
     DetailedProjectComponent,
-    ProjectStatusComponent
+    ProjectStatusComponent,
+    ChipsComponent
   ],
   imports: [
     CommonModule,

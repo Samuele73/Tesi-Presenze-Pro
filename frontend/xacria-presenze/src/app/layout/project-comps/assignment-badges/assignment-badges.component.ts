@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Project } from 'src/generated-client';
 
 declare var bootstrap: any;
@@ -10,6 +10,8 @@ declare var bootstrap: any;
 })
 export class AssignmentBadgesComponent implements AfterViewInit, OnInit {
   @Input() project: Project | null = null;
+   @Input() removable: boolean = false; // true = modalità con rimozione, false = statico
+  @Output() userRemoved = new EventEmitter<string>();
   tooltipTitle: string = '';
 
   ngOnInit(): void {
@@ -26,5 +28,10 @@ export class AssignmentBadgesComponent implements AfterViewInit, OnInit {
     const tooltipList = Array.from(tooltipTriggerList).map(
       (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
     );
+  }
+  onRemoveUser(user: string): void {
+    if (this.removable) {
+      this.userRemoved.emit(user);
+    }
   }
 }

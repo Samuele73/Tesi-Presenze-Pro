@@ -1,0 +1,16 @@
+<!-- <span class="badge badge-light text-dark border">
+  <i class="fa-solid fa-user me-1"></i>
+  {{ text | translate }}
+  <i class="fa-solid fa-x" *ngIf="isDeleteMode()" (click)="onDelete()"></i>
+</span> -->
+<span
+  class="badge bg-light text-dark border d-inline-flex align-items-center gap-2 px-2 py-1 chip rounded-4"
+  [class.chip-removable]="isDeleteMode()"
+>
+  <span>{{ text | translate }}</span>
+  <i
+    *ngIf="isDeleteMode()"
+    class="fa-solid fa-xmark chip-remove"
+    (click)="onDelete()"
+  ></i>
+</span>
