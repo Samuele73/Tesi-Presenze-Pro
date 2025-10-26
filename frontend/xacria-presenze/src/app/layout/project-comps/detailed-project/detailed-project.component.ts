@@ -19,7 +19,7 @@ export class DetailedProjectComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private projectService: ProjectService,
-    private authService: AuthService
+    public authService: AuthService
   ) {}
 
   ngOnInit() {

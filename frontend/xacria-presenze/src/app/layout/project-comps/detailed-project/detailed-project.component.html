@@ -59,7 +59,7 @@
           <app-chips
             *ngFor="let email of project?.assignedTo"
             [text]="email"
-            [mode]="'DELETE'"
+            [mode]="authService.isAdmin() ? 'DELETE' : 'STATIC'"
           ></app-chips>
         </div>
         <ng-template #noUsers>
