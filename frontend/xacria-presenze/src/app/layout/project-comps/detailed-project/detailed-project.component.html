@@ -1,4 +1,4 @@
-<ng-container *ngIf="project !== null; else noProject">
+<ng-container *ngIf="project !== null || isLoading; else noProject">
   <div class="container-fluid">
     <div class="mb-1">
       <a
@@ -12,14 +12,14 @@
     <!-- Header with title and status -->
     <div class="">
       <div class="d-flex align-items-center gap-4">
-        <h1 class="mb-2">{{ project.name }}</h1>
+        <h1 class="mb-2">{{ project?.name }}</h1>
         <app-project-status
           [project]="project"
           class="fs-6 mb-1"
         ></app-project-status>
       </div>
 
-      <p class="text-muted">ID: {{ project.id }}</p>
+      <p class="text-muted">ID: {{ project?.id }}</p>
     </div>
     <!-- Other components -->
     <div class="d-flex flex-column gap-2 mb-4">
@@ -28,7 +28,7 @@
         <h5 class="mb-0">
           <i class="bi bi-file-text"></i> {{ "Riepilogo" | translate }}
         </h5>
-        <p class="mb-0">{{ project.summary }}</p>
+        <p class="mb-0">{{ project?.summary }}</p>
       </div>
 
       <!-- Description -->
@@ -37,7 +37,7 @@
           <i class="bi bi-card-text"></i> {{ "Descrizione" | translate }}
         </h5>
         <p class="mb-0" style="white-space: pre-wrap">
-          {{ project.description }}
+          {{ project?.description }}
         </p>
       </div>
 
@@ -45,19 +45,19 @@
       <div>
         <h5 class="mb-2">
           <span class="text-primary">{{
-            project.assignedTo?.length || 0
+            project?.assignedTo?.length || 0
           }}</span> {{ "Utenti Assegnati" | translate }}:
 
         </h5>
         <div
           *ngIf="
-            project?.assignedTo && project.assignedTo!.length > 0;
+            project?.assignedTo && project?.assignedTo!.length > 0;
             else noUsers
           "
           class="d-flex flex-wrap gap-2"
         >
           <app-chips
-            *ngFor="let email of project.assignedTo"
+            *ngFor="let email of project?.assignedTo"
             [text]="email"
             [mode]="'DELETE'"
           ></app-chips>

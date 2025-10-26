@@ -14,6 +14,7 @@ export class DetailedProjectComponent implements OnInit {
   project: Project | null = null;
   backupTitle: string = 'Il progetto non è stato trovato';
   statusCode: string = '';
+  isLoading: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -29,6 +30,7 @@ export class DetailedProjectComponent implements OnInit {
     this.route.queryParams.subscribe((params) => {
       const projectId = params['id'];
       if (projectId) {
+        this.isLoading = true;
         this.projectService.getProjectById(projectId).subscribe({
           next: (project) => {
             console.log('Project details:', project);
@@ -43,6 +45,9 @@ export class DetailedProjectComponent implements OnInit {
             this.statusCode = err.status.toString();
             this.project = null;
           },
+          complete: () => {
+            this.isLoading = false;
+          }
         });
       } else {
         this.project = null;
