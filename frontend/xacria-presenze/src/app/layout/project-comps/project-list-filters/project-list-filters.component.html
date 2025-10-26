@@ -21,7 +21,7 @@
       <div class="col-md-4" >
         <label for="statusFilter" class="form-label mb-2">
           <i class="fa fa-bars-progress me-1"></i>
-          Filtra per stato
+          {{"Filtra per stato" | translate}}
         </label>
         <select
           id="statusFilter"
@@ -39,7 +39,7 @@
       <div class="col-md-4" *ngIf="authService.isAdmin()">
         <label for="assignedToFilter" class="form-label mb-2">
           <i class="fa fa-user me-1"></i>
-          Filtra per assegnatario
+          {{ "Filtra per assegnatario" | translate }}
         </label>
         <select
           id="assignedToFilter"

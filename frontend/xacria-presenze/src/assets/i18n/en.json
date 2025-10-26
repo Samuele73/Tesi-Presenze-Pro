@@ -105,5 +105,7 @@
   "Completed" : "Completed",
   "Cerca Progetto" : "Search Project",
   "Cerca per nome" : "Search by name",
-  "Lista Progetti" : "Projects List"
+  "Lista Progetti" : "Projects List",
+  "Filtra per stato" : "Filter by status",
+  "Filtra per assegnatario" : "Filter by assignee"
 }
