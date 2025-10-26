@@ -12,6 +12,7 @@ export class ProjectPageComponent {
   filteredProjects: Project[] = [];
   searchTerm: string = '';
   selectedStatus: string = 'ALL';
+  isLoading: boolean = false;
 
   projectStatuses = [
     { value: 'ALL', label: 'Tutti' },
@@ -30,6 +31,7 @@ export class ProjectPageComponent {
   }
 
   loadProjects(): void {
+    this.isLoading = true;
     if (this.authService.isAdmin()) {
       this.projectService.getAllProjects().subscribe({
         next: (projects: Project[]) => {
@@ -40,6 +42,9 @@ export class ProjectPageComponent {
         error: (err) => {
           console.error('Error loading projects:', err);
         },
+        complete: () => {
+          this.isLoading = false;
+        }
       });
     } else if (!this.authService.isAdmin()) {
       this.projectService.getMyProjects().subscribe({
@@ -51,6 +56,9 @@ export class ProjectPageComponent {
         error: (err) => {
           console.error('Error loading projects:', err);
         },
+        complete: () => {
+          this.isLoading = false;
+        }
       });
     }
   }

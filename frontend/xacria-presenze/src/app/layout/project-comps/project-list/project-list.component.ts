@@ -9,6 +9,7 @@ import { Project } from 'src/generated-client';
 export class ProjectListComponent {
 
   @Input() projects: Project[] = [];
+  @Input() isLoading: boolean = false;
 
   constructor() {
     console.log("ProjectListComponent initialized with projects:", this.projects);
