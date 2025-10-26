@@ -1,39 +1,58 @@
 <div class="card shadow-sm mb-4">
-    <div class="card-body">
-      <div class="row g-3">
-        <div class="col-md-8">
-          <label for="searchInput" class="form-label mb-2">
-            <i class="fa-solid fa-search"></i>
-            {{"Cerca Progetto" | translate}}
-          </label>
-          <input
-            id="searchInput"
-            type="text"
-            class="form-control"
-            placeholder="{{'Cerca per nome...' | translate}}"
-            [(ngModel)]="searchTerm"
-            (input)="onSearchChange()"
-          />
-        </div>
-        <div class="col-md-4">
-          <label for="statusFilter" class="form-label mb-2">
-            <i class="fa fa-filter me-1"></i>
-            Filtra per stato
-          </label>
-          <select
-            id="statusFilter"
-            class="form-select"
-            [(ngModel)]="selectedStatus"
-            (change)="onStatusChange()"
-          >
-            <option
-              *ngFor="let status of projectStatuses"
-              [value]="status.value"
-            >
-              {{ status.label }}
-            </option>
-          </select>
-        </div>
+  <div class="card-body">
+    <div class="row g-3">
+      <!-- Filtro per nome -->
+      <div class="col-md-4" [ngClass]="{'col-md-8' : !authService.isAdmin()}">
+        <label for="searchInput" class="form-label mb-2">
+          <i class="fa-solid fa-search"></i>
+          {{ "Cerca Progetto" | translate }}
+        </label>
+        <input
+          id="searchInput"
+          type="text"
+          class="form-control"
+          placeholder="{{ 'Cerca per nome...' | translate }}"
+          [(ngModel)]="searchTerm"
+          (input)="onSearchChange()"
+        />
+      </div>
+
+      <!-- Filtro per stato -->
+      <div class="col-md-4" >
+        <label for="statusFilter" class="form-label mb-2">
+          <i class="fa fa-bars-progress me-1"></i>
+          Filtra per stato
+        </label>
+        <select
+          id="statusFilter"
+          class="form-select"
+          [(ngModel)]="selectedStatus"
+          (change)="onStatusChange()"
+        >
+          <option *ngFor="let status of projectStatuses" [value]="status.value">
+            {{ status.label }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Filtro per assegnatario -->
+      <div class="col-md-4" *ngIf="authService.isAdmin()">
+        <label for="assignedToFilter" class="form-label mb-2">
+          <i class="fa fa-user me-1"></i>
+          Filtra per assegnatario
+        </label>
+        <select
+          id="assignedToFilter"
+          class="form-select"
+          [(ngModel)]="selectedAssignedTo"
+          (change)="onAssignedToChange()"
+        >
+          <option value="ALL">Tutti</option>
+          <option *ngFor="let user of assignedToList" [value]="user">
+            {{ user }}
+          </option>
+        </select>
       </div>
     </div>
   </div>
+</div>

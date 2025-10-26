@@ -1,4 +1,12 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
+import { AuthService } from 'src/app/shared/services/auth.service';
 import { Project } from 'src/generated-client';
 
 @Component({
@@ -7,15 +15,13 @@ import { Project } from 'src/generated-client';
   styleUrls: ['./project-list-filters.component.scss'],
 })
 export class ProjectListFiltersComponent implements OnChanges {
-  // Tutti i progetti originali
   @Input() projects: Project[] = [];
-
-  // Progetti filtrati, legati al padre in two-way binding
   @Input() filteredProjects: Project[] = [];
   @Output() filteredProjectsChange = new EventEmitter<Project[]>();
 
   searchTerm: string = '';
   selectedStatus: string = 'ALL';
+  selectedAssignedTo: string = 'ALL';
 
   projectStatuses = [
     { value: 'ALL', label: 'Tutti' },
@@ -24,24 +30,44 @@ export class ProjectListFiltersComponent implements OnChanges {
     { value: 'COMPLETED', label: 'Completato' },
   ];
 
+  assignedToList: string[] = [];
+
+  constructor(public authService: AuthService) {}
+
   ngOnChanges(changes: SimpleChanges): void {
-    // Se il padre aggiorna la lista completa, riapplica i filtri
     if (changes['projects'] && this.projects) {
+      this.generateAssignedToList();
       this.filterProjects();
     }
   }
 
+  /** 🔹 Crea la lista di utenti assegnatari senza duplicati */
+  private generateAssignedToList(): void {
+    const allAssigned: string[] = this.projects
+      .flatMap((p) => p.assignedTo || [])
+      .filter(Boolean);
+
+    // Usa Set per rimuovere duplicati e ordina alfabeticamente
+    this.assignedToList = Array.from(new Set(allAssigned)).sort();
+  }
+
+  /** 🔹 Applica tutti i filtri contemporaneamente */
   filterProjects(): void {
     const filtered = this.projects.filter((project: Project) => {
       const matchesSearch = (project.name?.toLowerCase() || '').includes(
         this.searchTerm.toLowerCase()
       );
+
       const matchesStatus =
         this.selectedStatus === 'ALL' || project.status === this.selectedStatus;
-      return matchesSearch && matchesStatus;
+
+      const matchesAssigned =
+        this.selectedAssignedTo === 'ALL' ||
+        (project.assignedTo || []).includes(this.selectedAssignedTo);
+
+      return matchesSearch && matchesStatus && matchesAssigned;
     });
 
-    // Aggiorna lo stato interno e notifica il padre
     this.filteredProjects = filtered;
     this.filteredProjectsChange.emit(filtered);
   }
@@ -51,6 +77,10 @@ export class ProjectListFiltersComponent implements OnChanges {
   }
 
   onStatusChange(): void {
+    this.filterProjects();
+  }
+
+  onAssignedToChange(): void {
     this.filterProjects();
   }
 }
