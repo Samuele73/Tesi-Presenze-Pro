@@ -15,6 +15,7 @@ export class DetailedProjectComponent implements OnInit {
   backupTitle: string = 'Il progetto non è stato trovato';
   statusCode: string = '';
   isLoading: boolean = false;
+  isEditMode: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -33,9 +34,8 @@ export class DetailedProjectComponent implements OnInit {
         this.isLoading = true;
         this.projectService.getProjectById(projectId).subscribe({
           next: (project) => {
-            console.log('Project details:', project);
             this.project = project;
-            console.log('Loaded project:', this.project);
+            this.isLoading = false;
           },
           error: (err: HttpErrorResponse) => {
             console.error('Error loading project:', err);
@@ -44,27 +44,22 @@ export class DetailedProjectComponent implements OnInit {
             }
             this.statusCode = err.status.toString();
             this.project = null;
-          },
-          complete: () => {
             this.isLoading = false;
           }
         });
       } else {
         this.project = null;
-        console.warn('No project ID found in query parameters.');
       }
     });
   }
 
-  getBadgesNgClass(): Record<string, boolean> {
-    const status = this.project?.status;
-    return {
-      'bg-success': status === 'COMPLETED',
-      'bg-warning': status === 'IN_PROGRESS',
-      'bg-secondary': status === 'CREATED',
-      'bg-danger':
-        status !== 'COMPLETED' && status !== 'IN_PROGRESS' && status !== 'CREATED',
-    };
+  toggleEditMode(): void {
+    this.isEditMode = !this.isEditMode;
+  }
+
+  getChipMode(): 'STATIC' | 'DELETE' {
+    if (!this.authService.isAdmin()) return 'STATIC';
+    return this.isEditMode ? 'DELETE' : 'STATIC';
   }
 
   getStatusLabel(status: Project.StatusEnum | undefined): string {
@@ -75,5 +70,19 @@ export class DetailedProjectComponent implements OnInit {
       COMPLETED: 'Completato',
     };
     return statusMap[status] || status;
+  }
+
+  get hasProject(): boolean {
+    return !!this.project;
+  }
+
+  get showContent(): boolean {
+    // Mostra il contenuto se stiamo caricando o se il progetto esiste
+    return this.isLoading || this.hasProject;
+  }
+
+  get showDetails(): boolean {
+    // Mostra i dettagli se non siamo in modalità di modifica
+    return !this.isEditMode;
   }
 }
