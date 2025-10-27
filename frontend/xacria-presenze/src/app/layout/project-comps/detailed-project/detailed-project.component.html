@@ -8,117 +8,227 @@
 
 <!-- Case 2: Check project -->
 <ng-template #checkProject>
-  <div class="mb-3 d-flex align-items-center justify-content-xl-between">
-    <a
-      [routerLink]="['/app/projects']"
-      class="text-decoration-none text-muted d-flex align-items-center"
-    >
-      <i class="fa-solid fa-arrow-left me-2"></i>
-      {{ "Lista Progetti" | translate }}
-    </a>
-    <div class="d-flex align-items-center gap-2">
-      <div class="btn-group btn-group-sm" role="group">
-        <input
-          type="radio"
-          class="btn-check"
-          name="modalita"
-          id="visualizzazione"
-          [value]="false"
-          [(ngModel)]="isEditMode"
-        />
-        <label class="btn btn-outline-secondary" for="visualizzazione"
-          >Visualizzazione</label
-        >
+  <div class="d-flex flex-column h-100" style="overflow: hidden;">
+    <!-- Header fisso -->
+    <div class="mb-3 d-flex align-items-center justify-content-xl-between px-3 pt-3 flex-shrink-0">
+      <a
+        [routerLink]="['/app/projects']"
+        class="text-decoration-none text-muted d-flex align-items-center"
+      >
+        <i class="fa-solid fa-arrow-left me-2"></i>
+        {{ "Lista Progetti" | translate }}
+      </a>
+      <!-- Mode toggler -->
+      <div class="d-flex align-items-center gap-2">
+        <div class="btn-group btn-group-sm" role="group">
+          <input
+            type="radio"
+            class="btn-check"
+            name="modalita"
+            id="visualizzazione"
+            [value]="false"
+            [(ngModel)]="isEditMode"
+          />
+          <label class="btn btn-outline-secondary" for="visualizzazione">{{
+            "Visualizza" | translate
+          }}</label>
 
-        <input
-          type="radio"
-          class="btn-check"
-          name="modalita"
-          id="modifica"
-          [value]="true"
-          [(ngModel)]="isEditMode"
-        />
-        <label class="btn btn-outline-secondary" for="modifica">Modifica</label>
+          <input
+            type="radio"
+            class="btn-check"
+            name="modalita"
+            id="modifica"
+            [value]="true"
+            [(ngModel)]="isEditMode"
+          />
+          <label class="btn btn-outline-secondary" for="modifica">{{
+            "Modifica" | translate
+          }}</label>
+        </div>
       </div>
     </div>
-  </div>
-  <ng-container *ngIf="showContent; else noProject">
-    <ng-container *ngIf="showDetails; else editModeTemplate">
-      <div class="container-fluid">
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <div
-              class="d-flex justify-content-between align-items-start flex-wrap mb-3"
-            >
-              <div>
-                <div class="d-flex align-items-center gap-3 mb-1">
-                  <h2 class="fw-bold mb-0">{{ project?.name }}</h2>
-                  <app-project-status
-                    [project]="project"
-                    class="fs-6"
-                  ></app-project-status>
+
+    <!-- Contenuto scrollabile -->
+    <div class="flex-grow-1" style="overflow-y: auto; overflow-x: hidden;">
+      <ng-container *ngIf="showContent; else noProject">
+        <div class="container-fluid px-3 pb-3">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <ng-container *ngIf="showDetails; else editModeTemplate">
+                <div
+                  class="d-flex justify-content-between align-items-start flex-wrap mb-3"
+                >
+                  <div>
+                    <div class="d-flex align-items-center gap-3 mb-1">
+                      <h2 class="fw-bold mb-0">{{ project?.name }}</h2>
+                      <app-project-status
+                        [project]="project"
+                        class="fs-6"
+                      ></app-project-status>
+                    </div>
+                    <small class="text-muted">ID: {{ project?.id }}</small>
+                  </div>
                 </div>
-                <small class="text-muted">ID: {{ project?.id }}</small>
-              </div>
-            </div>
 
-            <hr />
+                <hr />
 
-            <div class="mb-4">
-              <h5 class="fw-semibold mb-1">
-                <i class="bi bi-file-text me-1"></i>
-                {{ "Riepilogo" | translate }}
-              </h5>
-              <p class="text-muted mb-0">{{ project?.summary || "—" }}</p>
-            </div>
+                <div class="mb-4">
+                  <h5 class="fw-semibold mb-1">
+                    <i class="bi bi-file-text me-1"></i>
+                    {{ "Riepilogo" | translate }}
+                  </h5>
+                  <p class="text-muted mb-0">{{ project?.summary || "—" }}</p>
+                </div>
 
-            <div class="mb-4">
-              <h5 class="fw-semibold mb-1">
-                <i class="bi bi-card-text me-1"></i>
-                {{ "Descrizione" | translate }}
-              </h5>
-              <p class="text-muted" style="white-space: pre-wrap">
-                {{ project?.description || "—" }}
-              </p>
-            </div>
+                <div class="mb-4">
+                  <h5 class="fw-semibold mb-1">
+                    <i class="bi bi-card-text me-1"></i>
+                    {{ "Descrizione" | translate }}
+                  </h5>
+                  <p class="text-muted" style="white-space: pre-wrap">
+                    {{ project?.description || "—" }}
+                  </p>
+                </div>
 
-            <div>
-              <h5 class="fw-semibold mb-2">
-                <i class="bi bi-people me-1"></i>
-                <span class="text-primary">{{
-                  project?.assignedTo?.length || 0
-                }}</span>
-                {{ "Utenti Assegnati" | translate }}
-              </h5>
+                <div>
+                  <h5 class="fw-semibold mb-2">
+                    <i class="bi bi-people me-1"></i>
+                    <span class="text-primary">{{
+                      project?.assignedTo?.length || 0
+                    }}</span>
+                    {{ "Utenti Assegnati" | translate }}
+                  </h5>
 
-              <div
-                *ngIf="
-                  project?.assignedTo && (project?.assignedTo)!.length > 0;
-                  else noUsers
-                "
-                class="d-flex flex-wrap gap-2"
-              >
-                <app-chips
-                  *ngFor="let email of project?.assignedTo"
-                  [text]="email"
-                  [mode]="getChipMode()"
-                ></app-chips>
-              </div>
+                  <div
+                    *ngIf="
+                      project?.assignedTo && (project?.assignedTo)!.length > 0;
+                      else noUsers
+                    "
+                    class="d-flex flex-wrap gap-2"
+                  >
+                    <app-chips
+                      *ngFor="let email of project?.assignedTo"
+                      [text]="email"
+                      [mode]="getChipMode()"
+                    ></app-chips>
+                  </div>
 
-              <ng-template #noUsers>
-                <p class="text-muted mb-0">
-                  <i class="bi bi-info-circle"></i>
-                  {{ "Nessun utente assegnato a questo progetto" | translate }}
-                </p>
-              </ng-template>
+                  <ng-template #noUsers>
+                    <p class="text-muted mb-0">
+                      <i class="bi bi-info-circle"></i>
+                      {{ "Nessun utente assegnato a questo progetto" | translate }}
+                    </p>
+                  </ng-template>
+                </div>
+              </ng-container>
             </div>
           </div>
         </div>
-      </div>
-    </ng-container>
 
-    <ng-template #editModeTemplate> prova </ng-template>
-  </ng-container>
+        <ng-template #editModeTemplate>
+          <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
+            <!-- Nome Progetto -->
+            <div class="mb-3">
+              <label for="name" class="form-label fw-bold">Nome Progetto</label>
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                formControlName="name"
+                placeholder="Inserisci il nome del progetto"
+              />
+            </div>
+
+            <!-- Riepilogo -->
+            <div class="mb-3">
+              <label for="summary" class="form-label fw-bold">Riepilogo</label>
+              <input
+                type="text"
+                class="form-control"
+                id="summary"
+                formControlName="summary"
+                placeholder="Inserisci un breve riepilogo"
+              />
+            </div>
+
+            <!-- Descrizione -->
+            <div class="mb-3">
+              <label for="description" class="form-label fw-bold"
+                >Descrizione</label
+              >
+              <textarea
+                class="form-control"
+                id="description"
+                formControlName="description"
+                rows="4"
+                placeholder="Inserisci la descrizione del progetto"
+              ></textarea>
+            </div>
+
+            <!-- Status -->
+            <div class="mb-3">
+              <label for="status" class="form-label fw-bold">Stato</label>
+              <select class="form-select" id="status" formControlName="status">
+                <option value="CREATED">Creato</option>
+                <option value="IN_PROGRESS">In Corso</option>
+                <option value="COMPLETED">Completato</option>
+              </select>
+            </div>
+
+            <!-- Utenti Assegnati -->
+            <div class="mb-3">
+              <label class="form-label fw-bold">Utenti Assegnati</label>
+
+              <!-- Chips degli utenti esistenti -->
+              <div
+                class="d-flex flex-wrap gap-2 mb-2"
+                *ngIf="assignedUsers.length > 0"
+              >
+                <app-chips
+                  *ngFor="let user of assignedUsers; let i = index"
+                  [text]="user"
+                  [mode]="'DELETE'"
+                  (delete)="removeUser(i)"
+                ></app-chips>
+              </div>
+
+              <!-- Input per aggiungere nuovi utenti -->
+              <input
+                type="email"
+                class="form-control"
+                id="newUser"
+                [(ngModel)]="newUserEmail"
+                [ngModelOptions]="{ standalone: true }"
+                placeholder="Aggiungi email utente"
+                (keydown.enter)="addUser(); $event.preventDefault()"
+              />
+              <small class="form-text text-muted"
+                >Premi Invio per inserire un nuovo utente</small
+              >
+            </div>
+
+            <!-- Pulsanti -->
+            <div class="d-flex gap-2 justify-content-end">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                (click)="cancelEdit()"
+              >
+                Annulla
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="!projectForm.valid"
+              >
+                Salva Modifiche
+              </button>
+            </div>
+          </form>
+        </ng-template>
+      </ng-container>
+    </div>
+  </div>
 </ng-template>
 
 <!-- Case 3: No project -->

@@ -1,6 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { preventDefault } from '@fullcalendar/core/internal';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { Project } from 'src/generated-client';
 import { ProjectService } from 'src/generated-client/api/api';
@@ -16,15 +18,45 @@ export class DetailedProjectComponent implements OnInit {
   statusCode: string = '';
   isLoading: boolean = false;
   isEditMode: boolean = false;
+  projectForm!: FormGroup;
+  assignedUsers: string[] = [];
+  newUserEmail: string = '';
 
   constructor(
     private route: ActivatedRoute,
     private projectService: ProjectService,
-    public authService: AuthService
+    public authService: AuthService,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit() {
+    this.initForm();
     this.getProjectFromQueryParams();
+  }
+
+  private initForm(): void {
+    this.projectForm = this.fb.group({
+      id: [''],
+      name: ['', Validators.required],
+      summary: [''],
+      description: [''],
+      status: ['CREATED', Validators.required]
+    });
+  }
+
+  private populateForm(): void {
+    if (this.project) {
+      this.projectForm.patchValue({
+        id: this.project.id,
+        name: this.project.name,
+        summary: this.project.summary,
+        description: this.project.description,
+        status: this.project.status
+      });
+
+      // Popola l'array degli utenti assegnati
+      this.assignedUsers = this.project.assignedTo ? [...this.project.assignedTo] : [];
+    }
   }
 
   private getProjectFromQueryParams() {
@@ -35,6 +67,7 @@ export class DetailedProjectComponent implements OnInit {
         this.projectService.getProjectById(projectId).subscribe({
           next: (project) => {
             this.project = project;
+            this.populateForm();
             this.isLoading = false;
           },
           error: (err: HttpErrorResponse) => {
@@ -53,8 +86,69 @@ export class DetailedProjectComponent implements OnInit {
     });
   }
 
+  addUser(): void {
+    const email = this.newUserEmail.trim();
+
+    // Validazione base dell'email
+    if (email && this.isValidEmail(email)) {
+      // Verifica che l'email non sia già presente
+      if (!this.assignedUsers.includes(email)) {
+        this.assignedUsers.push(email);
+        this.newUserEmail = ''; // Reset dell'input
+      } else {
+        console.warn('Utente già assegnato');
+        // Opzionale: mostra un messaggio di avviso
+      }
+    } else {
+      console.warn('Email non valida');
+      // Opzionale: mostra un messaggio di errore
+    }
+  }
+
+  removeUser(index: number): void {
+    this.assignedUsers.splice(index, 1);
+  }
+
+  private isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
   toggleEditMode(): void {
     this.isEditMode = !this.isEditMode;
+    if (this.isEditMode) {
+      this.populateForm();
+    }
+  }
+
+  cancelEdit(): void {
+    this.isEditMode = false;
+    this.newUserEmail = '';
+    this.populateForm(); // Reset del form ai valori originali
+  }
+
+  onSubmit(): void {
+    if (this.projectForm.valid) {
+      const updatedProject: Project = {
+        ...this.projectForm.value,
+        assignedTo: this.assignedUsers
+      };
+
+      // Chiamata al servizio per aggiornare il progetto
+      this.projectService.updateProject(updatedProject, updatedProject.id!).subscribe({
+        next: (project) => {
+          this.project = project;
+          this.isEditMode = false;
+          this.newUserEmail = '';
+          console.log('Progetto aggiornato con successo');
+          // Opzionale: mostra un messaggio di successo
+        },
+        error: (err: HttpErrorResponse) => {
+          console.error('Errore durante l\'aggiornamento del progetto:', err);
+          // Opzionale: mostra un messaggio di errore
+        }
+      });
+    }
   }
 
   getChipMode(): 'STATIC' | 'DELETE' {
@@ -77,12 +171,10 @@ export class DetailedProjectComponent implements OnInit {
   }
 
   get showContent(): boolean {
-    // Mostra il contenuto se stiamo caricando o se il progetto esiste
     return this.isLoading || this.hasProject;
   }
 
   get showDetails(): boolean {
-    // Mostra i dettagli se non siamo in modalità di modifica
     return !this.isEditMode;
   }
 }

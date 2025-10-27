@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-chips',
@@ -8,10 +8,13 @@ import { Component, Input } from '@angular/core';
 export class ChipsComponent {
   @Input() text: string = "";
   @Input() mode: "DELETE" | "STATIC" = "STATIC";
+  @Output() delete = new EventEmitter<void>();
 
-  isDeleteMode(): boolean {return this.mode === "DELETE";}
+  isDeleteMode(): boolean {
+    return this.mode === "DELETE";
+  }
 
   onDelete(): void {
-    // To do
+    this.delete.emit();
   }
 }
