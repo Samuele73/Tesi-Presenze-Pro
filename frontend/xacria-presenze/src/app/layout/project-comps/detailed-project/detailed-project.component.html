@@ -8,9 +8,11 @@
 
 <!-- Case 2: Check project -->
 <ng-template #checkProject>
-  <div class="d-flex flex-column h-100" style="overflow: hidden;">
-    <!-- Header fisso -->
-    <div class="mb-3 d-flex align-items-center justify-content-xl-between px-3 pt-3 flex-shrink-0">
+  <div class="d-flex flex-column h-100" style="overflow: hidden">
+    <!-- Fixed Header -->
+    <div
+      class="mb-3 d-flex align-items-center justify-content-xl-between px-3 pt-3 flex-shrink-0"
+    >
       <a
         [routerLink]="['/app/projects']"
         class="text-decoration-none text-muted d-flex align-items-center"
@@ -29,7 +31,7 @@
             [value]="false"
             [(ngModel)]="isEditMode"
           />
-          <label class="btn btn-outline-secondary" for="visualizzazione">{{
+          <label class="btn btn-outline-dark" for="visualizzazione">{{
             "Visualizza" | translate
           }}</label>
 
@@ -41,15 +43,14 @@
             [value]="true"
             [(ngModel)]="isEditMode"
           />
-          <label class="btn btn-outline-secondary" for="modifica">{{
+          <label class="btn btn-outline-dark" for="modifica">{{
             "Modifica" | translate
           }}</label>
         </div>
       </div>
     </div>
 
-    <!-- Contenuto scrollabile -->
-    <div class="flex-grow-1" style="overflow-y: auto; overflow-x: hidden;">
+    <div class="flex-grow-1" style="overflow-y: auto; overflow-x: hidden">
       <ng-container *ngIf="showContent; else noProject">
         <div class="container-fluid px-3 pb-3">
           <div class="card shadow-sm">
@@ -116,7 +117,9 @@
                   <ng-template #noUsers>
                     <p class="text-muted mb-0">
                       <i class="bi bi-info-circle"></i>
-                      {{ "Nessun utente assegnato a questo progetto" | translate }}
+                      {{
+                        "Nessun utente assegnato a questo progetto" | translate
+                      }}
                     </p>
                   </ng-template>
                 </div>
@@ -203,7 +206,7 @@
                 (keydown.enter)="addUser(); $event.preventDefault()"
               />
               <small class="form-text text-muted"
-                >Premi Invio per inserire un nuovo utente</small
+                >{{"Premi Invio per inserire un nuovo utente" | translate}}</small
               >
             </div>
 
@@ -218,7 +221,7 @@
               </button>
               <button
                 type="submit"
-                class="btn btn-primary"
+                class="btn btn-primary text-white"
                 [disabled]="!projectForm.valid"
               >
                 Salva Modifiche
