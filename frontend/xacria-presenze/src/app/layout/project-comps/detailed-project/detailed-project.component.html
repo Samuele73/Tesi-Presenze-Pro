@@ -8,17 +8,41 @@
 
 <!-- Case 2: Check project -->
 <ng-template #checkProject>
-  <ng-container *ngIf="showContent; else noProject">
-    <div class="mb-3">
-      <a
-        [routerLink]="['/app/projects']"
-        class="text-decoration-none text-muted d-flex align-items-center"
-      >
-        <i class="fa-solid fa-arrow-left me-2"></i>
-        {{ "Lista Progetti" | translate }}
-      </a>
-    </div>
+  <div class="mb-3 d-flex align-items-center justify-content-xl-between">
+    <a
+      [routerLink]="['/app/projects']"
+      class="text-decoration-none text-muted d-flex align-items-center"
+    >
+      <i class="fa-solid fa-arrow-left me-2"></i>
+      {{ "Lista Progetti" | translate }}
+    </a>
+    <div class="d-flex align-items-center gap-2">
+      <div class="btn-group btn-group-sm" role="group">
+        <input
+          type="radio"
+          class="btn-check"
+          name="modalita"
+          id="visualizzazione"
+          [value]="false"
+          [(ngModel)]="isEditMode"
+        />
+        <label class="btn btn-outline-secondary" for="visualizzazione"
+          >Visualizzazione</label
+        >
 
+        <input
+          type="radio"
+          class="btn-check"
+          name="modalita"
+          id="modifica"
+          [value]="true"
+          [(ngModel)]="isEditMode"
+        />
+        <label class="btn btn-outline-secondary" for="modifica">Modifica</label>
+      </div>
+    </div>
+  </div>
+  <ng-container *ngIf="showContent; else noProject">
     <ng-container *ngIf="showDetails; else editModeTemplate">
       <div class="container-fluid">
         <div class="card shadow-sm">
