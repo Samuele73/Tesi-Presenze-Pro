@@ -21,7 +21,7 @@
         {{ "Lista Progetti" | translate }}
       </a>
       <!-- Mode toggler -->
-      <div class="d-flex align-items-center gap-2">
+      <div class="d-flex align-items-center gap-2" *ngIf="authService.isAdmin()">
         <div class="btn-group btn-group-sm" role="group">
           <input
             type="radio"
