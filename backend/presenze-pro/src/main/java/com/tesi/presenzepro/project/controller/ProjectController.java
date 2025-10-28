@@ -41,13 +41,14 @@ public class ProjectController {
 
 
     @GetMapping("/user")
-    @Operation(description = "Obtain all projects belonging to the authenticated user", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(description = "Obtain all projects belonging to the authenticated user (email taken from tkn)", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<List<Project>> getMyProjects() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         List<Project> projects = service.findProjectsByUserEmail(email);
         return ResponseEntity.ok(projects);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/user/{email}")
     @Operation(description = "Obtain all projects assigned to the specified user by email", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<List<Project>> getProjectsByUserEmail(@PathVariable String email) {
@@ -65,7 +66,7 @@ public class ProjectController {
     }
 
     @PutMapping("/{id}")
-    @Operation(description = "Save a new project", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(description = "Modify a project referred by its ID", security = @SecurityRequirement(name = "bearerAuth"))
     ResponseEntity<Project> updateProject(@RequestBody Project project, @PathVariable String id) {
         Project updatedProject = service.updateProject(project, id);
         return ResponseEntity.status(HttpStatus.OK).body(updatedProject);

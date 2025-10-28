@@ -9,7 +9,7 @@
 <!-- Case 2: Check project -->
 <ng-template #checkProject>
   <div class="d-flex flex-column h-100" style="overflow: hidden">
-    <!-- Fixed Header -->
+    <!-- Header -->
     <div
       class="mb-3 d-flex align-items-center justify-content-xl-between px-3 pt-3 flex-shrink-0"
     >
@@ -20,20 +20,23 @@
         <i class="fa-solid fa-arrow-left me-2"></i>
         {{ "Lista Progetti" | translate }}
       </a>
-      <!-- Mode toggler -->
-      <div class="d-flex align-items-center gap-2" *ngIf="authService.isAdmin()">
+
+      <div
+        class="d-flex align-items-center gap-2"
+        *ngIf="authService.isAdmin()"
+      >
         <div class="btn-group btn-group-sm" role="group">
           <input
             type="radio"
             class="btn-check"
             name="modalita"
-            id="visualizzazione"
+            id="visualizza"
             [value]="false"
             [(ngModel)]="isEditMode"
           />
-          <label class="btn btn-outline-dark" for="visualizzazione">{{
-            "Visualizza" | translate
-          }}</label>
+          <label class="btn btn-outline-dark" for="visualizza"
+            >Visualizza</label
+          >
 
           <input
             type="radio"
@@ -43,9 +46,7 @@
             [value]="true"
             [(ngModel)]="isEditMode"
           />
-          <label class="btn btn-outline-dark" for="modifica">{{
-            "Modifica" | translate
-          }}</label>
+          <label class="btn btn-outline-dark" for="modifica">Modifica</label>
         </div>
       </div>
     </div>
@@ -55,7 +56,9 @@
         <div class="container-fluid px-3 pb-3">
           <div class="card shadow-sm">
             <div class="card-body">
+              <!-- DETTAGLI / EDIT SWITCH -->
               <ng-container *ngIf="showDetails; else editModeTemplate">
+                <!-- Dettagli Progetto -->
                 <div
                   class="d-flex justify-content-between align-items-start flex-wrap mb-3"
                 >
@@ -75,16 +78,14 @@
 
                 <div class="mb-4">
                   <h5 class="fw-semibold mb-1">
-                    <i class="bi bi-file-text me-1"></i>
-                    {{ "Riepilogo" | translate }}
+                    <i class="bi bi-file-text me-1"></i>Riepilogo
                   </h5>
                   <p class="text-muted mb-0">{{ project?.summary || "—" }}</p>
                 </div>
 
                 <div class="mb-4">
                   <h5 class="fw-semibold mb-1">
-                    <i class="bi bi-card-text me-1"></i>
-                    {{ "Descrizione" | translate }}
+                    <i class="bi bi-card-text me-1"></i>Descrizione
                   </h5>
                   <p class="text-muted" style="white-space: pre-wrap">
                     {{ project?.description || "—" }}
@@ -97,14 +98,11 @@
                     <span class="text-primary">{{
                       project?.assignedTo?.length || 0
                     }}</span>
-                    {{ "Utenti Assegnati" | translate }}
+                    Utenti Assegnati
                   </h5>
 
                   <div
-                    *ngIf="
-                      project?.assignedTo && (project?.assignedTo)!.length > 0;
-                      else noUsers
-                    "
+                    *ngIf="project?.assignedTo?.length; else noUsers"
                     class="d-flex flex-wrap gap-2"
                   >
                     <app-chips
@@ -116,10 +114,7 @@
 
                   <ng-template #noUsers>
                     <p class="text-muted mb-0">
-                      <i class="bi bi-info-circle"></i>
-                      {{
-                        "Nessun utente assegnato a questo progetto" | translate
-                      }}
+                      <i class="bi bi-info-circle"></i> Nessun utente assegnato
                     </p>
                   </ng-template>
                 </div>
@@ -128,110 +123,94 @@
           </div>
         </div>
 
+        <!-- EDIT MODE -->
         <ng-template #editModeTemplate>
           <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
-            <!-- Nome Progetto -->
+            <!-- Nome -->
             <div class="mb-3">
-              <label for="name" class="form-label fw-bold">Nome Progetto</label>
-              <input
-                type="text"
-                class="form-control"
-                id="name"
-                formControlName="name"
-                placeholder="Inserisci il nome del progetto"
-              />
+              <label class="form-label fw-bold">Nome Progetto</label>
+              <input type="text" class="form-control" formControlName="name" />
               <app-form-error
                 [formControlRef]="formName"
-                [validator]="'required'"
-                [errorText]="'Il nome del progetto è obbligatorio'"
+                validator="required"
+                errorText="Il nome del progetto è obbligatorio"
               ></app-form-error>
             </div>
 
             <!-- Riepilogo -->
             <div class="mb-3">
-              <label for="summary" class="form-label fw-bold">Riepilogo</label>
+              <label class="form-label fw-bold">Riepilogo</label>
               <input
                 type="text"
                 class="form-control"
-                id="summary"
                 formControlName="summary"
-                placeholder="Inserisci un breve riepilogo"
               />
               <app-form-error
                 [formControlRef]="formSummary"
-                [validator]="'required'"
-                [errorText]="'Il riepilogo è obbligatorio'"
+                validator="required"
+                errorText="Il riepilogo del progetto è obbligatorio"
               ></app-form-error>
             </div>
 
             <!-- Descrizione -->
             <div class="mb-3">
-              <label for="description" class="form-label fw-bold"
-                >Descrizione</label
-              >
+              <label class="form-label fw-bold">Descrizione</label>
               <textarea
                 class="form-control"
-                id="description"
                 formControlName="description"
                 rows="4"
-                placeholder="Inserisci la descrizione del progetto"
               ></textarea>
               <app-form-error
                 [formControlRef]="formDescription"
-                [validator]="'required'"
-                [errorText]="'La descrizione è obbligatoria'"
+                validator="required"
+                errorText="La descrizione del progetto è obbligatoria"
               ></app-form-error>
             </div>
 
             <!-- Status -->
             <div class="mb-3">
-              <label for="status" class="form-label fw-bold">Stato</label>
-              <select class="form-select" id="status" formControlName="status">
+              <label class="form-label fw-bold">Stato</label>
+              <select class="form-select" formControlName="status">
                 <option value="CREATED">Creato</option>
                 <option value="IN_PROGRESS">In Corso</option>
                 <option value="COMPLETED">Completato</option>
               </select>
-              <app-form-error
-                [formControlRef]="formStatus"
-                [validator]="'required'"
-                [errorText]="'Seleziona uno stato valido'"
-              ></app-form-error>
             </div>
 
-            <!-- Utenti Assegnati -->
             <div class="mb-3">
               <label class="form-label fw-bold">Utenti Assegnati</label>
 
-              <!-- Chips degli utenti esistenti -->
               <div
                 class="d-flex flex-wrap gap-2 mb-2"
-                *ngIf="assignedUsers.length > 0"
+                *ngIf="assignedTo.controls.length > 0"
               >
                 <app-chips
-                  *ngFor="let user of assignedUsers; let i = index"
-                  [text]="user"
+                  *ngFor="let ctrl of assignedTo.controls; let i = index"
+                  [text]="ctrl.value"
                   [mode]="'DELETE'"
                   (delete)="removeUser(i)"
                 ></app-chips>
               </div>
 
-              <!-- Input per aggiungere nuovi utenti -->
               <input
                 type="email"
                 class="form-control"
-                id="newUser"
+                placeholder="Aggiungi email utente"
                 [(ngModel)]="newUserEmail"
                 [ngModelOptions]="{ standalone: true }"
-                placeholder="Aggiungi email utente"
+                #emailInput="ngModel"
+                email
                 (keydown.enter)="addUser(); $event.preventDefault()"
               />
-              <small class="form-text text-muted"
-                >{{"Premi Invio per inserire un nuovo utente" | translate}}</small
-              >
+
+              <!-- Messaggio errore -->
+              <div *ngIf="emailInput.invalid && emailInput.touched">
+                <small class="text-danger">Inserisci una email valida</small>
+              </div>
+              <small class="text-muted">Premi Invio per aggiungere.</small>
             </div>
 
-            <!-- Pulsanti -->
-            <div class="d-flex gap-2 justify-content-end">
+            <div class="d-flex justify-content-end gap-2">
               <button
                 type="button"
                 class="btn btn-secondary"
@@ -242,9 +221,9 @@
               <button
                 type="submit"
                 class="btn btn-primary text-white"
-                [disabled]="!projectForm.valid"
+                [disabled]="projectForm.invalid"
               >
-                Salva Modifiche
+                Salva
               </button>
             </div>
           </form>
@@ -254,32 +233,19 @@
   </div>
 </ng-template>
 
-<!-- Case 3: No project -->
+<!-- Case 3: no project -->
 <ng-template #noProject>
   <div
     class="container-fluid w-100 h-100 d-flex align-items-center justify-content-center"
-    style="transform: translateY(-5%)"
   >
     <div class="text-center" style="max-width: 500px">
-      <div class="mb-4">
-        <i
-          class="bi bi-exclamation-triangle text-danger"
-          style="font-size: 4rem"
-        ></i>
-      </div>
       <h1 class="display-4 fw-bold text-danger mb-3">{{ statusCode }}</h1>
-      <h4 class="fw-semibold mb-3" style="color: #2c3e50">
-        {{ backupTitle }}
-      </h4>
-      <p class="text-muted mb-4">
-        Controlla l'ID del progetto o torna alla lista per trovare quello che
-        cerchi.
-      </p>
+      <h4 class="fw-semibold mb-3">{{ backupTitle }}</h4>
       <button
-        type="button"
         class="btn btn-primary text-white fw-semibold px-4 py-2"
+        [routerLink]="['/app/projects']"
       >
-        <i class="bi bi-arrow-left me-2"></i>Torna alla lista progetti
+        <i class="bi bi-arrow-left me-2"></i>Torna alla lista
       </button>
     </div>
   </div>

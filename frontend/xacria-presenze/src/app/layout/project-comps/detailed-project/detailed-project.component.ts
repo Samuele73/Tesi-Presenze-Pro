@@ -1,8 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { preventDefault } from '@fullcalendar/core/internal';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { Project } from 'src/generated-client';
 import { ProjectService } from 'src/generated-client/api/api';
@@ -14,12 +13,11 @@ import { ProjectService } from 'src/generated-client/api/api';
 })
 export class DetailedProjectComponent implements OnInit {
   project: Project | null = null;
-  backupTitle: string = 'Il progetto non è stato trovato';
-  statusCode: string = '';
-  isLoading: boolean = false;
-  isEditMode: boolean = false;
+  backupTitle = 'Il progetto non è stato trovato';
+  statusCode = '';
+  isLoading = false;
+  isEditMode = false;
   projectForm!: FormGroup;
-  assignedUsers: string[] = [];
   newUserEmail: string = '';
 
   constructor(
@@ -40,8 +38,13 @@ export class DetailedProjectComponent implements OnInit {
       name: ['', Validators.required],
       summary: ['', Validators.required],
       description: ['', Validators.required],
-      status: ['CREATED', Validators.required]
+      status: ['CREATED', Validators.required],
+      assignedTo: this.fb.array([]) // <-- FormArray
     });
+  }
+
+  get assignedTo(): FormArray {
+    return this.projectForm.get('assignedTo') as FormArray;
   }
 
   get formName() { return this.projectForm.get('name'); }
@@ -50,125 +53,85 @@ export class DetailedProjectComponent implements OnInit {
   get formStatus() { return this.projectForm.get('status'); }
 
   private populateForm(): void {
-    if (this.project) {
-      this.projectForm.patchValue({
-        id: this.project.id,
-        name: this.project.name,
-        summary: this.project.summary,
-        description: this.project.description,
-        status: this.project.status
-      });
+    if (!this.project) return;
 
-      // Popola l'array degli utenti assegnati
-      this.assignedUsers = this.project.assignedTo ? [...this.project.assignedTo] : [];
-    }
+    this.projectForm.patchValue({
+      id: this.project.id,
+      name: this.project.name,
+      summary: this.project.summary,
+      description: this.project.description,
+      status: this.project.status
+    });
+
+    this.assignedTo.clear();
+    this.project.assignedTo?.forEach(email => {
+      this.assignedTo.push(this.fb.control(email, [Validators.email]));
+    });
   }
 
   private getProjectFromQueryParams() {
     this.route.queryParams.subscribe((params) => {
       const projectId = params['id'];
-      if (projectId) {
-        this.isLoading = true;
-        this.projectService.getProjectById(projectId).subscribe({
-          next: (project) => {
-            this.project = project;
-            this.populateForm();
-            this.isLoading = false;
-          },
-          error: (err: HttpErrorResponse) => {
-            console.error('Error loading project:', err);
-            if (err.status === 404) {
-              this.backupTitle = 'Progetto non trovato';
-            }
-            this.statusCode = err.status.toString();
-            this.project = null;
-            this.isLoading = false;
-          }
-        });
-      } else {
-        this.project = null;
-      }
+      if (!projectId) return;
+
+      this.isLoading = true;
+      this.projectService.getProjectById(projectId).subscribe({
+        next: (project) => {
+          this.project = project;
+          this.populateForm();
+          this.isLoading = false;
+        },
+        error: (err: HttpErrorResponse) => {
+          this.statusCode = err.status.toString();
+          this.project = null;
+          this.isLoading = false;
+        }
+      });
     });
   }
 
   addUser(): void {
     const email = this.newUserEmail.trim();
+    if (!email) return;
 
-    // Validazione base dell'email
-    if (email && this.isValidEmail(email)) {
-      // Verifica che l'email non sia già presente
-      if (!this.assignedUsers.includes(email)) {
-        this.assignedUsers.push(email);
-        this.newUserEmail = ''; // Reset dell'input
-      } else {
-        console.warn('Utente già assegnato');
-        // Opzionale: mostra un messaggio di avviso
-      }
-    } else {
-      console.warn('Email non valida');
-      // Opzionale: mostra un messaggio di errore
-    }
+    const control = this.fb.control(email, [Validators.email]);
+
+    if (control.invalid) return;
+    if (this.assignedTo.value.includes(email)) return;
+
+    this.assignedTo.push(control);
+    this.newUserEmail = '';
   }
 
   removeUser(index: number): void {
-    this.assignedUsers.splice(index, 1);
-  }
-
-  private isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-
-  toggleEditMode(): void {
-    this.isEditMode = !this.isEditMode;
-    if (this.isEditMode) {
-      this.populateForm();
-    }
+    this.assignedTo.removeAt(index);
   }
 
   cancelEdit(): void {
     this.isEditMode = false;
     this.newUserEmail = '';
-    this.populateForm(); // Reset del form ai valori originali
+    this.populateForm();
   }
 
   onSubmit(): void {
-    if (this.projectForm.valid) {
-      const updatedProject: Project = {
-        ...this.projectForm.value,
-        assignedTo: this.assignedUsers
-      };
+    if (this.projectForm.invalid) return;
 
-      // Chiamata al servizio per aggiornare il progetto
-      this.projectService.updateProject(updatedProject, updatedProject.id!).subscribe({
-        next: (project) => {
-          this.project = project;
-          this.isEditMode = false;
-          this.newUserEmail = '';
-          console.log('Progetto aggiornato con successo');
-          // Opzionale: mostra un messaggio di successo
-        },
-        error: (err: HttpErrorResponse) => {
-          console.error('Errore durante l\'aggiornamento del progetto:', err);
-          // Opzionale: mostra un messaggio di errore
-        }
-      });
-    }
+    const updatedProject: Project = {
+      ...this.projectForm.value,
+      assignedTo: this.assignedTo.value
+    };
+
+    this.projectService.updateProject(updatedProject, updatedProject.id!).subscribe({
+      next: (project) => {
+        this.project = project;
+        this.isEditMode = false;
+        this.newUserEmail = '';
+      }
+    });
   }
 
   getChipMode(): 'STATIC' | 'DELETE' {
-    if (!this.authService.isAdmin()) return 'STATIC';
-    return this.isEditMode ? 'DELETE' : 'STATIC';
-  }
-
-  getStatusLabel(status: Project.StatusEnum | undefined): string {
-    if (!status) return 'Sconosciuto';
-    const statusMap: { [key: string]: string } = {
-      CREATED: 'Creato',
-      IN_PROGRESS: 'In Corso',
-      COMPLETED: 'Completato',
-    };
-    return statusMap[status] || status;
+    return (!this.authService.isAdmin() || !this.isEditMode) ? 'STATIC' : 'DELETE';
   }
 
   get hasProject(): boolean {
