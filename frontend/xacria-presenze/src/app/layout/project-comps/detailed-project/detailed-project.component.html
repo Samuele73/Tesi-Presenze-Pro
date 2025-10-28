@@ -140,6 +140,11 @@
                 formControlName="name"
                 placeholder="Inserisci il nome del progetto"
               />
+              <app-form-error
+                [formControlRef]="formName"
+                [validator]="'required'"
+                [errorText]="'Il nome del progetto è obbligatorio'"
+              ></app-form-error>
             </div>
 
             <!-- Riepilogo -->
@@ -152,6 +157,11 @@
                 formControlName="summary"
                 placeholder="Inserisci un breve riepilogo"
               />
+              <app-form-error
+                [formControlRef]="formSummary"
+                [validator]="'required'"
+                [errorText]="'Il riepilogo è obbligatorio'"
+              ></app-form-error>
             </div>
 
             <!-- Descrizione -->
@@ -166,6 +176,11 @@
                 rows="4"
                 placeholder="Inserisci la descrizione del progetto"
               ></textarea>
+              <app-form-error
+                [formControlRef]="formDescription"
+                [validator]="'required'"
+                [errorText]="'La descrizione è obbligatoria'"
+              ></app-form-error>
             </div>
 
             <!-- Status -->
@@ -176,6 +191,11 @@
                 <option value="IN_PROGRESS">In Corso</option>
                 <option value="COMPLETED">Completato</option>
               </select>
+              <app-form-error
+                [formControlRef]="formStatus"
+                [validator]="'required'"
+                [errorText]="'Seleziona uno stato valido'"
+              ></app-form-error>
             </div>
 
             <!-- Utenti Assegnati -->

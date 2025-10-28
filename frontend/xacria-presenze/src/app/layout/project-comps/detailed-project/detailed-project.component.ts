@@ -38,11 +38,16 @@ export class DetailedProjectComponent implements OnInit {
     this.projectForm = this.fb.group({
       id: [''],
       name: ['', Validators.required],
-      summary: [''],
-      description: [''],
+      summary: ['', Validators.required],
+      description: ['', Validators.required],
       status: ['CREATED', Validators.required]
     });
   }
+
+  get formName() { return this.projectForm.get('name'); }
+  get formSummary() { return this.projectForm.get('summary'); }
+  get formDescription() { return this.projectForm.get('description'); }
+  get formStatus() { return this.projectForm.get('status'); }
 
   private populateForm(): void {
     if (this.project) {
