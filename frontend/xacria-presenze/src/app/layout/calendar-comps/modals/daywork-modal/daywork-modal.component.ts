@@ -16,7 +16,7 @@ import { ModalComponent } from '../modalComponent';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { faIcons } from '../../attendance/attendance.component';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
-import { CalendarWorkingDayEntry } from 'src/generated-client';
+import { CalendarWorkingDayEntry, Project, ProjectService } from 'src/generated-client';
 import { identifiableCalendarWorkingDay } from 'src/app/layout/shared/models/calendar';
 import { parse } from 'date-fns';
 import { it as itLocale } from 'date-fns/locale';
@@ -31,7 +31,7 @@ export class DayworkModalComponent
   implements ModalComponent, OnChanges, OnInit
 {
   form!: FormGroup;
-  validProjects: string[] = localStorage.getItem('user_projects') ? JSON.parse(localStorage.getItem('user_projects')!) : [];;
+  validProjects: string[] = [];
   @ViewChild('modal', { static: true }) modalElement!: ElementRef;
   @Input() date!: Date;
   @Input() dateString!: string;
@@ -47,7 +47,8 @@ export class DayworkModalComponent
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private dateFormat: DateFormatService,
-    private calendarStateService: CalendarStateService
+    private calendarStateService: CalendarStateService,
+    private projectService: ProjectService
   ) {}
 
   get hourFrom() {
@@ -64,7 +65,20 @@ export class DayworkModalComponent
   }
 
   ngOnInit(): void {
+    this.getUserProjects();
     this.initializeForm();
+  }
+
+  getUserProjects(): void {
+    this.projectService.getMyProjects().subscribe({
+      next: (projects: Project[]) => {
+        this.validProjects = projects.map((project) => project.name!);
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error fetching user projects:', err);
+      },
+    });
   }
 
   initializeForm(): void {

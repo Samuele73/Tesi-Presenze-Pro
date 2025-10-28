@@ -153,7 +153,6 @@ export class AttendanceComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.getUserProjects();
     this.subscriteToCalendarStateServices();
     this.calendarStateService.getCalendarByMonthYear(
       this.currentMonth,
@@ -161,17 +160,6 @@ export class AttendanceComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  getUserProjects(): void{
-    /* const userProjects: string | null = localStorage.getItem('user_projects');
-    console.log("USER PROJ LS", userProjects);
-    if(JSON.parse(userProjects!).length > 0) return; */
-    this.userService.getUserData().subscribe({
-      next: (userData: UserData) => {
-        console.log("USER PROJ", userData);
-        localStorage.setItem('user_projects', JSON.stringify(userData.assignedProjects ?? []));
-      }
-    });
-  }
 
   ngAfterViewInit(): void {
     this.initializeBootstrapTooltips();
