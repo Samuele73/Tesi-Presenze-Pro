@@ -107,5 +107,7 @@
   "Cerca per nome" : "Search by name",
   "Lista Progetti" : "Projects List",
   "Filtra per stato" : "Filter by status",
-  "Filtra per assegnatario" : "Filter by assignee"
+  "Filtra per assegnatario" : "Filter by assignee",
+  "Visualizza" : "View",
+  "Modifica" : "Edit"
 }
