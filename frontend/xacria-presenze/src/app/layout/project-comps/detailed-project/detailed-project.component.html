@@ -128,7 +128,7 @@
           <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
             <!-- Nome -->
             <div class="mb-3">
-              <label class="form-label fw-bold">Nome Progetto</label>
+              <label class="form-label fw-bold">{{ "Nome Progetto" | translate }}</label>
               <input type="text" class="form-control" formControlName="name" />
               <app-form-error
                 [formControlRef]="formName"
@@ -139,7 +139,7 @@
 
             <!-- Riepilogo -->
             <div class="mb-3">
-              <label class="form-label fw-bold">Riepilogo</label>
+              <label class="form-label fw-bold">{{ "Riepilogo" | translate }}</label>
               <input
                 type="text"
                 class="form-control"
@@ -148,13 +148,13 @@
               <app-form-error
                 [formControlRef]="formSummary"
                 validator="required"
-                errorText="Il riepilogo del progetto è obbligatorio"
+                errorText="Il riepilogo è obbligatorio"
               ></app-form-error>
             </div>
 
             <!-- Descrizione -->
             <div class="mb-3">
-              <label class="form-label fw-bold">Descrizione</label>
+              <label class="form-label fw-bold">{{ "Descrizione" | translate }}</label>
               <textarea
                 class="form-control"
                 formControlName="description"
@@ -163,13 +163,13 @@
               <app-form-error
                 [formControlRef]="formDescription"
                 validator="required"
-                errorText="La descrizione del progetto è obbligatoria"
+                errorText="La descrizione è obbligatoria"
               ></app-form-error>
             </div>
 
             <!-- Status -->
             <div class="mb-3">
-              <label class="form-label fw-bold">Stato</label>
+              <label class="form-label fw-bold">{{ "Stato" | translate }}</label>
               <select class="form-select" formControlName="status">
                 <option value="CREATED">Creato</option>
                 <option value="IN_PROGRESS">In Corso</option>
@@ -178,7 +178,7 @@
             </div>
 
             <div class="mb-3">
-              <label class="form-label fw-bold">Utenti Assegnati</label>
+              <label class="form-label fw-bold">{{ "Utenti Assegnati" | translate }}</label>
 
               <div
                 class="d-flex flex-wrap gap-2 mb-2"
@@ -205,9 +205,9 @@
 
               <!-- Messaggio errore -->
               <div *ngIf="emailInput.invalid && emailInput.touched">
-                <small class="text-danger">Inserisci una email valida</small>
+                <small class="text-danger">{{ "Inserisci una email valida" | translate }}</small>
               </div>
-              <small class="text-muted">Premi Invio per aggiungere.</small>
+              <small class="text-muted">{{ "Premi Invio per aggiungere" | translate }}</small>
             </div>
 
             <div class="d-flex justify-content-end gap-2">
@@ -216,14 +216,14 @@
                 class="btn btn-secondary"
                 (click)="cancelEdit()"
               >
-                Annulla
+                {{ "Annulla" | translate }}
               </button>
               <button
                 type="submit"
                 class="btn btn-primary text-white"
                 [disabled]="projectForm.invalid"
               >
-                Salva
+                {{ "Salva" | translate }}
               </button>
             </div>
           </form>

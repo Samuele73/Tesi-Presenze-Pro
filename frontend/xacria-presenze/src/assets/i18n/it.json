@@ -110,5 +110,12 @@
   "Filtra per stato" : "Filtra per stato",
   "Filtra per assegnatario" : "Filtra per assegnatario",
   "Visualizza" : "Visualizza",
-  "Modifica" : "Modifica"
+  "Modifica" : "Modifica",
+  "Nome Progetto" : "Nome Progetto",
+  "Stato" : "Stato",
+  "Inserisci una email valida" : "Inserisci una email valida",
+  "Premi Invio per aggiungere" : "Premi Invio per aggiungere",
+  "Il nome del progetto è obbligatorio" : "Il nome del progetto è obbligatorio",
+  "Il riepilogo è obbligatorio" : "Il riepilogo è obbligatorio",
+  "La descrizione è obbligatoria" : "La descrizione è obbligatoria"
 }

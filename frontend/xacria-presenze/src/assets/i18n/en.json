@@ -109,5 +109,12 @@
   "Filtra per stato" : "Filter by status",
   "Filtra per assegnatario" : "Filter by assignee",
   "Visualizza" : "View",
-  "Modifica" : "Edit"
+  "Modifica" : "Edit",
+  "Nome Progetto" : "Project Name",
+  "Stato" : "Status",
+  "Inserisci una email valida" : "Enter a valid email",
+  "Premi Invio per aggiungere" : "Press Enter to add",
+  "Il nome del progetto è obbligatorio" : "Project name is required",
+  "Il riepilogo è obbligatorio" : "Summary is required",
+  "La descrizione è obbligatoria" : "Description is required"
 }
