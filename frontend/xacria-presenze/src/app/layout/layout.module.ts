@@ -7,7 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HttpClient } from '@angular/common/http';
-import { NgbDatepickerModule, NgbDropdown, NgbDropdownModule, NgbModalModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDatepickerModule, NgbDropdown, NgbDropdownModule, NgbModalModule, NgbTooltipModule, NgbCollapse } from '@ng-bootstrap/ng-bootstrap';
 
 import { LayoutComponent } from './layout/layout.component';
 import { HomeComponent } from './home/home.component';
@@ -86,9 +86,10 @@ import { ChipsComponent } from './chips/chips.component';
         extend: true
     }),
     CalendarModule.forRoot({
-      provide: DateAdapter,
-      useFactory: adapterFactory,
+        provide: DateAdapter,
+        useFactory: adapterFactory,
     }),
-  ]
+    NgbCollapse
+]
 })
 export class LayoutModule { }

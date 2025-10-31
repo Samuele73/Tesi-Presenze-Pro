@@ -18,6 +18,7 @@ export class ProjectListFiltersComponent implements OnChanges {
   @Input() projects: Project[] = [];
   @Input() filteredProjects: Project[] = [];
   @Output() filteredProjectsChange = new EventEmitter<Project[]>();
+  areFiltersCollapsed: boolean = true;
 
   searchTerm: string = '';
   selectedStatus: string = 'ALL';
