@@ -1,15 +1,27 @@
 <div class="d-flex gap-2 align-items-center mb-2">
-<button
-  type="button"
-  class="btn "
-  [ngClass]="{ 'btn-secondary': !areFiltersCollapsed, 'btn-outline-secondary': areFiltersCollapsed }"
-  (click)="areFiltersCollapsed = !areFiltersCollapsed"
->
-  {{  areFiltersCollapsed ? ('Mostra Filtri' | translate) : ('Nascondi Filtri' | translate) }}
-</button>
-<button class="btn btn-primary text-white" *ngIf="authService.isAdmin()" [disabled]="!authService.isAdmin()">
-  {{ "Aggiungi Progetto" | translate }}
-</button>
+  <button
+    type="button"
+    class="btn text-center"
+    [ngClass]="{
+      'btn-secondary': !areFiltersCollapsed,
+      'btn-outline-secondary': areFiltersCollapsed
+    }"
+    (click)="areFiltersCollapsed = !areFiltersCollapsed"
+  >
+    <i class="fa-regular fa-filter fa-xs me-1" size></i>
+    {{
+      areFiltersCollapsed
+        ? ("Mostra Filtri" | translate)
+        : ("Nascondi Filtri" | translate)
+    }}
+  </button>
+  <button
+    class="btn btn-primary text-white"
+    *ngIf="authService.isAdmin()"
+    [disabled]="!authService.isAdmin()"
+  >
+    {{ "Aggiungi Progetto" | translate }}
+  </button>
 </div>
 
 <div class="card shadow-sm mb-4" [(ngbCollapse)]="areFiltersCollapsed">
