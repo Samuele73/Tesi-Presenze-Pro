@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { Project } from 'src/generated-client';
 import { ProjectService } from 'src/generated-client/api/api';
@@ -24,12 +24,14 @@ export class DetailedProjectComponent implements OnInit {
     private route: ActivatedRoute,
     private projectService: ProjectService,
     public authService: AuthService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private router: Router
   ) {}
 
   ngOnInit() {
     this.initForm();
     this.getProjectFromQueryParams();
+    this.isEditMode = this.authService.isAdmin();
   }
 
   private initForm(): void {
@@ -108,7 +110,6 @@ export class DetailedProjectComponent implements OnInit {
   }
 
   cancelEdit(): void {
-    this.isEditMode = false;
     this.newUserEmail = '';
     this.populateForm();
   }
@@ -124,8 +125,8 @@ export class DetailedProjectComponent implements OnInit {
     this.projectService.updateProject(updatedProject, updatedProject.id!).subscribe({
       next: (project) => {
         this.project = project;
-        this.isEditMode = false;
         this.newUserEmail = '';
+        this.router.navigate(["/app/projects"]);
       }
     });
   }

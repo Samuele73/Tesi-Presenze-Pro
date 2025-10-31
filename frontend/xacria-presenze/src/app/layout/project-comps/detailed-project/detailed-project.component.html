@@ -20,6 +20,19 @@
         <i class="fa-solid fa-arrow-left me-2"></i>
         {{ "Lista Progetti" | translate }}
       </a>
+      <div class="d-flex justify-content-end gap-2" *ngIf="isEditMode">
+        <button type="button" class="btn btn-secondary" (click)="cancelEdit()">
+          {{ "Annulla" | translate }}
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary text-white"
+          [disabled]="projectForm.invalid"
+          (click)="onSubmit()"
+        >
+          {{ "Salva" | translate }}
+        </button>
+      </div>
     </div>
 
     <div class="flex-grow-1" style="overflow-y: auto; overflow-x: hidden">
@@ -28,7 +41,9 @@
           <div class="card shadow-sm">
             <div class="card-body">
               <!-- DETTAGLI / EDIT SWITCH -->
-              <ng-container *ngIf="!authService.isAdmin(); else editModeTemplate">
+              <ng-container
+                *ngIf="!isEditMode; else editModeTemplate"
+              >
                 <!-- Dettagli Progetto -->
                 <div
                   class="d-flex justify-content-between align-items-start flex-wrap mb-3"
@@ -49,14 +64,16 @@
 
                 <div class="mb-4">
                   <h5 class="fw-semibold mb-1">
-                    <i class="bi bi-file-text me-1"></i>{{"Riepilogo" | translate}}
+                    <i class="bi bi-file-text me-1"></i
+                    >{{ "Riepilogo" | translate }}
                   </h5>
                   <p class="text-muted mb-0">{{ project?.summary || "—" }}</p>
                 </div>
 
                 <div class="mb-4">
                   <h5 class="fw-semibold mb-1">
-                    <i class="bi bi-card-text me-1"></i>{{"Descrizione" | translate}}
+                    <i class="bi bi-card-text me-1"></i
+                    >{{ "Descrizione" | translate }}
                   </h5>
                   <p class="text-muted" style="white-space: pre-wrap">
                     {{ project?.description || "—" }}
@@ -99,7 +116,9 @@
           <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
             <!-- Nome -->
             <div class="mb-3">
-              <label class="form-label fw-bold">{{ "Nome Progetto" | translate }}</label>
+              <label class="form-label fw-bold">{{
+                "Nome Progetto" | translate
+              }}</label>
               <input type="text" class="form-control" formControlName="name" />
               <app-form-error
                 [formControlRef]="formName"
@@ -110,7 +129,9 @@
 
             <!-- Riepilogo -->
             <div class="mb-3">
-              <label class="form-label fw-bold">{{ "Riepilogo" | translate }}</label>
+              <label class="form-label fw-bold">{{
+                "Riepilogo" | translate
+              }}</label>
               <input
                 type="text"
                 class="form-control"
@@ -125,7 +146,9 @@
 
             <!-- Descrizione -->
             <div class="mb-3">
-              <label class="form-label fw-bold">{{ "Descrizione" | translate }}</label>
+              <label class="form-label fw-bold">{{
+                "Descrizione" | translate
+              }}</label>
               <textarea
                 class="form-control"
                 formControlName="description"
@@ -140,7 +163,9 @@
 
             <!-- Status -->
             <div class="mb-3">
-              <label class="form-label fw-bold">{{ "Stato" | translate }}</label>
+              <label class="form-label fw-bold">{{
+                "Stato" | translate
+              }}</label>
               <select class="form-select" formControlName="status">
                 <option value="CREATED">Creato</option>
                 <option value="IN_PROGRESS">In Corso</option>
@@ -149,7 +174,9 @@
             </div>
 
             <div class="mb-3">
-              <label class="form-label fw-bold">{{ "Utenti Assegnati" | translate }}</label>
+              <label class="form-label fw-bold">{{
+                "Utenti Assegnati" | translate
+              }}</label>
 
               <div
                 class="d-flex flex-wrap gap-2 mb-2"
@@ -176,26 +203,13 @@
 
               <!-- Messaggio errore -->
               <div *ngIf="emailInput.invalid && emailInput.touched">
-                <small class="text-danger">{{ "Inserisci una email valida" | translate }}</small>
+                <small class="text-danger">{{
+                  "Inserisci una email valida" | translate
+                }}</small>
               </div>
-              <small class="text-muted">{{ "Premi Invio per aggiungere" | translate }}</small>
-            </div>
-
-            <div class="d-flex justify-content-end gap-2">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                (click)="cancelEdit()"
-              >
-                {{ "Annulla" | translate }}
-              </button>
-              <button
-                type="submit"
-                class="btn btn-primary text-white"
-                [disabled]="projectForm.invalid"
-              >
-                {{ "Salva" | translate }}
-              </button>
+              <small class="text-muted">{{
+                "Premi Invio per aggiungere" | translate
+              }}</small>
             </div>
           </form>
         </ng-template>
