@@ -21,9 +21,62 @@
         {{ "Lista Progetti" | translate }}
       </a>
       <div class="d-flex justify-content-end gap-2" *ngIf="isEditMode">
-        <button type="button" class="btn btn-secondary" (click)="cancelEdit()">
-          {{ "Annulla" | translate }}
-        </button>
+        <!-- Options -->
+        <div ngbDropdown class="d-inline-block">
+          <button
+            type="button"
+            ngbDropdownToggle
+            class="btn btn-link text-black dropdown-toggle"
+          >
+            <i class="fa fa-ellipsis"></i>
+          </button>
+          <div ngbDropdownMenu>
+            <button ngbDropdownItem (click)="cancelEdit()">
+              {{ "Annulla" | translate }}
+            </button>
+            <button ngbDropdownItem class="text-danger" (click)="openModal(content)">
+              {{ "Elimina" | translate }}
+            </button>
+          </div>
+        </div>
+        <!-- Delete confirmation modal -->
+        <ng-template #content let-modal>
+          <div class="modal-header">
+            <h5 class="modal-title">Conferma eliminazione</h5>
+            <button
+              type="button"
+              class="btn-close"
+              aria-label="Close"
+              (click)="modal.dismiss()"
+            ></button>
+          </div>
+
+          <div class="modal-body">
+            <p>
+              Sei sicuro di voler eliminare questo progetto? Questa azione non
+              può essere annullata.
+            </p>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="modal.dismiss()"
+            >
+              Annulla
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              ngbAutofocus
+              (click)="deleteProject(); modal.close()"
+            >
+              Elimina
+            </button>
+          </div>
+        </ng-template>
+
         <button
           type="submit"
           class="btn btn-primary text-white"
@@ -41,9 +94,7 @@
           <div class="card shadow-sm">
             <div class="card-body">
               <!-- DETTAGLI / EDIT SWITCH -->
-              <ng-container
-                *ngIf="!isEditMode; else editModeTemplate"
-              >
+              <ng-container *ngIf="!isEditMode; else editModeTemplate">
                 <!-- Dettagli Progetto -->
                 <div
                   class="d-flex justify-content-between align-items-start flex-wrap mb-3"

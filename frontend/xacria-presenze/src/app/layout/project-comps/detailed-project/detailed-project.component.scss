@@ -1,0 +1,7 @@
+.dropdown-toggle::after {
+  display: none !important;
+}
+
+.dropdown-toggle button.text-danger:active{
+  background-color: red !important;
+}

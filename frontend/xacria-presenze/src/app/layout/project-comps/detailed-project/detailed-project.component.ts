@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { Project } from 'src/generated-client';
 import { ProjectService } from 'src/generated-client/api/api';
@@ -19,13 +20,16 @@ export class DetailedProjectComponent implements OnInit {
   isEditMode = false;
   projectForm!: FormGroup;
   newUserEmail: string = '';
+  modalCloseResult: string = '';
+  private projcetId: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private projectService: ProjectService,
     public authService: AuthService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private modalService: NgbModal
   ) {}
 
   ngOnInit() {
@@ -134,6 +138,31 @@ export class DetailedProjectComponent implements OnInit {
   getChipMode(): 'STATIC' | 'DELETE' {
     return (!this.authService.isAdmin() || !this.isEditMode) ? 'STATIC' : 'DELETE';
   }
+
+  deleteProject(): void {
+    if(!this.project || !this.project.id)
+      return;
+    this.projectService.deleteProject(this.project.id).subscribe({
+      next: () => {
+        this.router.navigate(["/app/projects"]);
+      },
+      error: (error: HttpErrorResponse) => {
+        console.log(error, "dasfasfdsaf");
+        this.router.navigate(["/app/projects"]);
+      }
+    });
+  }
+
+  openModal(content: any) {
+		this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
+			(result) => {
+				this.modalCloseResult = `Closed with: ${result}`;
+			},
+			(reason) => {
+				this.modalCloseResult = `Dismissed ${reason}`;
+			},
+		);
+	}
 
   get hasProject(): boolean {
     return !!this.project;
