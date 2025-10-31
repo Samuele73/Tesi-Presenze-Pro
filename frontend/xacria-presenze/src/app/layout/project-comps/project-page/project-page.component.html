@@ -1,9 +1,9 @@
 <div class="d-flex flex-column h-100">
   <div class="flex-shrink-0">
-    <app-project-list-filters
+    <app-project-list-interaction
       [projects]="projects"
       [(filteredProjects)]="filteredProjects"
-    ></app-project-list-filters>
+    ></app-project-list-interaction>
   </div>
   <div class="flex-grow-1 overflow-auto overflow-x-hidden">
     <app-project-list [projects]="filteredProjects" [isLoading]="isLoading"></app-project-list>

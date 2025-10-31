@@ -10,11 +10,11 @@ import { AuthService } from 'src/app/shared/services/auth.service';
 import { Project } from 'src/generated-client';
 
 @Component({
-  selector: 'app-project-list-filters',
-  templateUrl: './project-list-filters.component.html',
-  styleUrls: ['./project-list-filters.component.scss'],
+  selector: 'app-project-list-interaction',
+  templateUrl: './project-list-interaction.component.html',
+  styleUrls: ['./project-list-interaction.component.scss'],
 })
-export class ProjectListFiltersComponent implements OnChanges {
+export class ProjectListInteractionComponent implements OnChanges {
   @Input() projects: Project[] = [];
   @Input() filteredProjects: Project[] = [];
   @Output() filteredProjectsChange = new EventEmitter<Project[]>();
