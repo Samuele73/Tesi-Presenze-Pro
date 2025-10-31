@@ -30,7 +30,7 @@ import { StatusBadgeComponent } from './status-badge/status-badge.component';
 import { ProjectPageComponent } from './project-comps/project-page/project-page.component';import { FilterPipe } from './shared/pipes/filter.pipe';
 import { ProjectListComponent } from './project-comps/project-list/project-list.component';
 import { ProjectListItemComponent } from './project-comps/project-list-item/project-list-item.component';
-import { ProjectListInteractionComponent } from './project-comps/project-list-filters/project-list-interaction.component';
+import { ProjectListInteractionComponent } from './project-comps/project-list-interaction/project-list-interaction.component';
 import { AssignmentBadgesComponent } from './project-comps/assignment-badges/assignment-badges.component';
 import { DetailedProjectComponent } from './project-comps/detailed-project/detailed-project.component';
 import { ProjectStatusComponent } from './project-comps/project-status/project-status.component';
