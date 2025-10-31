@@ -155,7 +155,7 @@ export class DetailedProjectComponent implements OnInit {
 
   openModal(content: any) {
 		this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
-			(result) => {
+			(result) => { 
 				this.modalCloseResult = `Closed with: ${result}`;
 			},
 			(reason) => {

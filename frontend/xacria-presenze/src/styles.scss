@@ -5,8 +5,14 @@
   --fc-daygrid-event-dot-width: 5px;
 
   .custom-tooltip2 {
-    /* --bs-tooltip-bg: var(--badge-bs-light);
-    --bs-tooltip-color: black; */
+    --bs-tooltip-bg: #f8f9fa;
+    --bs-tooltip-color: black;
+    --bs-tooltip-border-color: #dee2e6; /* colore del bordo */
+    --bs-tooltip-border-width: 1px;
+  }
+
+  .custom-tooltip2 .tooltip-inner {
+    border: 1px solid #dee2e6;
   }
 
   ::-webkit-scrollbar {
