@@ -20,35 +20,6 @@
         <i class="fa-solid fa-arrow-left me-2"></i>
         {{ "Lista Progetti" | translate }}
       </a>
-
-      <div
-        class="d-flex align-items-center gap-2"
-        *ngIf="authService.isAdmin()"
-      >
-        <div class="btn-group btn-group-sm" role="group">
-          <input
-            type="radio"
-            class="btn-check"
-            name="modalita"
-            id="visualizza"
-            [value]="false"
-            [(ngModel)]="isEditMode"
-          />
-          <label class="btn btn-outline-secondary" for="visualizza"
-            >{{"Visualizza" | translate}}</label
-          >
-
-          <input
-            type="radio"
-            class="btn-check"
-            name="modalita"
-            id="modifica"
-            [value]="true"
-            [(ngModel)]="isEditMode"
-          />
-          <label class="btn btn-outline-secondary" for="modifica">{{"Modifica" | translate}}</label>
-        </div>
-      </div>
     </div>
 
     <div class="flex-grow-1" style="overflow-y: auto; overflow-x: hidden">
@@ -57,7 +28,7 @@
           <div class="card shadow-sm">
             <div class="card-body">
               <!-- DETTAGLI / EDIT SWITCH -->
-              <ng-container *ngIf="showDetails; else editModeTemplate">
+              <ng-container *ngIf="!authService.isAdmin(); else editModeTemplate">
                 <!-- Dettagli Progetto -->
                 <div
                   class="d-flex justify-content-between align-items-start flex-wrap mb-3"
