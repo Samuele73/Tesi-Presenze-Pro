@@ -225,43 +225,44 @@
             </div>
 
             <div class="mb-3">
-              <label class="form-label fw-bold">{{
-                "Utenti Assegnati" | translate
-              }}</label>
+  <label class="form-label fw-bold">
+    {{ "Utenti Assegnati" | translate }}
+  </label>
 
-              <div
-                class="d-flex flex-wrap gap-2 mb-2"
-                *ngIf="assignedTo.controls.length > 0"
-              >
-                <app-chips
-                  *ngFor="let ctrl of assignedTo.controls; let i = index"
-                  [text]="ctrl.value"
-                  [mode]="'DELETE'"
-                  (delete)="removeUser(i)"
-                ></app-chips>
-              </div>
+  <div
+    class="chips-wrapper border rounded px-2 py-1 d-flex flex-wrap align-items-center gap-2 mb-1"
+  >
+    <!-- Chips -->
+    <app-chips
+      *ngFor="let ctrl of assignedTo.controls; let i = index"
+      [text]="ctrl.value"
+      [mode]="'DELETE'"
+      (delete)="removeUser(i)"
+    ></app-chips>
 
-              <input
-                type="email"
-                class="form-control"
-                placeholder="Aggiungi email utente"
-                [(ngModel)]="newUserEmail"
-                [ngModelOptions]="{ standalone: true }"
-                #emailInput="ngModel"
-                email
-                (keydown.enter)="addUser(); $event.preventDefault()"
-              />
+    <!-- Input -->
+    <input
+      type="email"
+      class="form-control chips-input p-0 m-0 border-0 shadow-none"
+      placeholder="Aggiungi email utente"
+      [(ngModel)]="newUserEmail"
+      [ngModelOptions]="{ standalone: true }"
+      #emailInput="ngModel"
+      email
+      (keydown.enter)="addUser(); $event.preventDefault()"
+    />
+  </div>
 
-              <!-- Messaggio errore -->
-              <div *ngIf="emailInput.invalid && emailInput.touched">
-                <small class="text-danger">{{
-                  "Inserisci una email valida" | translate
-                }}</small>
-              </div>
-              <small class="text-muted">{{
-                "Premi Invio per aggiungere" | translate
-              }}</small>
-            </div>
+  <!-- Messaggio errore -->
+  <div *ngIf="emailInput.invalid ">
+    <small class="text-danger">
+      {{ "Inserisci una email valida" | translate }}
+    </small>
+  </div>
+
+  <small class="text-muted">{{ "Premi Invio per aggiungere" | translate }}</small>
+</div>
+
           </form>
         </ng-template>
       </ng-container>
