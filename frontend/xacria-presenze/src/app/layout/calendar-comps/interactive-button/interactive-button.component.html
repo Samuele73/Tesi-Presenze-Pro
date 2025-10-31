@@ -1,91 +1,76 @@
 <div
   class="dropdown-center tt"
-  data-bs-toggle="tooltip"
-  [title]="tooltipTitle"
-  data-bs-placement="top"
-  data-bs-custom-class="custom-tooltip"
+  ngbTooltip="{{ tooltipTitle }}"
   [attr.id]="dropdownId"
+  #t="ngbTooltip"
+  ngbDropdown
 >
   <button
-    class=" btn-calendar-daycell dropdown-toggle no-caret"
+    class="btn-calendar-daycell dropdown-toggle no-caret"
     [ngClass]="buttonClasses"
-    data-bs-toggle="dropdown"
-    [attr.data-bs-target]="dropdownTargetId"
-    aria-expanded="false"
-    [ngClass]="{'btn-remove': mode === 'DELETE'}"
+    ngbDropdownToggle
+    (click)="t.close()"
+    [ngClass]="{ 'btn-remove': mode === 'DELETE' }"
   >
     <fa-icon
       [icon]="buttonIcon"
-      class="fa-lg "
+      class="fa-lg"
     ></fa-icon>
   </button>
+
   <ul
+    ngbDropdownMenu
     class="dropdown-menu"
+    container="body"
     [attr.id]="dropdownMenuId"
-    [ngClass]="{'delete-dropdown': mode === 'DELETE'}"
+    [ngClass]="{ 'delete-dropdown': mode === 'DELETE' }"
   >
     <li>
-      <a
+      <button
         class="dropdown-item d-flex align-items-center gap-2"
         (click)="openModal(dayworkModal)"
-        [ngClass]="{ 'disabled-item': isDayWorksDisabled }"
+        [disabled]="isDayWorksDisabled"
+        ngbDropdownItem
       >
         <fa-icon [icon]="faIcons.briefcase" class="fa-lg"></fa-icon>
         <span>{{ "Incarico" | translate }}</span>
-      </a>
+      </button>
     </li>
+
     <li>
-      <a
+      <button
         class="dropdown-item d-flex align-items-center gap-2"
         (click)="openModal(requestModal)"
-        [ngClass]="{ 'disabled-item': isRequestsDisabled }"
+        [disabled]="isRequestsDisabled"
+        ngbDropdownItem
       >
         <fa-icon [icon]="faIcons.request" class="fa-lg"></fa-icon>
         <span>{{ "Richiesta" | translate }}</span>
-      </a>
+      </button>
     </li>
+
     <li>
-      <a
+      <button
         class="dropdown-item d-flex align-items-center gap-2"
         (click)="openModal(workingTripModal)"
-        [ngClass]="{ 'disabled-item': isWorkingTripsDisabled }"
+        [disabled]="isWorkingTripsDisabled"
+        ngbDropdownItem
       >
         <fa-icon [icon]="faIcons.route" class="fa-lg"></fa-icon>
         <span>{{ "Trasferta" | translate }}</span>
-      </a>
+      </button>
     </li>
+
     <li>
-      <a
+      <button
         class="dropdown-item d-flex align-items-center gap-2"
         (click)="openModal(availabilityModal)"
-        [ngClass]="{ 'disabled-item': isAvailabilitiesDisabled }"
+        [disabled]="isAvailabilitiesDisabled"
+        ngbDropdownItem
       >
         <fa-icon [icon]="faIcons.bell" class="fa-lg"></fa-icon>
         <span>{{ "Reperibilità" | translate }}</span>
-      </a>
+      </button>
     </li>
   </ul>
 </div>
-
-<app-working-trip-modal
-  #working_trip_modal
-  [isModifyMode]="isModalsModifyMode"
-  [calendarEntries]="filteredEntries.working_trips || []"
-></app-working-trip-modal>
-<app-availability-modal
-  #availability_modal
-  [isModifyMode]="isModalsModifyMode"
-  [calendarEntries]="filteredEntries.availabilities || []"
-></app-availability-modal>
-<app-request-modal
-  #request_modal
-  [isModifyMode]="isModalsModifyMode"
-  [calendarEntries]="filteredEntries.requests || []"
-></app-request-modal>
-<app-daywork-modal
-  #daywork_modal
-  [date]="dayClicked"
-  [dateString]="dayWorkDateTitle"
-  [isModifyMode]="isModalsModifyMode"
-  [calendarEntries]="filteredEntries.day_works || []"
-></app-daywork-modal>

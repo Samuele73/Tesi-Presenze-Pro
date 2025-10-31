@@ -7,7 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HttpClient } from '@angular/common/http';
-import { NgbDatepickerModule, NgbModalModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDatepickerModule, NgbDropdown, NgbDropdownModule, NgbModalModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { LayoutComponent } from './layout/layout.component';
 import { HomeComponent } from './home/home.component';
@@ -75,6 +75,7 @@ import { ChipsComponent } from './chips/chips.component';
     FontAwesomeModule,
     NgbModalModule,
     NgbTooltipModule,
+    NgbDropdownModule,
     NgbDatepickerModule,
     TranslateModule.forChild({
         loader: {
