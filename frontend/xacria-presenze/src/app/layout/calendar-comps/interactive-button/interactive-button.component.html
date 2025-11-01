@@ -74,3 +74,25 @@
     </li>
   </ul>
 </div>
+<app-working-trip-modal
+  #working_trip_modal
+  [isModifyMode]="isModalsModifyMode"
+  [calendarEntries]="filteredEntries.working_trips || []"
+></app-working-trip-modal>
+<app-availability-modal
+  #availability_modal
+  [isModifyMode]="isModalsModifyMode"
+  [calendarEntries]="filteredEntries.availabilities || []"
+></app-availability-modal>
+<app-request-modal
+  #request_modal
+  [isModifyMode]="isModalsModifyMode"
+  [calendarEntries]="filteredEntries.requests || []"
+></app-request-modal>
+<app-daywork-modal
+  #daywork_modal
+  [date]="dayClicked"
+  [dateString]="dayWorkDateTitle"
+  [isModifyMode]="isModalsModifyMode"
+  [calendarEntries]="filteredEntries.day_works || []"
+></app-daywork-modal>

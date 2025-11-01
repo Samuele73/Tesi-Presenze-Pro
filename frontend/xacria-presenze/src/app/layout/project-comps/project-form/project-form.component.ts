@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  OnChanges,
+  SimpleChanges,
+  OnInit,
+} from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Project } from 'src/generated-client';
 
@@ -7,7 +15,7 @@ import { Project } from 'src/generated-client';
   templateUrl: './project-form.component.html',
   styleUrls: ['./project-form.component.scss'],
 })
-export class ProjectFormComponent implements OnChanges {
+export class ProjectFormComponent implements OnChanges, OnInit {
   @Input() project!: Project | null;
   @Output() submit = new EventEmitter<Project>();
 
@@ -15,6 +23,11 @@ export class ProjectFormComponent implements OnChanges {
   newUserEmail: string = '';
 
   constructor(private fb: FormBuilder) {}
+
+  ngOnInit(): void {
+    if (this.project == null) this.project = {status: 'CREATED'};
+    this.initForm();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['project'] && this.project) {
@@ -30,12 +43,14 @@ export class ProjectFormComponent implements OnChanges {
       description: [this.project?.description, Validators.required],
       status: [this.project?.status, Validators.required],
       assignedTo: this.fb.array(
-        this.project?.assignedTo?.map(email => this.fb.control(email, Validators.email)) ?? []
+        this.project?.assignedTo?.map((email) =>
+          this.fb.control(email, Validators.email)
+        ) ?? []
       ),
     });
   }
 
-  public ressetAll(): void{
+  public ressetAll(): void {
     this.initForm();
     this.newUserEmail = '';
   }
@@ -44,10 +59,18 @@ export class ProjectFormComponent implements OnChanges {
     return this.projectForm.get('assignedTo') as FormArray;
   }
 
-  get formName() { return this.projectForm.get('name'); }
-  get formSummary() { return this.projectForm.get('summary'); }
-  get formDescription() { return this.projectForm.get('description'); }
-  get formStatus() { return this.projectForm.get('status'); }
+  get formName() {
+    return this.projectForm.get('name');
+  }
+  get formSummary() {
+    return this.projectForm.get('summary');
+  }
+  get formDescription() {
+    return this.projectForm.get('description');
+  }
+  get formStatus() {
+    return this.projectForm.get('status');
+  }
 
   addUser(): void {
     const email = this.newUserEmail.trim();
@@ -66,7 +89,7 @@ export class ProjectFormComponent implements OnChanges {
   }
 
   onSubmit(): void {
-    console.log('controlla', this.projectForm.value)
+    console.log('controlla', this.projectForm.value);
     this.submit.emit(this.projectForm.value);
   }
 }

@@ -119,7 +119,7 @@ export class DetailedProjectComponent implements OnInit {
     const modalRef = this.modalService.open(ConfirmModalComponent, {
       centered: true,
     });
-    modalRef.componentInstance.title = 'Conferma eliminazione';
+    modalRef.componentInstance.title = 'Conferma eliminazione!';
     modalRef.componentInstance.message =
       'Sei sicuro di voler eliminare questo progetto? Questa azione non può essere annullata.';
     modalRef.componentInstance.mode = 'DELETE';

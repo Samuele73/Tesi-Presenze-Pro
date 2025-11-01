@@ -161,6 +161,8 @@ export class DayworkModalComponent
     }
     this.deleteEntries();
     this.updateEntries();
+
+    this.modalService.dismissAll();
   }
 
   open(): void {

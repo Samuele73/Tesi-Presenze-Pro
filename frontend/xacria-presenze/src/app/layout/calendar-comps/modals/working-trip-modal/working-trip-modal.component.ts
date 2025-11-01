@@ -135,6 +135,8 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
     }
     this.deleteEntries();
     this.updateEntries();
+
+    this.modalService.dismissAll();
   }
 
   open(): void {

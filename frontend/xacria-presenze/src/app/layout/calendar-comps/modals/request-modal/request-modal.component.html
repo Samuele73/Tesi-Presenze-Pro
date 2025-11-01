@@ -134,7 +134,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="px-4 py-0 rounded-4 bg-dark-subtle border-0 text-dark" (click)="modal.close('Save click')">{{"Annulla" | translate}}</button>
-        <button type="submit" class="px-4 py-0 rounded-4 bg-primary border-0 text-light" (click)="modal.close('Save click')" [disabled]="form.invalid" [class.disabled]="form.invalid">{{"Modifica" | translate}}</button>
+        <button type="submit" class="px-4 py-0 rounded-4 bg-primary border-0 text-light"  [disabled]="form.invalid" [class.disabled]="form.invalid">{{"Modifica" | translate}}</button>
       </div>
     </form>
   </ng-template>

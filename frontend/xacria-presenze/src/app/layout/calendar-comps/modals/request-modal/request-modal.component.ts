@@ -110,7 +110,9 @@ export class RequestModalComponent implements ModalComponent, OnInit {
   }
 
   private deleteEntries(): void {
+    console.log("to delete entries lenght", this.toDeleteEntries.length, this.toDeleteEntries)
     if (this.toDeleteEntries.length) {
+      console.log("i am about to delete", this.toDeleteEntries)
       this.calendarStateService.deleteCalendarEntities(this.toDeleteEntries, 'REQUEST');
       this.toDeleteEntries = [];
     }
@@ -121,8 +123,11 @@ export class RequestModalComponent implements ModalComponent, OnInit {
       console.error('Availability modify form is invalid');
       return;
     }
+    console.log("check here", this.form, this.toDeleteEntries)
     this.deleteEntries();
     this.updateEntries();
+
+    this.modalService.dismissAll();
   }
 
   open(): void {
@@ -203,6 +208,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     } else {
       this.toDeleteEntries.push(entryId);
     }
+    console.log("status to delete entries:", this.toDeleteEntries)
   }
 
   submitNewEntry(): void {

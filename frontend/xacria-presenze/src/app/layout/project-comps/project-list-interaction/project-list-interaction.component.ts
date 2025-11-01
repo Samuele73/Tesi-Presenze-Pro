@@ -6,6 +6,7 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { Project } from 'src/generated-client';
 
@@ -33,7 +34,7 @@ export class ProjectListInteractionComponent implements OnChanges {
 
   assignedToList: string[] = [];
 
-  constructor(public authService: AuthService) {}
+  constructor(public authService: AuthService, private modalService: NgbModal) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['projects'] && this.projects) {
@@ -83,5 +84,16 @@ export class ProjectListInteractionComponent implements OnChanges {
 
   onAssignedToChange(): void {
     this.filterProjects();
+  }
+
+  openAddProjectModal(content: any): void {
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
+			(result) => {
+				console.log(`Closed with: ${result}`);
+			},
+			(reason) => {
+				console.log(`Dismissed ${reason}`);
+			},
+		);
   }
 }

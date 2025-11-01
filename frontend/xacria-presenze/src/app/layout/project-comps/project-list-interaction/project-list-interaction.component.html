@@ -19,9 +19,38 @@
     class="btn btn-primary text-white"
     *ngIf="authService.isAdmin()"
     [disabled]="!authService.isAdmin()"
+    (click)="openAddProjectModal(addProjectModal)"
   >
     {{ "Aggiungi Progetto" | translate }}
   </button>
+  <ng-template #addProjectModal let-modal>
+    <div class="modal-header">
+      <div>
+        <h3 class="modal-title" id="modal-basic-title">
+          {{ "Aggiungi Progetto" | translate }}
+        </h3>
+        <span class="form-text">* Inserisci un nuovo progetto</span>
+      </div>
+      <button
+        type="button"
+        class="btn-close"
+        aria-label="Close"
+        (click)="modal.dismiss('Cross click')"
+      ></button>
+    </div>
+    <div class="modal-body">
+      <app-project-form></app-project-form>
+    </div>
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-primary text-white"
+        (click)="modal.close('Save click')"
+      >
+        Save
+      </button>
+    </div>
+  </ng-template>
 </div>
 
 <div class="card shadow-sm mb-4" [(ngbCollapse)]="areFiltersCollapsed">
