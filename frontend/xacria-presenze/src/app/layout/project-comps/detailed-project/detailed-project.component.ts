@@ -64,7 +64,8 @@ export class DetailedProjectComponent implements OnInit {
 
   onSubmit(): void {
     const compProjectForm: FormGroup = this.projectFormComponent.projectForm;
-    const compProjcetFormAssignedTo: FormArray = this.projectFormComponent.assignedTo;
+    const compProjcetFormAssignedTo: FormArray =
+      this.projectFormComponent.assignedTo;
     if (compProjectForm.invalid) return;
 
     const updatedProject: Project = {

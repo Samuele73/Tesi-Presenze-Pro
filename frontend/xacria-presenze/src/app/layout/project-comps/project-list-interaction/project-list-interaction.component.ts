@@ -5,10 +5,13 @@ import {
   EventEmitter,
   OnChanges,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/shared/services/auth.service';
-import { Project } from 'src/generated-client';
+import { Project, ProjectService } from 'src/generated-client';
+import { ProjectFormComponent } from '../project-form/project-form.component';
+import { FormArray, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-project-list-interaction',
@@ -20,6 +23,7 @@ export class ProjectListInteractionComponent implements OnChanges {
   @Input() filteredProjects: Project[] = [];
   @Output() filteredProjectsChange = new EventEmitter<Project[]>();
   areFiltersCollapsed: boolean = true;
+  @ViewChild('projectFormComp') projectFormComponent!: ProjectFormComponent;
 
   searchTerm: string = '';
   selectedStatus: string = 'ALL';
@@ -34,7 +38,11 @@ export class ProjectListInteractionComponent implements OnChanges {
 
   assignedToList: string[] = [];
 
-  constructor(public authService: AuthService, private modalService: NgbModal) {}
+  constructor(
+    public authService: AuthService,
+    private modalService: NgbModal,
+    private projectService: ProjectService
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['projects'] && this.projects) {
@@ -87,13 +95,37 @@ export class ProjectListInteractionComponent implements OnChanges {
   }
 
   openAddProjectModal(content: any): void {
-    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
-			(result) => {
-				console.log(`Closed with: ${result}`);
-			},
-			(reason) => {
-				console.log(`Dismissed ${reason}`);
-			},
-		);
+    this.modalService
+      .open(content, { ariaLabelledBy: 'modal-basic-title' })
+      .result.then(
+        (result) => {
+          console.log(`Closed with: ${result}`);
+        },
+        (reason) => {
+          console.log(`Dismissed ${reason}`);
+        }
+      );
+  }
+
+  submitAddProjectForm(component: ProjectFormComponent): void {
+    console.log("Look here", component.projectForm.value)
+    this.projectService
+      .saveProject(component.projectForm.value)
+      .subscribe({
+        next: (project: Project) => {
+          console.log("new project", project)
+
+        },
+      });
+      this.modalService.dismissAll();
+  }
+
+  saveProject(newProject: Project): void {
+
+    this.projectService.saveProject(newProject).subscribe({
+      next: (project: Project) => {
+        console.log('new project', project);
+      },
+    });
   }
 }

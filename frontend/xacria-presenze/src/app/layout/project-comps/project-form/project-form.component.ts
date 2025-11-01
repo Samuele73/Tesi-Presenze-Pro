@@ -22,7 +22,10 @@ export class ProjectFormComponent implements OnChanges, OnInit {
   projectForm!: FormGroup;
   newUserEmail: string = '';
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder) {
+    if (this.project == null) this.project = {status: 'CREATED'};
+    this.initForm();
+  }
 
   ngOnInit(): void {
     if (this.project == null) this.project = {status: 'CREATED'};
@@ -88,7 +91,7 @@ export class ProjectFormComponent implements OnChanges, OnInit {
     this.assignedTo.removeAt(index);
   }
 
-  onSubmit(): void {
+  public onSubmit(): void {
     console.log('controlla', this.projectForm.value);
     this.submit.emit(this.projectForm.value);
   }

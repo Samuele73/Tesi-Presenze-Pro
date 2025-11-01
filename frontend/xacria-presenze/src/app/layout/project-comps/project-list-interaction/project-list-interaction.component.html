@@ -39,15 +39,18 @@
       ></button>
     </div>
     <div class="modal-body">
-      <app-project-form></app-project-form>
+      <app-project-form (submit)="saveProject($event)" #projectFormComp ></app-project-form>
     </div>
     <div class="modal-footer">
+      <button type="button" class="btn btn-secondary">
+        {{"Annulla" | translate}}
+      </button>
       <button
         type="button"
         class="btn btn-primary text-white"
-        (click)="modal.close('Save click')"
+        (click)="submitAddProjectForm(projectFormComp)"
       >
-        Save
+        {{"Salva" | translate}}
       </button>
     </div>
   </ng-template>
