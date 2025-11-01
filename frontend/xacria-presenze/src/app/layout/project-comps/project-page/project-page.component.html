@@ -3,6 +3,7 @@
     <app-project-list-interaction
       [projects]="projects"
       [(filteredProjects)]="filteredProjects"
+      (newProject)="loadProjects()"
     ></app-project-list-interaction>
   </div>
   <div class="flex-grow-1 overflow-auto overflow-x-hidden">

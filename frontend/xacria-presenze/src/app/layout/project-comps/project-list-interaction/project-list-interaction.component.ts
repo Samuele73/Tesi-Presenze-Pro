@@ -22,6 +22,7 @@ export class ProjectListInteractionComponent implements OnChanges {
   @Input() projects: Project[] = [];
   @Input() filteredProjects: Project[] = [];
   @Output() filteredProjectsChange = new EventEmitter<Project[]>();
+  @Output() newProject = new EventEmitter<Project>();
   areFiltersCollapsed: boolean = true;
   @ViewChild('projectFormComp') projectFormComponent!: ProjectFormComponent;
 
@@ -114,18 +115,9 @@ export class ProjectListInteractionComponent implements OnChanges {
       .subscribe({
         next: (project: Project) => {
           console.log("new project", project)
-
+          this.newProject.emit(project);
         },
       });
       this.modalService.dismissAll();
-  }
-
-  saveProject(newProject: Project): void {
-
-    this.projectService.saveProject(newProject).subscribe({
-      next: (project: Project) => {
-        console.log('new project', project);
-      },
-    });
   }
 }
