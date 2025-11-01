@@ -6,6 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { Project } from 'src/generated-client';
 import { ProjectService } from 'src/generated-client/api/api';
+import { ConfirmModalComponent } from '../../confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-detailed-project',
@@ -45,7 +46,7 @@ export class DetailedProjectComponent implements OnInit {
       summary: ['', Validators.required],
       description: ['', Validators.required],
       status: ['CREATED', Validators.required],
-      assignedTo: this.fb.array([]) // <-- FormArray
+      assignedTo: this.fb.array([]), // <-- FormArray
     });
   }
 
@@ -53,10 +54,18 @@ export class DetailedProjectComponent implements OnInit {
     return this.projectForm.get('assignedTo') as FormArray;
   }
 
-  get formName() { return this.projectForm.get('name'); }
-  get formSummary() { return this.projectForm.get('summary'); }
-  get formDescription() { return this.projectForm.get('description'); }
-  get formStatus() { return this.projectForm.get('status'); }
+  get formName() {
+    return this.projectForm.get('name');
+  }
+  get formSummary() {
+    return this.projectForm.get('summary');
+  }
+  get formDescription() {
+    return this.projectForm.get('description');
+  }
+  get formStatus() {
+    return this.projectForm.get('status');
+  }
 
   private populateForm(): void {
     if (!this.project) return;
@@ -66,11 +75,11 @@ export class DetailedProjectComponent implements OnInit {
       name: this.project.name,
       summary: this.project.summary,
       description: this.project.description,
-      status: this.project.status
+      status: this.project.status,
     });
 
     this.assignedTo.clear();
-    this.project.assignedTo?.forEach(email => {
+    this.project.assignedTo?.forEach((email) => {
       this.assignedTo.push(this.fb.control(email, [Validators.email]));
     });
   }
@@ -91,7 +100,7 @@ export class DetailedProjectComponent implements OnInit {
           this.statusCode = err.status.toString();
           this.project = null;
           this.isLoading = false;
-        }
+        },
       });
     });
   }
@@ -123,46 +132,65 @@ export class DetailedProjectComponent implements OnInit {
 
     const updatedProject: Project = {
       ...this.projectForm.value,
-      assignedTo: this.assignedTo.value
+      assignedTo: this.assignedTo.value,
     };
 
-    this.projectService.updateProject(updatedProject, updatedProject.id!).subscribe({
-      next: (project) => {
-        this.project = project;
-        this.newUserEmail = '';
-        this.router.navigate(["/app/projects"]);
-      }
-    });
+    this.projectService
+      .updateProject(updatedProject, updatedProject.id!)
+      .subscribe({
+        next: (project) => {
+          this.project = project;
+          this.newUserEmail = '';
+          this.router.navigate(['/app/projects']);
+        },
+      });
   }
 
   getChipMode(): 'STATIC' | 'DELETE' {
-    return (!this.authService.isAdmin() || !this.isEditMode) ? 'STATIC' : 'DELETE';
+    return !this.authService.isAdmin() || !this.isEditMode
+      ? 'STATIC'
+      : 'DELETE';
   }
 
   deleteProject(): void {
-    if(!this.project || !this.project.id)
-      return;
+    if (!this.project || !this.project.id) return;
     this.projectService.deleteProject(this.project.id).subscribe({
       next: () => {
-        this.router.navigate(["/app/projects"]);
+        this.router.navigate(['/app/projects']);
       },
       error: (error: HttpErrorResponse) => {
-        console.log(error, "dasfasfdsaf");
-        this.router.navigate(["/app/projects"]);
-      }
+        console.log(error, 'dasfasfdsaf');
+        this.router.navigate(['/app/projects']);
+      },
     });
   }
 
   openModal(content: any) {
-		this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
-			(result) => { 
-				this.modalCloseResult = `Closed with: ${result}`;
-			},
-			(reason) => {
-				this.modalCloseResult = `Dismissed ${reason}`;
-			},
-		);
-	}
+    this.modalService
+      .open(content, { ariaLabelledBy: 'modal-basic-title' })
+      .result.then(
+        (result) => {
+          this.modalCloseResult = `Closed with: ${result}`;
+        },
+        (reason) => {
+          this.modalCloseResult = `Dismissed ${reason}`;
+        }
+      );
+  }
+
+  /* Handle delete confirmation modal */
+  openConfirmDeletionModal() {
+    const modalRef = this.modalService.open(ConfirmModalComponent, {
+      centered: true,
+    });
+    modalRef.componentInstance.title = 'Conferma eliminazione';
+    modalRef.componentInstance.message =
+      'Sei sicuro di voler eliminare questo progetto? Questa azione non può essere annullata.';
+    modalRef.componentInstance.mode = 'DELETE';
+    modalRef.componentInstance.confirm.subscribe(() => {
+      this.deleteProject();
+    });
+  }
 
   get hasProject(): boolean {
     return !!this.project;

@@ -7,7 +7,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HttpClient } from '@angular/common/http';
-import { NgbDatepickerModule, NgbDropdown, NgbDropdownModule, NgbModalModule, NgbTooltipModule, NgbCollapse } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbDatepickerModule,
+  NgbDropdown,
+  NgbDropdownModule,
+  NgbModalModule,
+  NgbTooltipModule,
+  NgbCollapse,
+  NgbActiveModal,
+} from '@ng-bootstrap/ng-bootstrap';
 
 import { LayoutComponent } from './layout/layout.component';
 import { HomeComponent } from './home/home.component';
@@ -27,7 +35,8 @@ import { AvailabilityModalComponent } from './calendar-comps/modals/availability
 import { RequestModalComponent } from './calendar-comps/modals/request-modal/request-modal.component';
 import { InteractiveButtonComponent } from './calendar-comps/interactive-button/interactive-button.component';
 import { StatusBadgeComponent } from './status-badge/status-badge.component';
-import { ProjectPageComponent } from './project-comps/project-page/project-page.component';import { FilterPipe } from './shared/pipes/filter.pipe';
+import { ProjectPageComponent } from './project-comps/project-page/project-page.component';
+import { FilterPipe } from './shared/pipes/filter.pipe';
 import { ProjectListComponent } from './project-comps/project-list/project-list.component';
 import { ProjectListItemComponent } from './project-comps/project-list-item/project-list-item.component';
 import { ProjectListInteractionComponent } from './project-comps/project-list-interaction/project-list-interaction.component';
@@ -35,9 +44,7 @@ import { AssignmentBadgesComponent } from './project-comps/assignment-badges/ass
 import { DetailedProjectComponent } from './project-comps/detailed-project/detailed-project.component';
 import { ProjectStatusComponent } from './project-comps/project-status/project-status.component';
 import { ChipsComponent } from './chips/chips.component';
-;
-
-
+import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
 @NgModule({
   declarations: [
     LayoutComponent,
@@ -63,7 +70,8 @@ import { ChipsComponent } from './chips/chips.component';
     AssignmentBadgesComponent,
     DetailedProjectComponent,
     ProjectStatusComponent,
-    ChipsComponent
+    ChipsComponent,
+    ConfirmModalComponent,
   ],
   imports: [
     CommonModule,
@@ -78,18 +86,19 @@ import { ChipsComponent } from './chips/chips.component';
     NgbDropdownModule,
     NgbDatepickerModule,
     TranslateModule.forChild({
-        loader: {
-            provide: TranslateLoader,
-            useFactory: httpTranslateLoader,
-            deps: [HttpClient]
-        },
-        extend: true
+      loader: {
+        provide: TranslateLoader,
+        useFactory: httpTranslateLoader,
+        deps: [HttpClient],
+      },
+      extend: true,
     }),
     CalendarModule.forRoot({
-        provide: DateAdapter,
-        useFactory: adapterFactory,
+      provide: DateAdapter,
+      useFactory: adapterFactory,
     }),
-    NgbCollapse
-]
+    NgbCollapse,
+  ],
+  providers: [NgbActiveModal]
 })
-export class LayoutModule { }
+export class LayoutModule {}

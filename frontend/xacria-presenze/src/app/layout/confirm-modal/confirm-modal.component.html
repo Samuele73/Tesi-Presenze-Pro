@@ -1,0 +1,30 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{title | translate}}</h5>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="activeModal.dismiss()"
+  ></button>
+</div>
+
+<div class="modal-body">
+  <p>
+    {{message |translate}}
+  </p>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">
+    {{'Annulla' | translate}}
+  </button>
+  <button
+    type="button"
+    class="btn btn-danger"
+    [ngClass]="confirmButtonColorClass()"
+    ngbAutofocus
+    (click)="onDelete()"
+  >
+    {{'Conferma' | translate}}
+  </button>
+</div>

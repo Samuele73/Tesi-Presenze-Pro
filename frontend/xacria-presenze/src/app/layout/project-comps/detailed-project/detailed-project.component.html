@@ -34,48 +34,11 @@
             <button ngbDropdownItem (click)="cancelEdit()">
               {{ "Annulla" | translate }}
             </button>
-            <button ngbDropdownItem class="text-danger" (click)="openModal(content)">
+            <button ngbDropdownItem class="text-danger" (click)="openConfirmDeletionModal()">
               {{ "Elimina" | translate }}
             </button>
           </div>
         </div>
-        <!-- Delete confirmation modal -->
-        <ng-template #content let-modal>
-          <div class="modal-header">
-            <h5 class="modal-title">Conferma eliminazione</h5>
-            <button
-              type="button"
-              class="btn-close"
-              aria-label="Close"
-              (click)="modal.dismiss()"
-            ></button>
-          </div>
-
-          <div class="modal-body">
-            <p>
-              Sei sicuro di voler eliminare questo progetto? Questa azione non
-              può essere annullata.
-            </p>
-          </div>
-
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              (click)="modal.dismiss()"
-            >
-              Annulla
-            </button>
-            <button
-              type="button"
-              class="btn btn-danger"
-              ngbAutofocus
-              (click)="deleteProject(); modal.close()"
-            >
-              Elimina
-            </button>
-          </div>
-        </ng-template>
 
         <button
           type="submit"
