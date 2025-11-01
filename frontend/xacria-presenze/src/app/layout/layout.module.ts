@@ -45,6 +45,7 @@ import { DetailedProjectComponent } from './project-comps/detailed-project/detai
 import { ProjectStatusComponent } from './project-comps/project-status/project-status.component';
 import { ChipsComponent } from './chips/chips.component';
 import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
+import { ProjectFormComponent } from './project-comps/project-form/project-form.component';
 @NgModule({
   declarations: [
     LayoutComponent,
@@ -72,6 +73,7 @@ import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
     ProjectStatusComponent,
     ChipsComponent,
     ConfirmModalComponent,
+    ProjectFormComponent,
   ],
   imports: [
     CommonModule,

@@ -34,7 +34,11 @@
             <button ngbDropdownItem (click)="cancelEdit()">
               {{ "Annulla" | translate }}
             </button>
-            <button ngbDropdownItem class="text-danger" (click)="openConfirmDeletionModal()">
+            <button
+              ngbDropdownItem
+              class="text-danger"
+              (click)="openConfirmDeletionModal()"
+            >
               {{ "Elimina" | translate }}
             </button>
           </div>
@@ -43,7 +47,6 @@
         <button
           type="submit"
           class="btn btn-primary text-white"
-          [disabled]="projectForm.invalid"
           (click)="onSubmit()"
         >
           {{ "Salva" | translate }}
@@ -127,106 +130,7 @@
 
         <!-- EDIT MODE -->
         <ng-template #editModeTemplate>
-          <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
-            <!-- Nome -->
-            <div class="mb-3">
-              <label class="form-label fw-bold">{{
-                "Nome Progetto" | translate
-              }}</label>
-              <input type="text" class="form-control" formControlName="name" />
-              <app-form-error
-                [formControlRef]="formName"
-                validator="required"
-                errorText="Il nome del progetto è obbligatorio"
-              ></app-form-error>
-            </div>
-
-            <!-- Riepilogo -->
-            <div class="mb-3">
-              <label class="form-label fw-bold">{{
-                "Riepilogo" | translate
-              }}</label>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="summary"
-              />
-              <app-form-error
-                [formControlRef]="formSummary"
-                validator="required"
-                errorText="Il riepilogo è obbligatorio"
-              ></app-form-error>
-            </div>
-
-            <!-- Descrizione -->
-            <div class="mb-3">
-              <label class="form-label fw-bold">{{
-                "Descrizione" | translate
-              }}</label>
-              <textarea
-                class="form-control"
-                formControlName="description"
-                rows="4"
-              ></textarea>
-              <app-form-error
-                [formControlRef]="formDescription"
-                validator="required"
-                errorText="La descrizione è obbligatoria"
-              ></app-form-error>
-            </div>
-
-            <!-- Status -->
-            <div class="mb-3">
-              <label class="form-label fw-bold">{{
-                "Stato" | translate
-              }}</label>
-              <select class="form-select" formControlName="status">
-                <option value="CREATED">Creato</option>
-                <option value="IN_PROGRESS">In Corso</option>
-                <option value="COMPLETED">Completato</option>
-              </select>
-            </div>
-
-            <div class="mb-3">
-  <label class="form-label fw-bold">
-    {{ "Utenti Assegnati" | translate }}
-  </label>
-
-  <div
-    class="chips-wrapper border rounded px-2 py-1 d-flex flex-wrap align-items-center gap-2 mb-1"
-  >
-    <!-- Chips -->
-    <app-chips
-      *ngFor="let ctrl of assignedTo.controls; let i = index"
-      [text]="ctrl.value"
-      [mode]="'DELETE'"
-      (delete)="removeUser(i)"
-    ></app-chips>
-
-    <!-- Input -->
-    <input
-      type="email"
-      class="form-control chips-input p-0 m-0 border-0 shadow-none"
-      placeholder="Aggiungi email utente"
-      [(ngModel)]="newUserEmail"
-      [ngModelOptions]="{ standalone: true }"
-      #emailInput="ngModel"
-      email
-      (keydown.enter)="addUser(); $event.preventDefault()"
-    />
-  </div>
-
-  <!-- Messaggio errore -->
-  <div *ngIf="emailInput.invalid ">
-    <small class="text-danger">
-      {{ "Inserisci una email valida" | translate }}
-    </small>
-  </div>
-
-  <small class="text-muted">{{ "Premi Invio per aggiungere" | translate }}</small>
-</div>
-
-          </form>
+          <app-project-form [project]="project" #projectFormComp></app-project-form>
         </ng-template>
       </ng-container>
     </div>

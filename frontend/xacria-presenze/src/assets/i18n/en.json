@@ -116,5 +116,7 @@
   "Premi Invio per aggiungere" : "Press Enter to add",
   "Il nome del progetto è obbligatorio" : "Project name is required",
   "Il riepilogo è obbligatorio" : "Summary is required",
-  "La descrizione è obbligatoria" : "Description is required"
+  "La descrizione è obbligatoria" : "Description is required",
+  "Conferma eliminazione" : "Confirm deletion",
+  "Sei sicuro di voler eliminare questo progetto? Questa azione non può essere annullata." : "Are you sure to delete this project? This action can not be undone."
 }

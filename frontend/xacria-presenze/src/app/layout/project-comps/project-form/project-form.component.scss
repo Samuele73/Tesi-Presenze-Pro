@@ -1,0 +1,16 @@
+.chips-wrapper {
+  cursor: text;
+}
+
+.chips-input {
+  min-width: 120px; /* input corto, cresce solo se serve */
+}
+
+/* rimuove bordo focus blu su WebKit */
+.chips-input:focus {
+  outline: none;
+  box-shadow: none !important;
+}
+.chips-input.form-control {
+  width: auto !important; /* <-- elimina width:100% */
+}

@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -7,6 +7,7 @@ import { AuthService } from 'src/app/shared/services/auth.service';
 import { Project } from 'src/generated-client';
 import { ProjectService } from 'src/generated-client/api/api';
 import { ConfirmModalComponent } from '../../confirm-modal/confirm-modal.component';
+import { ProjectFormComponent } from '../project-form/project-form.component';
 
 @Component({
   selector: 'app-detailed-project',
@@ -19,10 +20,9 @@ export class DetailedProjectComponent implements OnInit {
   statusCode = '';
   isLoading = false;
   isEditMode = false;
-  projectForm!: FormGroup;
-  newUserEmail: string = '';
   modalCloseResult: string = '';
   private projcetId: string | null = null;
+  @ViewChild('projectFormComp') projectFormComponent!: ProjectFormComponent;
 
   constructor(
     private route: ActivatedRoute,
@@ -34,54 +34,8 @@ export class DetailedProjectComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.initForm();
     this.getProjectFromQueryParams();
     this.isEditMode = this.authService.isAdmin();
-  }
-
-  private initForm(): void {
-    this.projectForm = this.fb.group({
-      id: [''],
-      name: ['', Validators.required],
-      summary: ['', Validators.required],
-      description: ['', Validators.required],
-      status: ['CREATED', Validators.required],
-      assignedTo: this.fb.array([]), // <-- FormArray
-    });
-  }
-
-  get assignedTo(): FormArray {
-    return this.projectForm.get('assignedTo') as FormArray;
-  }
-
-  get formName() {
-    return this.projectForm.get('name');
-  }
-  get formSummary() {
-    return this.projectForm.get('summary');
-  }
-  get formDescription() {
-    return this.projectForm.get('description');
-  }
-  get formStatus() {
-    return this.projectForm.get('status');
-  }
-
-  private populateForm(): void {
-    if (!this.project) return;
-
-    this.projectForm.patchValue({
-      id: this.project.id,
-      name: this.project.name,
-      summary: this.project.summary,
-      description: this.project.description,
-      status: this.project.status,
-    });
-
-    this.assignedTo.clear();
-    this.project.assignedTo?.forEach((email) => {
-      this.assignedTo.push(this.fb.control(email, [Validators.email]));
-    });
   }
 
   private getProjectFromQueryParams() {
@@ -93,7 +47,6 @@ export class DetailedProjectComponent implements OnInit {
       this.projectService.getProjectById(projectId).subscribe({
         next: (project) => {
           this.project = project;
-          this.populateForm();
           this.isLoading = false;
         },
         error: (err: HttpErrorResponse) => {
@@ -105,34 +58,18 @@ export class DetailedProjectComponent implements OnInit {
     });
   }
 
-  addUser(): void {
-    const email = this.newUserEmail.trim();
-    if (!email) return;
-
-    const control = this.fb.control(email, [Validators.email]);
-
-    if (control.invalid) return;
-    if (this.assignedTo.value.includes(email)) return;
-
-    this.assignedTo.push(control);
-    this.newUserEmail = '';
-  }
-
-  removeUser(index: number): void {
-    this.assignedTo.removeAt(index);
-  }
-
   cancelEdit(): void {
-    this.newUserEmail = '';
-    this.populateForm();
+    this.projectFormComponent.ressetAll();
   }
 
   onSubmit(): void {
-    if (this.projectForm.invalid) return;
+    const compProjectForm: FormGroup = this.projectFormComponent.projectForm;
+    const compProjcetFormAssignedTo: FormArray = this.projectFormComponent.assignedTo;
+    if (compProjectForm.invalid) return;
 
     const updatedProject: Project = {
-      ...this.projectForm.value,
-      assignedTo: this.assignedTo.value,
+      ...compProjectForm.value,
+      assignedTo: compProjcetFormAssignedTo.value,
     };
 
     this.projectService
@@ -140,7 +77,6 @@ export class DetailedProjectComponent implements OnInit {
       .subscribe({
         next: (project) => {
           this.project = project;
-          this.newUserEmail = '';
           this.router.navigate(['/app/projects']);
         },
       });
