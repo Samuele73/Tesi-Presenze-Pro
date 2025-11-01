@@ -8,6 +8,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProjectMapper {
     public Project fromCreateRequestToProject(CreateProjectRequest createProjectRequest){
-        return Project.builder().name(createProjectRequest.name()).description(createProjectRequest.description()).assignedTo(createProjectRequest.assignedTo()).status(ProjectStatus.valueOf("CREATED")).build();
+        return Project.builder().name(createProjectRequest.name()).description(createProjectRequest.description()).assignedTo(createProjectRequest.assignedTo()).status(ProjectStatus.valueOf("CREATED")).summary(createProjectRequest.summary()).build();
     }
 }

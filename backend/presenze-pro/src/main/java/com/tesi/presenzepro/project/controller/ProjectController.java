@@ -61,8 +61,9 @@ public class ProjectController {
     @PostMapping("")
     @Operation(description = "Save a new project", security = @SecurityRequirement(name = "bearerAuth"))
     ResponseEntity<Project> saveProject(@RequestBody CreateProjectRequest project) {
-        Project savedProjet = service.saveProject(project);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedProjet);
+        System.out.println("New project " + project);
+        Project savedProject = service.saveProject(project);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedProject);
     }
 
     @PutMapping("/{id}")
