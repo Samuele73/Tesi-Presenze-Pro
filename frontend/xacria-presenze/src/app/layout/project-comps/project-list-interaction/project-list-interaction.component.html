@@ -23,6 +23,7 @@
   >
     {{ "Aggiungi Progetto" | translate }}
   </button>
+  <!-- Add project modal -->
   <ng-template #addProjectModal let-modal>
     <div class="modal-header">
       <div>
@@ -40,6 +41,9 @@
     </div>
     <div class="modal-body">
       <app-project-form  #projectFormComp ></app-project-form>
+      <span *ngIf="addProjectRequestError" class="text-danger mt-2">
+        {{addProjectRequestError}}
+      </span>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="modal.close()">
@@ -56,6 +60,7 @@
   </ng-template>
 </div>
 
+<!-- Project list filters -->
 <div class="card shadow-sm mb-4" [(ngbCollapse)]="areFiltersCollapsed">
   <div class="card-body">
     <div class="row g-3">

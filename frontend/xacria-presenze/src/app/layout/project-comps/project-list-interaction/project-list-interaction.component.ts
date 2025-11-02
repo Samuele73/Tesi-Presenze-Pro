@@ -12,6 +12,7 @@ import { AuthService } from 'src/app/shared/services/auth.service';
 import { Project, ProjectService } from 'src/generated-client';
 import { ProjectFormComponent } from '../project-form/project-form.component';
 import { FormArray, FormGroup } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-project-list-interaction',
@@ -25,6 +26,7 @@ export class ProjectListInteractionComponent implements OnChanges {
   @Output() newProject = new EventEmitter<Project>();
   areFiltersCollapsed: boolean = true;
   @ViewChild('projectFormComp') projectFormComponent!: ProjectFormComponent;
+  addProjectRequestError: string | undefined;
 
   searchTerm: string = '';
   selectedStatus: string = 'ALL';
@@ -109,15 +111,20 @@ export class ProjectListInteractionComponent implements OnChanges {
   }
 
   submitAddProjectForm(component: ProjectFormComponent): void {
-    console.log("Look here", component.projectForm.value)
-    this.projectService
-      .saveProject(component.projectForm.value)
-      .subscribe({
-        next: (project: Project) => {
-          console.log("new project", project)
-          this.newProject.emit(project);
-        },
-      });
-      this.modalService.dismissAll();
+    console.log('Look here', component.projectForm.value);
+    this.projectService.saveProject(component.projectForm.value).subscribe({
+      next: (project: Project) => {
+        console.log('new project', project);
+        this.newProject.emit(project);
+        this.modalService.dismissAll();
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Error with add project reqeust', error);
+        if (error.status == 400) {
+          this.addProjectRequestError =
+            'Una o più email indicate non risultano registrate!';
+        }
+      },
+    });
   }
 }
