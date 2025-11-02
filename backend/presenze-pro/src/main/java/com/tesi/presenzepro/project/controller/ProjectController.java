@@ -6,7 +6,9 @@ import com.tesi.presenzepro.project.service.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -58,14 +60,16 @@ public class ProjectController {
                 : ResponseEntity.ok(projects);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("")
     @Operation(description = "Save a new project", security = @SecurityRequirement(name = "bearerAuth"))
-    ResponseEntity<Project> saveProject(@RequestBody CreateProjectRequest project) {
+    ResponseEntity<Project> saveProject(@RequestBody CreateProjectRequest project, HttpServletRequest request) {
         System.out.println("New project " + project);
-        Project savedProject = service.saveProject(project);
+        Project savedProject = service.saveProject(project, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProject);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     @Operation(description = "Modify a project referred by its ID", security = @SecurityRequirement(name = "bearerAuth"))
     ResponseEntity<Project> updateProject(@RequestBody Project project, @PathVariable String id) {
@@ -73,6 +77,7 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.OK).body(updatedProject);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     @Operation(description = "Delete the referred project", security = @SecurityRequirement(name = "bearerAuth"))
     ResponseEntity<String> deleteProject(@PathVariable String id) {

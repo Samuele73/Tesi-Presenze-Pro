@@ -7,8 +7,10 @@ import com.tesi.presenzepro.project.mapper.ProjectMapper;
 import com.tesi.presenzepro.project.model.Project;
 import com.tesi.presenzepro.project.repository.ProjectRepository;
 import com.tesi.presenzepro.user.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -33,11 +35,17 @@ public class ProjectService {
         return this.projectRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found"));
     }
 
-    public Project saveProject(CreateProjectRequest project){
+    public Project saveProject(CreateProjectRequest project, HttpServletRequest request) {
+        final String userEmail = request.getUserPrincipal().getName();
+        System.out.println("User email: " + userEmail);
+        final String userRole = this.userService.getCurrentUserRole();
+        System.out.println("User role: " + userRole);
         if (project.assignedTo() != null && !project.assignedTo().isEmpty()) {
             project.assignedTo().forEach(email -> {
+                if (userRole.equals("ADMIN") && email.equals(userEmail))
+                    throw new AccessDeniedException("Un admin non può auto-assegnarsi un progetto!");
                 this.userService.findByEmail(email)
-                        .orElseThrow(() -> new NoUserForProjectFound(email));
+                        .orElseThrow(() -> new NoUserForProjectFound("Una o più email indicate non risultano registrate!"));
                 this.userService.addUserProjectByEmail(email, project.name());
             });
         }

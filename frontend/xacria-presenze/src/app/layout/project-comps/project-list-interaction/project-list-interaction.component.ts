@@ -120,10 +120,7 @@ export class ProjectListInteractionComponent implements OnChanges {
       },
       error: (error: HttpErrorResponse) => {
         console.error('Error with add project reqeust', error);
-        if (error.status == 400) {
-          this.addProjectRequestError =
-            'Una o più email indicate non risultano registrate!';
-        }
+        this.addProjectRequestError = error.error.message;
       },
     });
   }
