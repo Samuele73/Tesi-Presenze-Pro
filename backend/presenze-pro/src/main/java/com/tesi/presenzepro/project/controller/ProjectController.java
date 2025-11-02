@@ -26,7 +26,7 @@ import java.util.List;
 public class ProjectController {
     private final ProjectService service;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OWNER')")
     @GetMapping("")
     @Operation(description = "Obtain all projects", security = @SecurityRequirement(name = "bearerAuth"))
     ResponseEntity<List<Project>> getAllProjects() {
@@ -50,7 +50,7 @@ public class ProjectController {
         return ResponseEntity.ok(projects);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OWNER')")
     @GetMapping("/user/{email}")
     @Operation(description = "Obtain all projects assigned to the specified user by email", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<List<Project>> getProjectsByUserEmail(@PathVariable String email) {
@@ -60,7 +60,7 @@ public class ProjectController {
                 : ResponseEntity.ok(projects);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OWNER')")
     @PostMapping("")
     @Operation(description = "Save a new project", security = @SecurityRequirement(name = "bearerAuth"))
     ResponseEntity<Project> saveProject(@RequestBody CreateProjectRequest project, HttpServletRequest request) {
@@ -69,7 +69,7 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProject);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OWNER')")
     @PutMapping("/{id}")
     @Operation(description = "Modify a project referred by its ID", security = @SecurityRequirement(name = "bearerAuth"))
     ResponseEntity<Project> updateProject(@RequestBody Project project, @PathVariable String id) {
@@ -77,7 +77,7 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.OK).body(updatedProject);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OWNER')")
     @DeleteMapping("/{id}")
     @Operation(description = "Delete the referred project", security = @SecurityRequirement(name = "bearerAuth"))
     ResponseEntity<String> deleteProject(@PathVariable String id) {

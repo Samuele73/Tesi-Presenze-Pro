@@ -17,7 +17,7 @@ public class UserMapper {
                 .profile(new UserProfile(dto.name(), dto.surname()))
                 .email(dto.email())
                 .pwd(dto.password())
-                .role(Role.USER) //STIAMO ASSUMENDO SIANO TUTTI USER. TOGLIERE QUANDO SI AGGIUNGONO ALTRI RUOLI
+                .role(Role.USER) // Si assume che i privilegi superiori vengano messi manualmente.
                 .build();
     }
 
