@@ -35,17 +35,9 @@
     "bootstrap": "^5.3.1",
     "date-fns": "^2.29.3",
     "jquery": "^3.7.1",
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     "jwt-decode": "^4.0.0",
-=======
     "primeicons": "^7.0.0",
     "primeng": "^15.4.1",
->>>>>>> Stashed changes
-=======
-    "primeicons": "^7.0.0",
-    "primeng": "^15.4.1",
->>>>>>> Stashed changes
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.12.0"
