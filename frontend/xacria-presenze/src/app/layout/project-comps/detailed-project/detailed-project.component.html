@@ -26,9 +26,9 @@
           <button
             type="button"
             ngbDropdownToggle
-            class="btn btn-link text-black dropdown-toggle"
+            class="btn btn-outline-light border-secondary text-black dropdown-toggle"
           >
-            <i class="fa fa-ellipsis"></i>
+            <i class="fa-solid fa-ellipsis-vertical"></i>
           </button>
           <div ngbDropdownMenu>
             <button ngbDropdownItem (click)="cancelEdit()">
@@ -36,7 +36,6 @@
             </button>
             <button
               ngbDropdownItem
-              class="text-danger"
               (click)="openConfirmDeletionModal()"
             >
               {{ "Elimina" | translate }}
