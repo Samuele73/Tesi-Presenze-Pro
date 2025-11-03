@@ -120,5 +120,6 @@
   "La descrizione è obbligatoria" : "La descrizione è obbligatoria",
   "Conferma eliminazione" : "Conferma eliminazione",
   "Sei sicuro di voler eliminare questo progetto? Questa azione non può essere annullata." : "Sei sicuro di voler eliminare questo progetto? Questa azione non può essere annullata.",
-  "Un admin non può auto-assegnarsi un progetto!" : "Un admin non può auto-assegnarsi un progetto!"
+  "Un admin non può auto-assegnarsi un progetto!" : "Un admin non può auto-assegnarsi un progetto!",
+  "Nessun progetto trovato" : "Nessun progetto trovato"
 }

@@ -119,5 +119,6 @@
   "La descrizione è obbligatoria" : "Description is required",
   "Conferma eliminazione" : "Confirm deletion",
   "Sei sicuro di voler eliminare questo progetto? Questa azione non può essere annullata." : "Are you sure to delete this project? This action can not be undone.",
-  "Un admin non può auto-assegnarsi un progetto!": "An admin cannot assign a project to themselves!"
+  "Un admin non può auto-assegnarsi un progetto!": "An admin cannot assign a project to themselves!",
+  "Nessun progetto trovato" : "No project found"
 }

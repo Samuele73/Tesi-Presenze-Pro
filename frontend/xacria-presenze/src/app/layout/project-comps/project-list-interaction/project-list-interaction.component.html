@@ -68,7 +68,7 @@
       <div class="col-md-4">
         <label class="form-label fw-bold">
           <i class="fa-solid fa-search me-1"></i>
-          Cerca Progetto
+          {{"Cerca Progetto" | translate}}
         </label>
         <input
           type="text"
@@ -82,7 +82,7 @@
       <!-- Filtro per stato -->
       <div class="col-md-4">
         <label class="form-label fw-bold">
-          <i class="fa fa-bars-progress me-1"></i> Filtra per stato
+          <i class="fa fa-bars-progress me-1"></i> {{"Filtra per stato" | translate}}
         </label>
 
         <p-multiSelect
@@ -101,7 +101,7 @@
 
       <!-- Filtro per assegnatario -->
       <div class="col-md-4" *ngIf="authService.isAdmin()">
-        <label class="form-label fw-bold"><i class="fa fa-user me-2"></i>Assegnato a</label>
+        <label class="form-label fw-bold"><i class="fa fa-user me-2"></i>{{"Assegnato a" | translate}}</label>
 
         <p-multiSelect
           [options]="assignedToList"
