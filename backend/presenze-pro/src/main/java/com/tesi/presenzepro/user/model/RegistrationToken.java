@@ -15,21 +15,19 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @Document
-public class PasswordResetToken {
-
-    private static final int EXPIRATION_HOURS = 24;
+public class RegistrationToken {
+    private static final int EXPIRATION_HOURS = 48;
     @Id
     private String id;
     private String token;
     private String userEmail;
     private Date expiryDate;
 
-    public PasswordResetToken(String token, String userEmail){
+    public RegistrationToken(String token, String userEmail){
         this.token = token;
         this.userEmail = userEmail;
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.HOUR_OF_DAY, EXPIRATION_HOURS);
         this.expiryDate = calendar.getTime();
     }
-
 }

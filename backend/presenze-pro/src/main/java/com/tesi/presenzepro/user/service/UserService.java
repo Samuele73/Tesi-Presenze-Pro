@@ -6,10 +6,7 @@ import com.tesi.presenzepro.jwt.JwtUtils;
 import com.tesi.presenzepro.project.model.Project;
 import com.tesi.presenzepro.user.dto.*;
 import com.tesi.presenzepro.user.mapper.UserMapper;
-import com.tesi.presenzepro.user.model.PasswordResetToken;
-import com.tesi.presenzepro.user.model.User;
-import com.tesi.presenzepro.user.model.UserData;
-import com.tesi.presenzepro.user.model.UserProfile;
+import com.tesi.presenzepro.user.model.*;
 import com.tesi.presenzepro.user.repository.PasswordResetTokenRespository;
 import com.tesi.presenzepro.user.repository.UserRepository;
 import com.tesi.presenzepro.user.repository.UserRepositoryCustomImpl;
@@ -148,7 +145,18 @@ public class UserService {
         return true;
     }
 
+    public boolean sendInvitation(String email, HttpServletRequest request){
+        if(this.repository.findByEmail(email).isPresent())
+            throw new DuplicateEmailException(email);
+        String token = UUID.randomUUID().toString();
+        saveRegistrationToken(email, token);
+        return false;
+    }
 
+    private void saveRegistrationToken(String email, String token){
+        RegistrationToken registrationToken = new RegistrationToken(email, token);
+
+    }
 
     private void createPasswordResetTokenForUser(String userEmail, String token){
         PasswordResetToken myToken = new PasswordResetToken(token, userEmail);

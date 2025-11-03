@@ -101,6 +101,11 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/send-invitation")
+    public ResponseEntity<?> sendInvitationByEmail(@RequestBody String email, HttpServletRequest request){
+        this.service.sendInvitation(email, request);
+    }
+
     @Operation(description = "Ottenimento dell'email interna al token indicato", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping("/getEmail")
     public ResponseEntity<String> getEmailFromTkn(@RequestBody String token){
