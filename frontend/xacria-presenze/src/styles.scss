@@ -8,9 +8,9 @@
   --primary-color-text: #ffffff;
 
   /* Per checkbox/radio selezionati */
-  --checkbox-checked-bg: var(--primary-color);
+  /* --checkbox-checked-bg: var(--primary-color);
   --checkbox-checked-border-color: var(--primary-color);
-  --multiselect-token-bg: var(--primary-color);
+  --multiselect-token-bg: var(--primary-color); */
 
   /* Bordo su focus */
   --focus-ring: 0 0 0 0.2rem rgba(19, 173, 106, 0.4);
@@ -26,22 +26,22 @@
 }
 
 /* Checkbox nella lista */
-.p-multiselect-panel .p-checkbox-box.p-highlight {
+/* .p-multiselect-panel .p-checkbox-box.p-highlight {
   background: var(--primary-color) !important;
   border-color: var(--primary-color) !important;
-}
+} */
 
 /* Tag del valore selezionato */
-.p-multiselect-token {
+/* .p-multiselect-token {
   background: var(--primary-color) !important;
   color: white !important;
-}
+} */
 
 /* Checkbox quando è selezionato */
-.p-checkbox .p-checkbox-box.p-highlight {
+/* .p-checkbox .p-checkbox-box.p-highlight {
   background: var(--primary-color) !important;
   border-color: var(--primary-color) !important;
-}
+} */
 
 
 :root {
@@ -60,7 +60,7 @@
   --surface-300: #13ad6a;
 }
 
-/* ✅ Dropdown & Multiselect più compatti */
+/* Dropdown & Multiselect più compatti */
 .p-dropdown,
 .p-multiselect {
   min-height: 32px !important;
@@ -73,14 +73,10 @@
   padding: 0.25rem 0.5rem !important;
 }
 
-/* ✅ Highlight selezione */
-.p-multiselect-panel .p-multiselect-item.p-highlight,
-.p-dropdown-panel .p-dropdown-item.p-highlight {
-  background-color:  rgba(19, 173, 106, 0.8) !important;
-  color: white !important;
-}
+/* Highlight selezione */
 
-/* ✅ Chip token (Multiselect) */
+
+/* Chip token (Multiselect) */
 .p-multiselect-token {
   background: var(--primary-color) !important;
   color: white !important;

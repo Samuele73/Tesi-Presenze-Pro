@@ -93,14 +93,15 @@
           [(ngModel)]="selectedStatus"
           (onChange)="filterProjects()"
           class="w-100 p-multiselect-sm "
-          [showToggleAll]="true"
+          [showToggleAll]="false"
           [filter]="false"
+          [showHeader]="false"
         ></p-multiSelect>
       </div>
 
       <!-- Filtro per assegnatario -->
       <div class="col-md-4" *ngIf="authService.isAdmin()">
-        <label class="form-label fw-bold">Assegnato a</label>
+        <label class="form-label fw-bold"><i class="fa fa-user me-2"></i>Assegnato a</label>
 
         <p-multiSelect
           [options]="assignedToList"
@@ -108,6 +109,8 @@
           [(ngModel)]="selectedAssignedTo"
           (onChange)="filterProjects()"
           [showToggleAll]="false"
+          [showHeader]="false"
+          [filter]="false"
           class="w-100 p-multiselect-sm  "
           [style]="{'min-height':'32px','font-size':'0.85rem'}"
         >
