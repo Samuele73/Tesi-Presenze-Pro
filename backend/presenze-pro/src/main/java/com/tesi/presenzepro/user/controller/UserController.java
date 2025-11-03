@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -28,6 +29,7 @@ import java.util.Map;
 public class UserController {
 
     private final UserService service;
+    private final HttpServletResponse httpServletResponse;
 
     @PostMapping("/login")
     public ResponseEntity<UserAuthResponseDto> login(@RequestBody LoginRequestDto user){
@@ -85,7 +87,7 @@ public class UserController {
     @Operation(description = "Redirect a pagina per il cambio password. Rotta raggiunta tramite il link nella email di richiesta password")
     @GetMapping("/changePassword")
     public void showChangePasswordPage(HttpServletResponse httpServletResponse, @RequestParam("token") String token) throws IOException {
-        if(!this.service.showChangePasswordPage(token)){
+        if(this.service.isUserTokenValid(token) != null){
             httpServletResponse.sendRedirect("http://localhost:4200/login"); //In produzione cambiare l'indirizzo. In generale impostalo dalle properties
             return;
         }
@@ -101,9 +103,22 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','OWNER')")
+    @Operation(description = "Manda invito per la registrazione di un nuovo account utente", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping("/send-invitation")
-    public ResponseEntity<?> sendInvitationByEmail(@RequestBody String email, HttpServletRequest request){
+    public ResponseEntity<Boolean> sendInvitationByEmail(@RequestBody String email, HttpServletRequest request){
         this.service.sendInvitation(email, request);
+        return ResponseEntity.ok(true);
+    }
+
+    @Operation(description = "Verifica il token dell'invito alla creazione dell'account utente")
+    @GetMapping("/verify-invitation")
+    public void verifyInvitationByEmail(@RequestParam("token") String token) throws IOException {
+        if(this.service.isUserTokenValid(token) != null){
+            httpServletResponse.sendRedirect("http://localhost:4200/login");
+            return;
+        }
+        httpServletResponse.sendRedirect("http://localhost:4200/signin?token=" + token);
     }
 
     @Operation(description = "Ottenimento dell'email interna al token indicato", security = @SecurityRequirement(name = "bearerAuth"))

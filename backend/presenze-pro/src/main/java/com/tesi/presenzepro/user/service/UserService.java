@@ -3,11 +3,10 @@ package com.tesi.presenzepro.user.service;
 import com.mongodb.DuplicateKeyException;
 import com.tesi.presenzepro.exception.DuplicateEmailException;
 import com.tesi.presenzepro.jwt.JwtUtils;
-import com.tesi.presenzepro.project.model.Project;
 import com.tesi.presenzepro.user.dto.*;
 import com.tesi.presenzepro.user.mapper.UserMapper;
 import com.tesi.presenzepro.user.model.*;
-import com.tesi.presenzepro.user.repository.PasswordResetTokenRespository;
+import com.tesi.presenzepro.user.repository.UserTokenRepository;
 import com.tesi.presenzepro.user.repository.UserRepository;
 import com.tesi.presenzepro.user.repository.UserRepositoryCustomImpl;
 import io.jsonwebtoken.JwtException;
@@ -27,13 +26,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static com.tesi.presenzepro.user.model.TokenType.PASSWORD_RESET;
+import static com.tesi.presenzepro.user.model.TokenType.REGISTRATION;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository repository;
     private final UserRepositoryCustomImpl repositoryCustom;
-    private final PasswordResetTokenRespository resetTokenRespository;
+    private final UserTokenRepository userTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
@@ -140,28 +142,29 @@ public class UserService {
         if(this.repository.findByEmail(userEmail).isEmpty())
             return false;
         String token = UUID.randomUUID().toString();
-        createPasswordResetTokenForUser(userEmail, token);
+        saveUserToken(userEmail, token, PASSWORD_RESET);
         mailSender.send(constructResetTokenEmail("http://" + request.getServerName() + ":" + request.getServerPort(), request.getLocale(), token, userEmail));
         return true;
     }
 
-    public boolean sendInvitation(String email, HttpServletRequest request){
+    public void sendInvitation(String email, HttpServletRequest request){
         if(this.repository.findByEmail(email).isPresent())
             throw new DuplicateEmailException(email);
         String token = UUID.randomUUID().toString();
-        saveRegistrationToken(email, token);
-        return false;
+        saveUserToken(email, token, REGISTRATION);
+        mailSender.send(constructInvitationTokenEmail("http://" + request.getServerName() + ":" + request.getServerPort(), request.getLocale(), token, email));
     }
 
-    private void saveRegistrationToken(String email, String token){
-        RegistrationToken registrationToken = new RegistrationToken(email, token);
-
+    private SimpleMailMessage constructInvitationTokenEmail(String contextPath, Locale locale, String token, String userEmail){
+        String url = contextPath + "/users/verify-invitation?token=" + token;
+        String body = messageSource.getMessage("message.invitation-token", null, locale);
+        return constructEmail("Presenze Pro - Accetta invito", body + " \r\n" + url, userEmail);
     }
 
-    private void createPasswordResetTokenForUser(String userEmail, String token){
-        PasswordResetToken myToken = new PasswordResetToken(token, userEmail);
-        this.resetTokenRespository.deleteAllByUserEmail(userEmail);
-        this.resetTokenRespository.save(myToken); //modificare per far si che venga controllato se esiste già un token e resettarlo
+    private void saveUserToken(String userEmail, String token, TokenType tokenType){
+        UserToken myToken = new UserToken(token, userEmail, tokenType);
+        this.userTokenRepository.deleteAllByUserEmailAndTokenType(userEmail, tokenType);
+        this.userTokenRepository.save(myToken); //modificare per far si che venga controllato se esiste già un token e resettarlo
     }
 
     private SimpleMailMessage constructResetTokenEmail(String contextPath, Locale locale, String token, String userEmail){
@@ -179,25 +182,18 @@ public class UserService {
         return email;
     }
 
-    public boolean showChangePasswordPage(String token){
-        String result = validatePasswordResetToken(token);
-        if(result != null)
-            return false;
-        return true;
-    }
-
-    public String validatePasswordResetToken(String token){
-        final PasswordResetToken resetToken = resetTokenRespository.findByToken(token);
+    public String isUserTokenValid(String token){
+        final UserToken resetToken = userTokenRepository.findByToken(token);
         return !isTokenFound(resetToken) ? "invalidToken"
-                : isTokenExpired(resetToken) ? "expiredToken"
+                : resetToken.isExpired() ? "expiredToken"
                 : null;
     }
 
-    private boolean isTokenFound(PasswordResetToken resetToken){
+    private boolean isTokenFound(UserToken resetToken){
         return resetToken != null;
     }
 
-    private boolean isTokenExpired(PasswordResetToken resetToken){
+    private boolean isTokenExpired(UserToken resetToken){
         final Calendar cal = Calendar.getInstance();
         return resetToken.getExpiryDate().before(cal.getTime());
     }
@@ -205,13 +201,13 @@ public class UserService {
     public boolean savePassword(NewPasswordDto newPasswordDto){
         System.out.println("TOKEN PER RESET: "  + newPasswordDto.token());
         System.out.println("TOKEN PER RESET: "  + newPasswordDto.password());
-        String result = validatePasswordResetToken(newPasswordDto.token());
+        String result = isUserTokenValid(newPasswordDto.token());
 
         if(result != null){
             System.out.println("Token per salvataggio di una nuova password non presente");
             return false;
         }
-        PasswordResetToken userToken = this.resetTokenRespository.findByToken(newPasswordDto.token());
+        UserToken userToken = this.userTokenRepository.findByToken(newPasswordDto.token());
         if(userToken != null){
             Optional<User> user = this.repository.findByEmail(userToken.getUserEmail());
             if(user.isPresent()){
