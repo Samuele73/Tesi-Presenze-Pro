@@ -15,7 +15,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @Document
-public class PasswordResetToken {
+public class    PasswordResetToken {
 
     private static final int EXPIRATION_HOURS = 24;
     @Id

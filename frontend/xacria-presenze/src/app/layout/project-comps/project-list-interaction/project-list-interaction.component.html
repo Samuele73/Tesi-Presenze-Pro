@@ -40,21 +40,21 @@
       ></button>
     </div>
     <div class="modal-body">
-      <app-project-form  #projectFormComp ></app-project-form>
+      <app-project-form #projectFormComp></app-project-form>
       <span *ngIf="addProjectRequestError" class="text-danger mt-2">
-        {{addProjectRequestError}}
+        {{ addProjectRequestError }}
       </span>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="modal.close()">
-        {{"Annulla" | translate}}
+        {{ "Annulla" | translate }}
       </button>
       <button
         type="button"
         class="btn btn-primary text-white"
         (click)="submitAddProjectForm(projectFormComp)"
       >
-        {{"Salva" | translate}}
+        {{ "Salva" | translate }}
       </button>
     </div>
   </ng-template>
@@ -62,59 +62,56 @@
 
 <!-- Project list filters -->
 <div class="card shadow-sm mb-4" [(ngbCollapse)]="areFiltersCollapsed">
-  <div class="card-body">
+  <div class="card-body p-fluid">
     <div class="row g-3">
       <!-- Filtro per nome -->
-      <div class="col-md-4" [ngClass]="{ 'col-md-8': !authService.isAdmin() }">
-        <label for="searchInput" class="form-label mb-2">
-          <i class="fa-solid fa-search"></i>
-          {{ "Cerca Progetto" | translate }}
+      <div class="col-md-4">
+        <label class="form-label fw-bold">
+          <i class="fa-solid fa-search me-1"></i>
+          Cerca Progetto
         </label>
         <input
-          id="searchInput"
           type="text"
-          class="form-control"
-          placeholder="{{ 'Cerca per nome...' | translate }}"
+          class="form-control "
+          placeholder="Cerca per nome..."
           [(ngModel)]="searchTerm"
-          (input)="onSearchChange()"
+          (input)="filterProjects()"
         />
       </div>
 
       <!-- Filtro per stato -->
       <div class="col-md-4">
-        <label for="statusFilter" class="form-label mb-2">
-          <i class="fa fa-bars-progress me-1"></i>
-          {{ "Filtra per stato" | translate }}
+        <label class="form-label fw-bold">
+          <i class="fa fa-bars-progress me-1"></i> Filtra per stato
         </label>
-        <select
-          id="statusFilter"
-          class="form-select"
+
+        <p-multiSelect
+          [options]="projectStatuses"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Tutti"
           [(ngModel)]="selectedStatus"
-          (change)="onStatusChange()"
-        >
-          <option *ngFor="let status of projectStatuses" [value]="status.value">
-            {{ status.label }}
-          </option>
-        </select>
+          (onChange)="filterProjects()"
+          class="w-100 p-multiselect-sm "
+          [showToggleAll]="true"
+          [filter]="false"
+        ></p-multiSelect>
       </div>
 
       <!-- Filtro per assegnatario -->
       <div class="col-md-4" *ngIf="authService.isAdmin()">
-        <label for="assignedToFilter" class="form-label mb-2">
-          <i class="fa fa-user me-1"></i>
-          {{ "Filtra per assegnatario" | translate }}
-        </label>
-        <select
-          id="assignedToFilter"
-          class="form-select"
+        <label class="form-label fw-bold">Assegnato a</label>
+
+        <p-multiSelect
+          [options]="assignedToList"
+          placeholder="Seleziona..."
           [(ngModel)]="selectedAssignedTo"
-          (change)="onAssignedToChange()"
+          (onChange)="filterProjects()"
+          [showToggleAll]="false"
+          class="w-100 p-multiselect-sm  "
+          [style]="{'min-height':'32px','font-size':'0.85rem'}"
         >
-          <option value="ALL">Tutti</option>
-          <option *ngFor="let user of assignedToList" [value]="user">
-            {{ user }}
-          </option>
-        </select>
+        </p-multiSelect>
       </div>
     </div>
   </div>

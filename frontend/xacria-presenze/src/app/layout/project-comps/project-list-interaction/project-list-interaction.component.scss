@@ -1,0 +1,10 @@
+:host ::ng-deep .p-multiselect-sm .p-multiselect,
+:host ::ng-deep .p-multiselect-sm .p-multiselect-label {
+  font-size: 0.82rem !important;
+  padding: 0.25rem 0.5rem !important;
+}
+
+:host ::ng-deep .p-multiselect-sm .p-multiselect-token {
+  padding: 0.12rem 0.35rem !important;
+  font-size: 0.75rem !important;
+}

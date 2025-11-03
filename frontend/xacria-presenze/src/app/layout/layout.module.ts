@@ -46,6 +46,8 @@ import { ProjectStatusComponent } from './project-comps/project-status/project-s
 import { ChipsComponent } from './chips/chips.component';
 import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
 import { ProjectFormComponent } from './project-comps/project-form/project-form.component';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { DropdownModule } from 'primeng/dropdown';
 @NgModule({
   declarations: [
     LayoutComponent,
@@ -87,6 +89,8 @@ import { ProjectFormComponent } from './project-comps/project-form/project-form.
     NgbTooltipModule,
     NgbDropdownModule,
     NgbDatepickerModule,
+    DropdownModule,
+    MultiSelectModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,

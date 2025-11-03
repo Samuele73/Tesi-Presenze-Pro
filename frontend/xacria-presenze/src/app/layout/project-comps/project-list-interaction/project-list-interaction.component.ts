@@ -11,7 +11,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { Project, ProjectService } from 'src/generated-client';
 import { ProjectFormComponent } from '../project-form/project-form.component';
-import { FormArray, FormGroup } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
@@ -29,11 +28,12 @@ export class ProjectListInteractionComponent implements OnChanges {
   addProjectRequestError: string | undefined;
 
   searchTerm: string = '';
-  selectedStatus: string = 'ALL';
-  selectedAssignedTo: string = 'ALL';
+
+  /** Ora entrambi sono array perché MultiSelect */
+  selectedStatus: string[] = [];
+  selectedAssignedTo: string[] = [];
 
   projectStatuses = [
-    { value: 'ALL', label: 'Tutti' },
     { value: 'CREATED', label: 'Creato' },
     { value: 'IN_PROGRESS', label: 'In Corso' },
     { value: 'COMPLETED', label: 'Completato' },
@@ -54,17 +54,15 @@ export class ProjectListInteractionComponent implements OnChanges {
     }
   }
 
-  /** 🔹 Crea la lista di utenti assegnatari senza duplicati */
   private generateAssignedToList(): void {
     const allAssigned: string[] = this.projects
       .flatMap((p) => p.assignedTo || [])
       .filter(Boolean);
 
-    // Usa Set per rimuovere duplicati e ordina alfabeticamente
     this.assignedToList = Array.from(new Set(allAssigned)).sort();
   }
 
-  /** 🔹 Applica tutti i filtri contemporaneamente */
+  /** Applica tutti i filtri */
   filterProjects(): void {
     const filtered = this.projects.filter((project: Project) => {
       const matchesSearch = (project.name?.toLowerCase() || '').includes(
@@ -72,11 +70,12 @@ export class ProjectListInteractionComponent implements OnChanges {
       );
 
       const matchesStatus =
-        this.selectedStatus === 'ALL' || project.status === this.selectedStatus;
+        this.selectedStatus.length === 0 ||
+        this.selectedStatus.includes(project.status || '');
 
       const matchesAssigned =
-        this.selectedAssignedTo === 'ALL' ||
-        (project.assignedTo || []).includes(this.selectedAssignedTo);
+        this.selectedAssignedTo.length === 0 ||
+        project.assignedTo?.some((u) => this.selectedAssignedTo.includes(u));
 
       return matchesSearch && matchesStatus && matchesAssigned;
     });
@@ -85,41 +84,17 @@ export class ProjectListInteractionComponent implements OnChanges {
     this.filteredProjectsChange.emit(filtered);
   }
 
-  onSearchChange(): void {
-    this.filterProjects();
-  }
-
-  onStatusChange(): void {
-    this.filterProjects();
-  }
-
-  onAssignedToChange(): void {
-    this.filterProjects();
-  }
-
   openAddProjectModal(content: any): void {
-    this.modalService
-      .open(content, { ariaLabelledBy: 'modal-basic-title' })
-      .result.then(
-        (result) => {
-          console.log(`Closed with: ${result}`);
-        },
-        (reason) => {
-          console.log(`Dismissed ${reason}`);
-        }
-      );
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
   }
 
   submitAddProjectForm(component: ProjectFormComponent): void {
-    console.log('Look here', component.projectForm.value);
     this.projectService.saveProject(component.projectForm.value).subscribe({
       next: (project: Project) => {
-        console.log('new project', project);
         this.newProject.emit(project);
         this.modalService.dismissAll();
       },
       error: (error: HttpErrorResponse) => {
-        console.error('Error with add project reqeust', error);
         this.addProjectRequestError = error.error.message;
       },
     });
