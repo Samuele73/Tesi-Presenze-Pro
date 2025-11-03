@@ -60,28 +60,36 @@
   --surface-300: #13ad6a;
 }
 
-/* Dropdown & Multiselect più compatti */
+/* Dropdown & Multiselect per matchare Bootstrap */
 .p-dropdown,
 .p-multiselect {
-  min-height: 32px !important;
-  font-size: 0.85rem !important;
+  min-height: 37.33px !important; /* Aumentato da 32px per matchare Bootstrap */
+  font-size: 1rem !important; /* Aumentato da 0.85rem a 1rem (dimensione standard Bootstrap) */
   border-radius: 0.375rem !important; /* bootstrap radius */
 }
 
 .p-dropdown-label,
 .p-multiselect-label {
-  padding: 0.25rem 0.5rem !important;
+  padding: 0.375rem 0.75rem !important; /* Aumentato padding per matchare Bootstrap form-control */
+  line-height: 1.5 !important; /* Line-height standard Bootstrap */
+}
+
+/* Anche le opzioni nel panel dovrebbero avere testo più grande */
+.p-multiselect-panel .p-multiselect-item,
+.p-dropdown-panel .p-dropdown-item {
+  font-size: 1rem !important;
+  padding: 0.375rem 0.75rem !important;
 }
 
 /* Highlight selezione */
 
 
-/* Chip token (Multiselect) */
+/* Chip token (Multiselect) - mantieni più piccolo per i tag */
 .p-multiselect-token {
   background: var(--primary-color) !important;
   color: white !important;
-  padding: 0.15rem 0.4rem !important;
-  font-size: 0.75rem !important;
+  padding: 0.25rem 0.5rem !important; /* Leggermente aumentato */
+  font-size: 0.875rem !important; /* Leggermente aumentato da 0.75rem */
   border-radius: 0.35rem !important;
 }
 
