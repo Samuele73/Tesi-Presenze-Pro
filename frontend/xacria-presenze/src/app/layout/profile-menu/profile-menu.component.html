@@ -1,14 +1,29 @@
 <div class="wrapper">
   <div class="profile-details d-block d-lg-flex align-items-center">
-    <div class="profile-pic">
-
-    </div>
-    <span>{{username?.name + " " + username?.surname}}</span>
+    <div class="profile-pic"></div>
+    <span>{{ username?.name + " " + username?.surname }}</span>
   </div>
   <div class="menu">
-    <button class="btn btn-link text-secondary p-0 mt-0 text-decoration-none fs-5" routerLink="/app/profile" [routerLinkActive]="'is-active'" [routerLinkActiveOptions]="{ exact: true }">{{"Il mio profilo" | translate}}</button>
-    <button class="btn btn-link text-secondary p-0 mt-0 text-decoration-none fs-5" routerLink="/app/attendance" [routerLinkActive]="'is-active'" [routerLinkActiveOptions]="{ exact: true }">{{"Presenze" | translate}}</button>
-    <button class="btn btn-link text-secondary p-0 mt-0 text-decoration-none fs-5" routerLink="/app/projects" [routerLinkActive]="'is-active'" [routerLinkActiveOptions]="{ exact: true }">{{"Progetti" | translate}}</button>
+    <app-profile-menu-item
+      [name]="'Il mio profilo'"
+      [route]="'/app/profile'"
+    ></app-profile-menu-item>
+
+    <app-profile-menu-item
+      [name]="'Presenze'"
+      [route]="'/app/attendance'"
+    ></app-profile-menu-item>
+
+    <app-profile-menu-item
+      [name]="'Progetti'"
+      [route]="'/app/projects'"
+    ></app-profile-menu-item>
+
+    <app-profile-menu-item
+      [name]="'Utenti'"
+      [route]="'/app/users-management'"
+      *ngIf="authService.isPrivilegedUser()"
+    ></app-profile-menu-item>
   </div>
-  <hr>
+  <hr />
 </div>

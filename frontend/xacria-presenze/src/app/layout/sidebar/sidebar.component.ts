@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { faUser, faUsers, faDiagramProject, faCalendar, faHouse } from '@fortawesome/free-solid-svg-icons';
+import { AuthService } from 'src/app/shared/services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -7,6 +8,9 @@ import { faUser, faUsers, faDiagramProject, faCalendar, faHouse } from '@fortawe
   styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent {
+
+  constructor(public authService: AuthService){}
+
   faUsers = faUsers;
   faUser = faUser;
   faDiagramProject = faDiagramProject;

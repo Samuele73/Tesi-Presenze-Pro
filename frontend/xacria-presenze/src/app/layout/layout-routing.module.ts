@@ -18,6 +18,9 @@ const routes: Routes = [
       {path: "attendance", pathMatch: "full", component: AttendanceComponent},
       {path: "projects", pathMatch: "full", component: ProjectPageComponent},
       {path: "detailed-project", pathMatch: "full", component: DetailedProjectComponent},
+      {path: "users-management", loadChildren: () =>
+        import('../user-management/user-management.module').then(m => m.UserManagementModule)
+      }
     ]
   }
 ];

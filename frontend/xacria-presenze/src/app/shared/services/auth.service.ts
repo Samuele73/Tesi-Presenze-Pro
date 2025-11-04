@@ -85,6 +85,14 @@ export class AuthService {
     return this.getUserRole() === 'ADMIN';
   }
 
+  isOwner(): boolean{
+    return this.getUserRole() === 'OWNER'
+  }
+
+  isPrivilegedUser(): boolean{
+    return this.isAdmin() || this.isOwner();
+  }
+
   getUserEmail() {
     const tkn = this.token;
     if (tkn) {

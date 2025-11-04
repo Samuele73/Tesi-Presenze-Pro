@@ -49,6 +49,7 @@ import { ProjectFormComponent } from './project-comps/project-form/project-form.
 import { MultiSelectModule } from 'primeng/multiselect';
 import { DropdownModule } from 'primeng/dropdown';
 import { SidebarItemComponent } from './sidebar-item/sidebar-item.component';
+import { ProfileMenuItemComponent } from './profile-menu-item/profile-menu-item.component';
 
 @NgModule({
   declarations: [
@@ -78,7 +79,8 @@ import { SidebarItemComponent } from './sidebar-item/sidebar-item.component';
     ChipsComponent,
     ConfirmModalComponent,
     ProjectFormComponent,
-    SidebarItemComponent
+    SidebarItemComponent,
+    ProfileMenuItemComponent
   ],
   imports: [
     CommonModule,

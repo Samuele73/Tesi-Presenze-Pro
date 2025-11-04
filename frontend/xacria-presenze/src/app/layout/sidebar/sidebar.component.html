@@ -33,6 +33,7 @@
         [name]="'Utenti'"
         [route]="'/app/users'"
         [icon]="faUsers"
+        *ngIf="authService.isPrivilegedUser()"
       >
       </app-sidebar-item>
     </ul>
