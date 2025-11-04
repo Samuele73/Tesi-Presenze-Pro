@@ -1,15 +1,13 @@
-<div class="card h-100 shadow-sm hover-shadow transition project-list-item" (click)="goToProject()">
-  <div
-    class="card-header bg-white text-black d-flex justify-content-between align-items-center"
-  >
+
+<app-card (cardClicked)="goToProject()">
+  <div card-header class="d-flex justify-content-between align-items-center">
     <h5 class="mb-0 text-truncate" [title]="project?.name">
       <i class="bi bi-folder2-open me-2"></i>
       {{ project?.name }}
     </h5>
     <app-project-status [project]="project"></app-project-status>
   </div>
-
-  <div class="card-body">
+  <div card-body>
     <p class="card-text text-muted mb-3">
       {{ project?.summary }}
     </p>
@@ -18,16 +16,4 @@
       <app-assignment-badges [project]="project"></app-assignment-badges>
     </div>
   </div>
-
-  <!-- <div class="card-footer bg-white border-top">
-              <div class="d-flex justify-content-end">
-                <button
-                  class="btn btn-sm btn-primary text-white fw-semibold"
-                  (click)="viewProject(project)"
-                  title="Visualizza"
-                >
-                  Visualizza
-                </button>
-              </div>
-            </div> -->
-</div>
+</app-card>

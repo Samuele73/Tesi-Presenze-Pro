@@ -5,13 +5,15 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { httpTranslateLoader } from 'src/app/app.module';
 import { HttpClient } from '@angular/common/http';
 import { FormErrorComponent } from 'src/app/form-error/form-error.component';
+import { CardComponent } from '../../components/card/card.component';
 
 
 
 @NgModule({
   declarations: [
     SelectLangComponent,
-    FormErrorComponent
+    FormErrorComponent,
+    CardComponent
   ],
   imports: [
     CommonModule,
@@ -26,7 +28,8 @@ import { FormErrorComponent } from 'src/app/form-error/form-error.component';
   ],
   exports: [
     SelectLangComponent,
-    FormErrorComponent
+    FormErrorComponent,
+    CardComponent
   ]
 })
 export class GeneralModule { }

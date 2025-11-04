@@ -1,0 +1,14 @@
+<div
+  class="card h-100 shadow-sm hover-shadow transition project-list-item"
+  (click)="emitCardClicked()"
+>
+  <div
+    class="card-header bg-white text-black"
+  >
+    <ng-content select="[card-header]"></ng-content>
+  </div>
+
+  <div class="card-body">
+    <ng-content select="[card-body]"></ng-content>
+  </div>
+</div>

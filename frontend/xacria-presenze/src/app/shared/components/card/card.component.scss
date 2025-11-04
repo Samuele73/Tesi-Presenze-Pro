@@ -1,0 +1,11 @@
+@import "../../../../vars.scss";
+
+.project-list-item{
+  transition: all 0.3s ease-in-out;
+  min-height: 220px;
+}
+
+.project-list-item:hover {
+  transform: scale(1.01);
+  cursor: pointer;
+}
