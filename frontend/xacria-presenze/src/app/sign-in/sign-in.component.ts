@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -6,24 +6,49 @@ import {
   Validators,
 } from '@angular/forms';
 import { AuthService } from '../shared/services/auth.service';
-import { Router } from '@angular/router';
-import { SignInRequestDto } from 'src/generated-client';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SignInRequestDto, UserService } from 'src/generated-client';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-sign-in',
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.scss'],
 })
-export class SignInComponent {
+export class SignInComponent implements OnInit {
   signinForm!: FormGroup;
   apiError?: string;
+  userEmail: string = '';
 
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private userService: UserService,
+    private route: ActivatedRoute
   ) {
     this.setSigninForm();
+  }
+
+  ngOnInit(): void {
+    this.setInvitedEmailFromTkn()
+  }
+
+  setInvitedEmailFromTkn(): void {
+    const tkn: string | null = this.route.snapshot.queryParamMap.get('token');
+    if (tkn) {
+      this.userService.getEmailFromInvitation(tkn).subscribe({
+        next: (email: string) => {
+          this.userEmail = email;
+          this.signinForm.patchValue({email: this.userEmail})
+        },
+        error: (err: HttpErrorResponse) => {
+          this.apiError = err.error.message;
+        }
+      })
+      return;
+    }
+    this.apiError = "Nessun token presente!"
   }
 
   get nameControl() {
@@ -79,7 +104,5 @@ export class SignInComponent {
         this.apiError = err.message;
       },
     });
-    /* if(this.authService.signin(userCredentials))
-      this.router.navigate(["login"]); */
   }
 }

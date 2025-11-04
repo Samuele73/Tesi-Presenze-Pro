@@ -114,6 +114,7 @@ public class UserController {
    @GetMapping("/invitation-details")
     public ResponseEntity<String> getEmailFromInvitation(@RequestParam("token") String token){
         String userEmail = this.userTokenService.getEmailFromUserTknValidation(token);
+        System.out.println("userEmail: " + userEmail);
         return ResponseEntity.ok(userEmail);
    }
 

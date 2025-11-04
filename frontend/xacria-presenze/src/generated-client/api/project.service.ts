@@ -149,7 +149,7 @@ export class ProjectService {
 
     /**
      * 
-     * Obtain all projects belonging to the authenticated user
+     * Obtain all projects belonging to the authenticated user (email taken from tkn)
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
@@ -342,7 +342,7 @@ export class ProjectService {
 
     /**
      * 
-     * Save a new project
+     * Modify a project referred by its ID
      * @param body 
      * @param id 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

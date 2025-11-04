@@ -25,9 +25,10 @@ export interface ProfileResponseDto {
     role?: ProfileResponseDto.RoleEnum;
 }
 export namespace ProfileResponseDto {
-    export type RoleEnum = 'USER' | 'ADMIN';
+    export type RoleEnum = 'USER' | 'ADMIN' | 'OWNER';
     export const RoleEnum = {
         USER: 'USER' as RoleEnum,
-        ADMIN: 'ADMIN' as RoleEnum
+        ADMIN: 'ADMIN' as RoleEnum,
+        OWNER: 'OWNER' as RoleEnum
     };
 }

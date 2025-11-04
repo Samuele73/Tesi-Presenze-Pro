@@ -63,6 +63,60 @@ export class UserService {
 
     /**
      * 
+     * Ottieni l&#x27;email dal token di invito (se valido)
+     * @param token 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getEmailFromInvitation(token: string, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public getEmailFromInvitation(token: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public getEmailFromInvitation(token: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public getEmailFromInvitation(token: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (token === null || token === undefined) {
+            throw new Error('Required parameter token was null or undefined when calling getEmailFromInvitation.');
+        }
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (token !== undefined && token !== null) {
+            queryParameters = queryParameters.set('token', <any>token);
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<string>('get',`${this.basePath}/users/invitation-details`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
      * Ottenimento dell&#x27;email interna al token indicato
      * @param body 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -346,6 +400,60 @@ export class UserService {
         }
 
         return this.httpClient.request<any>('put',`${this.basePath}/users/savePassword`,
+            {
+                body: body,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * Manda invito per la registrazione di un nuovo account utente
+     * @param body 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public sendInvitationByEmail(body: string, observe?: 'body', reportProgress?: boolean): Observable<boolean>;
+    public sendInvitationByEmail(body: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<boolean>>;
+    public sendInvitationByEmail(body: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<boolean>>;
+    public sendInvitationByEmail(body: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (body === null || body === undefined) {
+            throw new Error('Required parameter body was null or undefined when calling sendInvitationByEmail.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected != undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        return this.httpClient.request<boolean>('post',`${this.basePath}/users/send-invitation`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,
