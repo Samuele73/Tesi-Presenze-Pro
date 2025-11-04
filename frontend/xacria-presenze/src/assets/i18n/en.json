@@ -120,5 +120,8 @@
   "Conferma eliminazione" : "Confirm deletion",
   "Sei sicuro di voler eliminare questo progetto? Questa azione non può essere annullata." : "Are you sure to delete this project? This action can not be undone.",
   "Un admin non può auto-assegnarsi un progetto!": "An admin cannot assign a project to themselves!",
-  "Nessun progetto trovato" : "No project found"
+  "Nessun progetto trovato" : "No project found",
+  "Torna alla pagina di Login" : "Go back to Login page",
+  "Invito non presente" : "Invitation not present",
+  "Per accedere alla pagina di registrazione è necessario un invito da parte di un Admin.": "To access the registration page you need an invitation from an Admin."
 }

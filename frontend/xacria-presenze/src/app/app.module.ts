@@ -25,6 +25,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
 import { ApiModule } from 'src/generated-client';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { InvitationErrorComponent } from './invitation-error/invitation-error.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     ForgottenPwComponent,
     NotfoundComponent,
     UpdatePwComponent,
+    InvitationErrorComponent,
   ],
   imports: [
     BrowserModule,

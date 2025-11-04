@@ -38,7 +38,7 @@
             </div>
           </div>
           <small class="text-danger">{{apiError! | translate}}</small>
-          <button class="btn btn-sm btn-primary w-100 rounded-3 text-white fw-bold" [disabled]="signinForm.invalid">{{"Registrati" | translate}}</button>
+          <button class="btn btn-sm btn-primary w-100 rounded-3 text-white fw-bold" [disabled]="signinForm.invalid || apiError">{{"Registrati" | translate}}</button>
         </form>
         <div class="d-flex justify-content-between mt-2">
           <app-auth-link [text]="'Informativa sulla privacy' | translate"></app-auth-link>

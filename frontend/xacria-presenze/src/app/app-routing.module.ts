@@ -6,10 +6,13 @@ import { ForgottenPwComponent } from './forgotten-pw/forgotten-pw.component';
 import { IsAuthenticatedGuard } from './shared/guards/is-authenticated.guard';
 import { NotfoundComponent } from './notfound/notfound.component';
 import { UpdatePwComponent } from './update-pw/update-pw.component';
+import { SigninInvitationGuard } from './shared/guards/singin-invitation.guard';
+import { InvitationErrorComponent } from './invitation-error/invitation-error.component';
 
 const routes: Routes = [
   {path: "login", component: LoginComponent},
-  {path: "signin", component: SignInComponent},
+  {path: "signin", component: SignInComponent, canActivate: [SigninInvitationGuard]},
+  {path: "invitation-error", component: InvitationErrorComponent},
   {path: "forgotten-pw", component: ForgottenPwComponent},
   {path: "updatePassword", component: UpdatePwComponent},
   {path: "", pathMatch: "full", redirectTo: "/app/home"},

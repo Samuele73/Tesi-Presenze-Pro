@@ -121,5 +121,8 @@
   "Conferma eliminazione" : "Conferma eliminazione",
   "Sei sicuro di voler eliminare questo progetto? Questa azione non può essere annullata." : "Sei sicuro di voler eliminare questo progetto? Questa azione non può essere annullata.",
   "Un admin non può auto-assegnarsi un progetto!" : "Un admin non può auto-assegnarsi un progetto!",
-  "Nessun progetto trovato" : "Nessun progetto trovato"
+  "Nessun progetto trovato" : "Nessun progetto trovato",
+  "Torna alla pagina di Login" : "Torna alla pagina di Login",
+  "Invito non presente" : "Invito non presente",
+  "Per accedere alla pagina di registrazione è necessario un invito da parte di un Admin." : "Per accedere alla pagina di registrazione è necessario un invito da parte di un Admin."
 }
