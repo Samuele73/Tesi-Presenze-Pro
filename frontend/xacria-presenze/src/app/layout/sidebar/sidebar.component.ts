@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { faUser, faUsers, faDiagramProject, faCalendar, faHouse } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-sidebar',
@@ -6,5 +7,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent {
-
+  faUsers = faUsers;
+  faUser = faUser;
+  faDiagramProject = faDiagramProject;
+  faCalendar = faCalendar;
+  faHouse = faHouse;
 }

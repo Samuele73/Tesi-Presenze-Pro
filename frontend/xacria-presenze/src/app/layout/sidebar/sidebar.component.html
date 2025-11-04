@@ -1,23 +1,40 @@
-<div class=" d-none d-lg-block py-5 px-4 h-100" id="side_nav">
+<div class="d-none d-lg-block py-5 px-4 h-100" id="side_nav">
   <div class="header-box">
     <ul class="list-unstyled">
-      <li class="item">
-        <i class="fa-solid fa-house fa-lg"></i>
-        <a class="text-decoration-none text-dark h1 fs-5 align-bottom" routerLink="/app/home" [routerLinkActive]="'is-active'" [routerLinkActiveOptions]="{ exact: true }">{{"Home" | translate}}</a>
-      </li>
-      <li class="item">
-        <i class="fa-solid fa-user fa-lg"></i>
-        <a class="text-decoration-none text-dark h1 fs-5 align-bottom" routerLink="/app/profile" [routerLinkActive]="'is-active'" [routerLinkActiveOptions]="{ exact: true }">{{"Il mio profilo" | translate}}</a>
-      </li>
-      <li class="item">
-        <i class="fa-regular fa-calendar fa-lg"></i>
-        <a class="text-decoration-none text-dark h1 fs-5 align-bottom" routerLink="/app/attendance" [routerLinkActive]="'is-active'" [routerLinkActiveOptions]="{ exact: true }">{{"Presenze" | translate}}</a>
-      </li>
-      <li class="item">
-        <i class="fa-solid fa-diagram-project"></i>
-        <a class="text-decoration-none text-dark h1 fs-5 align-bottom" routerLink="/app/projects" [routerLinkActive]="'is-active'" [routerLinkActiveOptions]="{ exact: true }">{{"Progetti" | translate}}</a>
-      </li>
+      <app-sidebar-item
+        [name]="'Home'"
+        [route]="'/app/home'"
+        [icon]="faHouse"
+      >
+      </app-sidebar-item>
+
+      <app-sidebar-item
+        [name]="'Il mio profilo'"
+        [route]="'/app/profile'"
+        [icon]="faUser"
+      >
+      </app-sidebar-item>
+
+      <app-sidebar-item
+        [name]="'Presenze'"
+        [route]="'/app/attendance'"
+        [icon]="faCalendar"
+      >
+      </app-sidebar-item>
+
+      <app-sidebar-item
+        [name]="'Progetti'"
+        [route]="'/app/projects'"
+        [icon]="faDiagramProject"
+      >
+      </app-sidebar-item>
+
+      <app-sidebar-item
+        [name]="'Utenti'"
+        [route]="'/app/users'"
+        [icon]="faUsers"
+      >
+      </app-sidebar-item>
     </ul>
   </div>
 </div>
-

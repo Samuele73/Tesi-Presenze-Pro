@@ -36,7 +36,7 @@ import { InvitationErrorComponent } from './invitation-error/invitation-error.co
     ForgottenPwComponent,
     NotfoundComponent,
     UpdatePwComponent,
-    InvitationErrorComponent,
+    InvitationErrorComponent
   ],
   imports: [
     BrowserModule,

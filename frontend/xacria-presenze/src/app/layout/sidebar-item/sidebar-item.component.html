@@ -1,0 +1,10 @@
+<li class="item">
+  <fa-icon *ngIf="icon" [icon]="icon" [size]="iconSize"></fa-icon>
+  <a
+    class="text-decoration-none text-dark h1 fs-5 align-bottom"
+    routerLink="{{route}}"
+    [routerLinkActive]="'is-active'"
+    [routerLinkActiveOptions]="{ exact: true }"
+    >{{ name | translate }}</a
+  >
+</li>

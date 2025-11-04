@@ -48,6 +48,7 @@ import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
 import { ProjectFormComponent } from './project-comps/project-form/project-form.component';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { DropdownModule } from 'primeng/dropdown';
+import { SidebarItemComponent } from './sidebar-item/sidebar-item.component';
 
 @NgModule({
   declarations: [
@@ -76,7 +77,8 @@ import { DropdownModule } from 'primeng/dropdown';
     ProjectStatusComponent,
     ChipsComponent,
     ConfirmModalComponent,
-    ProjectFormComponent
+    ProjectFormComponent,
+    SidebarItemComponent
   ],
   imports: [
     CommonModule,
