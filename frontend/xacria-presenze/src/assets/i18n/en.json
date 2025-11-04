@@ -123,5 +123,7 @@
   "Nessun progetto trovato" : "No project found",
   "Torna alla pagina di Login" : "Go back to Login page",
   "Invito non presente" : "Invitation not present",
-  "Per accedere alla pagina di registrazione è necessario un invito da parte di un Admin.": "To access the registration page you need an invitation from an Admin."
+  "Per accedere alla pagina di registrazione è necessario un invito da parte di un Admin.": "To access the registration page you need an invitation from an Admin.",
+  "Aggiungi Progetto" : "Add Project",
+  "Aggiungi Utente" : "Add User"
 }

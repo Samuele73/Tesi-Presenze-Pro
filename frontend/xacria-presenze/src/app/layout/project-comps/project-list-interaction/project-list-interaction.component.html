@@ -1,121 +1,97 @@
-<div class="d-flex justify-content-end gap-2 align-items-center mb-2">
-  <button
-    type="button"
-    class="btn text-center"
-    [ngClass]="{
-      'btn-secondary': !areFiltersCollapsed,
-      'btn-outline-secondary': areFiltersCollapsed
-    }"
-    (click)="areFiltersCollapsed = !areFiltersCollapsed"
-  >
-    <i class="fa-regular fa-filter fa-xs me-1" size></i>
-    {{
-      areFiltersCollapsed
-        ? ("Mostra Filtri" | translate)
-        : ("Nascondi Filtri" | translate)
-    }}
-  </button>
-  <button
-    class="btn btn-primary text-white"
-    *ngIf="authService.isAdmin()"
-    [disabled]="!authService.isAdmin()"
-    (click)="openAddProjectModal(addProjectModal)"
-  >
-    {{ "Aggiungi Progetto" | translate }}
-  </button>
-  <!-- Add project modal -->
-  <ng-template #addProjectModal let-modal>
-    <div class="modal-header">
-      <div>
-        <h3 class="modal-title" id="modal-basic-title">
-          {{ "Aggiungi Progetto" | translate }}
-        </h3>
-        <span class="form-text">* Inserisci un nuovo progetto</span>
-      </div>
-      <button
-        type="button"
-        class="btn-close"
-        aria-label="Close"
-        (click)="modal.dismiss('Cross click')"
-      ></button>
+<app-list-interaction
+  [hasAddButtonPermission]="this.authService.isPrivilegedUser()"
+  (addButtonClick)="openAddProjectModal(addProjectModal)"
+  [addButtonName]="addButtonName"
+>
+  <div list-filters class="row g-3">
+    <div class="col-md-4">
+      <label class="form-label fw-bold">
+        <i class="fa-solid fa-search me-1"></i>
+        {{ "Cerca Progetto" | translate }}
+      </label>
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Cerca per nome..."
+        [(ngModel)]="searchTerm"
+        (input)="filterProjects()"
+      />
     </div>
-    <div class="modal-body">
-      <app-project-form #projectFormComp></app-project-form>
-      <span *ngIf="addProjectRequestError" class="text-danger mt-2">
-        {{ addProjectRequestError }}
-      </span>
+
+    <!-- Filtro per stato -->
+    <div class="col-md-4">
+      <label class="form-label fw-bold">
+        <i class="fa fa-bars-progress me-1"></i>
+        {{ "Filtra per stato" | translate }}
+      </label>
+
+      <p-multiSelect
+        [options]="projectStatuses"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Tutti"
+        [(ngModel)]="selectedStatus"
+        (onChange)="filterProjects()"
+        class="w-100 p-multiselect-sm"
+        [showToggleAll]="false"
+        [filter]="false"
+        [showHeader]="false"
+      ></p-multiSelect>
     </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" (click)="modal.close()">
-        {{ "Annulla" | translate }}
-      </button>
-      <button
-        type="button"
-        class="btn btn-primary text-white"
-        (click)="submitAddProjectForm(projectFormComp)"
+
+    <!-- Filtro per assegnatario -->
+    <div class="col-md-4" *ngIf="authService.isAdmin()">
+      <label class="form-label fw-bold"
+        ><i class="fa fa-user me-2"></i>{{ "Assegnato a" | translate }}</label
       >
-        {{ "Salva" | translate }}
-      </button>
-    </div>
-  </ng-template>
-</div>
 
-<!-- Project list filters -->
-<div class="card shadow-sm mb-4" [(ngbCollapse)]="areFiltersCollapsed">
-  <div class="card-body p-fluid">
-    <div class="row g-3">
-      <!-- Filtro per nome -->
-      <div class="col-md-4">
-        <label class="form-label fw-bold">
-          <i class="fa-solid fa-search me-1"></i>
-          {{"Cerca Progetto" | translate}}
-        </label>
-        <input
-          type="text"
-          class="form-control "
-          placeholder="Cerca per nome..."
-          [(ngModel)]="searchTerm"
-          (input)="filterProjects()"
-        />
-      </div>
-
-      <!-- Filtro per stato -->
-      <div class="col-md-4">
-        <label class="form-label fw-bold">
-          <i class="fa fa-bars-progress me-1"></i> {{"Filtra per stato" | translate}}
-        </label>
-
-        <p-multiSelect
-          [options]="projectStatuses"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Tutti"
-          [(ngModel)]="selectedStatus"
-          (onChange)="filterProjects()"
-          class="w-100 p-multiselect-sm "
-          [showToggleAll]="false"
-          [filter]="false"
-          [showHeader]="false"
-        ></p-multiSelect>
-      </div>
-
-      <!-- Filtro per assegnatario -->
-      <div class="col-md-4" *ngIf="authService.isAdmin()">
-        <label class="form-label fw-bold"><i class="fa fa-user me-2"></i>{{"Assegnato a" | translate}}</label>
-
-        <p-multiSelect
-          [options]="assignedToList"
-          placeholder="Seleziona..."
-          [(ngModel)]="selectedAssignedTo"
-          (onChange)="filterProjects()"
-          [showToggleAll]="false"
-          [showHeader]="false"
-          [filter]="false"
-          class="w-100 p-multiselect-sm  "
-          [style]="{'min-height':'32px','font-size':'0.85rem'}"
-        >
-        </p-multiSelect>
-      </div>
+      <p-multiSelect
+        [options]="assignedToList"
+        placeholder="Seleziona..."
+        [(ngModel)]="selectedAssignedTo"
+        (onChange)="filterProjects()"
+        [showToggleAll]="false"
+        [showHeader]="false"
+        [filter]="false"
+        class="w-100 p-multiselect-sm"
+        [style]="{ 'min-height': '32px', 'font-size': '0.85rem' }"
+      >
+      </p-multiSelect>
     </div>
   </div>
-</div>
+</app-list-interaction>
+<!-- Add project modal -->
+<ng-template #addProjectModal let-modal>
+  <div class="modal-header">
+    <div>
+      <h3 class="modal-title" id="modal-basic-title">
+        {{ "Aggiungi Progetto" | translate }}
+      </h3>
+      <span class="form-text">* Inserisci un nuovo progetto</span>
+    </div>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <app-project-form #projectFormComp></app-project-form>
+    <span *ngIf="addProjectRequestError" class="text-danger mt-2">
+      {{ addProjectRequestError }}
+    </span>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.close()">
+      {{ "Annulla" | translate }}
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary text-white"
+      (click)="submitAddProjectForm(projectFormComp)"
+    >
+      {{ "Salva" | translate }}
+    </button>
+  </div>
+</ng-template>

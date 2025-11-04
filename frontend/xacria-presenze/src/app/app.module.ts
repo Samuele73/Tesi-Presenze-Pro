@@ -26,6 +26,7 @@ import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
 import { ApiModule } from 'src/generated-client';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { InvitationErrorComponent } from './invitation-error/invitation-error.component';
+import { NgbCollapse } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -58,7 +59,8 @@ import { InvitationErrorComponent } from './invitation-error/invitation-error.co
       useFactory: adapterFactory,
     }),
     FontAwesomeModule,
-    ApiModule
+    ApiModule,
+    NgbCollapse
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

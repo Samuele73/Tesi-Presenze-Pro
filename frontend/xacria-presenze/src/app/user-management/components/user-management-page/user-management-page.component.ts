@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthService } from 'src/app/shared/services/auth.service';
 
 @Component({
   selector: 'app-user-management-page',
@@ -6,5 +7,12 @@ import { Component } from '@angular/core';
   styleUrls: ['./user-management-page.component.scss']
 })
 export class UserManagementPageComponent {
+  public searchTerm: string = '';
+  public addButtonName: string = 'Aggiungi Utente'
 
+  constructor(public authService: AuthService){}
+
+  openInvitationModal(){
+
+  }
 }

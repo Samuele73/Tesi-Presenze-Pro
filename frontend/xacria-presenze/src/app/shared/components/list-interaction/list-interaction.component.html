@@ -1,0 +1,33 @@
+<div class="d-flex justify-content-end gap-2 align-items-center mb-2">
+  <button
+    type="button"
+    class="btn text-center"
+    [ngClass]="{
+      'btn-secondary': !areFiltersCollapsed,
+      'btn-outline-secondary': areFiltersCollapsed
+    }"
+    (click)="areFiltersCollapsed = !areFiltersCollapsed"
+  >
+    <i class="fa-regular fa-filter fa-xs me-1" size></i>
+    {{
+      areFiltersCollapsed
+        ? ("Mostra Filtri" | translate)
+        : ("Nascondi Filtri" | translate)
+    }}
+  </button>
+  <button
+    class="btn btn-primary text-white"
+    *ngIf="hasAddButtonPermission"
+    [disabled]="!hasAddButtonPermission"
+    (click)="onAddButtonClick()"
+  >
+    {{ addButtonName | translate }}
+  </button>
+</div>
+
+<!-- Project list filters -->
+<div class="card shadow-sm mb-4" [(ngbCollapse)]="areFiltersCollapsed">
+  <div class="card-body p-fluid">
+    <ng-content select="[list-filters]"></ng-content>
+  </div>
+</div>

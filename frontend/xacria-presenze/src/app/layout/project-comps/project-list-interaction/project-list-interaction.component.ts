@@ -26,6 +26,7 @@ export class ProjectListInteractionComponent implements OnChanges {
   areFiltersCollapsed: boolean = true;
   @ViewChild('projectFormComp') projectFormComponent!: ProjectFormComponent;
   addProjectRequestError: string | undefined;
+  addButtonName: string = "Aggiungi Progetto"
 
   searchTerm: string = '';
 
@@ -33,7 +34,7 @@ export class ProjectListInteractionComponent implements OnChanges {
   selectedStatus: string[] = [];
   selectedAssignedTo: string[] = [];
 
-  projectStatuses = [
+  projectStatuses = [ 
     { value: 'CREATED', label: 'Creato' },
     { value: 'IN_PROGRESS', label: 'In Corso' },
     { value: 'COMPLETED', label: 'Completato' },

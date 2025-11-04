@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import { UserManagementRoutingModule } from './user-management-routing.module';
 import { UserManagementPageComponent } from './components/user-management-page/user-management-page.component';
@@ -23,6 +24,7 @@ import { HttpClient } from '@angular/common/http';
       },
       extend: true,
     }),
+    FormsModule
   ],
 })
 export class UserManagementModule {}

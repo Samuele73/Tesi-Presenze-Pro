@@ -6,6 +6,8 @@ import { httpTranslateLoader } from 'src/app/app.module';
 import { HttpClient } from '@angular/common/http';
 import { FormErrorComponent } from 'src/app/form-error/form-error.component';
 import { CardComponent } from '../../components/card/card.component';
+import { ListInteractionComponent } from '../../components/list-interaction/list-interaction.component';
+import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 
@@ -13,7 +15,8 @@ import { CardComponent } from '../../components/card/card.component';
   declarations: [
     SelectLangComponent,
     FormErrorComponent,
-    CardComponent
+    CardComponent,
+    ListInteractionComponent
   ],
   imports: [
     CommonModule,
@@ -25,11 +28,13 @@ import { CardComponent } from '../../components/card/card.component';
       },
       extend: true
     }),
+    NgbCollapseModule
   ],
   exports: [
     SelectLangComponent,
     FormErrorComponent,
-    CardComponent
+    CardComponent,
+    ListInteractionComponent
   ]
 })
 export class GeneralModule { }
