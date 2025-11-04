@@ -9,5 +9,8 @@ spring:
   app:
     jwtSecret: 04e4f610f80809047031491a0c0e33e04c018c35286bd2f7a8400df5a57d3c3c
     jwtExpirationMs: 86400000
+    frontend-port: 4200
+    frontend-name: localhost
+
 
 

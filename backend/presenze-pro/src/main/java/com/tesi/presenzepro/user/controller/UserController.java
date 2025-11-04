@@ -3,23 +3,21 @@ package com.tesi.presenzepro.user.controller;
 import com.tesi.presenzepro.user.dto.*;
 import com.tesi.presenzepro.user.model.User;
 import com.tesi.presenzepro.user.model.UserData;
-import com.tesi.presenzepro.user.model.UserProfile;
+import com.tesi.presenzepro.user.repository.UserTokenRepository;
 import com.tesi.presenzepro.user.service.UserService;
+import com.tesi.presenzepro.user.service.UserTokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,6 +27,7 @@ import java.util.Map;
 public class UserController {
 
     private final UserService service;
+    private final UserTokenService userTokenService;
     private final HttpServletResponse httpServletResponse;
 
     @PostMapping("/login")
@@ -46,7 +45,7 @@ public class UserController {
     @Operation(description = "Valida il token inviato")
     @PostMapping("/secure")
     public ResponseEntity<Boolean> validToken(@RequestBody String token){
-        final boolean isTokenValid = service.isTokenValid(token);
+        final boolean isTokenValid = service.isJwtTokenValid(token);
         return ResponseEntity.status(HttpStatus.OK).body(isTokenValid);
     }
 
@@ -87,7 +86,7 @@ public class UserController {
     @Operation(description = "Redirect a pagina per il cambio password. Rotta raggiunta tramite il link nella email di richiesta password")
     @GetMapping("/changePassword")
     public void showChangePasswordPage(HttpServletResponse httpServletResponse, @RequestParam("token") String token) throws IOException {
-        if(this.service.isUserTokenValid(token) != null){
+        if(!this.userTokenService.isUserTokenValid(token)){
             httpServletResponse.sendRedirect("http://localhost:4200/login"); //In produzione cambiare l'indirizzo. In generale impostalo dalle properties
             return;
         }
@@ -111,15 +110,13 @@ public class UserController {
         return ResponseEntity.ok(true);
     }
 
-    @Operation(description = "Verifica il token dell'invito alla creazione dell'account utente")
-    @GetMapping("/verify-invitation")
-    public void verifyInvitationByEmail(@RequestParam("token") String token) throws IOException {
-        if(this.service.isUserTokenValid(token) != null){
-            httpServletResponse.sendRedirect("http://localhost:4200/login");
-            return;
-        }
-        httpServletResponse.sendRedirect("http://localhost:4200/signin?token=" + token);
-    }
+    @Operation(description = "Ottieni l'email dal token di invito (se valido)", security = @SecurityRequirement(name = "bearerAuth"))
+   @GetMapping("/invitation-details")
+    public ResponseEntity<String> getEmailFromInvitation(@RequestParam("token") String token){
+        String userEmail = this.userTokenService.getEmailFromUserTknValidation(token);
+        return ResponseEntity.ok(userEmail);
+   }
+
 
     @Operation(description = "Ottenimento dell'email interna al token indicato", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping("/getEmail")
