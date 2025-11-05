@@ -15,4 +15,13 @@ export interface UserBasicDetailsResponse {
     surname?: string;
     email?: string;
     duty?: string;
+    role?: UserBasicDetailsResponse.RoleEnum;
+}
+export namespace UserBasicDetailsResponse {
+    export type RoleEnum = 'USER' | 'ADMIN' | 'OWNER';
+    export const RoleEnum = {
+        USER: 'USER' as RoleEnum,
+        ADMIN: 'ADMIN' as RoleEnum,
+        OWNER: 'OWNER' as RoleEnum
+    };
 }

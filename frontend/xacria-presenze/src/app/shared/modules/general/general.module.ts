@@ -9,6 +9,7 @@ import { CardComponent } from '../../components/card/card.component';
 import { ListInteractionComponent } from '../../components/list-interaction/list-interaction.component';
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { CardListWrapperComponent } from '../../components/card-list-wrapper/card-list-wrapper.component';
+import { CardBadgeComponent } from '../../components/card-badge/card-badge.component';
 
 
 
@@ -18,7 +19,8 @@ import { CardListWrapperComponent } from '../../components/card-list-wrapper/car
     FormErrorComponent,
     CardComponent,
     ListInteractionComponent,
-    CardListWrapperComponent
+    CardListWrapperComponent,
+    CardBadgeComponent
   ],
   imports: [
     CommonModule,
@@ -37,7 +39,8 @@ import { CardListWrapperComponent } from '../../components/card-list-wrapper/car
     FormErrorComponent,
     CardComponent,
     ListInteractionComponent,
-    CardListWrapperComponent
+    CardListWrapperComponent,
+    CardBadgeComponent
   ]
 })
 export class GeneralModule { }

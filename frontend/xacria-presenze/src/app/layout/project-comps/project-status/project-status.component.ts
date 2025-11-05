@@ -8,31 +8,17 @@ import { Project } from 'src/generated-client';
 })
 export class ProjectStatusComponent {
   @Input() project: Project | null = null;
-  @Input() class: string = "";
+  @Input() class: string = '';
 
-  getStatusClass(status: Project.StatusEnum | undefined): string {
-    if (!status) return 'bg-secondary';
-    const classMap: { [key: string]: string } = {
-      CREATED: 'bg-secondary',
-      IN_PROGRESS: 'bg-warning',
-      COMPLETED: 'bg-success',
-    };
-    console.log(
-      'Status class for',
-      status,
-      ':',
-      classMap[status] || 'badge-secondary'
-    );
-    return classMap[status] || 'bg-secondary';
-  }
+  classMap: { [key: string]: string } = {
+    CREATED: 'bg-secondary',
+    IN_PROGRESS: 'bg-warning',
+    COMPLETED: 'bg-success',
+  };
 
-  getStatusLabel(status: Project.StatusEnum | undefined): string {
-    if (!status) return 'Sconosciuto';
-    const statusMap: { [key: string]: string } = {
+  statusMap: { [key: string]: string } = {
       CREATED: 'Creato',
       IN_PROGRESS: 'In Corso',
       COMPLETED: 'Completato',
     };
-    return statusMap[status] || status;
-  }
 }

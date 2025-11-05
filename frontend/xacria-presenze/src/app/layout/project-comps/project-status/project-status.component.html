@@ -1,3 +1,1 @@
-<span class="badge" [ngClass]="[class, getStatusClass(project?.status)]">
-  {{ getStatusLabel(project?.status) | translate }}
-</span>
+<app-card-badge [mapValue]="this.project?.status" [classMap]="this.classMap" [labelMap]="statusMap"></app-card-badge>

@@ -61,7 +61,8 @@ public class UserMapper {
                 userProfile.name(),
                 userProfile.surname(),
                 user.getEmail(),
-                userProfile.duty()
+                userProfile.duty(),
+                user.getRole()
         );
     }
 

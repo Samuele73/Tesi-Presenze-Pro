@@ -23,6 +23,13 @@ export class UserLisInteractionComponent implements OnChanges {
     UserBasicDetailsResponse[]
   >();
 
+  selectedRole: string[] = [];
+  userRoles = [
+    {value: 'USER', label: 'Utente'},
+    {value: 'ADMIN', label: 'Admin'},
+    {value: 'OWNER', label: 'Owner'}
+  ]
+
   constructor(public authService: AuthService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -40,7 +47,9 @@ export class UserLisInteractionComponent implements OnChanges {
       const matchesSearch = (this.createUserFullname(userBasicDetails?.name, userBasicDetails?.surname).toLowerCase() || '').includes(
         this.searchTerm.toLowerCase()
       );
-      return matchesSearch;
+      const matchesRole = this.selectedRole.length === 0 ||
+        this.selectedRole.includes(userBasicDetails.role || '');
+      return matchesSearch && matchesRole;
     });
 
     this.filteredUsersBasicDetails = filtered;

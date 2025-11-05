@@ -11,6 +11,7 @@ import { httpTranslateLoader } from '../app.module';
 import { HttpClient } from '@angular/common/http';
 import { UserLisInteractionComponent } from './components/user-list-interaction/user-list-interaction.component';
 import { UserListItemComponent } from './components/user-list-item/user-list-item.component';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 @NgModule({
   declarations: [UserManagementPageComponent, UserListComponent, UserLisInteractionComponent, UserListItemComponent],
@@ -26,7 +27,8 @@ import { UserListItemComponent } from './components/user-list-item/user-list-ite
       },
       extend: true,
     }),
-    FormsModule
+    FormsModule,
+    MultiSelectModule
   ],
 })
 export class UserManagementModule {}

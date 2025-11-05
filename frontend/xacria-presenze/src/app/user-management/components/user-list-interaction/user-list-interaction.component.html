@@ -2,7 +2,7 @@
   [hasAddButtonPermission]="this.authService.isPrivilegedUser()"
   (addButtonClick)="openInvitationModal()"
   [addButtonName]="addButtonName"
-  
+
 >
   <div class="row g-3" list-filters>
     <div class="col-md-4">
@@ -18,6 +18,24 @@
         [(ngModel)]="searchTerm"
         (input)="filterUsersBasicDetails()"
       />
+    </div>
+    <div class="col-md-4">
+      <label class="form-label fw-bold"
+        ><i class="fa fa-user me-2"></i>{{ "Ruolo" | translate }}</label
+      >
+
+      <p-multiSelect
+        [options]="userRoles"
+        placeholder="Seleziona..."
+        [(ngModel)]="selectedRole"
+        (onChange)="filterUsersBasicDetails()"
+        [showToggleAll]="false"
+        [showHeader]="false"
+        [filter]="false"
+        class="w-100 p-multiselect-sm"
+        [style]="{ 'min-height': '32px', 'font-size': '0.85rem' }"
+      >
+      </p-multiSelect>
     </div>
   </div>
 </app-list-interaction>

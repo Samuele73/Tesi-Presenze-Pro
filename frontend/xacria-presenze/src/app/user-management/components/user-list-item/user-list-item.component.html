@@ -4,6 +4,7 @@
       <i class="bi bi-folder2-open me-2"></i>
       {{ fullName }}
     </h5>
+    <app-card-badge [mapValue]="userBasiDetails?.role" [classMap]="classMap" [labelMap]="roleMap"></app-card-badge>
   </div>
   <div card-body>
     <p class="card-text text-muted mb-3">
