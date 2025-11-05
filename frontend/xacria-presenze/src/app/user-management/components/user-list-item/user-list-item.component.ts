@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { UserBasicDetailsResponse, UserEmailResponse, UserService } from 'src/generated-client';
 
@@ -16,7 +16,8 @@ export class UserListItemComponent implements OnInit {
   constructor(
     private router: Router,
     private userAuth: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private route: ActivatedRoute
   ) {}
 
   classMap: { [key: string]: string } = {
@@ -65,6 +66,7 @@ export class UserListItemComponent implements OnInit {
     else params = { mode: 'BASIC' };
     this.router.navigate(['./user-details'], {
       queryParams: params,
+      relativeTo: this.route
     });
   }
 }

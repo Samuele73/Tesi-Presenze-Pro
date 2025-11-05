@@ -12,9 +12,10 @@ import { HttpClient } from '@angular/common/http';
 import { UserLisInteractionComponent } from './components/user-list-interaction/user-list-interaction.component';
 import { UserListItemComponent } from './components/user-list-item/user-list-item.component';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { UserDetailsComponent } from './components/user-details/user-details.component';
 
 @NgModule({
-  declarations: [UserManagementPageComponent, UserListComponent, UserLisInteractionComponent, UserListItemComponent],
+  declarations: [UserManagementPageComponent, UserListComponent, UserLisInteractionComponent, UserListItemComponent, UserDetailsComponent],
   imports: [
     CommonModule,
     UserManagementRoutingModule,
