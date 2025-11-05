@@ -1,13 +1,18 @@
 <div
-  class="dropdown-center tt"
-  ngbTooltip="{{ tooltipTitle }}"
+  class="tt"
+
   [attr.id]="dropdownId"
-  #t="ngbTooltip"
+  [placement]="'bottom'"
   ngbDropdown
+  container="body"
 >
   <button
     class="btn-calendar-daycell dropdown-toggle no-caret"
     [ngClass]="buttonClasses"
+    ngbTooltip="{{ tooltipTitle }}"
+    #t="ngbTooltip"
+    [placement]="'top'"
+    container="body"
     ngbDropdownToggle
     (click)="t.close()"
     [ngClass]="{ 'btn-remove': mode === 'DELETE' }"
