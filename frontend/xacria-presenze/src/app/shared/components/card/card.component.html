@@ -1,6 +1,7 @@
 <div
   class="card h-100 shadow-sm hover-shadow transition project-list-item"
   (click)="emitCardClicked()"
+  [ngClass]="{'min-small' : isSmall}"
 >
   <div
     class="card-header bg-white text-black"

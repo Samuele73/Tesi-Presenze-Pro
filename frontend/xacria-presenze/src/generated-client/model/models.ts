@@ -17,4 +17,5 @@ export * from './user';
 export * from './userAuthResponseDto';
 export * from './userBasicDetailsResponse';
 export * from './userData';
+export * from './userEmailResponse';
 export * from './userProfile';

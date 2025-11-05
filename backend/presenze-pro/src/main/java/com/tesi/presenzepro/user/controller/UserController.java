@@ -122,10 +122,11 @@ public class UserController {
 
     @Operation(description = "Ottenimento dell'email interna al token indicato", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping("/getEmail")
-    public ResponseEntity<String> getEmailFromTkn(@RequestBody String token){
+    public ResponseEntity<UserEmailResponse> getEmailFromTkn(@RequestBody String token){
         System.out.println("AO GUARDA: " + token);
         String userEmail = this.service.getEmailFromTkn(token);
-        return ResponseEntity.ok(userEmail);
+        System.out.println("User email: " + userEmail);
+        return ResponseEntity.ok(new UserEmailResponse(userEmail));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','OWNER')")

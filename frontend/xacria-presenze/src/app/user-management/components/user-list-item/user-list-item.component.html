@@ -1,4 +1,4 @@
-<app-card>
+<app-card [isSmall]="true" (cardClicked)="handleCardClicked()">
   <div card-header class="d-flex justify-content-between align-items-center">
     <h5 class="mb-0 text-truncate" [title]="fullName">
       <i class="bi bi-folder2-open me-2"></i>

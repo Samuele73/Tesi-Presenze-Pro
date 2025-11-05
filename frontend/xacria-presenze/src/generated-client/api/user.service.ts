@@ -25,6 +25,7 @@ import { User } from '../model/user';
 import { UserAuthResponseDto } from '../model/userAuthResponseDto';
 import { UserBasicDetailsResponse } from '../model/userBasicDetailsResponse';
 import { UserData } from '../model/userData';
+import { UserEmailResponse } from '../model/userEmailResponse';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -123,9 +124,9 @@ export class UserService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getEmailFromTkn(body: string, observe?: 'body', reportProgress?: boolean): Observable<string>;
-    public getEmailFromTkn(body: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
-    public getEmailFromTkn(body: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public getEmailFromTkn(body: string, observe?: 'body', reportProgress?: boolean): Observable<UserEmailResponse>;
+    public getEmailFromTkn(body: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserEmailResponse>>;
+    public getEmailFromTkn(body: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserEmailResponse>>;
     public getEmailFromTkn(body: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
@@ -159,7 +160,7 @@ export class UserService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<string>('post',`${this.basePath}/users/getEmail`,
+        return this.httpClient.request<UserEmailResponse>('post',`${this.basePath}/users/getEmail`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,

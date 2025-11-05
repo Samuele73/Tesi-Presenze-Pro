@@ -1,5 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { UserBasicDetailsResponse } from 'src/generated-client';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from 'src/app/shared/services/auth.service';
+import { UserBasicDetailsResponse, UserEmailResponse, UserService } from 'src/generated-client';
 
 @Component({
   selector: 'app-user-list-item',
@@ -9,6 +12,12 @@ import { UserBasicDetailsResponse } from 'src/generated-client';
 export class UserListItemComponent implements OnInit {
   @Input() userBasicDetails: UserBasicDetailsResponse | null = null;
   fullName!: string;
+
+  constructor(
+    private router: Router,
+    private userAuth: AuthService,
+    private userService: UserService
+  ) {}
 
   classMap: { [key: string]: string } = {
     OWNER: 'bg-warning',
@@ -25,5 +34,37 @@ export class UserListItemComponent implements OnInit {
   ngOnInit(): void {
     this.fullName =
       this.userBasicDetails?.name + ' ' + this.userBasicDetails?.surname;
+  }
+
+  handleCardClicked(): void {
+    const loggedUserTkn: string | null = this.userAuth.token;
+    if (!loggedUserTkn) {
+      console.warn('Could not get token to go on user profile page');
+      return;
+    }
+    this.userService.getEmailFromTkn(loggedUserTkn).subscribe({
+      next: (resp: UserEmailResponse) => {
+        this.goToUserProfileByEmailRole(resp.email);
+      },
+      error: (err: HttpErrorResponse) => {
+        console.warn('could not get email from tkn to go to user profile', err);
+      },
+    });
+  }
+
+  private goToUserProfileByEmailRole(email?: string): void {
+    if(!email){
+      console.warn("could not retrieve email from tkn");
+      return;
+    }
+    let params = {};
+    if (email === this.userBasicDetails?.email) {
+      this.router.navigate(['/app/profile']);
+      return;
+    } else if (this.userAuth.isOwner()) params = { mode: 'FULL' };
+    else params = { mode: 'BASIC' };
+    this.router.navigate(['./user-details'], {
+      queryParams: params,
+    });
   }
 }
