@@ -7,7 +7,7 @@ import { UserBasicDetailsResponse } from 'src/generated-client';
   styleUrls: ['./user-list-item.component.scss'],
 })
 export class UserListItemComponent implements OnInit {
-  @Input() userBasiDetails: UserBasicDetailsResponse | null = null;
+  @Input() userBasicDetails: UserBasicDetailsResponse | null = null;
   fullName!: string;
 
   classMap: { [key: string]: string } = {
@@ -24,6 +24,6 @@ export class UserListItemComponent implements OnInit {
 
   ngOnInit(): void {
     this.fullName =
-      this.userBasiDetails?.name + ' ' + this.userBasiDetails?.surname;
+      this.userBasicDetails?.name + ' ' + this.userBasicDetails?.surname;
   }
 }

@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   Component,
   EventEmitter,
@@ -6,8 +7,14 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/shared/services/auth.service';
-import { UserBasicDetailsResponse } from 'src/generated-client';
+import { UserBasicDetailsResponse, UserService } from 'src/generated-client';
+
+type invitationFeedback = {
+  positive: boolean;
+  message: string;
+};
 
 @Component({
   selector: 'app-user-list-interaction',
@@ -16,21 +23,27 @@ import { UserBasicDetailsResponse } from 'src/generated-client';
 })
 export class UserLisInteractionComponent implements OnChanges {
   searchTerm: string = '';
-  addButtonName: string = 'Aggiungi Utente';
+  addButtonName: string = 'Invita Utente';
   @Input() usersBasicDetails!: UserBasicDetailsResponse[];
   @Input() filteredUsersBasicDetails!: UserBasicDetailsResponse[];
   @Output() filteredUsersBasicDetailsChange = new EventEmitter<
     UserBasicDetailsResponse[]
   >();
+  toInviteUserEmail: string = '';
+  invitationFeedBack!: invitationFeedback | undefined;
 
   selectedRole: string[] = [];
   userRoles = [
-    {value: 'USER', label: 'Utente'},
-    {value: 'ADMIN', label: 'Admin'},
-    {value: 'OWNER', label: 'Owner'}
-  ]
+    { value: 'USER', label: 'Utente' },
+    { value: 'ADMIN', label: 'Admin' },
+    { value: 'OWNER', label: 'Owner' },
+  ];
 
-  constructor(public authService: AuthService) {}
+  constructor(
+    public authService: AuthService,
+    private modalService: NgbModal,
+    private userService: UserService
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['usersBasicDetails'] && this.usersBasicDetails) {
@@ -43,18 +56,51 @@ export class UserLisInteractionComponent implements OnChanges {
   }
 
   filterUsersBasicDetails(): void {
-    const filtered = this.usersBasicDetails.filter((userBasicDetails: UserBasicDetailsResponse) => {
-      const matchesSearch = (this.createUserFullname(userBasicDetails?.name, userBasicDetails?.surname).toLowerCase() || '').includes(
-        this.searchTerm.toLowerCase()
-      );
-      const matchesRole = this.selectedRole.length === 0 ||
-        this.selectedRole.includes(userBasicDetails.role || '');
-      return matchesSearch && matchesRole;
-    });
+    const filtered = this.usersBasicDetails.filter(
+      (userBasicDetails: UserBasicDetailsResponse) => {
+        const matchesSearch = (
+          this.createUserFullname(
+            userBasicDetails?.name,
+            userBasicDetails?.surname
+          ).toLowerCase() || ''
+        ).includes(this.searchTerm.toLowerCase());
+        const matchesRole =
+          this.selectedRole.length === 0 ||
+          this.selectedRole.includes(userBasicDetails.role || '');
+        return matchesSearch && matchesRole;
+      }
+    );
 
     this.filteredUsersBasicDetails = filtered;
     this.filteredUsersBasicDetailsChange.emit(filtered);
   }
 
-  openInvitationModal(): void {}
+  openInvitationModal(content: any): void {
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
+  }
+
+  submitInviteUser(): void {
+    this.invitationFeedBack = undefined;
+    this.userService.sendInvitationByEmail(this.toInviteUserEmail).subscribe({
+      next: () => {
+        this.invitationFeedBack = {
+          positive: true,
+          message: 'Utente invitato con successo',
+        };
+      },
+      error: (err: HttpErrorResponse) => {
+        if (err.status == 409) {
+          this.invitationFeedBack = {
+            positive: false,
+            message: 'Un utente con questa email esiste già',
+          };
+          return;
+        }
+        this.invitationFeedBack = {
+          positive: false,
+          message: 'Non è stato possibile recapitare l invito'
+        }
+      },
+    });
+  }
 }

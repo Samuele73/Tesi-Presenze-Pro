@@ -4,11 +4,23 @@
       <i class="bi bi-folder2-open me-2"></i>
       {{ fullName }}
     </h5>
-    <app-card-badge [mapValue]="userBasiDetails?.role" [classMap]="classMap" [labelMap]="roleMap"></app-card-badge>
+    <app-card-badge [mapValue]="userBasicDetails?.role" [classMap]="classMap" [labelMap]="roleMap"></app-card-badge>
   </div>
   <div card-body>
-    <p class="card-text text-muted mb-3">
-      {{ 'sdfsdf' }}
-    </p>
+    <!-- Email -->
+    <div class="card-text d-flex align-items-center mb-2">
+      <i class="fa-solid fa-envelope me-2"></i>
+      <a [href]="'mailto:' + userBasicDetails?.email" class="">
+        {{ userBasicDetails?.email }}
+      </a>
+    </div>
+
+    <!-- Duty (Mansione) -->
+    <div class="card-text d-flex align-items-center text-truncate" *ngIf="userBasicDetails?.duty">
+      <i class="fa-solid fa-briefcase me-2"></i>
+      <span class="text-body">
+        {{ (userBasicDetails?.duty ?? '') | translate }}
+      </span>
+    </div>
   </div>
 </app-card>
