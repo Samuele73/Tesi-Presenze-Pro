@@ -54,16 +54,17 @@ export class UserListItemComponent implements OnInit {
   }
 
   private goToUserProfileByEmailRole(email?: string): void {
-    if(!email){
-      console.warn("could not retrieve email from tkn");
+    const toGoUserEmail = this.userBasicDetails?.email
+    if(!email || !toGoUserEmail){
+      console.warn("could not retrieve email from tkn or to go to user email");
       return;
     }
-    let params = {};
+    let params = { email: toGoUserEmail, mode: '' };
     if (email === this.userBasicDetails?.email) {
-      this.router.navigate(['/app/profile']);
+      this.router.navigate(['/app/profile'], {queryParams: {mode: 'ME'}});
       return;
-    } else if (this.userAuth.isOwner()) params = { mode: 'FULL' };
-    else params = { mode: 'BASIC' };
+    } else if (this.userAuth.isOwner()) params = { ...params, mode: 'FULL' };
+    else params = {...params, mode: 'BASIC' };
     this.router.navigate(['./user-details'], {
       queryParams: params,
       relativeTo: this.route

@@ -8,4 +8,5 @@ import { Component, Input } from '@angular/core';
 export class ProfileMenuItemComponent {
   @Input() name!: string;
   @Input() route!: string;
+  @Input() queryParams?: {[key: string] : string};
 }

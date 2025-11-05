@@ -1,132 +1,184 @@
-<form
-  [formGroup]="profileForm"
-  (ngSubmit)="onProfileFormSubmit()"
-  class="overflow-hidden"
->
-  <div class="text-end mb-2">
-    <button class="btn btn-primary rounded-3 fw-bold text-white">
-      {{ "Aggiorna" | translate }}
-    </button>
-  </div>
+<span class="text-danger" *ngIf="error">{{error}}</span>
+<div *ngIf="profileForm">
+  <form
+    [formGroup]="profileForm"
+    (ngSubmit)="onProfileFormSubmit()"
+    class="overflow-hidden"
+    *ngIf="this.mode === 'FULL' || this.mode === 'ME'"
+  >
+    <div class="text-end mb-2">
+      <button class="btn btn-primary rounded-3 fw-bold text-white">
+        {{ "Aggiorna" | translate }}
+      </button>
+    </div>
 
-  <div class="row gx-5 gy-4">
-    <div class="col-lg-4">
-      <label for="name" class="form-label fw-semibold fs-5">{{
-        "Nome" | translate
-      }}</label>
-      <input
-        type="text"
-        class="form-control shadow-sm border-dark border-1 rounded-3"
-        id="name"
-        formControlName="name"
-      />
+    <div class="row gx-5 gy-4">
+      <div class="col-lg-4">
+        <label for="name" class="form-label fw-semibold fs-5">{{
+          "Nome" | translate
+        }}</label>
+        <input
+          type="text"
+          class="form-control shadow-sm border-dark border-1 rounded-3"
+          id="name"
+          formControlName="name"
+        />
+      </div>
+      <div class="col-lg-4">
+        <label for="surname" class="form-label fw-semibold fs-5">{{
+          "Cognome" | translate
+        }}</label>
+        <input
+          type="text"
+          class="form-control shadow-sm border-dark border-1 rounded-3"
+          id="surname"
+          formControlName="surname"
+        />
+      </div>
+      <div class="col-lg-4">
+        <label for="serial-number" class="form-label fw-semibold fs-5">{{
+          "Numero di matricola" | translate
+        }}</label>
+        <input
+          type="number"
+          class="form-control shadow-sm border-dark border-1 rounded-3"
+          id="serial-number"
+          formControlName="serial_num"
+        />
+      </div>
+      <div class="col-lg-4">
+        <label for="serial-number" class="form-label fw-semibold fs-5">{{
+          "Mansione" | translate
+        }}</label>
+        <input
+          type="text"
+          class="form-control shadow-sm border-dark border-1 rounded-3"
+          formControlName="duty"
+        />
+      </div>
+      <div class="col-lg-4">
+        <label for="serial-numberform-label " class="fw-semibold fs-5">{{
+          "Tipo d'impiego" | translate
+        }}</label>
+        <input
+          type="text"
+          class="form-control shadow-sm border-dark border-1 rounded-3"
+          formControlName="employment_type"
+        />
+      </div>
+      <div class="col-lg-4">
+        <label for="serial-number" class="form-label fw-semibold fs-5">{{
+          "Data di assunzione" | translate
+        }}</label>
+        <input
+          type="date"
+          class="form-control shadow-sm border-dark border-1 rounded-3"
+          formControlName="hire_date"
+        />
+      </div>
+      <div class="col-lg-4">
+        <label for="serial-number" class="form-label fw-semibold fs-5">{{
+          "E-mail" | translate
+        }}</label>
+        <input
+          type="email"
+          class="form-control shadow-sm border-dark border-1 rounded-3"
+          formControlName="email"
+        />
+      </div>
+      <div class="col-lg-4">
+        <label for="serial-number" class="form-label fw-semibold fs-5">{{
+          "Iban" | translate
+        }}</label>
+        <input
+          type="number"
+          class="form-control shadow-sm border-dark border-1 rounded-3"
+          formControlName="iban"
+        />
+      </div>
+      <div class="col-12">
+        <span class="text-primary form-label fw-semibold fs-4">{{
+          "Dati personali" | translate
+        }}</span>
+      </div>
+      <div class="col-lg-4">
+        <label for="serial-number" class="form-label fw-semibold fs-5">{{
+          "Data di nascita" | translate
+        }}</label>
+        <input
+          type="date"
+          class="form-control shadow-sm border-dark border-1 rounded-3"
+          formControlName="birth_date"
+        />
+      </div>
+      <div class="col-lg-4">
+        <label for="serial-number" class="form-label fw-semibold fs-5">{{
+          "Indirizzo" | translate
+        }}</label>
+        <input
+          type="text"
+          class="form-control shadow-sm border-dark border-1 rounded-3"
+          formControlName="address"
+        />
+      </div>
+      <div class="col-lg-4">
+        <label for="serial-number" class="form-label fw-semibold fs-5">{{
+          "Telefono" | translate
+        }}</label>
+        <input
+          type="tel"
+          class="form-control shadow-sm border-dark border-1 rounded-3"
+          formControlName="phone"
+        />
+      </div>
     </div>
-    <div class="col-lg-4">
-      <label for="surname" class="form-label fw-semibold fs-5">{{
-        "Cognome" | translate
-      }}</label>
-      <input
-        type="text"
-        class="form-control shadow-sm border-dark border-1 rounded-3"
-        id="surname"
-        formControlName="surname"
-      />
+  </form>
+
+  <form
+    [formGroup]="profileForm"
+    (ngSubmit)="onProfileFormSubmit()"
+    class="overflow-hidden"
+    *ngIf="this.mode === 'BASIC'"
+  >
+    <div class="text-end mb-2">
+      <button class="btn btn-primary rounded-3 fw-bold text-white">
+        {{ "Aggiorna" | translate }}
+      </button>
     </div>
-    <div class="col-lg-4">
-      <label for="serial-number" class="form-label fw-semibold fs-5">{{
-        "Numero di matricola" | translate
-      }}</label>
-      <input
-        type="number"
-        class="form-control shadow-sm border-dark border-1 rounded-3"
-        id="serial-number"
-        formControlName="serial_num"
-      />
+
+    <div class="row gx-5 gy-4">
+      <div class="col-lg-4">
+        <label for="name" class="form-label fw-semibold fs-5">{{
+          "Nome" | translate
+        }}</label>
+        <input
+          type="text"
+          class="form-control shadow-sm border-dark border-1 rounded-3"
+          id="name"
+          formControlName="name"
+        />
+      </div>
+      <div class="col-lg-4">
+        <label for="surname" class="form-label fw-semibold fs-5">{{
+          "Cognome" | translate
+        }}</label>
+        <input
+          type="text"
+          class="form-control shadow-sm border-dark border-1 rounded-3"
+          id="surname"
+          formControlName="surname"
+        />
+      </div>
+      <div class="col-lg-4">
+        <label for="serial-number" class="form-label fw-semibold fs-5">{{
+          "E-mail" | translate
+        }}</label>
+        <input
+          type="email"
+          class="form-control shadow-sm border-dark border-1 rounded-3"
+          formControlName="email"
+        />
+      </div>
     </div>
-    <div class="col-lg-4">
-      <label for="serial-number" class="form-label fw-semibold fs-5">{{
-        "Mansione" | translate
-      }}</label>
-      <input
-        type="text"
-        class="form-control shadow-sm border-dark border-1 rounded-3"
-        formControlName="duty"
-      />
-    </div>
-    <div class="col-lg-4">
-      <label for="serial-numberform-label " class="fw-semibold fs-5">{{
-        "Tipo d'impiego" | translate
-      }}</label>
-      <input
-        type="text"
-        class="form-control shadow-sm border-dark border-1 rounded-3"
-        formControlName="employment_type"
-      />
-    </div>
-    <div class="col-lg-4">
-      <label for="serial-number" class="form-label fw-semibold fs-5">{{
-        "Data di assunzione" | translate
-      }}</label>
-      <input
-        type="date"
-        class="form-control shadow-sm border-dark border-1 rounded-3"
-        formControlName="hire_date"
-      />
-    </div>
-    <div class="col-lg-4">
-      <label for="serial-number" class="form-label fw-semibold fs-5">{{
-        "E-mail" | translate
-      }}</label>
-      <input
-        type="email"
-        class="form-control shadow-sm border-dark border-1 rounded-3"
-        formControlName="email"
-      />
-    </div>
-    <div class="col-lg-4">
-      <label for="serial-number" class="form-label fw-semibold fs-5">{{
-        "Iban" | translate
-      }}</label>
-      <input
-        type="number"
-        class="form-control shadow-sm border-dark border-1 rounded-3"
-        formControlName="iban"
-      />
-    </div>
-    <div class="col-12">
-      <span class="text-primary form-label fw-semibold fs-4">{{
-        "Dati personali" | translate
-      }}</span>
-    </div>
-    <div class="col-lg-4">
-      <label for="serial-number" class="form-label fw-semibold fs-5">{{
-        "Data di nascita" | translate
-      }}</label>
-      <input
-        type="date"
-        class="form-control shadow-sm border-dark border-1 rounded-3"
-        formControlName="birth_date"
-      />
-    </div>
-    <div class="col-lg-4">
-      <label for="serial-number" class="form-label fw-semibold fs-5">{{
-        "Indirizzo" | translate
-      }}</label>
-      <input
-        type="text"
-        class="form-control shadow-sm border-dark border-1 rounded-3"
-        formControlName="address"
-      />
-    </div>
-    <div class="col-lg-4">
-      <label for="serial-number" class="form-label fw-semibold fs-5">{{
-        "Telefono" | translate
-      }}</label>
-      <input
-        type="tel"
-        class="form-control shadow-sm border-dark border-1 rounded-3"
-        formControlName="phone"
-      />
-    </div>
-  </div>
-</form>
+  </form>
+</div>
