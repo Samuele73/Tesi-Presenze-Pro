@@ -15,5 +15,6 @@ export * from './saveCalendarEntityRequestDto';
 export * from './signInRequestDto';
 export * from './user';
 export * from './userAuthResponseDto';
+export * from './userBasicDetailsResponse';
 export * from './userData';
 export * from './userProfile';

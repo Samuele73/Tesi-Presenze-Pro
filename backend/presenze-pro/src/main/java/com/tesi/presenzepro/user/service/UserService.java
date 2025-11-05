@@ -221,4 +221,9 @@ public class UserService {
     public long updateProjectNameForAll(String projectName, String newProjectName){
         return this.repositoryCustom.updateProjectNameForAllUsers(projectName, newProjectName);
     }
+
+    public List<UserBasicDetailsResponse> getUsersBasicDetails(){
+        List<User> users = this.repository.findAll();
+        return users.stream().map(this.userMapper::fromUserToUserBasicDetailsResponse).toList();
+    }
 }

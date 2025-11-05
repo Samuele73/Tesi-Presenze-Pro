@@ -1,17 +1,10 @@
-<div class="row p-2">
-  <div class="col-12">
-    <div
-      *ngIf="projects.length === 0 && !isLoading"
-      class="alert alert-warning text-center"
-    >
-      <i class="bi bi-info-circle me-2"></i>
-      {{ "Nessun progetto trovato" | translate }}
-    </div>
-
-    <div class="row g-4">
-      <div class="col-lg-6 col-xl-4" *ngFor="let project of projects">
-        <app-project-list-item [project]="project"></app-project-list-item>
-      </div>
-    </div>
-  </div>
-</div>
+<app-card-list-wrapper
+  [contentLenght]="this.projects.length"
+  [isLoading]="isLoading"
+  [noEntryMessage]="'Nessun progetto trovato'"
+>
+  <app-project-list-item
+    [project]="project"
+    *ngFor="let project of projects"
+  ></app-project-list-item>
+</app-card-list-wrapper>

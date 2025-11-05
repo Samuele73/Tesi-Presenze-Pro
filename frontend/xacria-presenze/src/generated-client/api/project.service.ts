@@ -94,7 +94,7 @@ export class ProjectService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<string>('delete',`${this.basePath}/project/${encodeURIComponent(String(id))}`,
+        return this.httpClient.request<string>('delete',`${this.basePath}/projects/${encodeURIComponent(String(id))}`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -137,7 +137,7 @@ export class ProjectService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<Array<Project>>('get',`${this.basePath}/project`,
+        return this.httpClient.request<Array<Project>>('get',`${this.basePath}/projects`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -180,7 +180,7 @@ export class ProjectService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<Array<Project>>('get',`${this.basePath}/project/user`,
+        return this.httpClient.request<Array<Project>>('get',`${this.basePath}/projects/user`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -228,7 +228,7 @@ export class ProjectService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<Project>('get',`${this.basePath}/project/${encodeURIComponent(String(id))}`,
+        return this.httpClient.request<Project>('get',`${this.basePath}/projects/${encodeURIComponent(String(id))}`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -276,7 +276,7 @@ export class ProjectService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<Array<Project>>('get',`${this.basePath}/project/user/${encodeURIComponent(String(email))}`,
+        return this.httpClient.request<Array<Project>>('get',`${this.basePath}/projects/user/${encodeURIComponent(String(email))}`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -329,7 +329,7 @@ export class ProjectService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<Project>('post',`${this.basePath}/project`,
+        return this.httpClient.request<Project>('post',`${this.basePath}/projects`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,
@@ -388,7 +388,7 @@ export class ProjectService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<Project>('put',`${this.basePath}/project/${encodeURIComponent(String(id))}`,
+        return this.httpClient.request<Project>('put',`${this.basePath}/projects/${encodeURIComponent(String(id))}`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,

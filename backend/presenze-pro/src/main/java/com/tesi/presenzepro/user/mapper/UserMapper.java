@@ -2,6 +2,7 @@ package com.tesi.presenzepro.user.mapper;
 
 import com.tesi.presenzepro.user.dto.LoginRequestDto;
 import com.tesi.presenzepro.user.dto.ProfileResponseDto;
+import com.tesi.presenzepro.user.dto.UserBasicDetailsResponse;
 import com.tesi.presenzepro.user.model.Role;
 import com.tesi.presenzepro.user.model.User;
 import com.tesi.presenzepro.user.model.UserData;
@@ -51,6 +52,16 @@ public class UserMapper {
                 userProfile.iban(),
                 user.getEmail(),
                 user.getRole()
+        );
+    }
+
+    public UserBasicDetailsResponse fromUserToUserBasicDetailsResponse(User user){
+        final UserProfile userProfile = user.getProfile();
+        return new UserBasicDetailsResponse(
+                userProfile.name(),
+                userProfile.surname(),
+                user.getEmail(),
+                userProfile.duty()
         );
     }
 

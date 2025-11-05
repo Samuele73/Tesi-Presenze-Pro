@@ -8,6 +8,7 @@ import { FormErrorComponent } from 'src/app/form-error/form-error.component';
 import { CardComponent } from '../../components/card/card.component';
 import { ListInteractionComponent } from '../../components/list-interaction/list-interaction.component';
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
+import { CardListWrapperComponent } from '../../components/card-list-wrapper/card-list-wrapper.component';
 
 
 
@@ -16,7 +17,8 @@ import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
     SelectLangComponent,
     FormErrorComponent,
     CardComponent,
-    ListInteractionComponent
+    ListInteractionComponent,
+    CardListWrapperComponent
   ],
   imports: [
     CommonModule,
@@ -34,7 +36,8 @@ import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
     SelectLangComponent,
     FormErrorComponent,
     CardComponent,
-    ListInteractionComponent
+    ListInteractionComponent,
+    CardListWrapperComponent
   ]
 })
 export class GeneralModule { }

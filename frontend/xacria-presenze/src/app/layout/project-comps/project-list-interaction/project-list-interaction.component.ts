@@ -23,7 +23,6 @@ export class ProjectListInteractionComponent implements OnChanges {
   @Input() filteredProjects: Project[] = [];
   @Output() filteredProjectsChange = new EventEmitter<Project[]>();
   @Output() newProject = new EventEmitter<Project>();
-  areFiltersCollapsed: boolean = true;
   @ViewChild('projectFormComp') projectFormComponent!: ProjectFormComponent;
   addProjectRequestError: string | undefined;
   addButtonName: string = "Aggiungi Progetto"
@@ -34,7 +33,7 @@ export class ProjectListInteractionComponent implements OnChanges {
   selectedStatus: string[] = [];
   selectedAssignedTo: string[] = [];
 
-  projectStatuses = [ 
+  projectStatuses = [
     { value: 'CREATED', label: 'Creato' },
     { value: 'IN_PROGRESS', label: 'In Corso' },
     { value: 'COMPLETED', label: 'Completato' },
@@ -50,17 +49,8 @@ export class ProjectListInteractionComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['projects'] && this.projects) {
-      this.generateAssignedToList();
       this.filterProjects();
     }
-  }
-
-  private generateAssignedToList(): void {
-    const allAssigned: string[] = this.projects
-      .flatMap((p) => p.assignedTo || [])
-      .filter(Boolean);
-
-    this.assignedToList = Array.from(new Set(allAssigned)).sort();
   }
 
   /** Applica tutti i filtri */

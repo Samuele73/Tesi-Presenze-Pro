@@ -1,0 +1,23 @@
+<app-list-interaction
+  [hasAddButtonPermission]="this.authService.isPrivilegedUser()"
+  (addButtonClick)="openInvitationModal()"
+  [addButtonName]="addButtonName"
+  
+>
+  <div class="row g-3" list-filters>
+    <div class="col-md-4">
+      <!-- Estrai in componente esterno - filtro di ricerca -->
+      <label class="form-label fw-bold">
+        <i class="fa-solid fa-search me-1"></i>
+        {{ "Cerca Utente" | translate }}
+      </label>
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Cerca per nome..."
+        [(ngModel)]="searchTerm"
+        (input)="filterUsersBasicDetails()"
+      />
+    </div>
+  </div>
+</app-list-interaction>

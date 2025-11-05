@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { UserBasicDetailsResponse } from 'src/generated-client';
 
 @Component({
   selector: 'app-user-list',
@@ -6,5 +7,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./user-list.component.scss']
 })
 export class UserListComponent {
-
+  @Input() usersBasicDetails: UserBasicDetailsResponse[] = [];
+  @Input() isLoading: boolean = false;
 }

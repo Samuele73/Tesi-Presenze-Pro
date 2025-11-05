@@ -14,33 +14,4 @@ export class ProjectListComponent {
   constructor() {
     console.log("ProjectListComponent initialized with projects:", this.projects);
   }
-
-
-  getStatusLabel(status: Project.StatusEnum | undefined): string {
-      if(!status)
-        return 'Sconosciuto';
-      const statusMap: { [key: string]: string } = {
-        'CREATED': 'Creato',
-        'IN_PROGRESS': 'In Corso',
-        'COMPLETED': 'Completato'
-      };
-      return statusMap[status] || status;
-    }
-
-    getStatusClass(status: Project.StatusEnum | undefined): string {
-      if(!status)
-        return 'bg-secondary';
-      const classMap: { [key: string]: string } = {
-        'CREATED': 'bg-secondary',
-        'IN_PROGRESS': 'bg-warning',
-        'COMPLETED': 'bg-success'
-      };
-      console.log('Status class for', status, ':', classMap[status] || 'badge-secondary');
-      return classMap[status] || 'bg-secondary';
-    }
-
-    viewProject(project: Project): void {
-      console.log('Visualizza progetto:', project);
-      // Implementa la navigazione al dettaglio del progetto
-    }
 }

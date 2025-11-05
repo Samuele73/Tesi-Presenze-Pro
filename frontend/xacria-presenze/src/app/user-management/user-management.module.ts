@@ -9,9 +9,11 @@ import { GeneralModule } from '../shared/modules/general/general.module';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { httpTranslateLoader } from '../app.module';
 import { HttpClient } from '@angular/common/http';
+import { UserLisInteractionComponent } from './components/user-list-interaction/user-list-interaction.component';
+import { UserListItemComponent } from './components/user-list-item/user-list-item.component';
 
 @NgModule({
-  declarations: [UserManagementPageComponent, UserListComponent],
+  declarations: [UserManagementPageComponent, UserListComponent, UserLisInteractionComponent, UserListItemComponent],
   imports: [
     CommonModule,
     UserManagementRoutingModule,

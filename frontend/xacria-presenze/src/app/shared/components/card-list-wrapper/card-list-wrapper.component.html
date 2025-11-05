@@ -1,0 +1,15 @@
+<div class="row p-2">
+  <div class="col-12">
+    <div
+      *ngIf="isContentEmpty() && !isLoading"
+      class="alert alert-warning text-center"
+    >
+      <i class="bi bi-info-circle me-2"></i>
+      {{ noEntryMessage | translate }}
+    </div>
+
+    <div class="row g-4 row-cols-lg-2 row-cols-xl-3">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

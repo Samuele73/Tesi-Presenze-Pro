@@ -18,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -126,4 +127,13 @@ public class UserController {
         String userEmail = this.service.getEmailFromTkn(token);
         return ResponseEntity.ok(userEmail);
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN','OWNER')")
+    @Operation(description = "Ottieni informazioni di base su tutti gli utenti", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/all-basic-details")
+    public ResponseEntity<List<UserBasicDetailsResponse>> getUsersBasicDetails(){
+        List<UserBasicDetailsResponse> usersBasicDetails = this.service.getUsersBasicDetails();
+        return ResponseEntity.ok(usersBasicDetails);
+    }
+
 }

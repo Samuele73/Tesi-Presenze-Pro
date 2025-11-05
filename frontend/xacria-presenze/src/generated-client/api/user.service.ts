@@ -23,6 +23,7 @@ import { ProfileResponseDto } from '../model/profileResponseDto';
 import { SignInRequestDto } from '../model/signInRequestDto';
 import { User } from '../model/user';
 import { UserAuthResponseDto } from '../model/userAuthResponseDto';
+import { UserBasicDetailsResponse } from '../model/userBasicDetailsResponse';
 import { UserData } from '../model/userData';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -246,6 +247,49 @@ export class UserService {
         ];
 
         return this.httpClient.request<ProfileResponseDto>('get',`${this.basePath}/users/profile`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * Ottieni informazioni di base su tutti gli utenti
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getUsersBasicDetails(observe?: 'body', reportProgress?: boolean): Observable<Array<UserBasicDetailsResponse>>;
+    public getUsersBasicDetails(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<UserBasicDetailsResponse>>>;
+    public getUsersBasicDetails(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<UserBasicDetailsResponse>>>;
+    public getUsersBasicDetails(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<Array<UserBasicDetailsResponse>>('get',`${this.basePath}/users/all-basic-details`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,

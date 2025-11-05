@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/project")
+@RequestMapping("/projects")
 @CrossOrigin(origins = "http://localhost:4200")
 @Tag(name = "Project", description = "Operazioni relative ai progetti")
 public class ProjectController {
