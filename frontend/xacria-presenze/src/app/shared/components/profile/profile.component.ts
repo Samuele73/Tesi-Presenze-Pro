@@ -32,6 +32,7 @@ export class ProfileComponent implements OnInit {
   @Output() newUsername = new EventEmitter<{ name: string; surname: string }>();
   mode: ProfileMode = 'BASIC';
   error: string = '';
+  isReadOnly: boolean = true;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -131,6 +132,7 @@ export class ProfileComponent implements OnInit {
 
   retrieveUserCreds(): void {
     this.mode = this.route.snapshot.queryParamMap.get('mode') as ProfileMode;
+    this.isReadOnly = this.mode === 'BASIC';
     const userEmail: string | null =
       this.route.snapshot.queryParamMap.get('email');
 
