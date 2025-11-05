@@ -2,9 +2,10 @@ package com.tesi.presenzepro.user.service;
 
 import com.mongodb.DuplicateKeyException;
 import com.tesi.presenzepro.exception.DuplicateEmailException;
+import com.tesi.presenzepro.exception.NoUserFoundException;
 import com.tesi.presenzepro.jwt.JwtUtils;
+import com.tesi.presenzepro.project.exception.NoUserForProjectFound;
 import com.tesi.presenzepro.user.dto.*;
-import com.tesi.presenzepro.user.exception.UserTokenNotValidException;
 import com.tesi.presenzepro.user.mapper.UserMapper;
 import com.tesi.presenzepro.user.model.*;
 import com.tesi.presenzepro.user.repository.UserTokenRepository;
@@ -125,15 +126,24 @@ public class UserService {
         return jwtUtils.getUsernameFromJwt(tkn);
     }
 
-    public ProfileResponseDto getUserProfile(HttpServletRequest request){
+    public FullUserProfileResponseDto getUserProfile(HttpServletRequest request){
         String email = this.getUserEmailFromRequest(request);
-        Optional<User> user = repository.findByEmail(email);
-        return user.map(userMapper::fromUserToUserProfile).orElse(null);
+        return this.getUserProfileFromEmail(email);
     }
 
-    public ProfileResponseDto updateUserProfile(User updatedUserProfile){
+    public FullUserProfileResponseDto getUserProfileFromEmail(String email){
+        User user = repository.findByEmail(email).orElseThrow(() -> new NoUserFoundException("Utente non trovato"));
+        return this.userMapper.fromUserToUserProfile(user);
+    }
+
+    public FullUserProfileResponseDto updateUserProfile(User updatedUserProfile){
         Optional<User> newUserProfile = repository.findByIdAndModify(updatedUserProfile);
         return newUserProfile.map(userMapper::fromUserToUserProfile).orElse(null);
+    }
+
+    public BasicUserProfileResponse getBasicUserProfileFromEmail(String email){
+        User user = repository.findByEmail(email).orElseThrow(() -> new NoUserFoundException("Utente non trovato"));
+        return this.userMapper.fromUserToBasicUserProfile(user);
     }
 
     public boolean addUserProjectByEmail(String email, String projectName){
@@ -214,6 +224,11 @@ public class UserService {
 
     public UserData getUserData(HttpServletRequest request) {
         String email = this.getUserEmailFromRequest(request);
+        Optional<User> user = repository.findByEmail(email);
+        return user.map(userMapper::fromUserToUserData).orElse(null);
+    }
+
+    public UserData getFullUserData(String email) {
         Optional<User> user = repository.findByEmail(email);
         return user.map(userMapper::fromUserToUserData).orElse(null);
     }

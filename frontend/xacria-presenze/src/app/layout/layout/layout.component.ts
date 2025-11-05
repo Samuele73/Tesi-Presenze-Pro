@@ -18,7 +18,7 @@ export class LayoutComponent{
     private authService: AuthService
   ) {
     this.authService.checkUserAutentication(this.authService.token);
-    let userCreds = this.authService.getUserProfile();
+    let userCreds = this.authService.getMyUserProfile();
     if (userCreds != null) {
       userCreds.subscribe({
         next: (resp: any) => {

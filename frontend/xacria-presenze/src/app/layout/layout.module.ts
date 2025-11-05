@@ -24,7 +24,6 @@ import { httpTranslateLoader } from '../app.module';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { ProfileMenuComponent } from './profile-menu/profile-menu.component';
 import { RequestsListComponent } from './requests-list/requests-list.component';
-import { ProfileComponent } from './profile/profile.component';
 import { AttendanceComponent } from './calendar-comps/attendance/attendance.component';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
@@ -59,7 +58,6 @@ import { ProfileMenuItemComponent } from './profile-menu-item/profile-menu-item.
     SidebarComponent,
     ProfileMenuComponent,
     RequestsListComponent,
-    ProfileComponent,
     AttendanceComponent,
     DayCellNotifComponent,
     DayworkModalComponent,

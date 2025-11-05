@@ -10,6 +10,8 @@ import { ListInteractionComponent } from '../../components/list-interaction/list
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { CardListWrapperComponent } from '../../components/card-list-wrapper/card-list-wrapper.component';
 import { CardBadgeComponent } from '../../components/card-badge/card-badge.component';
+import { ProfileComponent } from '../../components/profile/profile.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 
@@ -20,7 +22,8 @@ import { CardBadgeComponent } from '../../components/card-badge/card-badge.compo
     CardComponent,
     ListInteractionComponent,
     CardListWrapperComponent,
-    CardBadgeComponent
+    CardBadgeComponent,
+    ProfileComponent
   ],
   imports: [
     CommonModule,
@@ -32,7 +35,8 @@ import { CardBadgeComponent } from '../../components/card-badge/card-badge.compo
       },
       extend: true
     }),
-    NgbCollapseModule
+    NgbCollapseModule,
+    ReactiveFormsModule
   ],
   exports: [
     SelectLangComponent,
@@ -40,7 +44,8 @@ import { CardBadgeComponent } from '../../components/card-badge/card-badge.compo
     CardComponent,
     ListInteractionComponent,
     CardListWrapperComponent,
-    CardBadgeComponent
+    CardBadgeComponent,
+    ProfileComponent
   ]
 })
 export class GeneralModule { }

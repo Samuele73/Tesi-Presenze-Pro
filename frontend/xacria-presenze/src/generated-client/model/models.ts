@@ -1,3 +1,4 @@
+export * from './basicUserProfileResponse';
 export * from './calendarAvailabilityEntry';
 export * from './calendarEntity';
 export * from './calendarEntry';
@@ -6,10 +7,10 @@ export * from './calendarResponseDto';
 export * from './calendarWorkingDayEntry';
 export * from './calendarWorkingTripEntry';
 export * from './createProjectRequest';
+export * from './fullUserProfileResponseDto';
 export * from './grantedAuthority';
 export * from './loginRequestDto';
 export * from './newPasswordDto';
-export * from './profileResponseDto';
 export * from './project';
 export * from './saveCalendarEntityRequestDto';
 export * from './signInRequestDto';

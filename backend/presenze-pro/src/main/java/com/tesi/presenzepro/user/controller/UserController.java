@@ -3,7 +3,6 @@ package com.tesi.presenzepro.user.controller;
 import com.tesi.presenzepro.user.dto.*;
 import com.tesi.presenzepro.user.model.User;
 import com.tesi.presenzepro.user.model.UserData;
-import com.tesi.presenzepro.user.repository.UserTokenRepository;
 import com.tesi.presenzepro.user.service.UserService;
 import com.tesi.presenzepro.user.service.UserTokenService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,11 +51,28 @@ public class UserController {
 
     //Utilizzato per reperire i dati del profilo dell
     @Operation(description = "Ottieni il profilo utente",security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping("/profile")
-    public ResponseEntity<ProfileResponseDto> getUserProfile(HttpServletRequest request){
-         final ProfileResponseDto user = service.getUserProfile(request);
+    @GetMapping("/my-profile")
+    public ResponseEntity<FullUserProfileResponseDto> getMyUserProfile(HttpServletRequest request){
+         final FullUserProfileResponseDto user = service.getUserProfile(request);
         System.out.println("profile user: " + user);
          return ResponseEntity.ok(user);
+    }
+
+    @PreAuthorize("hasRole('OWNER')")
+    @Operation(description = "Ottieni l'intero profilo dell'utente indicati (permessi permettendo)",security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/full-profile/{email}")
+    public ResponseEntity<FullUserProfileResponseDto> getFullUserProfile(@PathVariable String email){
+        final FullUserProfileResponseDto user = service.getUserProfileFromEmail(email);
+        System.out.println("profile user: " + user);
+        return ResponseEntity.ok(user);
+    }
+
+    @Operation(description = "Ottieni il profilo base dell'utente indicato",security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/basic-profile/{email}")
+    public ResponseEntity<BasicUserProfileResponse> getBasicUserProfile(@PathVariable String email){
+        final BasicUserProfileResponse user = service.getBasicUserProfileFromEmail(email);
+        System.out.println("profile user: " + user);
+        return ResponseEntity.ok(user);
     }
 
     @Operation(description = "Ottieni il campo dati dell'utente in base al tkn nell'headder", security = @SecurityRequirement(name = "bearerAuth"))
@@ -69,8 +85,8 @@ public class UserController {
     //Implementare il metodo di aggiornamento
     @Operation(description = "Modifica le credenziali del profilo utente", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping("/profile")
-    public ResponseEntity<ProfileResponseDto> updateUserProfile(@RequestBody User updatedUserProfile){
-        final ProfileResponseDto newProfile = service.updateUserProfile(updatedUserProfile);
+    public ResponseEntity<FullUserProfileResponseDto> updateUserProfile(@RequestBody User updatedUserProfile){
+        final FullUserProfileResponseDto newProfile = service.updateUserProfile(updatedUserProfile);
         return ResponseEntity.status(HttpStatus.OK).body(newProfile);
     }
 

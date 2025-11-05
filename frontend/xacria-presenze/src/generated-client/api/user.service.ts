@@ -17,9 +17,10 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
+import { BasicUserProfileResponse } from '../model/basicUserProfileResponse';
+import { FullUserProfileResponseDto } from '../model/fullUserProfileResponseDto';
 import { LoginRequestDto } from '../model/loginRequestDto';
 import { NewPasswordDto } from '../model/newPasswordDto';
-import { ProfileResponseDto } from '../model/profileResponseDto';
 import { SignInRequestDto } from '../model/signInRequestDto';
 import { User } from '../model/user';
 import { UserAuthResponseDto } from '../model/userAuthResponseDto';
@@ -62,6 +63,54 @@ export class UserService {
         return false;
     }
 
+
+    /**
+     * 
+     * Ottieni il profilo base dell&#x27;utente indicato
+     * @param email 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getBasicUserProfile(email: string, observe?: 'body', reportProgress?: boolean): Observable<BasicUserProfileResponse>;
+    public getBasicUserProfile(email: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<BasicUserProfileResponse>>;
+    public getBasicUserProfile(email: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<BasicUserProfileResponse>>;
+    public getBasicUserProfile(email: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (email === null || email === undefined) {
+            throw new Error('Required parameter email was null or undefined when calling getBasicUserProfile.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<BasicUserProfileResponse>('get',`${this.basePath}/users/basic-profile/${encodeURIComponent(String(email))}`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
 
     /**
      * 
@@ -173,6 +222,97 @@ export class UserService {
 
     /**
      * 
+     * Ottieni l&#x27;intero profilo dell&#x27;utente indicati (permessi permettendo)
+     * @param email 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getFullUserProfile(email: string, observe?: 'body', reportProgress?: boolean): Observable<FullUserProfileResponseDto>;
+    public getFullUserProfile(email: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<FullUserProfileResponseDto>>;
+    public getFullUserProfile(email: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<FullUserProfileResponseDto>>;
+    public getFullUserProfile(email: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (email === null || email === undefined) {
+            throw new Error('Required parameter email was null or undefined when calling getFullUserProfile.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<FullUserProfileResponseDto>('get',`${this.basePath}/users/full-profile/${encodeURIComponent(String(email))}`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * Ottieni il profilo utente
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getMyUserProfile(observe?: 'body', reportProgress?: boolean): Observable<FullUserProfileResponseDto>;
+    public getMyUserProfile(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<FullUserProfileResponseDto>>;
+    public getMyUserProfile(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<FullUserProfileResponseDto>>;
+    public getMyUserProfile(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<FullUserProfileResponseDto>('get',`${this.basePath}/users/my-profile`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
      * Ottieni il campo dati dell&#x27;utente in base al tkn nell&#x27;headder
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -205,49 +345,6 @@ export class UserService {
         ];
 
         return this.httpClient.request<UserData>('get',`${this.basePath}/users/data`,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * 
-     * Ottieni il profilo utente
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public getUserProfile(observe?: 'body', reportProgress?: boolean): Observable<ProfileResponseDto>;
-    public getUserProfile(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<ProfileResponseDto>>;
-    public getUserProfile(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<ProfileResponseDto>>;
-    public getUserProfile(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-
-        let headers = this.defaultHeaders;
-
-        // authentication (bearerAuth) required
-        if (this.configuration.accessToken) {
-            const accessToken = typeof this.configuration.accessToken === 'function'
-                ? this.configuration.accessToken()
-                : this.configuration.accessToken;
-            headers = headers.set('Authorization', 'Bearer ' + accessToken);
-        }
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            '*/*'
-        ];
-        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set('Accept', httpHeaderAcceptSelected);
-        }
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-        ];
-
-        return this.httpClient.request<ProfileResponseDto>('get',`${this.basePath}/users/profile`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -610,9 +707,9 @@ export class UserService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateUserProfile(body: User, observe?: 'body', reportProgress?: boolean): Observable<ProfileResponseDto>;
-    public updateUserProfile(body: User, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<ProfileResponseDto>>;
-    public updateUserProfile(body: User, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<ProfileResponseDto>>;
+    public updateUserProfile(body: User, observe?: 'body', reportProgress?: boolean): Observable<FullUserProfileResponseDto>;
+    public updateUserProfile(body: User, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<FullUserProfileResponseDto>>;
+    public updateUserProfile(body: User, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<FullUserProfileResponseDto>>;
     public updateUserProfile(body: User, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
@@ -646,7 +743,7 @@ export class UserService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<ProfileResponseDto>('put',`${this.basePath}/users/profile`,
+        return this.httpClient.request<FullUserProfileResponseDto>('put',`${this.basePath}/users/profile`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,

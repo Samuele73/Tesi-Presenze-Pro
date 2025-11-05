@@ -1,13 +1,10 @@
 package com.tesi.presenzepro.user.mapper;
 
-import com.tesi.presenzepro.user.dto.LoginRequestDto;
-import com.tesi.presenzepro.user.dto.ProfileResponseDto;
-import com.tesi.presenzepro.user.dto.UserBasicDetailsResponse;
+import com.tesi.presenzepro.user.dto.*;
 import com.tesi.presenzepro.user.model.Role;
 import com.tesi.presenzepro.user.model.User;
 import com.tesi.presenzepro.user.model.UserData;
 import com.tesi.presenzepro.user.model.UserProfile;
-import com.tesi.presenzepro.user.dto.SignInRequestDto;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,17 +26,17 @@ public class UserMapper {
                 .build();
     }
 
-    public ProfileResponseDto fromUserToUserProfile(User user){
+    public FullUserProfileResponseDto fromUserToUserProfile(User user){
         final UserProfile userProfile = user.getProfile();
         if (userProfile == null) {
-            return new ProfileResponseDto(
+            return new FullUserProfileResponseDto(
                     null, null, null, null, null, null,
                     null, null, null, null,
                     user.getEmail(),
                     user.getRole()
             );
         }
-        return new ProfileResponseDto(
+        return new FullUserProfileResponseDto(
                 userProfile.name(),
                 userProfile.surname(),
                 userProfile.serialNum(),
@@ -63,6 +60,15 @@ public class UserMapper {
                 user.getEmail(),
                 userProfile.duty(),
                 user.getRole()
+        );
+    }
+
+    public BasicUserProfileResponse fromUserToBasicUserProfile(User user){
+        final UserProfile userProfile = user.getProfile();
+        return new BasicUserProfileResponse(
+                userProfile.name(),
+                userProfile.surname(),
+                user.getEmail()
         );
     }
 

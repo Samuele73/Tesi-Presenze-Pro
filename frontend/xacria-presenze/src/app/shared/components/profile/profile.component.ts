@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
   Form,
   FormBuilder,
@@ -7,26 +7,37 @@ import {
   Validators,
 } from '@angular/forms';
 import { AuthService } from 'src/app/shared/services/auth.service';
-import { Username } from '../shared/models/username';
-import { UsernameService } from '../shared/services/username.service';
-import { ProfileResponseDto, User, UserProfile } from 'src/generated-client';
+import { Username } from '../../../layout/shared/models/username';
+import { UsernameService } from '../../../layout/shared/services/username.service';
+import { FullUserProfileResponseDto, User, UserProfile } from 'src/generated-client';
+import { ActivatedRoute } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
+
+type ProfileMode = 'FULL' | 'BASIC';
+
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
 })
-export class ProfileComponent {
+export class ProfileComponent implements OnInit {
   profileForm!: FormGroup;
-  user!: ProfileResponseDto; //cambiare il tipo
+  user!: FullUserProfileResponseDto; //cambiare il tipo
   @Output() newUsername = new EventEmitter<{ name: string; surname: string }>();
+  mode: ProfileMode = 'BASIC';
 
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private usernameService: UsernameService
+    private usernameService: UsernameService,
+    private route: ActivatedRoute
   ) {
     this.setProfileForm();
     this.retrieveUserCreds();
+  }
+
+  ngOnInit(): void {
+    throw new Error('Method not implemented.');
   }
 
   get name() {
@@ -100,18 +111,17 @@ export class ProfileComponent {
   }
 
   retrieveUserCreds(): void {
-    if (this.authService != null) {
-      this.authService.getUserProfile().subscribe({
-        next: (resp: ProfileResponseDto) => {
-          this.user = resp;
-          console.log('User from api', resp, this.user);
-          this.setProfileForm();
-        },
-        error: (err: any) => {
-          console.log('ERRORE PROFILE: ', err);
-        },
-      });
-    }
+    this.authService.getMyUserProfile().subscribe({
+      next: (resp: FullUserProfileResponseDto) => {
+        this.user = resp;
+        console.log('User from api', resp, this.user);
+        this.setProfileForm();
+      },
+      error: (err: HttpErrorResponse) => {
+        console.log('ERRORE PROFILE: ', err);
+      },
+    });
+
     console.log('User crdes from profile component: ', this.user);
   }
 
@@ -120,7 +130,7 @@ export class ProfileComponent {
     console.log('Profile form submitted!');
     const tmp_user: User = this.getAllUserCreds();
     this.authService.updateCreds(tmp_user).subscribe({
-      next: (user: ProfileResponseDto) => {
+      next: (user: FullUserProfileResponseDto) => {
         this.user = user;
         this.setProfileForm();
         this.emitChangedUsername({

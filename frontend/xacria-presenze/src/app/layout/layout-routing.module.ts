@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LayoutComponent } from './layout/layout.component';
 import { HomeComponent } from './home/home.component';
-import { ProfileComponent } from './profile/profile.component';
+import { ProfileComponent } from '../shared/components/profile/profile.component';
 import { AttendanceComponent } from './calendar-comps/attendance/attendance.component';
 import { ProjectPageComponent } from './project-comps/project-page/project-page.component';
 import { DetailedProjectComponent } from './project-comps/detailed-project/detailed-project.component';

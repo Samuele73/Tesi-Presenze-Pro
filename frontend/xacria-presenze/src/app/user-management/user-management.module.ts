@@ -13,6 +13,7 @@ import { UserLisInteractionComponent } from './components/user-list-interaction/
 import { UserListItemComponent } from './components/user-list-item/user-list-item.component';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { UserDetailsComponent } from './components/user-details/user-details.component';
+import { ProfileComponent } from '../shared/components/profile/profile.component';
 
 @NgModule({
   declarations: [UserManagementPageComponent, UserListComponent, UserLisInteractionComponent, UserListItemComponent, UserDetailsComponent],

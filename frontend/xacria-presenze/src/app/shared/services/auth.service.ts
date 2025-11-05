@@ -142,8 +142,8 @@ export class AuthService {
     return this.userService.saveNewPassword(newPasswordRequest);
   }
 
-  getUserProfile() {
-    return this.userService.getUserProfile();
+  getMyUserProfile() {
+    return this.userService.getMyUserProfile();
   }
 
   updateCreds(user_creds: User) {

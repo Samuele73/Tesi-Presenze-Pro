@@ -4,7 +4,7 @@ import com.tesi.presenzepro.user.model.Role;
 
 import java.util.Date;
 
-public record ProfileResponseDto(
+public record FullUserProfileResponseDto(
         String name,
         String surname,
         Long serialNum,
