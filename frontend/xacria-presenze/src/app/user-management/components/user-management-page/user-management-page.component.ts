@@ -25,6 +25,7 @@ export class UserManagementPageComponent implements OnInit {
     this.userService.getUsersBasicDetails().subscribe({
       next: (resp: UserBasicDetailsResponse[]) => {
         this.usersBasicDetails = resp;
+        this.filteredUsersBasicDetails = [...resp];
       },
       error: (err: HttpErrorResponse) => {
         console.warn('Could not fetch Users basi details', err)
