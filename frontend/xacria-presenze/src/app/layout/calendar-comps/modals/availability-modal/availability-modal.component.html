@@ -2,36 +2,94 @@
   <div *ngIf="!isModifyMode; else modify_modal">
     <div class="modal-header">
       <div>
-        <h2 class="modal-title" id="modal-basic-title">{{"Aggiungi reperibilità" | translate}}</h2>
-        <span id="emailHelp" class="form-text">* Inserire la reperibilità per il progetto</span>
+        <h2 class="modal-title" id="modal-basic-title">
+          {{ "Aggiungi reperibilità" | translate }}
+        </h2>
+        <span id="emailHelp" class="form-text"
+          >* Inserire la reperibilità per il progetto</span
+        >
       </div>
-      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+      <button
+        type="button"
+        class="btn-close"
+        aria-label="Close"
+        (click)="modal.dismiss('Cross click')"
+      ></button>
     </div>
     <form [formGroup]="form" (ngSubmit)="submitNewEntry()">
       <div class="modal-body">
         <div class="mb-3 d-flex gap-4 text-primary">
           <div>
-            <label for="dateFrom" class="form-label h5">{{"Da" | translate}}</label>
-            <input type="date" class="form-control" id="dateFrom" formControlName="dateFrom">
-            <app-form-error [formControlRef]="dateFrom" [validator]="'required'" [errorText]="'Seleziona la data di inizio'"></app-form-error>
+            <label for="dateFrom" class="form-label h5">{{
+              "Da" | translate
+            }}</label>
+            <input
+              type="date"
+              class="form-control"
+              id="dateFrom"
+              formControlName="dateFrom"
+            />
+            <app-form-error
+              [formControlRef]="dateFrom"
+              [validator]="'required'"
+              [errorText]="'Seleziona la data di inizio'"
+            ></app-form-error>
           </div>
           <div>
-            <label for="dateTo" class="form-label h5">{{"A" | translate}}</label>
-            <input type="date" class="form-control" id="dateTo" formControlName="dateTo">
-            <app-form-error [formControlRef]="dateTo" [validator]="'required'" [errorText]="'Seleziona la data di fine'"></app-form-error>
+            <label for="dateTo" class="form-label h5">{{
+              "A" | translate
+            }}</label>
+            <input
+              type="date"
+              class="form-control"
+              id="dateTo"
+              formControlName="dateTo"
+            />
+            <app-form-error
+              [formControlRef]="dateTo"
+              [validator]="'required'"
+              [errorText]="'Seleziona la data di fine'"
+            ></app-form-error>
           </div>
           <div>
-            <label for="projects" class="form-label h5">{{"Progetto" | translate}}</label>
-            <select name="project_" id="projects" class="form-select" formControlName="project">
-              <option value="{{project}}" *ngFor="let project of validProjects">{{project}}</option>
+            <label for="projects" class="form-label h5">{{
+              "Progetto" | translate
+            }}</label>
+            <select
+              name="project_"
+              id="projects"
+              class="form-select"
+              formControlName="project"
+            >
+              <option
+                value="{{ project }}"
+                *ngFor="let project of validProjects"
+              >
+                {{ project }}
+              </option>
             </select>
-            <app-form-error [formControlRef]="project" [validator]="'required'" [errorText]="'Seleziona il progetto'"></app-form-error>
+            <app-form-error
+              [formControlRef]="project"
+              [validator]="'required'"
+              [errorText]="'Seleziona il progetto'"
+            ></app-form-error>
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" (click)="modal.close('Save click')">Annulla</button>
-        <button type="submit" class="btn btn-primary text-white" (click)="modal.close('Save click')" [disabled]="form.invalid" [class.disabled]="form.invalid">Salva</button>
+        <app-button
+          [type]="'button'"
+          [mode]="'UNDO'"
+          [name]="'Annulla'"
+          (buttonClick)="modal.close('Close click')"
+        ></app-button>
+        <app-button
+          [type]="'submit'"
+          [mode]="'SAVE'"
+          [name]="'Salva'"
+          (buttonClick)="modal.close('Save click')"
+          [buttonDisabled]="form.invalid"
+        ></app-button>
       </div>
     </form>
   </div>
@@ -40,52 +98,132 @@
     <div *ngIf="calendarEntries.length > 0; else no_entries">
       <div class="modal-header">
         <div>
-          <h2 class="modal-title" id="modal-basic-title">{{"Modifica reperibilità" | translate}}</h2>
-          <span id="emailHelp" class="form-text">* {{"Modifica la reperibilità dei progetti" | translate}}</span>
+          <h2 class="modal-title" id="modal-basic-title">
+            {{ "Modifica reperibilità" | translate }}
+          </h2>
+          <span id="emailHelp" class="form-text"
+            >* {{ "Modifica la reperibilità dei progetti" | translate }}</span
+          >
         </div>
-        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Close"
+          (click)="modal.dismiss('Cross click')"
+        ></button>
       </div>
       <form [formGroup]="form" (ngSubmit)="submitModifyModeForm()">
         <div class="modal-body" formArrayName="availabilities">
-          <div *ngFor="let availability of availabilities.controls; let i = index" formGroupName="{{i}}">
-            <div class="mb-3 d-flex gap-4 text-primary" #entry [ngClass]="{'delete-mode': toDeleteEntries.includes(availability.value.id)}">
+          <div
+            *ngFor="let availability of availabilities.controls; let i = index"
+            formGroupName="{{ i }}"
+          >
+            <div
+              class="mb-3 d-flex gap-4 text-primary"
+              #entry
+              [ngClass]="{
+                'delete-mode': toDeleteEntries.includes(availability.value.id)
+              }"
+            >
               <div>
-                <label for="dateFrom" class="form-label h5">{{"Da" | translate}}</label>
-                <input type="date" class="form-control" id="dateFrom" formControlName="dateFrom">
-                <app-form-error [formControlRef]="availabilities.at(i).get('dateFrom')" [validator]="'required'" [errorText]="'Seleziona la data di inizio'"></app-form-error>
+                <label for="dateFrom" class="form-label h5">{{
+                  "Da" | translate
+                }}</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="dateFrom"
+                  formControlName="dateFrom"
+                />
+                <app-form-error
+                  [formControlRef]="availabilities.at(i).get('dateFrom')"
+                  [validator]="'required'"
+                  [errorText]="'Seleziona la data di inizio'"
+                ></app-form-error>
               </div>
               <div>
-                <label for="dateTo" class="form-label h5">{{"A" | translate}}</label>
-                <input type="date" class="form-control" id="dateTo" formControlName="dateTo">
-                <app-form-error [formControlRef]="availabilities.at(i).get('dateTo')" [validator]="'required'" [errorText]="'Seleziona la data di fine'"></app-form-error>
+                <label for="dateTo" class="form-label h5">{{
+                  "A" | translate
+                }}</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="dateTo"
+                  formControlName="dateTo"
+                />
+                <app-form-error
+                  [formControlRef]="availabilities.at(i).get('dateTo')"
+                  [validator]="'required'"
+                  [errorText]="'Seleziona la data di fine'"
+                ></app-form-error>
               </div>
               <div>
-                <label for="projects" class="form-label h5">{{"Progetto" | translate}}</label>
-                <select name="project_" id="projects" class="form-select" formControlName="project">
-                  <option value="{{project}}" *ngFor="let project of validProjects">{{project}}</option>
+                <label for="projects" class="form-label h5">{{
+                  "Progetto" | translate
+                }}</label>
+                <select
+                  name="project_"
+                  id="projects"
+                  class="form-select"
+                  formControlName="project"
+                >
+                  <option
+                    value="{{ project }}"
+                    *ngFor="let project of validProjects"
+                  >
+                    {{ project }}
+                  </option>
                 </select>
-                <app-form-error [formControlRef]="availabilities.at(i).get('project')" [validator]="'required'" [errorText]="'Seleziona il progetto'"></app-form-error>
+                <app-form-error
+                  [formControlRef]="availabilities.at(i).get('project')"
+                  [validator]="'required'"
+                  [errorText]="'Seleziona il progetto'"
+                ></app-form-error>
               </div>
               <div class="d-flex align-items-end">
-                <button class="rounded-2 bg-danger btn btn-icon" type="button" (click)="toggleEntryDelete(availability.value, i)"><fa-icon [icon]="faIcons.xSimbol" class="fa-sm text-light"></fa-icon></button>
+                <button
+                  class="rounded-2 bg-danger btn btn-icon"
+                  type="button"
+                  (click)="toggleEntryDelete(availability.value, i)"
+                >
+                  <fa-icon
+                    [icon]="faIcons.xSimbol"
+                    class="fa-sm text-light"
+                  ></fa-icon>
+                </button>
               </div>
             </div>
-            <hr class="my-4 border-1" *ngIf="i != (availabilities.controls.length - 1)">
+            <hr
+              class="my-4 border-1"
+              *ngIf="i != availabilities.controls.length - 1"
+            />
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" (click)="modal.close('Save click')">Annulla</button>
-          <button type="submit" class="btn btn-primary text-white"  [disabled]="form.invalid" [class.disabled]="form.invalid">Modifica</button>
+          <app-button
+            [type]="'button'"
+            [mode]="'UNDO'"
+            [name]="'Annulla'"
+            (buttonClick)="modal.close('Close click')"
+          ></app-button>
+          <app-button
+            [type]="'submit'"
+            [mode]="'SAVE'"
+            [name]="'Salva'"
+            [buttonDisabled]="form.invalid"
+          ></app-button>
         </div>
       </form>
     </div>
     <!-- Nel caso in cui le entries in input siano nulle -->
     <ng-template #no_entries>
-      <div class="d-flex justify-content-center align-items-center p-4 text-danger">
-        <span class="h4">Nessuna reperibilità presente per il giorno indicato</span>
+      <div
+        class="d-flex justify-content-center align-items-center p-4 text-danger"
+      >
+        <span class="h4"
+          >Nessuna reperibilità presente per il giorno indicato</span
+        >
       </div>
     </ng-template>
   </ng-template>
 </ng-template>
-
-

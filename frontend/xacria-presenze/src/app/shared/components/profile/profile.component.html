@@ -7,9 +7,7 @@
     *ngIf="this.mode === 'FULL' || this.mode === 'ME'"
   >
     <div class="text-end mb-2">
-      <button class="btn btn-primary rounded-3 fw-bold text-white">
-        {{ "Aggiorna" | translate }}
-      </button>
+      <app-button [name]="'Modifica'" [mode]="'SAVE'" [type]="'submit'"></app-button>
     </div>
 
     <div class="row gx-5 gy-4">
@@ -141,9 +139,7 @@
     *ngIf="this.mode === 'BASIC'"
   >
     <div class="text-end mb-2" *ngIf="!isReadOnly">
-      <button class="btn btn-primary rounded-3 fw-bold text-white">
-        {{ "Aggiorna" | translate }}
-      </button>
+      <app-button [name]="'Modifica'" [mode]="'SAVE'" [type]="'submit'"></app-button>
     </div>
 
     <div class="row gx-5 gy-4" [ngClass]="{'mt-2': isReadOnly}">

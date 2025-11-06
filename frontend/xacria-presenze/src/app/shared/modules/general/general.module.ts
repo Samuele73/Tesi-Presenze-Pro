@@ -12,6 +12,7 @@ import { CardListWrapperComponent } from '../../components/card-list-wrapper/car
 import { CardBadgeComponent } from '../../components/card-badge/card-badge.component';
 import { ProfileComponent } from '../../components/profile/profile.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ButtonComponent } from '../../components/button/button.component';
 
 
 
@@ -23,7 +24,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     ListInteractionComponent,
     CardListWrapperComponent,
     CardBadgeComponent,
-    ProfileComponent
+    ProfileComponent,
+    ButtonComponent
   ],
   imports: [
     CommonModule,
@@ -45,7 +47,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     ListInteractionComponent,
     CardListWrapperComponent,
     CardBadgeComponent,
-    ProfileComponent
+    ProfileComponent,
+    ButtonComponent
   ]
 })
 export class GeneralModule { }

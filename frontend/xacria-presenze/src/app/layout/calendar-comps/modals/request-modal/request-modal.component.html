@@ -56,8 +56,19 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" (click)="modal.close('Save click')">Annulla</button>
-        <button type="submit" class="btn btn-primary text-white" (click)="modal.close('Save click')" [disabled]="form.invalid" [class.disabled]="form.invalid" id="save-btn">Salva</button>
+        <app-button
+          [type]="'button'"
+          [mode]="'UNDO'"
+          [name]="'Annulla'"
+          (buttonClick)="modal.close('Close click')"
+        ></app-button>
+        <app-button
+          [type]="'submit'"
+          [mode]="'SAVE'"
+          [name]="'Salva'"
+          (buttonClick)="modal.close('Save click')"
+          [buttonDisabled]="form.invalid"
+        ></app-button>
       </div>
     </form>
   </div>
@@ -133,8 +144,18 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" (click)="modal.close('Save click')">{{"Annulla" | translate}}</button>
-        <button type="submit" class="btn btn-primary text-white"  [disabled]="form.invalid" [class.disabled]="form.invalid">{{"Modifica" | translate}}</button>
+        <app-button
+          [type]="'button'"
+          [mode]="'UNDO'"
+          [name]="'Annulla'"
+          (buttonClick)="modal.close('Close click')"
+        ></app-button>
+        <app-button
+          [type]="'submit'"
+          [mode]="'SAVE'"
+          [name]="'Modifica'"
+          [buttonDisabled]="form.invalid"
+        ></app-button>
       </div>
     </form>
   </ng-template>
