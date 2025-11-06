@@ -301,7 +301,7 @@ export class UserService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<FullUserProfileResponseDto>('get',`${this.basePath}/users/my-profile`,
+        return this.httpClient.request<FullUserProfileResponseDto>('get',`${this.basePath}/users/profile`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -744,6 +744,65 @@ export class UserService {
         }
 
         return this.httpClient.request<FullUserProfileResponseDto>('put',`${this.basePath}/users/profile`,
+            {
+                body: body,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * Modifica le credenziali del profilo utente
+     * @param body 
+     * @param email 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public updateUserProfileByEmail(body: User, email: string, observe?: 'body', reportProgress?: boolean): Observable<FullUserProfileResponseDto>;
+    public updateUserProfileByEmail(body: User, email: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<FullUserProfileResponseDto>>;
+    public updateUserProfileByEmail(body: User, email: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<FullUserProfileResponseDto>>;
+    public updateUserProfileByEmail(body: User, email: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (body === null || body === undefined) {
+            throw new Error('Required parameter body was null or undefined when calling updateUserProfileByEmail.');
+        }
+
+        if (email === null || email === undefined) {
+            throw new Error('Required parameter email was null or undefined when calling updateUserProfileByEmail.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected != undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        return this.httpClient.request<FullUserProfileResponseDto>('put',`${this.basePath}/users/profile/${encodeURIComponent(String(email))}`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,

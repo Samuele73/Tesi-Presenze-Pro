@@ -51,7 +51,7 @@ public class UserController {
 
     //Utilizzato per reperire i dati del profilo dell
     @Operation(description = "Ottieni il profilo utente",security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping("/my-profile")
+    @GetMapping("/profile")
     public ResponseEntity<FullUserProfileResponseDto> getMyUserProfile(HttpServletRequest request){
          final FullUserProfileResponseDto user = service.getUserProfile(request);
         System.out.println("profile user: " + user);
@@ -87,6 +87,14 @@ public class UserController {
     @PutMapping("/profile")
     public ResponseEntity<FullUserProfileResponseDto> updateUserProfile(@RequestBody User updatedUserProfile){
         final FullUserProfileResponseDto newProfile = service.updateUserProfile(updatedUserProfile);
+        return ResponseEntity.status(HttpStatus.OK).body(newProfile);
+    }
+
+    @PreAuthorize("hasRole('OWNER')")
+    @Operation(description = "Modifica le credenziali del profilo utente", security = @SecurityRequirement(name = "bearerAuth"))
+    @PutMapping("/profile/{email}")
+    public ResponseEntity<FullUserProfileResponseDto> updateUserProfileByEmail(@RequestBody User updatedUserProfile, @PathVariable String email){
+        final FullUserProfileResponseDto newProfile = service.updateUserProfileByEmail(updatedUserProfile, email);
         return ResponseEntity.status(HttpStatus.OK).body(newProfile);
     }
 

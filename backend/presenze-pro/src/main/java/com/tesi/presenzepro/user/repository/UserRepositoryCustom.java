@@ -6,4 +6,5 @@ import java.util.Optional;
 
 public interface UserRepositoryCustom {
     Optional<User> findByIdAndModify(User user);
+    Optional<User> findByEmailAndModify(User user, String email);
 }

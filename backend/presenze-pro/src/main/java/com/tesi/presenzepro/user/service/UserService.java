@@ -141,6 +141,11 @@ public class UserService {
         return newUserProfile.map(userMapper::fromUserToUserProfile).orElse(null);
     }
 
+    public FullUserProfileResponseDto updateUserProfileByEmail(User updatedUserProfile, String email){
+        Optional<User> newUserProfile = repository.findByEmailAndModify(updatedUserProfile, email);
+        return newUserProfile.map(userMapper::fromUserToUserProfile).orElse(null);
+    }
+
     public BasicUserProfileResponse getBasicUserProfileFromEmail(String email){
         User user = repository.findByEmail(email).orElseThrow(() -> new NoUserFoundException("Utente non trovato"));
         return this.userMapper.fromUserToBasicUserProfile(user);

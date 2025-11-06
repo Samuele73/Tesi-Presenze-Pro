@@ -16,7 +16,7 @@ import {
   UserProfile,
   UserService,
 } from 'src/generated-client';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 
 type ProfileMode = 'FULL' | 'BASIC' | 'ME';
@@ -39,7 +39,8 @@ export class ProfileComponent implements OnInit {
     private authService: AuthService,
     private userService: UserService,
     private usernameService: UsernameService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -162,21 +163,43 @@ export class ProfileComponent implements OnInit {
   onProfileFormSubmit(): void {
     if (this.profileForm.invalid) return;
     console.log('Profile form submitted!');
+    const isOwner = this.authService.isOwner();
     const tmp_user: User = this.getAllUserCreds();
-    this.authService.updateCreds(tmp_user).subscribe({
-      next: (user: FullUserProfileResponseDto) => {
-        this.user = user;
-        this.setProfileForm();
-        this.emitChangedUsername({
-          name: user.name || '',
-          surname: user.surname || '',
-        });
-      },
-      error: (err: any) => {
-        console.log('Error in Profile update: ', err);
-      },
-    });
-    /* window.location.reload(); */
+    if (this.mode == 'ME') {
+      this.authService.updateCreds(tmp_user).subscribe({
+        next: (user: FullUserProfileResponseDto) => {
+          this.user = user;
+          this.setProfileForm();
+          this.emitChangedUsername({
+            name: user.name || '',
+            surname: user.surname || '',
+          });
+        },
+        error: (err: any) => {
+          console.log('Error in Profile update: ', err);
+        },
+      });
+    } else if (this.mode == 'FULL') {
+      const userEmail: string | null =
+        this.route.snapshot.queryParamMap.get('email');
+      if (!userEmail) {
+        console.warn('Could not update user because no user email on route');
+        this.error = 'Nessuna email per effetture l aggiornamento';
+        return;
+      }
+      this.userService.updateUserProfileByEmail(tmp_user, userEmail).subscribe({
+        next: (user: FullUserProfileResponseDto) => {
+          this.user = user;
+          this.setProfileForm();
+          this.router.navigate(['/app/users-management'])
+        },
+        error: (err: any) => {
+          console.log('Error in Profile update: ', err);
+        },
+      });
+    } else {
+      this.error = 'Permessi per aggiornamento non posseduti';
+    }
   }
 
   //Returns an UserCreds object with values from profileForm and userCreds variable (because contains password)

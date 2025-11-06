@@ -19,7 +19,12 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
     @Override
     public Optional<User> findByIdAndModify(User user) {
-        Query query = new Query().addCriteria(Criteria.where("email").is(user.getEmail()));
+        return this.findByEmailAndModify(user, user.getEmail());
+    }
+
+    @Override
+    public Optional<User> findByEmailAndModify(User user, String email) {
+        Query query = new Query().addCriteria(Criteria.where("email").is(email));
         Update update = new Update();
 
         // Aggiornamento campi di User
