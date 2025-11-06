@@ -23,7 +23,7 @@ export class ProjectPageComponent {
 
   loadProjects(): void {
     this.isLoading = true;
-    if (this.authService.isAdmin()) {
+    if (this.authService.isPrivilegedUser()) {
       this.projectService.getAllProjects().subscribe({
         next: (projects: Project[]) => {
           this.projects = projects;
@@ -37,7 +37,7 @@ export class ProjectPageComponent {
           this.isLoading = false;
         }
       });
-    } else if (!this.authService.isAdmin()) {
+    } else if (!this.authService.isPrivilegedUser()) {
       this.projectService.getMyProjects().subscribe({
         next: (projects: Project[]) => {
           this.projects = projects;

@@ -12,7 +12,7 @@
       {{ project?.summary }}
     </p>
 
-    <div class="mb-3" *ngIf="authService.isAdmin()">
+    <div class="mb-3" *ngIf="authService.isPrivilegedUser()">
       <app-assignment-badges [project]="project"></app-assignment-badges>
     </div>
   </div>
