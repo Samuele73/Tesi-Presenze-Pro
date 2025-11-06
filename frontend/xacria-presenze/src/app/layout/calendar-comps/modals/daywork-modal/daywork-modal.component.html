@@ -62,8 +62,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="px-4 py-0 rounded-4 bg-dark-subtle border-0 text-dark" (click)="modal.close('Save click')">Annulla</button>
-        <button type="submit" class="px-4 py-0 rounded-4 bg-primary border-0 text-light" (click)="modal.close('Save click')" [disabled]="form.invalid" [class.disabled]="form.invalid">Salva</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="modal.close('Save click')">Annulla</button>
+        <button type="submit" class="btn btn-primary text-white" (click)="modal.close('Save click')" [disabled]="form.invalid" [class.disabled]="form.invalid">Salva</button>
       </div>
     </form>
   </div>
@@ -105,8 +105,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="px-4 py-0 rounded-4 bg-dark-subtle border-0 text-dark" (click)="modal.close('Save click')">Annulla</button>
-        <button type="submit" class="px-4 py-0 rounded-4 bg-primary border-0 text-light" [disabled]="form.invalid" [class.disabled]="form.invalid">Salva</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="modal.close('Save click')">Annulla</button>
+        <button type="submit" class="btn btn-primary text-white" [disabled]="form.invalid" [class.disabled]="form.invalid">Salva</button>
       </div>
     </form>
   </ng-template>
