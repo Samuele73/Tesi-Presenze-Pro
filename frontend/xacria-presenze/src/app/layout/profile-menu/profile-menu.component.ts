@@ -12,6 +12,18 @@ export class ProfileMenuComponent {
   surname!: string;
   @Input() username!: Username;
 
+  classMap: { [key: string]: string } = {
+    OWNER: 'bg-warning',
+    USER: 'bg-secondary',
+    ADMIN: 'bg-primary',
+  };
+
+  roleMap: { [key: string]: string } = {
+    ADMIN: 'Admin',
+    USER: 'Utente',
+    OWNER: 'Owner',
+  };
+
   constructor(public authService: AuthService){
     console.log("USERNAEM: ", this.username)
   }

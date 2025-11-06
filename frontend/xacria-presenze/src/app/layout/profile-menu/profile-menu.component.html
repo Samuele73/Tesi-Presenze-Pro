@@ -1,13 +1,16 @@
 <div class="wrapper">
   <div class="profile-details d-block d-lg-flex align-items-center">
     <div class="profile-pic"></div>
-    <span>{{ username?.name + " " + username?.surname }}</span>
+    <div class="d-flex align-items-center gap-2">
+      <span>{{ username?.name + " " + username?.surname }}</span>
+      <app-card-badge [mapValue]="authService.getUserRole() ?? undefined" [labelMap]="roleMap" [classMap]="classMap"></app-card-badge>
+    </div>
   </div>
   <div class="menu">
     <app-profile-menu-item
       [name]="'Il mio profilo'"
       [route]="'/app/profile'"
-      [queryParams]="{mode : 'ME'}"
+      [queryParams]="{ mode: 'ME' }"
     ></app-profile-menu-item>
 
     <app-profile-menu-item

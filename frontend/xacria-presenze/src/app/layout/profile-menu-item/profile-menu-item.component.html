@@ -1,1 +1,9 @@
-<button class="btn btn-link text-secondary p-0 mt-0 text-decoration-none fs-5" routerLink="{{route}}" [queryParams]="queryParams" [routerLinkActive]="'is-active'" [routerLinkActiveOptions]="{ exact: true }">{{name | translate}}</button>
+<button
+  class="btn btn-link text-secondary p-0 mt-0 text-decoration-none fs-5"
+  routerLink="{{ route }}"
+  [queryParams]="queryParams"
+  [routerLinkActive]="'is-active'"
+  [routerLinkActiveOptions]="{ exact: true }"
+>
+  {{ name | translate }}
+</button>

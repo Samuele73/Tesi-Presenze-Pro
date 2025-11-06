@@ -10,17 +10,17 @@
     <!-- Email -->
     <div class="card-text d-flex align-items-center mb-2">
       <i class="fa-solid fa-envelope me-2"></i>
-      <a [href]="'mailto:' + userBasicDetails?.email" class="">
+      <a [href]="'mailto:' + userBasicDetails?.email" class="" (click)="$event.stopPropagation()">
         {{ userBasicDetails?.email }}
       </a>
     </div>
 
     <!-- Duty (Mansione) -->
-    <div class="card-text d-flex align-items-center text-truncate" *ngIf="userBasicDetails?.duty">
+    <!-- <div class="card-text d-flex align-items-center text-truncate" *ngIf="userBasicDetails?.duty">
       <i class="fa-solid fa-briefcase me-2"></i>
       <span class="text-body">
         {{ (userBasicDetails?.duty ?? '') | translate }}
       </span>
-    </div>
+    </div> -->
   </div>
 </app-card>
