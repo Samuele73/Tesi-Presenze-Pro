@@ -12,4 +12,5 @@ export class SidebarItemComponent {
   @Input() route!: string;
   @Input() name!: string;
   @Input() iconSize: SizeProp = 'lg';
+  @Input() queryParams?: {[param: string] : string};
 }

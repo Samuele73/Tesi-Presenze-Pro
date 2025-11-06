@@ -5,6 +5,7 @@
     routerLink="{{route}}"
     [routerLinkActive]="'is-active'"
     [routerLinkActiveOptions]="{ exact: true }"
+    [queryParams]="queryParams"
     >{{ name | translate }}</a
   >
 </li>
