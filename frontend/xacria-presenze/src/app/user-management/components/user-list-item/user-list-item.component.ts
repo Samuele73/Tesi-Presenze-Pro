@@ -21,9 +21,9 @@ export class UserListItemComponent implements OnInit {
   ) {}
 
   classMap: { [key: string]: string } = {
-    OWNER: 'bg-warning',
-    USER: 'bg-secondary',
-    ADMIN: 'bg-primary',
+    OWNER: 'bg-secondary-subtle text-muted',
+    USER: 'bg-secondary-subtle text-muted',
+    ADMIN: 'bg-secondary-subtle text-muted',
   };
 
   roleMap: { [key: string]: string } = {

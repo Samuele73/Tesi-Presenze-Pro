@@ -153,7 +153,7 @@ public class UserController {
         return ResponseEntity.ok(new UserEmailResponse(userEmail));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','OWNER')")
+    //@PreAuthorize("hasAnyRole('ADMIN','OWNER')")
     @Operation(description = "Ottieni informazioni di base su tutti gli utenti", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/all-basic-details")
     public ResponseEntity<List<UserBasicDetailsResponse>> getUsersBasicDetails(){

@@ -3,7 +3,6 @@
     <div class="profile-pic"></div>
     <div class="d-flex align-items-center gap-2">
       <span>{{ username?.name + " " + username?.surname }}</span>
-      <app-card-badge [mapValue]="authService.getUserRole() ?? undefined" [labelMap]="roleMap" [classMap]="classMap"></app-card-badge>
     </div>
   </div>
   <div class="menu">
@@ -26,7 +25,6 @@
     <app-profile-menu-item
       [name]="'Utenti'"
       [route]="'/app/users-management'"
-      *ngIf="authService.isPrivilegedUser()"
     ></app-profile-menu-item>
   </div>
   <hr />
