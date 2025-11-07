@@ -21,28 +21,7 @@
         {{ "Lista Progetti" | translate }}
       </a>
       <div class="d-flex justify-content-end gap-2" *ngIf="isEditMode">
-        <!-- Options -->
-        <div ngbDropdown class="d-inline-block">
-          <button
-            type="button"
-            ngbDropdownToggle
-            class="btn btn-outline-light border-secondary text-black dropdown-toggle"
-          >
-            <i class="fa-solid fa-ellipsis-vertical"></i>
-          </button>
-          <div ngbDropdownMenu>
-            <button ngbDropdownItem (click)="cancelEdit()">
-              {{ "Annulla" | translate }}
-            </button>
-            <button
-              ngbDropdownItem
-              (click)="openConfirmDeletionModal()"
-            >
-              {{ "Elimina" | translate }}
-            </button>
-          </div>
-        </div>
-
+        <app-ngb-options [dropdownOptions]="dropdownItems"></app-ngb-options>
         <button
           type="submit"
           class="btn btn-primary text-white"
@@ -129,7 +108,10 @@
 
         <!-- EDIT MODE -->
         <ng-template #editModeTemplate>
-          <app-project-form [project]="project" #projectFormComp></app-project-form>
+          <app-project-form
+            [project]="project"
+            #projectFormComp
+          ></app-project-form>
         </ng-template>
       </ng-container>
     </div>

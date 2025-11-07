@@ -7,12 +7,13 @@ import { HttpClient } from '@angular/common/http';
 import { FormErrorComponent } from 'src/app/form-error/form-error.component';
 import { CardComponent } from '../../components/card/card.component';
 import { ListInteractionComponent } from '../../components/list-interaction/list-interaction.component';
-import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCollapseModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { CardListWrapperComponent } from '../../components/card-list-wrapper/card-list-wrapper.component';
 import { CardBadgeComponent } from '../../components/card-badge/card-badge.component';
 import { ProfileComponent } from '../../components/profile/profile.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ButtonComponent } from '../../components/button/button.component';
+import { NgbOptionsComponent } from '../../components/ngb-options/ngb-options.component';
 
 
 
@@ -25,7 +26,8 @@ import { ButtonComponent } from '../../components/button/button.component';
     CardListWrapperComponent,
     CardBadgeComponent,
     ProfileComponent,
-    ButtonComponent
+    ButtonComponent,
+    NgbOptionsComponent
   ],
   imports: [
     CommonModule,
@@ -38,7 +40,8 @@ import { ButtonComponent } from '../../components/button/button.component';
       extend: true
     }),
     NgbCollapseModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgbDropdownModule
   ],
   exports: [
     SelectLangComponent,
@@ -48,7 +51,8 @@ import { ButtonComponent } from '../../components/button/button.component';
     CardListWrapperComponent,
     CardBadgeComponent,
     ProfileComponent,
-    ButtonComponent
+    ButtonComponent,
+    NgbOptionsComponent
   ]
 })
 export class GeneralModule { }

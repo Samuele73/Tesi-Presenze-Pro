@@ -1,0 +1,23 @@
+<div ngbDropdown class="d-inline-block">
+  <button
+    type="button"
+    ngbDropdownToggle
+    class="btn btn-outline-light border-secondary text-black dropdown-toggle"
+  >
+    <i class="fa-solid fa-ellipsis-vertical"></i>
+  </button>
+  <div ngbDropdownMenu>
+    <button ngbDropdownItem *ngFor="let item of dropdownOptions" (click)="item.onclick()">
+      {{ item.name| translate }}
+    </button>
+  </div>
+</div>
+
+<!-- <div ngbDropdownMenu>
+    <button ngbDropdownItem (click)="cancelEdit()">
+      {{ "Annulla" | translate }}
+    </button>
+    <button ngbDropdownItem (click)="openConfirmDeletionModal()">
+      {{ "Elimina" | translate }}
+    </button>
+  </div> -->

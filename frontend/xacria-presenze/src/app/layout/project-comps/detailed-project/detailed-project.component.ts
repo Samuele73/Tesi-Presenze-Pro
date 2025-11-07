@@ -8,6 +8,7 @@ import { Project } from 'src/generated-client';
 import { ProjectService } from 'src/generated-client/api/api';
 import { ConfirmModalComponent } from '../../confirm-modal/confirm-modal.component';
 import { ProjectFormComponent } from '../project-form/project-form.component';
+import { DropdownOptions } from 'src/app/shared/components/ngb-options/ngb-options.component';
 
 @Component({
   selector: 'app-detailed-project',
@@ -23,6 +24,11 @@ export class DetailedProjectComponent implements OnInit {
   modalCloseResult: string = '';
   private projcetId: string | null = null;
   @ViewChild('projectFormComp') projectFormComponent!: ProjectFormComponent;
+
+  dropdownItems: DropdownOptions = [
+  { name: 'Annulla', onclick: () => this.cancelEdit() },
+  { name: 'Elimina', onclick: () => this.openConfirmDeletionModal() }
+];
 
   constructor(
     private route: ActivatedRoute,
