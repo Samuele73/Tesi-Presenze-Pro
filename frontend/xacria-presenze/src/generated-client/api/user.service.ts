@@ -119,9 +119,9 @@ export class UserService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getEmailFromInvitation(token: string, observe?: 'body', reportProgress?: boolean): Observable<string>;
-    public getEmailFromInvitation(token: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
-    public getEmailFromInvitation(token: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public getEmailFromInvitation(token: string, observe?: 'body', reportProgress?: boolean): Observable<UserEmailResponse>;
+    public getEmailFromInvitation(token: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserEmailResponse>>;
+    public getEmailFromInvitation(token: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserEmailResponse>>;
     public getEmailFromInvitation(token: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (token === null || token === undefined) {
@@ -155,7 +155,7 @@ export class UserService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<string>('get',`${this.basePath}/users/invitation-details`,
+        return this.httpClient.request<UserEmailResponse>('get',`${this.basePath}/users/invitation-details`,
             {
                 params: queryParameters,
                 withCredentials: this.configuration.withCredentials,
@@ -209,7 +209,7 @@ export class UserService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<UserEmailResponse>('post',`${this.basePath}/users/getEmail`,
+        return this.httpClient.request<UserEmailResponse>('post',`${this.basePath}/users/getEmailFromJwt`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,

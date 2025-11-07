@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { AuthService } from '../shared/services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SignInRequestDto, UserService } from 'src/generated-client';
+import { SignInRequestDto, UserEmailResponse, UserService } from 'src/generated-client';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
@@ -38,12 +38,14 @@ export class SignInComponent implements OnInit {
     const tkn: string | null = this.route.snapshot.queryParamMap.get('token');
     if (tkn) {
       this.userService.getEmailFromInvitation(tkn).subscribe({
-        next: (email: string) => {
-          this.userEmail = email;
+        next: (resp: UserEmailResponse) => {
+          this.userEmail = resp.email!;
+          console.log("Controlla", this.userEmail)
           this.signinForm.patchValue({email: this.userEmail})
         },
         error: (err: HttpErrorResponse) => {
           this.apiError = err.error.message;
+          console.warn('Problema con tkn', err)
         }
       })
       return;

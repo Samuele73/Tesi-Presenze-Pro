@@ -137,15 +137,15 @@ public class UserController {
 
     @Operation(description = "Ottieni l'email dal token di invito (se valido)", security = @SecurityRequirement(name = "bearerAuth"))
    @GetMapping("/invitation-details")
-    public ResponseEntity<String> getEmailFromInvitation(@RequestParam("token") String token){
+    public ResponseEntity<UserEmailResponse> getEmailFromInvitation(@RequestParam("token") String token){
         String userEmail = this.userTokenService.getEmailFromUserTknValidation(token);
         System.out.println("userEmail: " + userEmail);
-        return ResponseEntity.ok(userEmail);
+        return ResponseEntity.ok(new UserEmailResponse(userEmail));
    }
 
 
     @Operation(description = "Ottenimento dell'email interna al token indicato", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping("/getEmail")
+    @PostMapping("/getEmailFromJwt")
     public ResponseEntity<UserEmailResponse> getEmailFromTkn(@RequestBody String token){
         System.out.println("AO GUARDA: " + token);
         String userEmail = this.service.getEmailFromTkn(token);
