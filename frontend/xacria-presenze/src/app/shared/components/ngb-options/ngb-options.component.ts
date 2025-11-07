@@ -12,4 +12,5 @@ export type DropdownOptions = {
 })
 export class NgbOptionsComponent {
   @Input() dropdownOptions!: DropdownOptions;
+  @Input() buttonClass?: string;
 }

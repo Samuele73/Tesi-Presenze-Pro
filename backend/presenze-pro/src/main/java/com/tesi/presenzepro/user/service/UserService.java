@@ -5,6 +5,8 @@ import com.tesi.presenzepro.exception.DuplicateEmailException;
 import com.tesi.presenzepro.exception.NoUserFoundException;
 import com.tesi.presenzepro.jwt.JwtUtils;
 import com.tesi.presenzepro.project.exception.NoUserForProjectFound;
+import com.tesi.presenzepro.project.repository.ProjectRepository;
+import com.tesi.presenzepro.project.repository.ProjectRepositoryCustomImpl;
 import com.tesi.presenzepro.user.dto.*;
 import com.tesi.presenzepro.user.mapper.UserMapper;
 import com.tesi.presenzepro.user.model.*;
@@ -39,6 +41,7 @@ public class UserService {
     private final UserRepository repository;
     private final UserRepositoryCustomImpl repositoryCustom;
     private final UserTokenRepository userTokenRepository;
+    private final ProjectRepository projectRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
@@ -245,5 +248,14 @@ public class UserService {
     public List<UserBasicDetailsResponse> getUsersBasicDetails(){
         List<User> users = this.repository.findAll();
         return users.stream().map(this.userMapper::fromUserToUserBasicDetailsResponse).toList();
+    }
+
+    public User deleteUserByEmail(String email){
+        User deletedUser = this.repository.deleteByEmail(email).orElseThrow(() -> new NoUserFoundException("Nessun utente trovato con questa email: " + email));
+        if(deletedUser != null){
+            System.out.println("Sto eliminando: "  + deletedUser.getEmail());
+            this.projectRepository.removeUserFromAllProjects(email);
+        }
+        return deletedUser;
     }
 }

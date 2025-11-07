@@ -18,6 +18,9 @@ import {
 } from 'src/generated-client';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
+import { DropdownOptions } from '../ngb-options/ngb-options.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmModalComponent } from 'src/app/layout/confirm-modal/confirm-modal.component';
 
 type ProfileMode = 'FULL' | 'BASIC' | 'ME';
 
@@ -31,8 +34,14 @@ export class ProfileComponent implements OnInit {
   user!: FullUserProfileResponseDto; //cambiare il tipo
   @Output() newUsername = new EventEmitter<{ name: string; surname: string }>();
   mode: ProfileMode = 'BASIC';
-  error: string = '';
+  apiError: string = '';
   isReadOnly: boolean = true;
+  initialValue: any;
+
+  dropdownItems: DropdownOptions = [
+    { name: 'Annulla', onclick: () => this.cancelEdit() },
+    { name: 'Elimina', onclick: () => this.openConfirmDeletionModal() },
+  ];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -40,7 +49,8 @@ export class ProfileComponent implements OnInit {
     private userService: UserService,
     private usernameService: UsernameService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private modalService: NgbModal
   ) {}
 
   ngOnInit(): void {
@@ -74,6 +84,7 @@ export class ProfileComponent implements OnInit {
   get birth_date() {
     return this.profileForm.get('birth_date');
   }
+
   get address() {
     return this.profileForm.get('address');
   }
@@ -116,6 +127,7 @@ export class ProfileComponent implements OnInit {
         address: [this.user?.address ?? '', []],
         phone: [this.user?.phone ?? '', []],
       });
+      this.initialValue = this.profileForm.getRawValue();
     } else if (this.mode === 'BASIC') {
       this.profileForm = this.formBuilder.group({
         name: [this.user?.name ?? '', []],
@@ -131,6 +143,43 @@ export class ProfileComponent implements OnInit {
     }
   }
 
+  cancelEdit(): void {
+    this.profileForm.reset(this.initialValue);
+  }
+
+  openConfirmDeletionModal() {
+    console.log('Controllasdafadsfsfa');
+    const modalRef = this.modalService.open(ConfirmModalComponent, {
+      centered: true,
+    });
+    modalRef.componentInstance.title = 'Conferma eliminazione!';
+    modalRef.componentInstance.message =
+      'Sei sicuro di voler eliminare questo utente? Questa azione non può essere annullata.';
+    modalRef.componentInstance.mode = 'DELETE';
+    modalRef.componentInstance.confirm.subscribe(() => {
+      this.deleteUser();
+    });
+  }
+
+  deleteUser() {
+    const email = this.email?.value
+    console.log("controlla di nuovo", email, !email || !this.authService.isOwner());
+    if (!email || !this.authService.isOwner()) {
+      this.apiError = 'Impossibile eliminare l utente';
+      return;
+    }
+    console.log("e invece ecccomi")
+    this.userService.deleteUserByEmail(email).subscribe({
+      next: (deletedUser: User) => {
+        console.log("Delted user: ", deletedUser)
+        this.router.navigate(['/app/users-management']);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.apiError = err.error.message;
+      }
+    })
+  }
+
   retrieveUserCreds(): void {
     this.mode = this.route.snapshot.queryParamMap.get('mode') as ProfileMode;
     this.isReadOnly = this.mode === 'BASIC';
@@ -138,7 +187,7 @@ export class ProfileComponent implements OnInit {
       this.route.snapshot.queryParamMap.get('email');
 
     if (!userEmail && this.mode !== 'ME') {
-      this.error = 'Nessuna email presente nella richiesta';
+      this.apiError = 'Nessuna email presente nella richiesta';
       return;
     }
 
@@ -155,7 +204,7 @@ export class ProfileComponent implements OnInit {
         this.setProfileForm();
       },
       error: () => {
-        this.error = 'Errore nella richiesta del profilo utente';
+        this.apiError = 'Errore nella richiesta del profilo utente';
       },
     });
   }
@@ -184,21 +233,21 @@ export class ProfileComponent implements OnInit {
         this.route.snapshot.queryParamMap.get('email');
       if (!userEmail) {
         console.warn('Could not update user because no user email on route');
-        this.error = 'Nessuna email per effetture l aggiornamento';
+        this.apiError = 'Nessuna email per effetture l aggiornamento';
         return;
       }
       this.userService.updateUserProfileByEmail(tmp_user, userEmail).subscribe({
         next: (user: FullUserProfileResponseDto) => {
           this.user = user;
           this.setProfileForm();
-          this.router.navigate(['/app/users-management'])
+          this.router.navigate(['/app/users-management']);
         },
         error: (err: any) => {
           console.log('Error in Profile update: ', err);
         },
       });
     } else {
-      this.error = 'Permessi per aggiornamento non posseduti';
+      this.apiError = 'Permessi per aggiornamento non posseduti';
     }
   }
 

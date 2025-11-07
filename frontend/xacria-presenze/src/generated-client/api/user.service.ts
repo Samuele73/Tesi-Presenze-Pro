@@ -66,6 +66,54 @@ export class UserService {
 
     /**
      * 
+     * Rimuovi un utente per email
+     * @param email 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public deleteUserByEmail(email: string, observe?: 'body', reportProgress?: boolean): Observable<User>;
+    public deleteUserByEmail(email: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<User>>;
+    public deleteUserByEmail(email: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<User>>;
+    public deleteUserByEmail(email: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (email === null || email === undefined) {
+            throw new Error('Required parameter email was null or undefined when calling deleteUserByEmail.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<User>('delete',`${this.basePath}/users/${encodeURIComponent(String(email))}`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
      * Ottieni il profilo base dell&#x27;utente indicato
      * @param email 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

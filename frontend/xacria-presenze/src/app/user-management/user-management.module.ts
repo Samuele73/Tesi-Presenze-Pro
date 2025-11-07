@@ -14,6 +14,7 @@ import { UserListItemComponent } from './components/user-list-item/user-list-ite
 import { MultiSelectModule } from 'primeng/multiselect';
 import { UserDetailsComponent } from './components/user-details/user-details.component';
 import { ProfileComponent } from '../shared/components/profile/profile.component';
+import { CalendarCommonModule } from "angular-calendar";
 
 @NgModule({
   declarations: [UserManagementPageComponent, UserListComponent, UserLisInteractionComponent, UserListItemComponent, UserDetailsComponent],
@@ -22,15 +23,16 @@ import { ProfileComponent } from '../shared/components/profile/profile.component
     UserManagementRoutingModule,
     GeneralModule,
     TranslateModule.forChild({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: httpTranslateLoader,
-        deps: [HttpClient],
-      },
-      extend: true,
+        loader: {
+            provide: TranslateLoader,
+            useFactory: httpTranslateLoader,
+            deps: [HttpClient],
+        },
+        extend: true,
     }),
     FormsModule,
-    MultiSelectModule
-  ],
+    MultiSelectModule,
+    CalendarCommonModule
+],
 })
 export class UserManagementModule {}

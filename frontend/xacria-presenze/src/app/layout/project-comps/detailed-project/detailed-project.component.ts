@@ -41,7 +41,7 @@ export class DetailedProjectComponent implements OnInit {
 
   ngOnInit() {
     this.getProjectFromQueryParams();
-    this.isEditMode = this.authService.isAdmin();
+    this.isEditMode = this.authService.isPrivilegedUser();
   }
 
   private getProjectFromQueryParams() {

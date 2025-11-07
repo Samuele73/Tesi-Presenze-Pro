@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { UserBasicDetailsResponse } from 'src/generated-client';
 
 @Component({
@@ -9,4 +9,5 @@ import { UserBasicDetailsResponse } from 'src/generated-client';
 export class UserListComponent {
   @Input() usersBasicDetails: UserBasicDetailsResponse[] = [];
   @Input() isLoading: boolean = false;
+  @Output() userDeleted = new EventEmitter<void>();
 }

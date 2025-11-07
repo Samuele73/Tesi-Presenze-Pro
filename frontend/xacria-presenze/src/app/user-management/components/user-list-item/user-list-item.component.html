@@ -4,6 +4,7 @@
       <i class="bi bi-folder2-open me-2"></i>
       {{ fullName }}
     </h5>
+    <app-ngb-options *ngIf="userAuth.isOwner()" (mwlClick)="$event.preventDefault()" [buttonClass]="'border-0 py-0 px-2'" [dropdownOptions]="itemOptions"></app-ngb-options>
   </div>
   <div card-body class="d-flex gap-2">
     <!-- Email -->

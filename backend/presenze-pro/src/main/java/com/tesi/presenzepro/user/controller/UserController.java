@@ -161,4 +161,12 @@ public class UserController {
         return ResponseEntity.ok(usersBasicDetails);
     }
 
+    @PreAuthorize("hasRole('OWNER')")
+    @Operation(description = "Rimuovi un utente per email", security = @SecurityRequirement(name = "bearerAuth"))
+    @DeleteMapping("/{email}")
+    public ResponseEntity<User> deleteUserByEmail(@PathVariable String email){
+        User deletedUser = this.service.deleteUserByEmail(email);
+        return ResponseEntity.ok(deletedUser);
+    }
+
 }

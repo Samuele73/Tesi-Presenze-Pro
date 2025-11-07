@@ -14,6 +14,7 @@ import { ProfileComponent } from '../../components/profile/profile.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ButtonComponent } from '../../components/button/button.component';
 import { NgbOptionsComponent } from '../../components/ngb-options/ngb-options.component';
+import { RouterModule } from '@angular/router';
 
 
 
@@ -41,7 +42,8 @@ import { NgbOptionsComponent } from '../../components/ngb-options/ngb-options.co
     }),
     NgbCollapseModule,
     ReactiveFormsModule,
-    NgbDropdownModule
+    NgbDropdownModule,
+    RouterModule
   ],
   exports: [
     SelectLangComponent,
