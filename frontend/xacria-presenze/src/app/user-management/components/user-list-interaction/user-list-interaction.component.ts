@@ -7,6 +7,7 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { UserBasicDetailsResponse, UserService } from 'src/generated-client';
@@ -79,28 +80,38 @@ export class UserLisInteractionComponent implements OnChanges {
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
   }
 
-  submitInviteUser(): void {
-    this.invitationFeedBack = undefined;
-    this.userService.sendInvitationByEmail(this.toInviteUserEmail).subscribe({
-      next: () => {
-        this.invitationFeedBack = {
-          positive: true,
-          message: 'Utente invitato con successo',
-        };
-      },
-      error: (err: HttpErrorResponse) => {
-        if (err.status == 409) {
-          this.invitationFeedBack = {
-            positive: false,
-            message: 'Un utente con questa email esiste già',
-          };
-          return;
-        }
+  submitInviteUser(form: NgForm): void {
+
+  if (form.invalid) {
+    Object.values(form.controls).forEach(control => {
+      control.markAsTouched();
+    });
+    return;
+  }
+
+  this.invitationFeedBack = undefined;
+
+  this.userService.sendInvitationByEmail(this.toInviteUserEmail).subscribe({
+    next: () => {
+      this.invitationFeedBack = {
+        positive: true,
+        message: 'Utente invitato con successo',
+      };
+      form.resetForm();
+    },
+    error: (err: HttpErrorResponse) => {
+      if (err.status == 409) {
         this.invitationFeedBack = {
           positive: false,
-          message: 'Non è stato possibile recapitare l invito'
-        }
-      },
-    });
-  }
+          message: 'Un utente con questa email esiste già',
+        };
+        return;
+      }
+      this.invitationFeedBack = {
+        positive: false,
+        message: 'Non è stato possibile recapitare l invito',
+      };
+    },
+  });
+}
 }

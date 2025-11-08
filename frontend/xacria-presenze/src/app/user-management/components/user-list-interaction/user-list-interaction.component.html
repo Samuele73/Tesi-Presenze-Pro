@@ -40,48 +40,69 @@
 </app-list-interaction>
 <!-- Invite user modal -->
 <ng-template #inviteUserModal let-modal>
-  <div class="modal-header">
-    <div>
-      <h3 class="modal-title" id="modal-basic-title">
-        {{ "Invita Utente" | translate }}
-      </h3>
-      <span class="form-text">* Invita un nuovo utente in azienda</span>
+  <form #inviteForm="ngForm" (ngSubmit)="submitInviteUser(inviteForm)">
+    <div class="modal-header">
+      <div>
+        <h3 class="modal-title" id="modal-basic-title">
+          {{ "Invita Utente" | translate }}
+        </h3>
+        <span class="form-text">* Invita un nuovo utente in azienda</span>
+      </div>
+      <button
+        type="button"
+        class="btn-close"
+        aria-label="Close"
+        (click)="modal.dismiss('Cross click')"
+      ></button>
     </div>
-    <button
-      type="button"
-      class="btn-close"
-      aria-label="Close"
-      (click)="modal.dismiss('Cross click')"
-    ></button>
-  </div>
-  <div class="modal-body border-0">
+    <div class="modal-body border-0">
       <input
         type="text"
         id="email"
         class="form-control"
         placeholder="{{ 'Inserisci email utente' }}"
         [(ngModel)]="toInviteUserEmail"
+        name="email"
+        #emailControl="ngModel"
+        required
+        email
       />
-    <span
-      *ngIf="invitationFeedBack"
-      [ngClass]="{
-        'text-danger': !this.invitationFeedBack.positive,
-        'text-primary': this.invitationFeedBack.positive
-      }"
-      >{{ invitationFeedBack.message }}</span
-    >
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modal.close()">
-      {{ "Annulla" | translate }}
-    </button>
-    <button
-      type="button"
-      class="btn btn-primary text-white"
-      (click)="submitInviteUser()"
-    >
-      
-      {{ "Invia Invito" | translate }}
-    </button>
-  </div>
+      <div
+        *ngIf="
+          emailControl.invalid && (emailControl.dirty || emailControl.touched)
+        "
+        class="text-danger mt-1 small"
+      >
+        <span *ngIf="emailControl.errors?.['required']">
+          L'email è richiesta.
+        </span>
+        <span *ngIf="emailControl.errors?.['email']">
+          Inserisci un formato email valido.
+        </span>
+      </div>
+      <span
+        *ngIf="invitationFeedBack"
+        [ngClass]="{
+          'text-danger': !this.invitationFeedBack.positive,
+          'text-primary': this.invitationFeedBack.positive
+        }"
+        class="small"
+        >{{ invitationFeedBack.message }}</span
+      >
+    </div>
+    <div class="modal-footer">
+      <app-button
+        [name]="'Annulla'"
+        [mode]="'UNDO'"
+        [type]="'button'"
+        (buttonClick)="modal.close()"
+      ></app-button>
+      <app-button
+        [name]="'Invia Invito'"
+        [mode]="'SAVE'"
+        [type]="'submit'"
+        [buttonDisabled]="inviteForm.invalid ?? false"
+      ></app-button>
+    </div>
+  </form>
 </ng-template>
