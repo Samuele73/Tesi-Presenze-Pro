@@ -83,15 +83,7 @@
     </span>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modal.close()">
-      {{ "Annulla" | translate }}
-    </button>
-    <button
-      type="button"
-      class="btn btn-primary text-white"
-      (click)="submitAddProjectForm(projectFormComp)"
-    >
-      {{ "Salva" | translate }}
-    </button>
+    <app-button [type]="'button'" [name]="'Annulla'" [mode]="'UNDO'"></app-button>
+    <app-button [type]="'submit'" [name]="'Salva'" [mode]="'SAVE'" [buttonDisabled]="projectFormComp.projectForm.invalid" (buttonClick)="submitAddProjectForm(projectFormComp)"></app-button>
   </div>
 </ng-template>

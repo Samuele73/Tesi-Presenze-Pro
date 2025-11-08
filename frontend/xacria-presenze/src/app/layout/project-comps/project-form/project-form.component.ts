@@ -20,7 +20,7 @@ export class ProjectFormComponent implements OnChanges, OnInit {
   @Output() submit = new EventEmitter<Project>();
   isEmailSame: boolean = false;
 
-  projectForm!: FormGroup;
+  public projectForm!: FormGroup;
   newUserEmail: string = '';
 
   constructor(private fb: FormBuilder) {
