@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { Project, ProjectService } from 'src/generated-client';
+import { ApiError, ProjectStoreService } from '../../services/project-store.service';
 
 @Component({
   selector: 'app-project-page',
@@ -14,14 +15,26 @@ export class ProjectPageComponent {
 
   constructor(
     private projectService: ProjectService,
-    private authService: AuthService
+    private authService: AuthService,
+    private projectStoreService: ProjectStoreService
   ) {}
 
   ngOnInit(): void {
-    this.loadProjects();
+    this.subscribeToProjectStoreServices();
+    this.projectStoreService.loadProjects();
   }
 
-  loadProjects(): void {
+  subscribeToProjectStoreServices(): void{
+    this.projectStoreService.projects$.subscribe((projects: Project[]) => {
+      this.projects = projects;
+      this.filteredProjects = [...projects];
+    })
+    this.projectStoreService.isLoading$.subscribe((isLoading: boolean | null) => {
+      this.isLoading = isLoading ?? false;
+    })
+  }
+
+  /* loadProjects(): void {
     this.isLoading = true;
     if (this.authService.isPrivilegedUser()) {
       this.projectService.getAllProjects().subscribe({
@@ -52,5 +65,5 @@ export class ProjectPageComponent {
         }
       });
     }
-  }
+  } */
 }

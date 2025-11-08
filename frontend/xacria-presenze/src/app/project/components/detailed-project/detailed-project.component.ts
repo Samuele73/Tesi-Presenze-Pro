@@ -6,9 +6,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { Project } from 'src/generated-client';
 import { ProjectService } from 'src/generated-client/api/api';
-import { ConfirmModalComponent } from '../../confirm-modal/confirm-modal.component';
+import { ConfirmModalComponent } from '../../../layout/confirm-modal/confirm-modal.component';
 import { ProjectFormComponent } from '../project-form/project-form.component';
 import { DropdownOptions } from 'src/app/shared/components/ngb-options/ngb-options.component';
+import { ApiError, ProjectStoreService } from '../../services/project-store.service';
 
 @Component({
   selector: 'app-detailed-project',
@@ -27,22 +28,29 @@ export class DetailedProjectComponent implements OnInit {
   @ViewChild('projectFormComp') projectFormComponent!: ProjectFormComponent;
 
   dropdownItems: DropdownOptions = [
-  { name: 'Annulla', onclick: () => this.cancelEdit() },
-  { name: 'Elimina', onclick: () => this.openConfirmDeletionModal() }
-];
+    { name: 'Annulla', onclick: () => this.cancelEdit() },
+    { name: 'Elimina', onclick: () => this.openConfirmDeletionModal() },
+  ];
 
   constructor(
     private route: ActivatedRoute,
     private projectService: ProjectService,
     public authService: AuthService,
-    private fb: FormBuilder,
     private router: Router,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private projectStoreService: ProjectStoreService
   ) {}
+
+  subscribeToProjectApiError(): void{
+    this.projectStoreService.apiError$.subscribe((apiError: ApiError | null) => {
+      this.apiError = apiError?.error ?? '';
+    })
+  }
 
   ngOnInit() {
     this.getProjectFromQueryParams();
     this.isEditMode = this.authService.isPrivilegedUser();
+    this.subscribeToProjectApiError();
   }
 
   private getProjectFromQueryParams() {
@@ -79,17 +87,12 @@ export class DetailedProjectComponent implements OnInit {
       ...compProjectForm.value,
       assignedTo: compProjcetFormAssignedTo.value,
     };
-
-    this.projectService
-      .updateProject(updatedProject, updatedProject.id!)
-      .subscribe({
-        next: (project) => {
-          this.project = project;
+    this.projectStoreService
+      .updateProject(updatedProject)
+      .subscribe((result: boolean) => {
+        if (result) {
           this.router.navigate(['/app/projects']);
-        },
-        error: (err: HttpErrorResponse) => {
-          console.warn("Error with project update", err);
-          this.apiError = err.error.message
+          return;
         }
       });
   }
@@ -102,15 +105,14 @@ export class DetailedProjectComponent implements OnInit {
 
   deleteProject(): void {
     if (!this.project || !this.project.id) return;
-    this.projectService.deleteProject(this.project.id).subscribe({
-      next: () => {
+    this.projectStoreService.deleteProject(this.project.id).subscribe((result: boolean) => {
+      if(result){
         this.router.navigate(['/app/projects']);
-      },
-      error: (error: HttpErrorResponse) => {
-        console.log(error, 'dasfasfdsaf');
-        this.router.navigate(['/app/projects']);
-      },
-    });
+        return;
+      }
+      console.log('error');
+      this.router.navigate(['/app/projects']);
+    })
   }
 
   openModal(content: any) {

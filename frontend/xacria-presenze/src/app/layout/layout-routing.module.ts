@@ -4,8 +4,8 @@ import { LayoutComponent } from './layout/layout.component';
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from '../shared/components/profile/profile.component';
 import { AttendanceComponent } from './calendar-comps/attendance/attendance.component';
-import { ProjectPageComponent } from './project-comps/project-page/project-page.component';
-import { DetailedProjectComponent } from './project-comps/detailed-project/detailed-project.component';
+import { ProjectPageComponent } from '../project/components/project-page/project-page.component';
+import { DetailedProjectComponent } from '../project/components/detailed-project/detailed-project.component';
 
 const routes: Routes = [
   {path: "", redirectTo: "home", pathMatch: "full"},

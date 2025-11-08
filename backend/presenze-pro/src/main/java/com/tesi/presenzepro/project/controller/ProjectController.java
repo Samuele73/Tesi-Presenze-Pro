@@ -1,6 +1,7 @@
 package com.tesi.presenzepro.project.controller;
 
 import com.tesi.presenzepro.project.dto.CreateProjectRequest;
+import com.tesi.presenzepro.project.dto.ProjectIdResponse;
 import com.tesi.presenzepro.project.model.Project;
 import com.tesi.presenzepro.project.service.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -80,9 +81,9 @@ public class ProjectController {
     @PreAuthorize("hasAnyRole('ADMIN', 'OWNER')")
     @DeleteMapping("/{id}")
     @Operation(description = "Delete the referred project", security = @SecurityRequirement(name = "bearerAuth"))
-    ResponseEntity<String> deleteProject(@PathVariable String id) {
+    ResponseEntity<ProjectIdResponse> deleteProject(@PathVariable String id) {
         String delProjectID = service.deleteProject(id);
-        return ResponseEntity.status(HttpStatus.OK).body(delProjectID);
+        return ResponseEntity.status(HttpStatus.OK).body(new ProjectIdResponse(delProjectID));
     }
 
 }

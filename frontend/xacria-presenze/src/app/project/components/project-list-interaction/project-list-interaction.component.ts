@@ -6,26 +6,30 @@ import {
   OnChanges,
   SimpleChanges,
   ViewChild,
+  OnInit,
 } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { Project, ProjectService } from 'src/generated-client';
 import { ProjectFormComponent } from '../project-form/project-form.component';
 import { HttpErrorResponse } from '@angular/common/http';
+import {
+  ApiError,
+  ProjectStoreService,
+} from '../../services/project-store.service';
 
 @Component({
   selector: 'app-project-list-interaction',
   templateUrl: './project-list-interaction.component.html',
   styleUrls: ['./project-list-interaction.component.scss'],
 })
-export class ProjectListInteractionComponent implements OnChanges {
+export class ProjectListInteractionComponent implements OnChanges, OnInit {
   @Input() projects: Project[] = [];
   @Input() filteredProjects: Project[] = [];
   @Output() filteredProjectsChange = new EventEmitter<Project[]>();
-  @Output() newProject = new EventEmitter<Project>();
   @ViewChild('projectFormComp') projectFormComponent!: ProjectFormComponent;
   addProjectRequestError: string | undefined;
-  addButtonName: string = "Aggiungi Progetto"
+  addButtonName: string = 'Aggiungi Progetto';
 
   searchTerm: string = '';
 
@@ -44,12 +48,23 @@ export class ProjectListInteractionComponent implements OnChanges {
   constructor(
     public authService: AuthService,
     private modalService: NgbModal,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private projectStoreService: ProjectStoreService
   ) {}
+
+  subscribeToProjectStoreServices(): void {
+    this.projectStoreService.apiError$.subscribe(
+      (apiError: ApiError | null) => {
+        this.addProjectRequestError = apiError?.error ?? '';
+      }
+    );
+  }
+
+  ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['projects'] && this.projects) {
-      this.generateAssignedToList()
+      this.generateAssignedToList();
       this.filterProjects();
     }
   }
@@ -88,7 +103,7 @@ export class ProjectListInteractionComponent implements OnChanges {
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
   }
 
-  submitAddProjectForm(component: ProjectFormComponent): void {
+  /* submitAddProjectForm(component: ProjectFormComponent): void {
     this.projectService.saveProject(component.projectForm.value).subscribe({
       next: (project: Project) => {
         this.newProject.emit(project);
@@ -98,5 +113,13 @@ export class ProjectListInteractionComponent implements OnChanges {
         this.addProjectRequestError = error.error.message;
       },
     });
+  } */
+
+  submitAddProjectForm(component: ProjectFormComponent): void {
+    this.projectStoreService
+      .addProject(component.projectForm.value)
+      .subscribe((result: boolean) => {
+        if (result) this.modalService.dismissAll();
+      });
   }
 }

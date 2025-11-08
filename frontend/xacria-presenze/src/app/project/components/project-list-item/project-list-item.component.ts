@@ -4,8 +4,9 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownOptions } from 'src/app/shared/components/ngb-options/ngb-options.component';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { Project } from 'src/generated-client/model/models';
-import { ConfirmModalComponent } from '../../confirm-modal/confirm-modal.component';
+import { ConfirmModalComponent } from '../../../layout/confirm-modal/confirm-modal.component';
 import { ProjectService } from 'src/generated-client';
+import { ProjectStoreService } from '../../services/project-store.service';
 
 @Component({
   selector: 'app-project-list-item',
@@ -17,13 +18,15 @@ export class ProjectListItemComponent implements OnInit {
   optionsItems: DropdownOptions = [
     { name: 'Elimina', onclick: () => this.openConfirmDeletionModal() },
   ];
+  apiError: string = '';
 
   constructor(
     public authService: AuthService,
     private router: Router,
     public userAuth: AuthService,
     private modalService: NgbModal,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private projectStoreService: ProjectStoreService
   ) {}
 
   ngOnInit(): void {}
@@ -68,8 +71,11 @@ export class ProjectListItemComponent implements OnInit {
     return classMap[status] || 'bg-secondary';
   }
 
-  deleteProject(): void{
-
+  deleteProject(): void {
+    if (this.project?.id) {
+      this.projectStoreService.deleteProject(this.project?.id).subscribe();
+    }
+    this.apiError = "Non è stato possibile eliminare il progetto"
   }
 
   goToProject() {

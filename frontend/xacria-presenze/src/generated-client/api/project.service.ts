@@ -19,6 +19,7 @@ import { Observable }                                        from 'rxjs';
 
 import { CreateProjectRequest } from '../model/createProjectRequest';
 import { Project } from '../model/project';
+import { ProjectIdResponse } from '../model/projectIdResponse';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -63,9 +64,9 @@ export class ProjectService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public deleteProject(id: string, observe?: 'body', reportProgress?: boolean): Observable<string>;
-    public deleteProject(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
-    public deleteProject(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public deleteProject(id: string, observe?: 'body', reportProgress?: boolean): Observable<ProjectIdResponse>;
+    public deleteProject(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<ProjectIdResponse>>;
+    public deleteProject(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<ProjectIdResponse>>;
     public deleteProject(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (id === null || id === undefined) {
@@ -94,7 +95,7 @@ export class ProjectService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<string>('delete',`${this.basePath}/projects/${encodeURIComponent(String(id))}`,
+        return this.httpClient.request<ProjectIdResponse>('delete',`${this.basePath}/projects/${encodeURIComponent(String(id))}`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
