@@ -18,6 +18,7 @@ import { Project } from 'src/generated-client';
 export class ProjectFormComponent implements OnChanges, OnInit {
   @Input() project!: Project | null;
   @Output() submit = new EventEmitter<Project>();
+  isEmailSame: boolean = false;
 
   projectForm!: FormGroup;
   newUserEmail: string = '';
@@ -81,8 +82,11 @@ export class ProjectFormComponent implements OnChanges, OnInit {
 
     const control = this.fb.control(email, [Validators.email]);
     if (control.invalid) return;
-    if (this.assignedTo.value.includes(email)) return;
-
+    if (this.assignedTo.value.includes(email)){
+      this.newUserEmail = '';
+      return;
+    }
+    this.isEmailSame = false;
     this.assignedTo.push(control);
     this.newUserEmail = '';
   }

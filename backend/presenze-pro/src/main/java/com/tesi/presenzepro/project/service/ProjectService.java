@@ -116,6 +116,7 @@ public class ProjectService {
             throw new IllegalArgumentException("Project id does not match");
         Project oldProject = this.projectRepository.findById(id).orElseThrow(() -> new NoProjectFound(id));
         project.setId(id);
+        project.getAssignedTo().forEach(email -> this.userService.findByEmail(email).orElseThrow(() -> new NoUserForProjectFound(email + " non è registrata")));
         final Project updatedProject = this.projectRepository.save(project);
         this.updateUsersOnProjectUpdate(oldProject, updatedProject);
         return updatedProject;

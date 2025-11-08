@@ -112,6 +112,11 @@
             [project]="project"
             #projectFormComp
           ></app-project-form>
+          <div *ngIf="apiError">
+            <small class="text-danger">
+              {{ apiError | translate }}
+            </small>
+          </div>
         </ng-template>
       </ng-container>
     </div>

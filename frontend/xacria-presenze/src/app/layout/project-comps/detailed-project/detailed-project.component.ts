@@ -23,6 +23,7 @@ export class DetailedProjectComponent implements OnInit {
   isEditMode = false;
   modalCloseResult: string = '';
   private projcetId: string | null = null;
+  apiError: string = '';
   @ViewChild('projectFormComp') projectFormComponent!: ProjectFormComponent;
 
   dropdownItems: DropdownOptions = [
@@ -86,6 +87,10 @@ export class DetailedProjectComponent implements OnInit {
           this.project = project;
           this.router.navigate(['/app/projects']);
         },
+        error: (err: HttpErrorResponse) => {
+          console.warn("Error with project update", err);
+          this.apiError = err.error.message
+        }
       });
   }
 

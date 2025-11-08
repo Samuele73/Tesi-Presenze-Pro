@@ -61,25 +61,25 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NoUserForProjectFound.class)
     public ResponseEntity<ErrorResponse> handleUserNotFound(NoUserForProjectFound ex) {
-        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Assigned user not found");
+        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Utente assegnato non trovato");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(NoProjectFound.class)
     public ResponseEntity<ErrorResponse> handleNoProjectFound(NoProjectFound ex) {
-        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Project not found");
+        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Progetto non trovato");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleBadRequestException(IllegalArgumentException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Bad argument");
+        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Argomento errato");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(NoUserFoundException.class)
     public ResponseEntity<ErrorResponse> handleNoUserFoundException(IllegalArgumentException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "No resource found");
+        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Nessuna risorsa trovata");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
@@ -97,7 +97,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Access denied");
+        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Accesso negato");
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
 

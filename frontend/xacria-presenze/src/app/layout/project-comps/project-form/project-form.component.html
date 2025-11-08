@@ -76,11 +76,16 @@
     </div>
 
     <!-- Messaggio errore -->
-    <div *ngIf="emailInput.invalid">
+    <div *ngIf="emailInput.invalid || isEmailSame">
       <small class="text-danger">
         {{ "Inserisci una email valida" | translate }}
       </small>
     </div>
+    <!-- <div *ngIf="isEmailSame">
+      <small class="text-danger">
+        {{ "Inserisci una email valida" | translate }}
+      </small>
+    </div> -->
 
     <small class="text-muted">{{
       "Premi Invio per aggiungere" | translate
