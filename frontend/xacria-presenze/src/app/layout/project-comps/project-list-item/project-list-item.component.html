@@ -5,7 +5,7 @@
       <i class="bi bi-folder2-open me-2"></i>
       {{ project?.name }}
     </h5>
-    <app-project-status [project]="project"></app-project-status>
+    <app-ngb-options [dropdownOptions]="optionsItems" *ngIf="userAuth.isPrivilegedUser()" (mwlClick)="$event.preventDefault()" [buttonClass]="'border-0 py-0 px-2'"></app-ngb-options>
   </div>
   <div card-body>
     <p class="card-text text-muted mb-3">
@@ -15,5 +15,6 @@
     <div class="mb-3" *ngIf="authService.isPrivilegedUser()">
       <app-assignment-badges [project]="project"></app-assignment-badges>
     </div>
+    <app-project-status [project]="project"></app-project-status>
   </div>
 </app-card>

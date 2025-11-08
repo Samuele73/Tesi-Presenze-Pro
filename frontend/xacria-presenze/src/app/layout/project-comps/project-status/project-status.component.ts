@@ -11,7 +11,7 @@ export class ProjectStatusComponent {
   @Input() class: string = '';
 
   classMap: { [key: string]: string } = {
-    CREATED: 'bg-secondary',
+    CREATED: 'bg-secondary-subtle text-muted',
     IN_PROGRESS: 'bg-warning',
     COMPLETED: 'bg-success',
   };

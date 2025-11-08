@@ -15,16 +15,6 @@
 </div>
 
 <div class="modal-footer">
-  <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">
-    {{'Annulla' | translate}}
-  </button>
-  <button
-    type="button"
-    class="btn btn-danger"
-    [ngClass]="confirmButtonColorClass()"
-    ngbAutofocus
-    (click)="onDelete()"
-  >
-    {{'Conferma' | translate}}
-  </button>
+  <app-button [name]="'Annulla'" [type]="'button'" [mode]="'UNDO'" (buttonClick)="activeModal.dismiss()"></app-button>
+  <app-button [name]="'Conferma'" [type]="'submit'" [mode]="'DELETE'" (buttonClick)="onDelete()"></app-button>
 </div>

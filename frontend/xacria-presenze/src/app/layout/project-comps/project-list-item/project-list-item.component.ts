@@ -1,7 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { DropdownOptions } from 'src/app/shared/components/ngb-options/ngb-options.component';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { Project } from 'src/generated-client/model/models';
+import { ConfirmModalComponent } from '../../confirm-modal/confirm-modal.component';
+import { ProjectService } from 'src/generated-client';
 
 @Component({
   selector: 'app-project-list-item',
@@ -10,10 +14,32 @@ import { Project } from 'src/generated-client/model/models';
 })
 export class ProjectListItemComponent implements OnInit {
   @Input() project: Project | null = null;
+  optionsItems: DropdownOptions = [
+    { name: 'Elimina', onclick: () => this.openConfirmDeletionModal() },
+  ];
 
-  constructor(public authService: AuthService, private router: Router) {}
+  constructor(
+    public authService: AuthService,
+    private router: Router,
+    public userAuth: AuthService,
+    private modalService: NgbModal,
+    private projectService: ProjectService
+  ) {}
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
+
+  openConfirmDeletionModal() {
+    console.log('Controllasdafadsfsfa');
+    const modalRef = this.modalService.open(ConfirmModalComponent, {
+      centered: true,
+    });
+    modalRef.componentInstance.title = 'Conferma eliminazione!';
+    modalRef.componentInstance.message =
+      'Sei sicuro di voler eliminare questo progetto? Questa azione non può essere annullata.';
+    modalRef.componentInstance.mode = 'DELETE';
+    modalRef.componentInstance.confirm.subscribe(() => {
+      this.deleteProject();
+    });
   }
 
   getStatusLabel(status: Project.StatusEnum | undefined): string {
@@ -42,9 +68,15 @@ export class ProjectListItemComponent implements OnInit {
     return classMap[status] || 'bg-secondary';
   }
 
-  goToProject(){
-    if(this.project){
-      this.router.navigate(['/app/detailed-project/'], { queryParams: { id: this.project.id } });
+  deleteProject(): void{
+
+  }
+
+  goToProject() {
+    if (this.project) {
+      this.router.navigate(['/app/detailed-project/'], {
+        queryParams: { id: this.project.id },
+      });
     }
   }
 }
