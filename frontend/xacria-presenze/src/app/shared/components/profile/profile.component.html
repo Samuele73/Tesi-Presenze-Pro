@@ -1,12 +1,12 @@
 <span class="text-danger" *ngIf="apiError">{{ apiError }}</span>
-<div *ngIf="profileForm">
+<div *ngIf="profileForm" class="h-100 d-flex flex-column overflow-hidden">
   <form
     [formGroup]="profileForm"
     (ngSubmit)="onProfileFormSubmit()"
-    class="overflow-hidden"
+    class=" d-flex flex-column overflow-hidden"
     *ngIf="this.mode === 'FULL' || this.mode === 'ME'"
   >
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-2 flex-shrink-0">
       <a
         [routerLink]="['/app/users-management']"
         class="text-decoration-none text-muted d-flex align-items-center"
@@ -24,17 +24,18 @@
       </div>
     </div>
 
-    <div class="row gx-5 gy-4">
+    <div class="row row-gap-3 pb-4 m-0 flex-grow-1 overflow-y-auto" style=" overflow-x: hidden">
       <div class="col-lg-4">
         <label for="name" class="form-label fw-semibold fs-5">{{
           "Nome" | translate
         }}</label>
         <input
           type="text"
-          class="form-control shadow-sm border-dark border-1 rounded-3"
+          class="form-control border-dark  "
           id="name"
           formControlName="name"
         />
+        <!-- c border-dark   -->
       </div>
       <div class="col-lg-4">
         <label for="surname" class="form-label fw-semibold fs-5">{{
@@ -42,7 +43,7 @@
         }}</label>
         <input
           type="text"
-          class="form-control shadow-sm border-dark border-1 rounded-3"
+          class="form-control border-dark  "
           id="surname"
           formControlName="surname"
         />
@@ -53,7 +54,7 @@
         }}</label>
         <input
           type="number"
-          class="form-control shadow-sm border-dark border-1 rounded-3"
+          class="form-control border-dark  "
           id="serial-number"
           formControlName="serial_num"
         />
@@ -64,17 +65,17 @@
         }}</label>
         <input
           type="text"
-          class="form-control shadow-sm border-dark border-1 rounded-3"
+          class="form-control border-dark  "
           formControlName="duty"
         />
       </div>
       <div class="col-lg-4">
-        <label for="serial-numberform-label " class="fw-semibold fs-5">{{
+        <label for="serial-number form-label " class="form-label fw-semibold fs-5">{{
           "Tipo d'impiego" | translate
         }}</label>
         <input
           type="text"
-          class="form-control shadow-sm border-dark border-1 rounded-3"
+          class="form-control border-dark  "
           formControlName="employment_type"
         />
       </div>
@@ -84,7 +85,7 @@
         }}</label>
         <input
           type="date"
-          class="form-control shadow-sm border-dark border-1 rounded-3"
+          class="form-control border-dark  "
           formControlName="hire_date"
         />
       </div>
@@ -94,7 +95,7 @@
         }}</label>
         <input
           type="email"
-          class="form-control shadow-sm border-dark border-1 rounded-3"
+          class="form-control border-dark  "
           formControlName="email"
         />
       </div>
@@ -104,7 +105,7 @@
         }}</label>
         <input
           type="number"
-          class="form-control shadow-sm border-dark border-1 rounded-3"
+          class="form-control border-dark  "
           formControlName="iban"
         />
       </div>
@@ -119,7 +120,7 @@
         }}</label>
         <input
           type="date"
-          class="form-control shadow-sm border-dark border-1 rounded-3"
+          class="form-control border-dark  "
           formControlName="birth_date"
         />
       </div>
@@ -129,7 +130,7 @@
         }}</label>
         <input
           type="text"
-          class="form-control shadow-sm border-dark border-1 rounded-3"
+          class="form-control border-dark  "
           formControlName="address"
         />
       </div>
@@ -139,7 +140,7 @@
         }}</label>
         <input
           type="tel"
-          class="form-control shadow-sm border-dark border-1 rounded-3"
+          class="form-control border-dark  "
           formControlName="phone"
         />
       </div>
@@ -149,25 +150,27 @@
   <form
     [formGroup]="profileForm"
     (ngSubmit)="onProfileFormSubmit()"
-    class="overflow-hidden"
+    class="d-flex flex-column overflow-hidden"
     *ngIf="this.mode === 'BASIC'"
   >
-    <div class="text-end mb-2" *ngIf="!isReadOnly">
-      <app-button
-        [name]="'Modifica'"
-        [mode]="'SAVE'"
-        [type]="'submit'"
-      ></app-button>
+    <div class="d-flex justify-content-between align-items-center mb-2 flex-shrink-0">
+      <a
+        [routerLink]="['/app/users-management']"
+        class="text-decoration-none text-muted d-flex align-items-center"
+      >
+        <i class="fa-solid fa-arrow-left me-2"></i>
+        {{ "Lista Utenti" | translate }}
+      </a>
     </div>
 
-    <div class="row gx-5 gy-4" [ngClass]="{ 'mt-2': isReadOnly }">
+    <div class="row row-gap-3 pb-4 m-0 flex-grow-1 overflow-y-auto" style=" overflow-x: hidden" [ngClass]="{ 'mt-2': isReadOnly }">
       <div class="col-lg-4">
         <label for="name" class="form-label fw-semibold fs-5">{{
           "Nome" | translate
         }}</label>
         <input
           type="text"
-          class="form-control shadow-sm border-dark border-1 rounded-3"
+          class="form-control border-dark  "
           id="name"
           formControlName="name"
           [readOnly]="isReadOnly"
@@ -179,7 +182,7 @@
         }}</label>
         <input
           type="text"
-          class="form-control shadow-sm border-dark border-1 rounded-3"
+          class="form-control border-dark  "
           id="surname"
           formControlName="surname"
           [readOnly]="isReadOnly"
@@ -191,7 +194,7 @@
         }}</label>
         <input
           type="email"
-          class="form-control shadow-sm border-dark border-1 rounded-3"
+          class="form-control border-dark  "
           formControlName="email"
           [readOnly]="isReadOnly"
         />
