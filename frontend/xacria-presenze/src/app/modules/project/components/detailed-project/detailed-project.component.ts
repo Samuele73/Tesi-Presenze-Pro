@@ -9,7 +9,8 @@ import { ProjectService } from 'src/generated-client/api/api';
 import { ConfirmModalComponent } from '../../../layout/confirm-modal/confirm-modal.component';
 import { ProjectFormComponent } from '../project-form/project-form.component';
 import { DropdownOptions } from 'src/app/shared/components/ngb-options/ngb-options.component';
-import { ApiError, ProjectStoreService } from '../../services/project-store.service';
+import { ProjectStoreService } from '../../services/project-store.service';
+import { ApiError } from 'src/app/shared/models/api-error.models';
 
 @Component({
   selector: 'app-detailed-project',

@@ -9,5 +9,4 @@ import { UserBasicDetailsResponse } from 'src/generated-client';
 export class UserListComponent {
   @Input() usersBasicDetails: UserBasicDetailsResponse[] = [];
   @Input() isLoading: boolean = false;
-  @Output() userDeleted = new EventEmitter<void>();
 }

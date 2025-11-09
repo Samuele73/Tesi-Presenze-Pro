@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { Project, ProjectService } from 'src/generated-client';
-import { ApiError, ProjectStoreService } from '../../services/project-store.service';
+import { ProjectStoreService } from '../../services/project-store.service';
 
 @Component({
   selector: 'app-project-page',

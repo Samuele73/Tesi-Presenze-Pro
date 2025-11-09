@@ -14,9 +14,9 @@ import { Project, ProjectService } from 'src/generated-client';
 import { ProjectFormComponent } from '../project-form/project-form.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  ApiError,
   ProjectStoreService,
 } from '../../services/project-store.service';
+import { ApiError } from 'src/app/shared/models/api-error.models';
 
 @Component({
   selector: 'app-project-list-interaction',

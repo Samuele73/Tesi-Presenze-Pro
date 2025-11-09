@@ -12,6 +12,7 @@ import {
   UserEmailResponse,
   UserService,
 } from 'src/generated-client';
+import { UserBasicDetailsStoreService } from '../../services/user-basic-details-store.service';
 
 @Component({
   selector: 'app-user-list-item',
@@ -21,7 +22,6 @@ import {
 export class UserListItemComponent implements OnInit {
   APP_ROUTES = APP_ROUTES
   @Input() userBasicDetails: UserBasicDetailsResponse | null = null;
-  @Output() deleted = new EventEmitter<void>();
   fullName!: string;
   apiError: string = '';
   itemOptions: DropdownOptions = [
@@ -33,7 +33,8 @@ export class UserListItemComponent implements OnInit {
     public userAuth: AuthService,
     private userService: UserService,
     private route: ActivatedRoute,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private UserBasicStoreService: UserBasicDetailsStoreService
   ) {}
 
   classMap: { [key: string]: string } = {
@@ -75,16 +76,7 @@ export class UserListItemComponent implements OnInit {
       this.apiError = 'Impossibile eliminare l utente';
       return;
     }
-    console.log("e invece ecccomi")
-    this.userService.deleteUserByEmail(this.userBasicDetails?.email).subscribe({
-      next: (deletedUser: User) => {
-        console.log("Delted user: ", deletedUser)
-        this.deleted.emit();
-      },
-      error: (err: HttpErrorResponse) => {
-        this.apiError = err.error.message;
-      }
-    })
+    this.UserBasicStoreService.deleteUser(this.userBasicDetails.email).subscribe();
   }
 
   openConfirmDeletionModal() {

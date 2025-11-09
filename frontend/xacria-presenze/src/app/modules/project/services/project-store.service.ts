@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, map, Observable, of, tap } from 'rxjs';
+import { ApiError } from 'src/app/shared/models/api-error.models';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import {
   CreateProjectRequest,
@@ -8,12 +9,6 @@ import {
   ProjectIdResponse,
   ProjectService,
 } from 'src/generated-client';
-
-type ApiOp = 'DELETE' | 'UPDATE' | 'GET' | 'ADD';
-export type ApiError = {
-  error: string;
-  op: ApiOp;
-};
 
 @Injectable({
   providedIn: 'root',
