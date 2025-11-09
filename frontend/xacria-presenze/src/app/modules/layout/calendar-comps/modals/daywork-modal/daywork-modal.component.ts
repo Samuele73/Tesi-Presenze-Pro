@@ -17,10 +17,10 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { faIcons } from '../../attendance/attendance.component';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
 import { CalendarWorkingDayEntry, Project, ProjectService } from 'src/generated-client';
-import { identifiableCalendarWorkingDay } from 'src/app/layout/shared/models/calendar';
+import { identifiableCalendarWorkingDay } from 'src/app/modules/layout/shared/models/calendar';
 import { parse } from 'date-fns';
 import { it as itLocale } from 'date-fns/locale';
-import { CalendarStateService } from 'src/app/layout/shared/services/calendar-state.service';
+import { CalendarStateService } from 'src/app/modules/layout/shared/services/calendar-state.service';
 
 @Component({
   selector: 'app-daywork-modal',

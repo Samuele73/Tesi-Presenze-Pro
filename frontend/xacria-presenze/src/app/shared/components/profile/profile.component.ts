@@ -7,8 +7,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { AuthService } from 'src/app/shared/services/auth.service';
-import { Username } from '../../../layout/shared/models/username';
-import { UsernameService } from '../../../layout/shared/services/username.service';
+import { Username } from '../../../modules/layout/shared/models/username';
+import { UsernameService } from '../../../modules/layout/shared/services/username.service';
 import {
   BasicUserProfileResponse,
   FullUserProfileResponseDto,
@@ -20,7 +20,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DropdownOptions } from '../ngb-options/ngb-options.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmModalComponent } from 'src/app/layout/confirm-modal/confirm-modal.component';
+import { ConfirmModalComponent } from 'src/app/modules/layout/confirm-modal/confirm-modal.component';
 
 type ProfileMode = 'FULL' | 'BASIC' | 'ME';
 

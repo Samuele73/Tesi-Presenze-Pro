@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmModalComponent } from 'src/app/layout/confirm-modal/confirm-modal.component';
+import { ConfirmModalComponent } from 'src/app/modules/layout/confirm-modal/confirm-modal.component';
 import { DropdownOptions } from 'src/app/shared/components/ngb-options/ngb-options.component';
 import { APP_ROUTES } from 'src/app/shared/constants/route-paths';
 import { AuthService } from 'src/app/shared/services/auth.service';

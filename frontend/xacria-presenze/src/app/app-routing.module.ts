@@ -16,7 +16,7 @@ const routes: Routes = [
   {path: "forgotten-pw", component: ForgottenPwComponent},
   {path: "updatePassword", component: UpdatePwComponent},
   {path: "", pathMatch: "full", redirectTo: "/app/home"},
-  {path: "app", pathMatch: "prefix", loadChildren: (() => import("./layout/layout.module").then((module) => module.LayoutModule)), canActivate: [IsAuthenticatedGuard]},
+  {path: "app", pathMatch: "prefix", loadChildren: (() => import("./modules/layout/layout.module").then((module) => module.LayoutModule)), canActivate: [IsAuthenticatedGuard]},
   {path: "**", component: NotfoundComponent}
 ];
 

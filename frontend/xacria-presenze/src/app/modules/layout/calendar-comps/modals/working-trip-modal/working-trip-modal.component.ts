@@ -7,32 +7,36 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { request_types } from '../../const-vars';
-import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { inject, TemplateRef } from '@angular/core';
+
+import {
+  ModalDismissReasons,
+  NgbDatepickerModule,
+  NgbModal,
+} from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from '../modalComponent';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
 import { faIcons } from '../../attendance/attendance.component';
-import { CalendarRequestEntry } from 'src/generated-client';
-import { identifiableCalendarRequest } from 'src/app/layout/shared/models/calendar';
-import { CalendarStateService } from 'src/app/layout/shared/services/calendar-state.service';
+import { CalendarWorkingTripEntry } from 'src/generated-client';
+import { identifiableCalendarWorkingTrip } from 'src/app/modules/layout/shared/models/calendar';
+import { CalendarStateService } from 'src/app/modules/layout/shared/services/calendar-state.service';
 
 @Component({
-  selector: 'app-request-modal',
-  templateUrl: './request-modal.component.html',
-  styleUrls: ['./request-modal.component.scss'],
+  selector: 'app-working-trip-modal',
+  templateUrl: './working-trip-modal.component.html',
+  styleUrls: ['./working-trip-modal.component.scss'],
 })
-export class RequestModalComponent implements ModalComponent, OnInit {
-  request_types: any = request_types;
+export class WorkingTripModalComponent implements ModalComponent, OnInit {
   @ViewChild('modal', { static: true }) modalElement!: ElementRef;
   closeResult = '';
   form!: FormGroup;
   @Input() isModifyMode!: boolean;
-  @Input() calendarEntries!: identifiableCalendarRequest[];
+  @Input() calendarEntries!: identifiableCalendarWorkingTrip[];
   @Input() currentDate?: Date;
-  faIcons = faIcons;
   toDeleteEntries: string[] = [];
-  initialRequests: identifiableCalendarRequest[] = [];
+  faIcons = faIcons;
+  initialWorkingTrips: identifiableCalendarWorkingTrip[] = [];
 
   constructor(
     private modalService: NgbModal,
@@ -41,23 +45,14 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     private calendarStateService: CalendarStateService
   ) {}
 
-  get requestType() {
-    return this.form.get('requestType');
-  }
   get dateFrom() {
     return this.form.get('dateFrom');
   }
   get dateTo() {
     return this.form.get('dateTo');
   }
-  get timeFrom() {
-    return this.form.get('timeFrom');
-  }
-  get timeTo() {
-    return this.form.get('timeTo');
-  }
-  get requests() {
-    return this.form.get('requests') as FormArray;
+  get workingTrips() {
+    return this.form.get('working_trips') as FormArray;
   }
 
   ngOnInit(): void {
@@ -65,17 +60,13 @@ export class RequestModalComponent implements ModalComponent, OnInit {
   }
 
   initializeForm(): void {
-    console.log('initialized date', this.currentDate);
     if (!this.isModifyMode) {
       const formattedCurrentDate = this.dateFormat.manuallyFormatToDateInput(
         this.currentDate ?? new Date()
       );
       this.form = this.fb.group({
-        requestType: [request_types[0], Validators.required],
         dateFrom: [formattedCurrentDate, Validators.required],
         dateTo: [formattedCurrentDate, Validators.required],
-        timeFrom: [null, Validators.required],
-        timeTo: [null, Validators.required],
       });
     } else this.initializeModifyForm();
   }
@@ -84,36 +75,55 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     this.toDeleteEntries = [];
   }
 
+  initializeModifyForm(): void {
+    let entries: any[] = [];
+    this.calendarEntries.forEach((entry: identifiableCalendarWorkingTrip) => {
+      entries.push(this.createWorkingTripGroup(entry));
+    });
+    this.form = this.fb.group({
+      working_trips: this.fb.array(entries),
+    });
+  }
+
+  createWorkingTripGroup(entry: identifiableCalendarWorkingTrip) {
+    const from = this.dateFormat.formatToDateInput(
+      entry.calendarEntry.dateFrom ?? new Date()
+    );
+    const to = this.dateFormat.formatToDateInput(
+      entry.calendarEntry.dateTo ?? new Date()
+    );
+    return this.fb.group({
+      id: [entry.id],
+      dateFrom: [from, Validators.required],
+      dateTo: [to, Validators.required],
+    });
+  }
+
   private updateEntries(): void {
-    const currentEntries: ({ id: string } & CalendarRequestEntry)[] =
-      this.requests.value;
-    const changedEntries: identifiableCalendarRequest[] = currentEntries
-      .filter((entry: { id: string } & CalendarRequestEntry, i) => {
-        const initial = this.initialRequests[i];
+    const currentEntries: ({ id: string } & CalendarWorkingTripEntry)[] =
+      this.workingTrips.value;
+    const changedEntries: identifiableCalendarWorkingTrip[] = currentEntries
+      .filter((entry: { id: string } & CalendarWorkingTripEntry, i) => {
+        const initial = this.initialWorkingTrips[i];
         return JSON.stringify(entry) !== JSON.stringify(initial);
       })
-      .map((entry: { id: string } & CalendarRequestEntry) => {
+      .map((entry: { id: string } & CalendarWorkingTripEntry) => {
         return {
           id: entry.id,
           calendarEntry: {
             dateFrom: entry.dateFrom,
             dateTo: entry.dateTo,
-            timeFrom: entry.timeFrom,
-            timeTo: entry.timeTo,
-            requestType: entry.requestType,
           },
         };
       });
     console.log('To updated entries', changedEntries);
-    this.calendarStateService.updateCalendarEntries(changedEntries, 'REQUEST');
-    this.initialRequests = this.requests.value;
+    this.calendarStateService.updateCalendarEntries(changedEntries, 'WORKING_TRIP');
+    this.initialWorkingTrips = this.workingTrips.value;
   }
 
   private deleteEntries(): void {
-    console.log("to delete entries lenght", this.toDeleteEntries.length, this.toDeleteEntries)
     if (this.toDeleteEntries.length) {
-      console.log("i am about to delete", this.toDeleteEntries)
-      this.calendarStateService.deleteCalendarEntities(this.toDeleteEntries, 'REQUEST');
+      this.calendarStateService.deleteCalendarEntities(this.toDeleteEntries, 'WORKING_TRIP');
       this.toDeleteEntries = [];
     }
   }
@@ -123,7 +133,6 @@ export class RequestModalComponent implements ModalComponent, OnInit {
       console.error('Availability modify form is invalid');
       return;
     }
-    console.log("check here", this.form, this.toDeleteEntries)
     this.deleteEntries();
     this.updateEntries();
 
@@ -171,34 +180,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     }
   }
 
-  initializeModifyForm(): void {
-    let entries: FormGroup[] = [];
-    this.calendarEntries.forEach((entry) => {
-      entries.push(this.createRequestGroup(entry));
-    });
-    this.form = this.fb.group({
-      requests: this.fb.array(entries),
-    });
-  }
-
-  createRequestGroup(entry: identifiableCalendarRequest) {
-    const from = this.dateFormat.formatToDateInput(
-      entry.calendarEntry.dateFrom ?? new Date()
-    );
-    const to = this.dateFormat.formatToDateInput(
-      entry.calendarEntry.dateTo ?? new Date()
-    );
-    return this.fb.group({
-      id: [entry.id],
-      dateFrom: [from, Validators.required],
-      dateTo: [to, Validators.required],
-      timeFrom: [entry.calendarEntry.timeFrom, Validators.required],
-      timeTo: [entry.calendarEntry.timeTo, Validators.required],
-      requestType: [entry.calendarEntry.requestType, Validators.required],
-    });
-  }
-
-  toggleEntryDelete(entry: identifiableCalendarRequest, i: number): void {
+  toggleEntryDelete(entry: identifiableCalendarWorkingTrip, i: number): void {
     const entryId = entry.id;
     console.log('CONTROLLA IL VALORE ava', entryId, i);
     if (this.toDeleteEntries.includes(entryId)) {
@@ -208,19 +190,15 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     } else {
       this.toDeleteEntries.push(entryId);
     }
-    console.log("status to delete entries:", this.toDeleteEntries)
   }
 
   submitNewEntry(): void {
     if (this.form.valid) {
-      const newEntry: CalendarRequestEntry = {
+      const newEntry: CalendarWorkingTripEntry = {
         dateFrom: this.dateFrom?.value,
         dateTo: this.dateTo?.value,
-        requestType: this.requestType?.value,
-        timeFrom: this.timeFrom?.value,
-        timeTo: this.timeTo?.value,
       };
-      this.calendarStateService.saveCalendarEntry(newEntry, 'REQUEST');
+      this.calendarStateService.saveCalendarEntry(newEntry, 'WORKING_TRIP');
       this.form.reset();
     } else console.error('Availability new entry form is invalid');
   }

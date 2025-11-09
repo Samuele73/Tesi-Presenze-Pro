@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { LayoutRoutingModule } from './layout-routing.module';
-import { GeneralModule } from '../shared/modules/general/general.module';
+import { GeneralModule } from '../../shared/modules/general/general.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -20,7 +20,7 @@ import {
 import { LayoutComponent } from './layout/layout.component';
 import { HomeComponent } from './home/home.component';
 import { NavbarComponent } from './navbar/navbar.component';
-import { httpTranslateLoader } from '../app.module';
+import { httpTranslateLoader } from '../../app.module';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { ProfileMenuComponent } from './profile-menu/profile-menu.component';
 import { RequestsListComponent } from './requests-list/requests-list.component';
