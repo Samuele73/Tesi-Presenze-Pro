@@ -1,8 +1,14 @@
-export const ROUTES = {
+export const APP_ROUTES = {
   APP: '/app',
   PROFILE: '/app/profile',
   HOME: '/app/home',
-  CALENDAR: '/app/attendance',
-  PROJECTS: '/app/projects',
-  USERS: '/app/users-management'
+  CALENDAR: '/app/calendar',
+  PROJECTS: {
+    DEFAULT: '/app/projects',
+    DETAILS: '/app/projects/details'
+  },
+  USERS: {
+    DEFAULT: '/app/users-management',
+    DETAILS: '/app/users-management/user-details'
+  }
 }

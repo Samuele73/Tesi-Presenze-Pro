@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Username } from '../shared/models/username';
 import { AuthService } from 'src/app/shared/services/auth.service';
+import { APP_ROUTES } from 'src/app/shared/constants/route-paths';
 
 @Component({
   selector: 'app-profile-menu',
@@ -8,6 +9,7 @@ import { AuthService } from 'src/app/shared/services/auth.service';
   styleUrls: ['./profile-menu.component.scss']
 })
 export class ProfileMenuComponent {
+  APP_ROUTES = APP_ROUTES
   name!: string;
   surname!: string;
   @Input() username!: Username;

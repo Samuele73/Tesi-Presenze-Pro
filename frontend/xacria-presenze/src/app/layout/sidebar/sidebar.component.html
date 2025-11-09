@@ -3,14 +3,14 @@
     <ul class="list-unstyled">
       <app-sidebar-item
         [name]="'Home'"
-        [route]="'/app/home'"
+        [route]="APP_ROUTES.HOME"
         [icon]="faHouse"
       >
       </app-sidebar-item>
 
       <app-sidebar-item
         [name]="'Il mio profilo'"
-        [route]="'/app/profile'"
+        [route]="APP_ROUTES.PROFILE"
         [icon]="faUser"
         [queryParams]="{mode: 'ME'}"
       >
@@ -18,21 +18,21 @@
 
       <app-sidebar-item
         [name]="'Presenze'"
-        [route]="'/app/attendance'"
+        [route]="APP_ROUTES.CALENDAR"
         [icon]="faCalendar"
       >
       </app-sidebar-item>
 
       <app-sidebar-item
         [name]="'Progetti'"
-        [route]="'/app/projects'"
+        [route]="APP_ROUTES.PROJECTS.DEFAULT"
         [icon]="faDiagramProject"
       >
       </app-sidebar-item>
 
       <app-sidebar-item
         [name]="'Utenti'"
-        [route]="'/app/users-management'"
+        [route]="APP_ROUTES.USERS.DEFAULT"
         [icon]="faUsers"
       >
       </app-sidebar-item>

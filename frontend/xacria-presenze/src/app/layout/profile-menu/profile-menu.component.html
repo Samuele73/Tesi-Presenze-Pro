@@ -8,23 +8,23 @@
   <div class="menu">
     <app-profile-menu-item
       [name]="'Il mio profilo'"
-      [route]="'/app/profile'"
+      [route]="APP_ROUTES.PROFILE"
       [queryParams]="{ mode: 'ME' }"
     ></app-profile-menu-item>
 
     <app-profile-menu-item
       [name]="'Presenze'"
-      [route]="'/app/attendance'"
+      [route]="APP_ROUTES.CALENDAR"
     ></app-profile-menu-item>
 
     <app-profile-menu-item
       [name]="'Progetti'"
-      [route]="'/app/projects'"
+      [route]="APP_ROUTES.PROJECTS.DEFAULT"
     ></app-profile-menu-item>
 
     <app-profile-menu-item
       [name]="'Utenti'"
-      [route]="'/app/users-management'"
+      [route]="APP_ROUTES.USERS.DEFAULT"
     ></app-profile-menu-item>
   </div>
   <hr />

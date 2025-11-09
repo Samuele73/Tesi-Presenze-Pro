@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmModalComponent } from 'src/app/layout/confirm-modal/confirm-modal.component';
 import { DropdownOptions } from 'src/app/shared/components/ngb-options/ngb-options.component';
+import { APP_ROUTES } from 'src/app/shared/constants/route-paths';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import {
   User,
@@ -18,6 +19,7 @@ import {
   styleUrls: ['./user-list-item.component.scss'],
 })
 export class UserListItemComponent implements OnInit {
+  APP_ROUTES = APP_ROUTES
   @Input() userBasicDetails: UserBasicDetailsResponse | null = null;
   @Output() deleted = new EventEmitter<void>();
   fullName!: string;
@@ -107,11 +109,11 @@ export class UserListItemComponent implements OnInit {
     }
     let params = { email: toGoUserEmail, mode: '' };
     if (email === this.userBasicDetails?.email) {
-      this.router.navigate(['/app/profile'], { queryParams: { mode: 'ME' } });
+      this.router.navigate([APP_ROUTES.PROFILE], { queryParams: { mode: 'ME' } });
       return;
     } else if (this.userAuth.isOwner()) params = { ...params, mode: 'FULL' };
     else params = { ...params, mode: 'BASIC' };
-    this.router.navigate(['./user-details'], {
+    this.router.navigate([APP_ROUTES.USERS.DETAILS], {
       queryParams: params,
       relativeTo: this.route,
     });

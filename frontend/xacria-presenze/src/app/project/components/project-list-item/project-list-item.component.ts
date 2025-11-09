@@ -7,6 +7,7 @@ import { Project } from 'src/generated-client/model/models';
 import { ConfirmModalComponent } from '../../../layout/confirm-modal/confirm-modal.component';
 import { ProjectService } from 'src/generated-client';
 import { ProjectStoreService } from '../../services/project-store.service';
+import { APP_ROUTES } from 'src/app/shared/constants/route-paths';
 
 @Component({
   selector: 'app-project-list-item',
@@ -19,6 +20,7 @@ export class ProjectListItemComponent implements OnInit {
     { name: 'Elimina', onclick: () => this.openConfirmDeletionModal() },
   ];
   apiError: string = '';
+  APP_ROUTES = APP_ROUTES;
 
   constructor(
     public authService: AuthService,
@@ -80,7 +82,7 @@ export class ProjectListItemComponent implements OnInit {
 
   goToProject() {
     if (this.project) {
-      this.router.navigate(['/app/detailed-project/'], {
+      this.router.navigate([APP_ROUTES.PROJECTS.DETAILS], {
         queryParams: { id: this.project.id },
       });
     }

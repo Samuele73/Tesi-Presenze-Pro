@@ -8,25 +8,32 @@ import { ProjectPageComponent } from '../project/components/project-page/project
 import { DetailedProjectComponent } from '../project/components/detailed-project/detailed-project.component';
 
 const routes: Routes = [
-  {path: "", redirectTo: "home", pathMatch: "full"},
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
   {
-    path: "",
+    path: '',
     component: LayoutComponent,
     children: [
-      {path: "home", pathMatch: "full", component: HomeComponent},
-      {path: "profile", pathMatch: "full", component: ProfileComponent},
-      {path: "attendance", pathMatch: "full", component: AttendanceComponent},
-      {path: "projects", pathMatch: "full", component: ProjectPageComponent},
-      {path: "detailed-project", pathMatch: "full", component: DetailedProjectComponent},
-      {path: "users-management", loadChildren: () =>
-        import('../user-management/user-management.module').then(m => m.UserManagementModule)
-      }
-    ]
-  }
+      { path: 'home', pathMatch: 'full', component: HomeComponent },
+      { path: 'profile', pathMatch: 'full', component: ProfileComponent },
+      { path: 'calendar', pathMatch: 'full', component: AttendanceComponent },
+      {
+        path: 'projects',
+        loadChildren: () =>
+          import('../project/project.module').then((m) => m.ProjectModule),
+      },
+      {
+        path: 'users-management',
+        loadChildren: () =>
+          import('../user-management/user-management.module').then(
+            (m) => m.UserManagementModule
+          ),
+      },
+    ],
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class LayoutRoutingModule { }
+export class LayoutRoutingModule {}
