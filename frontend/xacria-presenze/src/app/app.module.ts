@@ -27,6 +27,7 @@ import { ApiModule } from 'src/generated-client';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { InvitationErrorComponent } from './invitation-error/invitation-error.component';
 import { NgbCollapse } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -60,7 +61,11 @@ import { NgbCollapse } from '@ng-bootstrap/ng-bootstrap';
     }),
     FontAwesomeModule,
     ApiModule,
-    NgbCollapse
+    NgbCollapse,
+    ToastrModule.forRoot({
+      preventDuplicates: true,
+
+    }),
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

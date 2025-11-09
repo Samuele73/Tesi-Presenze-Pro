@@ -1,7 +1,8 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { UsernameService } from '../shared/services/username.service';
 import { Username } from '../shared/models/username';
 import { AuthService } from 'src/app/shared/services/auth.service';
+import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 
 declare var bootstrap: any;
 
@@ -10,12 +11,15 @@ declare var bootstrap: any;
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.scss'],
 })
-export class LayoutComponent{
+export class LayoutComponent implements OnInit{
   newUsername: Username = null;
+  @ViewChild(ToastContainerDirective, { static: true })
+  toastContainer!: ToastContainerDirective;
 
   constructor(
     private usernameService: UsernameService,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastrService: ToastrService
   ) {
     this.authService.checkUserAutentication(this.authService.token);
     let userCreds = this.authService.getMyUserProfile();
@@ -35,6 +39,8 @@ export class LayoutComponent{
       this.newUsername = newUsername;
     });
   }
-
+  ngOnInit(): void {
+    this.toastrService.overlayContainer = this.toastContainer;
+  }
 
 }

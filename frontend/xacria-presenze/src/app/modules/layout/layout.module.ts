@@ -49,6 +49,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { DropdownModule } from 'primeng/dropdown';
 import { SidebarItemComponent } from './sidebar-item/sidebar-item.component';
 import { ProfileMenuItemComponent } from './profile-menu-item/profile-menu-item.component';
+import { ToastContainerModule, ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -107,6 +108,8 @@ import { ProfileMenuItemComponent } from './profile-menu-item/profile-menu-item.
       useFactory: adapterFactory,
     }),
     NgbCollapse,
+    ToastrModule,
+    ToastContainerModule
   ],
   providers: [NgbActiveModal]
 })

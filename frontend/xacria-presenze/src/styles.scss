@@ -2,7 +2,6 @@
 @import "primeng/resources/themes/lara-light-blue/theme.css";
 @import "primeng/resources/primeng.min.css";
 
-
 :root {
   --primary-color: #13ad6a;
   --primary-color-text: #ffffff;
@@ -42,7 +41,6 @@
   background: var(--primary-color) !important;
   border-color: var(--primary-color) !important;
 } */
-
 
 :root {
   /* Colore primario coerente con Bootstrap */
@@ -85,7 +83,6 @@
 
 /* Highlight selezione */
 
-
 /* Chip token (Multiselect) - mantieni più piccolo per i tag */
 .p-multiselect-token {
   background: var(--primary-color) !important;
@@ -127,7 +124,10 @@
     background-color: #aaa;
   }
 
-  .form-control, .form-select, .chips-wrapper, .p-multiselect{
+  .form-control,
+  .form-select,
+  .chips-wrapper,
+  .p-multiselect {
     @extend .border-dark;
   }
 }
@@ -177,6 +177,31 @@
 .green {
   background-color: #13ad6a !important;
 }
+
+/* INIZIO MODIFICA TOASTERS */
+
+.toast-success {
+  background-color: var(--bs-primary) !important;
+}
+
+.toast-error{
+  background-color: var(--bs-danger) !important;
+}
+
+.toast-success,
+.toast-error,
+.toast-info,
+.toast-warning {
+  transition: all 0.6s ease;
+
+  &:hover {
+    box-shadow: 0 0px 18px rgba(0, 0, 0, 0.4) !important;
+    transition: all 0.5s ease;
+    scale: 1.02;
+  }
+}
+
+/* FINE MODIFICA TOASTERS */
 
 body,
 html {

@@ -6,9 +6,12 @@ import {
   OnChanges,
   Output,
   SimpleChanges,
+  TemplateRef,
+  ViewChild,
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { UserBasicDetailsResponse, UserService } from 'src/generated-client';
 
@@ -30,6 +33,8 @@ export class UserLisInteractionComponent implements OnChanges {
   @Output() filteredUsersBasicDetailsChange = new EventEmitter<
     UserBasicDetailsResponse[]
   >();
+  @ViewChild('inviteUserModal') inviteUserModal!: TemplateRef<any>;
+  private modalRef!: NgbModalRef;
   toInviteUserEmail: string = '';
   invitationFeedBack!: invitationFeedback | undefined;
 
@@ -43,7 +48,8 @@ export class UserLisInteractionComponent implements OnChanges {
   constructor(
     public authService: AuthService,
     private modalService: NgbModal,
-    private userService: UserService
+    private userService: UserService,
+    private toastrService: ToastrService
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -77,41 +83,34 @@ export class UserLisInteractionComponent implements OnChanges {
   }
 
   openInvitationModal(content: any): void {
-    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
+    this.modalRef = this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
   }
 
   submitInviteUser(form: NgForm): void {
+    if (form.invalid) {
+      Object.values(form.controls).forEach((control) => {
+        control.markAsTouched();
+      });
+      return;
+    }
 
-  if (form.invalid) {
-    Object.values(form.controls).forEach(control => {
-      control.markAsTouched();
+    this.invitationFeedBack = undefined;
+
+    this.userService.sendInvitationByEmail(this.toInviteUserEmail).subscribe({
+      next: () => {
+        this.modalRef.close();
+        this.toastrService.success('Invito mandato con successo.');
+        form.resetForm();
+      },
+      error: (err: HttpErrorResponse) => {
+        if (err.status == 409) {
+          this.modalRef.close();
+          this.toastrService.error('Un utente con questa email esiste già.')
+          return;
+        }
+        this.modalRef.close();
+        this.toastrService.error('Non è stato possibile mandare l invito')
+      },
     });
-    return;
   }
-
-  this.invitationFeedBack = undefined;
-
-  this.userService.sendInvitationByEmail(this.toInviteUserEmail).subscribe({
-    next: () => {
-      this.invitationFeedBack = {
-        positive: true,
-        message: 'Utente invitato con successo',
-      };
-      form.resetForm();
-    },
-    error: (err: HttpErrorResponse) => {
-      if (err.status == 409) {
-        this.invitationFeedBack = {
-          positive: false,
-          message: 'Un utente con questa email esiste già',
-        };
-        return;
-      }
-      this.invitationFeedBack = {
-        positive: false,
-        message: 'Non è stato possibile recapitare l invito',
-      };
-    },
-  });
-}
 }

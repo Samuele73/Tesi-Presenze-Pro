@@ -9,7 +9,7 @@
     </aside>
 
     <!-- Contenuto dinamico -->
-    <main class="flex-grow-1 d-flex flex-column px-4 py-4 overflow-hidden">
+    <main class="flex-grow-1 d-flex flex-column px-4 py-4 overflow-hidden position-relative" aria-live="polite" toastContainer>
       <app-profile-menu [username]="newUsername" class="flex-shrink-0"></app-profile-menu>
       <div class="flex-grow-1 overflow-auto" >
         <router-outlet></router-outlet>
