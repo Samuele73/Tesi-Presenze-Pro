@@ -1,4 +1,5 @@
 <form *ngIf="projectForm" [formGroup]="projectForm" (ngSubmit)="onSubmit()">
+  <button class="d-none" type="submit"></button>
   <!-- Nome -->
   <div class="mb-3">
     <label class="form-label fw-bold">{{ "Nome Progetto" | translate }}</label>

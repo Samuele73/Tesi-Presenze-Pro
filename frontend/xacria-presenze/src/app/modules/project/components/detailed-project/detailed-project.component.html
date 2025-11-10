@@ -22,13 +22,7 @@
       </a>
       <div class="d-flex justify-content-end gap-2" *ngIf="isEditMode">
         <app-ngb-options [dropdownOptions]="dropdownItems"></app-ngb-options>
-        <button
-          type="submit"
-          class="btn btn-primary text-white"
-          (click)="onSubmit()"
-        >
-          {{ "Salva" | translate }}
-        </button>
+        <app-button [name]="'Salva'" [type]="'submit'" (buttonClick)="onSubmit()" [mode]="'SAVE'"></app-button>
       </div>
     </div>
 
@@ -111,6 +105,7 @@
           <app-project-form
             [project]="project"
             #projectFormComp
+            (submit)="onSubmit()"
           ></app-project-form>
           <div *ngIf="apiError">
             <small class="text-danger">
