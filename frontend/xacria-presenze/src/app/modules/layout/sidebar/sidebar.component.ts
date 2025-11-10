@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { faUser, faUsers, faDiagramProject, faCalendar, faHouse } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faUsers, faDiagramProject, faCalendar, faHouse, faClipboardList } from '@fortawesome/free-solid-svg-icons';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { APP_ROUTES } from 'src/app/shared/constants/route-paths';
 
@@ -17,4 +17,5 @@ export class SidebarComponent {
   faDiagramProject = faDiagramProject;
   faCalendar = faCalendar;
   faHouse = faHouse;
+  faClipboardList = faClipboardList
 }

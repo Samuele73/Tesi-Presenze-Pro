@@ -28,6 +28,13 @@ const routes: Routes = [
             (m) => m.UserManagementModule
           ),
       },
+      {
+        path: 'requests-approval',
+        loadChildren: () =>
+          import('../requests-approval/requests-approval.module').then(
+            (m) => m.RequestsApprovalModule
+          ),
+      },
     ],
   },
 ];

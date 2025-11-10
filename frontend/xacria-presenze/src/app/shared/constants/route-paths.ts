@@ -10,5 +10,8 @@ export const APP_ROUTES = {
   USERS: {
     DEFAULT: '/app/users-management',
     DETAILS: '/app/users-management/user-details'
+  },
+  REQUESTS_APPROVAL: {
+    DEFAULT: '/app/requests-approval'
   }
 }
