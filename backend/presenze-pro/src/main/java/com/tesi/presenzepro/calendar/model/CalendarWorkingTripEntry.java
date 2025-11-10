@@ -16,5 +16,5 @@ import java.util.Date;
 public class CalendarWorkingTripEntry implements CalendarEntry{
     private Date dateFrom;
     private Date dateTo;
-
+    private RequestStatus status;
 }

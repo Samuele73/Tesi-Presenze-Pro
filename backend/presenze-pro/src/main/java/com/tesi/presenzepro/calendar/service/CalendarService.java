@@ -2,6 +2,9 @@ package com.tesi.presenzepro.calendar.service;
 
 import com.tesi.presenzepro.calendar.dto.SaveCalendarEntityRequestDto;
 import com.tesi.presenzepro.calendar.mapper.CalendarMapper;
+import com.tesi.presenzepro.calendar.model.CalendarRequestEntry;
+import com.tesi.presenzepro.calendar.model.CalendarWorkingTripEntry;
+import com.tesi.presenzepro.calendar.model.RequestStatus;
 import com.tesi.presenzepro.calendar.repository.CalendarRepository;
 import com.tesi.presenzepro.calendar.dto.CalendarResponseDto;
 import com.tesi.presenzepro.calendar.model.CalendarEntity;
@@ -34,8 +37,17 @@ public class CalendarService {
         CalendarEntity newCalendarEntity = calendarMapper.fromCalendarSaveRequestToEntity(calendarEntityData);
         String userEmail = this.getUserEmailFromRequest(request);
         newCalendarEntity.setUserEmail(userEmail);
+        this.applyDefaultStatus(newCalendarEntity);
         CalendarEntity calendarEntity =  this.repository.save(newCalendarEntity);
         return calendarMapper.fromCalendarEntityToCalendarEntry(calendarEntity);
+    }
+
+    private void applyDefaultStatus(CalendarEntity entity) {
+        if (entity.getCalendarEntry() instanceof CalendarRequestEntry requestEntry && requestEntry.getStatus() == null) {
+            requestEntry.setStatus(RequestStatus.PENDING);
+        } else if (entity.getCalendarEntry() instanceof CalendarWorkingTripEntry tripEntry && tripEntry.getStatus() == null) {
+            tripEntry.setStatus(RequestStatus.PENDING);
+        }
     }
 
     public List<CalendarResponseDto> saveCalendarEntities(HttpServletRequest request, List<SaveCalendarEntityRequestDto> calendarEntities) {

@@ -19,4 +19,5 @@ public class CalendarRequestEntry implements CalendarEntry {
     private Date dateTo;
     private String timeFrom;
     private String timeTo;
+    private RequestStatus status;
 }
