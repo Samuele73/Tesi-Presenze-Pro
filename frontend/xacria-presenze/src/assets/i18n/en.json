@@ -126,5 +126,8 @@
   "Per accedere alla pagina di registrazione è necessario un invito da parte di un Admin.": "To access the registration page you need an invitation from an Admin.",
   "Aggiungi Progetto" : "Add Project",
   "Aggiungi Utente" : "Add User",
-  "Elimina" : "Delete"
-}
+  "Elimina" : "Delete",
+  "Richieste aperte" : "Open requests",
+  "Richieste chiuse" : "Closed requests",
+  "Caricamento richieste" : "Requests loading"
+ }

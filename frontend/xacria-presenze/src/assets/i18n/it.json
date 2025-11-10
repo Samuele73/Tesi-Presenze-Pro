@@ -127,5 +127,8 @@
   "Per accedere alla pagina di registrazione è necessario un invito da parte di un Admin." : "Per accedere alla pagina di registrazione è necessario un invito da parte di un Admin.",
   "Aggiungi Progetto" : "Aggiungi Progetto",
   "Aggiungi Utente" : "Aggiungi Utente",
-  "Elimina" : "Elimina"
+  "Elimina" : "Elimina",
+  "Richieste aperte": "Richieste aperte",
+  "Richieste chiuse" : "Richieste chiuse",
+  "Caricamento richieste..." : "Caricamento richieste..."
 }

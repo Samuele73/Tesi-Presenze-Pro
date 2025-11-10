@@ -8,14 +8,14 @@
   >
     <li [ngbNavItem]="'open'">
       <button ngbNavLink type="button">
-        Richieste aperte
+        {{"Richieste aperte" | translate}}
         <span class="badge bg-secondary-subtle text-muted ms-2">{{ openRequests.length }}</span>
       </button>
       <ng-template ngbNavContent></ng-template>
     </li>
     <li [ngbNavItem]="'closed'">
       <button ngbNavLink type="button">
-        Richieste chiuse
+        {{"Richieste chiuse" | translate}}
         <span class="badge bg-secondary-subtle text-muted ms-2">{{ closedRequests.length }}</span>
       </button>
       <ng-template ngbNavContent></ng-template>
@@ -24,8 +24,8 @@
   <div class="mt-3">
     <ng-container [ngSwitch]="activeTab">
       <ng-container *ngSwitchCase="'open'">
-        <div *ngIf="loading" class="alert alert-info mt-3" role="status">
-          Caricamento richieste...
+        <div *ngIf="loading" class="alert alert-info mt-3 text-center" role="status">
+          {{"Caricamento richieste" | translate}}...
         </div>
         <app-requests-table *ngIf="!loading"
           class="d-block"
@@ -35,8 +35,8 @@
         ></app-requests-table>
       </ng-container>
       <ng-container *ngSwitchCase="'closed'">
-        <div *ngIf="loading" class="alert alert-info mt-3" role="status">
-          Caricamento richieste...
+        <div *ngIf="loading" class="alert alert-info mt-3 text-center" role="status">
+          {{"Caricamento richieste" | translate}}...
         </div>
         <app-requests-table *ngIf="!loading"
           class="d-block"
