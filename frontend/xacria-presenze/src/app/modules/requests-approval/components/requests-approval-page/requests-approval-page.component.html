@@ -9,14 +9,14 @@
     <li [ngbNavItem]="'open'">
       <button ngbNavLink type="button">
         Richieste aperte
-        <span class="badge bg-secondary ms-2">{{ openRequests.length }}</span>
+        <span class="badge bg-secondary-subtle text-muted ms-2">{{ openRequests.length }}</span>
       </button>
       <ng-template ngbNavContent></ng-template>
     </li>
     <li [ngbNavItem]="'closed'">
       <button ngbNavLink type="button">
         Richieste chiuse
-        <span class="badge bg-secondary ms-2">{{ closedRequests.length }}</span>
+        <span class="badge bg-secondary-subtle text-muted ms-2">{{ closedRequests.length }}</span>
       </button>
       <ng-template ngbNavContent></ng-template>
     </li>
