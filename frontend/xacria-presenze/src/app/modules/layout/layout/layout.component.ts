@@ -43,4 +43,8 @@ export class LayoutComponent implements OnInit{
     this.toastrService.overlayContainer = this.toastContainer;
   }
 
+  onClick(){
+    this.toastrService.success('prova')
+  }
+
 }

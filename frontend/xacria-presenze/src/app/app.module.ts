@@ -64,7 +64,6 @@ import { ToastrModule } from 'ngx-toastr';
     NgbCollapse,
     ToastrModule.forRoot({
       preventDuplicates: true,
-
     }),
   ],
   providers: [

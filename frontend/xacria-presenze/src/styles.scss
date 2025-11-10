@@ -180,6 +180,15 @@
 
 /* INIZIO MODIFICA TOASTERS */
 
+
+.toast-container {
+  pointer-events: none !important;
+}
+
+.toast {
+  pointer-events: auto !important;
+}
+
 .toast-success {
   background-color: var(--bs-primary) !important;
 }

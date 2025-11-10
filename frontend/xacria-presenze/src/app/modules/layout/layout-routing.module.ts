@@ -6,6 +6,7 @@ import { ProfileComponent } from '../../shared/components/profile/profile.compon
 import { AttendanceComponent } from './calendar-comps/attendance/attendance.component';
 import { ProjectPageComponent } from '../project/components/project-page/project-page.component';
 import { DetailedProjectComponent } from '../project/components/detailed-project/detailed-project.component';
+import { RequestsApprovalGuard } from './shared/guards/requests-approval.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -30,6 +31,7 @@ const routes: Routes = [
       },
       {
         path: 'requests-approval',
+        canActivate: [RequestsApprovalGuard],
         loadChildren: () =>
           import('../requests-approval/requests-approval.module').then(
             (m) => m.RequestsApprovalModule
