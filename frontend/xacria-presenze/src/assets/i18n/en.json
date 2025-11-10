@@ -129,5 +129,12 @@
   "Elimina" : "Delete",
   "Richieste aperte" : "Open requests",
   "Richieste chiuse" : "Closed requests",
-  "Caricamento richieste" : "Requests loading"
+  "Caricamento richieste" : "Requests loading",
+  "Progetti" : "Projects",
+  "Utenti" : "Users",
+  "Richieste" : "Requests",
+  "Invita Utente" : "Invite User",
+  "Mostra Filtri" : "Show Filters",
+  "Utente" : "User",
+  "Tipo" : "Type"
  }
