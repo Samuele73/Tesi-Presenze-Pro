@@ -1,0 +1,52 @@
+<div class="mb-2 text-end">
+  <ngb-pagination
+    *ngIf="showPaginationControls"
+    [collectionSize]="collectionSize"
+    [page]="currentPage"
+    [pageSize]="pageSize"
+    (pageChange)="onPageChange($event)"
+    size="sm"
+    [boundaryLinks]="true"
+  ></ngb-pagination>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-striped table-hover align-middle mb-0">
+    <thead class="table-light">
+      <tr>
+        <th
+          *ngFor="let column of columns"
+          scope="col"
+          [ngClass]="column.headerClass"
+        >
+          {{ column.label }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngIf="!rows?.length">
+        <td
+          class="text-center text-muted py-4 dynamic-table-empty"
+          [attr.colspan]="columns.length || 1"
+        >
+          {{ emptyMessage }}
+        </td>
+      </tr>
+      <tr *ngFor="let row of paginatedRows; trackBy: trackByRow">
+        <td *ngFor="let column of columns" [ngClass]="column.cellClass">
+          <ng-container *ngIf="column.template; else valueTpl">
+            <ng-container
+              *ngTemplateOutlet="
+                column.template;
+                context: { $implicit: row, column: column }
+              "
+            ></ng-container>
+          </ng-container>
+          <ng-template #valueTpl>
+            {{ getCellValue(row, column) }}
+          </ng-template>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgbNavModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { RequestsApprovalRoutingModule } from './requests-approval-routing.module';
 import { FormsModule } from '@angular/forms';
@@ -10,10 +11,14 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { httpTranslateLoader } from 'src/app/app.module';
 import { HttpClient } from '@angular/common/http';
 import { RequestsApprovalPageComponent } from './components/requests-approval-page/requests-approval-page.component';
+import { RequestsTableComponent } from './components/requests-table/requests-table.component';
+import { DynamicTableComponent } from './components/dynamic-table/dynamic-table.component';
 
 @NgModule({
   declarations: [
-    RequestsApprovalPageComponent
+    RequestsApprovalPageComponent,
+    RequestsTableComponent,
+    DynamicTableComponent,
   ],
   imports: [
     CommonModule,
@@ -22,6 +27,8 @@ import { RequestsApprovalPageComponent } from './components/requests-approval-pa
     MultiSelectModule,
     CalendarCommonModule,
     GeneralModule,
+    NgbNavModule,
+    NgbPaginationModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,

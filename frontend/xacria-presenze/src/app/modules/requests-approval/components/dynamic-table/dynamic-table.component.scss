@@ -1,0 +1,35 @@
+:host {
+  display: block;
+}
+
+.dynamic-table-empty {
+  font-style: italic;
+}
+
+:host ::ng-deep .pagination {
+  display: inline-flex;
+  gap: 0.25rem;
+  padding-left: 0;
+  margin-bottom: 0;
+}
+
+:host ::ng-deep .page-link {
+  border: 1px solid #ced4da;
+  border-radius: 0.3rem;
+  color: #0d6efd;
+  padding: 0.25rem 0.6rem;
+  min-width: 2.25rem;
+  text-align: center;
+  background-color: #fff;
+}
+
+:host ::ng-deep .page-item.active .page-link {
+  background-color: #13ad6a;
+  border-color: #13ad6a;
+  color: #fff;
+}
+
+:host ::ng-deep .page-item.disabled .page-link {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

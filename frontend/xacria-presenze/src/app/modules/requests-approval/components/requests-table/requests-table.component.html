@@ -1,0 +1,25 @@
+<ng-template #actionsTemplate let-row>
+  <app-ngb-options
+    [dropdownOptions]="generateOptions(row)"
+    [buttonClass]="'border-0 py-0 px-2'"
+  ></app-ngb-options>
+</ng-template>
+
+<ng-template #userTemplate let-row>
+  <a
+    href="javascript:void(0)"
+    class="text-decoration-none "
+    (click)="onUserClick(row)"
+    title="{{ row.user }}"
+  >
+    {{ row.user }}
+  </a>
+</ng-template>
+
+<app-dynamic-table
+  [columns]="columns"
+  [rows]="data"
+  [emptyMessage]="emptyMessage"
+  [pageSize]="pageSize"
+  [maxPages]="maxPages"
+></app-dynamic-table>
