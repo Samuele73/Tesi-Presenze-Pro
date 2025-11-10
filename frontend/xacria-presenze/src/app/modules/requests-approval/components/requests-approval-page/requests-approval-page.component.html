@@ -1,8 +1,4 @@
 <div class="container-fluid requests-approval-page">
-  <div *ngIf="loading" class="alert alert-info mt-3" role="status">
-    Caricamento richieste di esempio...
-  </div>
-
   <ul
     ngbNav
     #nav="ngbNav"
@@ -28,7 +24,10 @@
   <div class="mt-3">
     <ng-container [ngSwitch]="activeTab">
       <ng-container *ngSwitchCase="'open'">
-        <app-requests-table
+        <div *ngIf="loading" class="alert alert-info mt-3" role="status">
+          Caricamento richieste...
+        </div>
+        <app-requests-table *ngIf="!loading"
           class="d-block"
           [data]="openRequests"
           emptyMessage="Nessuna richiesta aperta"
@@ -36,7 +35,10 @@
         ></app-requests-table>
       </ng-container>
       <ng-container *ngSwitchCase="'closed'">
-        <app-requests-table
+        <div *ngIf="loading" class="alert alert-info mt-3" role="status">
+          Caricamento richieste...
+        </div>
+        <app-requests-table *ngIf="!loading"
           class="d-block"
           [data]="closedRequests"
           [showStatusColumn]="true"
