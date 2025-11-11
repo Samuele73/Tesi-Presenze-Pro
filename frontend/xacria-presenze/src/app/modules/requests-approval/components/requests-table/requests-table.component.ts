@@ -6,6 +6,7 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  OnInit,
   Output,
   SimpleChanges,
   TemplateRef,
@@ -55,15 +56,17 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
 
   requestTypeOptions = Object.values(UserRequestResponseDto.TypeEnum).map(
     (value) => ({
-      label: value.charAt(0).toUpperCase() + value.slice(1).toLowerCase(), // "Ferie"
-      value, // il valore effettivo (FERIE, MALATTIA, ecc.)
+      label: value.charAt(0).toUpperCase() + value.slice(1).toLowerCase(),
+      value,
     })
   );
   selectedRequestTypes: UserRequestResponseDto.TypeEnum[] = [];
+  userOptions!: string[];
+  selectedUsers: string[] = [];
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private authService: AuthService
+    public authService: AuthService
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -74,11 +77,19 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
     ) {
       this.buildColumns();
     }
+    if (changes['data'] && this.data) {
+      this.generateUserOptions()
+    }
   }
 
   ngAfterViewInit(): void {
     this.buildColumns();
     this.cdr.detectChanges();
+  }
+
+  generateUserOptions(): void{
+    this.userOptions = [...new Set(this.data.map(r => r.user))]
+    console.log("look here", this.userOptions)
   }
 
   private buildColumns(): void {
