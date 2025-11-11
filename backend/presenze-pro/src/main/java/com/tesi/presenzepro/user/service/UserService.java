@@ -72,6 +72,14 @@ public class UserService {
                 .orElse(null);
     }
 
+    public boolean isPrivilegedRole(String role) {
+        return role.equalsIgnoreCase("ADMIN") || role.equalsIgnoreCase("OWNER");
+    }
+
+    public boolean isAdmin(String role) {
+        return role.equalsIgnoreCase("ADMIN");
+    }
+
     public UserAuthResponseDto login(LoginRequestDto userDto){
         User userRequest = userMapper.fromLoginToUser(userDto);
         System.out.println(userRequest);

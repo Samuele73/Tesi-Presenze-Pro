@@ -2,6 +2,7 @@ package com.tesi.presenzepro.calendar.controller;
 
 import com.tesi.presenzepro.calendar.dto.CalendarResponseDto;
 import com.tesi.presenzepro.calendar.dto.SaveCalendarEntityRequestDto;
+import com.tesi.presenzepro.calendar.dto.UserRequestResponseDto;
 import com.tesi.presenzepro.calendar.model.CalendarEntity;
 import com.tesi.presenzepro.calendar.service.CalendarService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,6 +37,14 @@ public class CalendarController {
     ResponseEntity<List<CalendarResponseDto>> getCalendarEntitiesByMonthYear(HttpServletRequest request , @RequestParam String month, @RequestParam String year){
         final List<CalendarResponseDto> calendarEntries = calendarService.getUserEntriesByMonthYear(request ,Integer.parseInt(month), Integer.parseInt(year));
         return ResponseEntity.status(HttpStatus.OK).body(calendarEntries);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'OWNER')")
+    @Operation(description = "Ottieni tutte le richieste in base al ruolo utente: admin, owner", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/requests")
+    ResponseEntity<List<UserRequestResponseDto>> getAllRequests(HttpServletRequest request){
+        final List<UserRequestResponseDto> requests = calendarService.getAllUserRequests(request);
+        return ResponseEntity.status(HttpStatus.OK).body(requests);
     }
 
     @Operation(description = "Save a new calendar entry", security = @SecurityRequirement(name = "bearerAuth"))

@@ -39,6 +39,22 @@ public class JwtUtils {
         return null;
     }
 
+    public String getRoleFromJwt(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .verifyWith((SecretKey) key())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+
+            return claims.get("role", String.class);
+        } catch (Exception e) {
+            logger.error("Cannot extract role from JWT: {}", e.getMessage());
+            return null;
+        }
+    }
+
+
     public String generateTokenFromUsername(UserDetails userDetails) {
         String username = userDetails.getUsername();
         String role = userDetails.getAuthorities().stream()

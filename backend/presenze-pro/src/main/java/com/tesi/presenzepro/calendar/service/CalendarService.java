@@ -1,15 +1,14 @@
 package com.tesi.presenzepro.calendar.service;
 
 import com.tesi.presenzepro.calendar.dto.SaveCalendarEntityRequestDto;
+import com.tesi.presenzepro.calendar.dto.UserRequestResponseDto;
 import com.tesi.presenzepro.calendar.mapper.CalendarMapper;
-import com.tesi.presenzepro.calendar.model.CalendarRequestEntry;
-import com.tesi.presenzepro.calendar.model.CalendarWorkingTripEntry;
-import com.tesi.presenzepro.calendar.model.RequestStatus;
+import com.tesi.presenzepro.calendar.model.*;
 import com.tesi.presenzepro.calendar.repository.CalendarRepository;
 import com.tesi.presenzepro.calendar.dto.CalendarResponseDto;
-import com.tesi.presenzepro.calendar.model.CalendarEntity;
 import com.tesi.presenzepro.exception.CalendarEntityNotFound;
 import com.tesi.presenzepro.jwt.JwtUtils;
+import com.tesi.presenzepro.user.service.UserService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +18,10 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+import java.time.LocalTime;
 
 import java.security.InvalidParameterException;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +33,7 @@ public class CalendarService {
     private final JwtUtils jwtUtils;
     private final CalendarMapper calendarMapper;
     private final MongoTemplate mongoTemplate;
+    private final UserService userService;
 
     public CalendarResponseDto saveNewCalendarEntry(HttpServletRequest request ,SaveCalendarEntityRequestDto calendarEntityData){
         CalendarEntity newCalendarEntity = calendarMapper.fromCalendarSaveRequestToEntity(calendarEntityData);
@@ -49,6 +51,31 @@ public class CalendarService {
             tripEntry.setStatus(RequestStatus.PENDING);
         }
     }
+
+    public List<UserRequestResponseDto> getAllUserRequests(HttpServletRequest request) {
+        List<CalendarEntity> entities = repository.findAll();
+
+        final String jwt = jwtUtils.getJwtFromHeader(request);
+        if (jwt == null) {
+            throw new IllegalArgumentException("Missing JWT token in request header");
+        }
+
+        String currentUserEmail = jwtUtils.getUsernameFromJwt(jwt);
+        String currentUserRole = jwtUtils.getRoleFromJwt(jwt);
+
+        boolean isAdmin = currentUserRole != null && this.userService.isAdmin(currentUserRole);
+
+        return entities.stream()
+                // Se è admin, escludi solo le sue entry
+                .filter(e -> !(isAdmin && e.getUserEmail().equals(currentUserEmail)))
+                // Filtra solo richieste e trasferte
+                .filter(e -> e.getEntryType() == CalendarEntryType.REQUEST
+                        || e.getEntryType() == CalendarEntryType.WORKING_TRIP)
+                // Mappa in DTO
+                .map(this.calendarMapper::mapToUserRequestResponseDto)
+                .toList();
+    }
+
 
     public List<CalendarResponseDto> saveCalendarEntities(HttpServletRequest request, List<SaveCalendarEntityRequestDto> calendarEntities) {
         List<CalendarEntity> newCalendarEntities = calendarMapper.fromCalendarSaveRequestToEntities(calendarEntities);
