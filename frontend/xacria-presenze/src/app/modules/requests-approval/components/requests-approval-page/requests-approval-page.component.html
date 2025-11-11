@@ -10,18 +10,14 @@
     <li [ngbNavItem]="'open'">
       <button ngbNavLink type="button">
         {{"Richieste aperte" | translate}}
-        <span class="badge bg-secondary-subtle text-muted ms-2">{{
-          tabState.open.filteredTotal
-        }}</span>
+        <!-- Badge temporaneamente disabilitato in attesa del nuovo endpoint backend -->
       </button>
       <ng-template ngbNavContent></ng-template>
     </li>
     <li [ngbNavItem]="'closed'">
       <button ngbNavLink type="button">
         {{"Richieste chiuse" | translate}}
-        <span class="badge bg-secondary-subtle text-muted ms-2">{{
-          tabState.closed.filteredTotal
-        }}</span>
+        <!-- Badge temporaneamente disabilitato in attesa del nuovo endpoint backend -->
       </button>
       <ng-template ngbNavContent></ng-template>
     </li>

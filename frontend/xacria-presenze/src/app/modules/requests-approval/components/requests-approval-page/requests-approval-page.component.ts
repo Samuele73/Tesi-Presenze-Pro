@@ -15,7 +15,6 @@ type RequestsTab = 'open' | 'closed';
 interface RequestsTabState {
   rows: RequestsTableRow[];
   total: number;
-  filteredTotal: number;
   totalPages: number;
   isLast: boolean;
   page: number; // zero-based index returned by backend
@@ -61,7 +60,10 @@ export class RequestsApprovalPageComponent implements OnInit {
   onTabChange(tab: RequestsTab): void {
     this.activeTab = tab;
     const state = this.tabState[tab];
+    state.page = 0;
     if (!state.initialized && !state.loading) {
+      this.loadTabData(tab);
+    } else {
       this.loadTabData(tab);
     }
   }
@@ -112,11 +114,7 @@ export class RequestsApprovalPageComponent implements OnInit {
       this.matchesTabStatus(tab, entry.status ?? undefined)
     );
     state.rows = filtered.map((entry) => this.mapToRow(entry));
-    state.filteredTotal = filtered.length;
-    state.total =
-      typeof resp.totalElements === 'number'
-        ? resp.totalElements
-        : filtered.length;
+    state.total = this.deriveTotalFromResponse(resp, filtered.length);
     state.page =
       typeof resp.page === 'number' ? resp.page : state.page ?? 0;
     if (typeof resp.size === 'number' && resp.size > 0) {
@@ -137,7 +135,6 @@ export class RequestsApprovalPageComponent implements OnInit {
     }
     state.rows = [];
     state.total = 0;
-    state.filteredTotal = 0;
     state.totalPages = 0;
     state.isLast = true;
     state.page = 0;
@@ -174,7 +171,6 @@ export class RequestsApprovalPageComponent implements OnInit {
     return {
       rows: [],
       total: 0,
-      filteredTotal: 0,
       totalPages: 0,
       isLast: false,
       page: 0,
@@ -191,5 +187,15 @@ export class RequestsApprovalPageComponent implements OnInit {
     return this.isPrivilegedUser
       ? this.calendarService.getAllRequests(pageable)
       : this.calendarService.getUserRequests(pageable);
+  }
+
+  private deriveTotalFromResponse(
+    resp: PagedResponseUserRequestResponseDto,
+    fallback: number
+  ): number {
+    if (typeof resp.totalElements === 'number') {
+      return resp.totalElements;
+    }
+    return fallback;
   }
 }
