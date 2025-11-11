@@ -10,15 +10,23 @@
  * Do not edit the class manually.
  */
 
-/**
- * Rappresenta una entry di una trasferta nel calendario
- */
-export interface CalendarWorkingTripEntry { 
+export interface UserRequestResponseDto { 
+    id?: string;
+    userEmail?: string;
+    type?: UserRequestResponseDto.TypeEnum;
     dateFrom?: Date;
     dateTo?: Date;
-    status?: CalendarWorkingTripEntry.StatusEnum;
+    status?: UserRequestResponseDto.StatusEnum;
 }
-export namespace CalendarWorkingTripEntry {
+export namespace UserRequestResponseDto {
+    export type TypeEnum = 'FERIE' | 'MALATTIA' | 'TRASFERTA' | 'PERMESSI' | 'CONGEDO';
+    export const TypeEnum = {
+        FERIE: 'FERIE' as TypeEnum,
+        MALATTIA: 'MALATTIA' as TypeEnum,
+        TRASFERTA: 'TRASFERTA' as TypeEnum,
+        PERMESSI: 'PERMESSI' as TypeEnum,
+        CONGEDO: 'CONGEDO' as TypeEnum
+    };
     export type StatusEnum = 'PENDING' | 'ACCEPTED' | 'REJECTED';
     export const StatusEnum = {
         PENDING: 'PENDING' as StatusEnum,

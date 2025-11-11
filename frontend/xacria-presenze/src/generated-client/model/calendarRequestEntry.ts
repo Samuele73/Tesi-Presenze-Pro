@@ -19,4 +19,13 @@ export interface CalendarRequestEntry {
     dateTo?: Date;
     timeFrom?: string;
     timeTo?: string;
+    status?: CalendarRequestEntry.StatusEnum;
+}
+export namespace CalendarRequestEntry {
+    export type StatusEnum = 'PENDING' | 'ACCEPTED' | 'REJECTED';
+    export const StatusEnum = {
+        PENDING: 'PENDING' as StatusEnum,
+        ACCEPTED: 'ACCEPTED' as StatusEnum,
+        REJECTED: 'REJECTED' as StatusEnum
+    };
 }

@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { DynamicTableColumn } from '../dynamic-table/dynamic-table.component';
 import { DropdownOptions } from 'src/app/shared/components/ngb-options/ngb-options.component';
+import { AuthService } from 'src/app/shared/services/auth.service';
 
 export interface RequestsTableRow {
   user: string;
@@ -38,7 +39,10 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
 
   columns: DynamicTableColumn[] = [];
 
-  constructor(private readonly cdr: ChangeDetectorRef) {}
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (
@@ -77,7 +81,8 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
       baseColumns.push({ field: 'status', label: 'Stato' });
     }
 
-    baseColumns.push(this.getActionsColumn());
+    if (this.authService.isPrivilegedUser())
+      baseColumns.push(this.getActionsColumn());
 
     this.columns = baseColumns;
   }

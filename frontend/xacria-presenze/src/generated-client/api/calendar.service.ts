@@ -20,6 +20,7 @@ import { Observable }                                        from 'rxjs';
 import { CalendarEntity } from '../model/calendarEntity';
 import { CalendarResponseDto } from '../model/calendarResponseDto';
 import { SaveCalendarEntityRequestDto } from '../model/saveCalendarEntityRequestDto';
+import { UserRequestResponseDto } from '../model/userRequestResponseDto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -204,6 +205,49 @@ export class CalendarService {
 
     /**
      * 
+     * Ottieni tutte le richieste in base al ruolo utente: admin, owner
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getAllRequests(observe?: 'body', reportProgress?: boolean): Observable<Array<UserRequestResponseDto>>;
+    public getAllRequests(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<UserRequestResponseDto>>>;
+    public getAllRequests(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<UserRequestResponseDto>>>;
+    public getAllRequests(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<Array<UserRequestResponseDto>>('get',`${this.basePath}/calendar/requests`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
      * Obtain all user calendar entries from specific month and year
      * @param month 
      * @param year 
@@ -256,6 +300,49 @@ export class CalendarService {
         return this.httpClient.request<Array<CalendarResponseDto>>('get',`${this.basePath}/calendar/byMonthYear`,
             {
                 params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * Ottieni tutte le richieste in base al ruolo utente: admin, owner
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getUserRequests(observe?: 'body', reportProgress?: boolean): Observable<Array<UserRequestResponseDto>>;
+    public getUserRequests(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<UserRequestResponseDto>>>;
+    public getUserRequests(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<UserRequestResponseDto>>>;
+    public getUserRequests(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<Array<UserRequestResponseDto>>('get',`${this.basePath}/calendar/my-requests`,
+            {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,

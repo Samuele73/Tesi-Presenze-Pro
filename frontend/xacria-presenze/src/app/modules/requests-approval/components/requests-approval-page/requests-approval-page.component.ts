@@ -18,6 +18,14 @@ export class RequestsApprovalPageComponent implements OnInit {
     this.simulateRequestsFetch();
   }
 
+  getNonPrivilegedUserRequests(): void{
+
+  }
+
+  getRequests(): void{
+    
+  }
+
   private simulateRequestsFetch(): void {
     this.loading = true;
 
