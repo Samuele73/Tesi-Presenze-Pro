@@ -3,8 +3,10 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
+  EventEmitter,
   Input,
   OnChanges,
+  Output,
   SimpleChanges,
   TemplateRef,
   ViewChild,
@@ -14,8 +16,12 @@ import { DropdownOptions } from 'src/app/shared/components/ngb-options/ngb-optio
 import { AuthService } from 'src/app/shared/services/auth.service';
 
 export interface RequestsTableRow {
+  id?: string;
   user: string;
-  date: string | Date;
+  dateFrom?: string | Date;
+  timeFrom?: string;
+  dateTo?: string | Date;
+  timeTo?: string;
   type: string;
   status?: string;
 }
@@ -36,6 +42,10 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
   @Input() emptyMessage = 'Nessuna richiesta disponibile';
   @Input() pageSize = 10;
   @Input() maxPages = Number.POSITIVE_INFINITY;
+  @Input() totalItems: number | null = null;
+  @Input() currentPage = 1;
+  @Input() serverPagination = false;
+  @Output() pageChange = new EventEmitter<number>();
 
   columns: DynamicTableColumn[] = [];
 
@@ -69,10 +79,16 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
         cellClass: 'requests-table-user-column',
       },
       {
-        field: 'date',
-        label: 'Data',
+        field: 'from',
+        label: 'Da',
         valueAccessor: (row: RequestsTableRow) =>
-          this.formatDateValue(row?.date),
+          this.formatDateTime(row?.dateFrom, row?.timeFrom),
+      },
+      {
+        field: 'to',
+        label: 'A',
+        valueAccessor: (row: RequestsTableRow) =>
+          this.formatDateTime(row?.dateTo, row?.timeTo),
       },
       { field: 'type', label: 'Tipo' },
     ];
@@ -116,10 +132,25 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
     console.log('User clicked:', row);
   }
 
-  private formatDateValue(value: string | Date | undefined): string {
-    if (!value) {
+  onPageChanged(page: number): void {
+    this.pageChange.emit(page);
+  }
+
+  private formatDateTime(
+    dateValue: string | Date | undefined,
+    timeValue: string | undefined
+  ): string {
+    if (!dateValue && !timeValue) {
       return '—';
     }
+    const formattedDate = dateValue
+      ? this.tryFormatDate(dateValue)
+      : undefined;
+    const formattedTime = timeValue?.trim();
+    return [formattedDate, formattedTime].filter(Boolean).join(' ');
+  }
+
+  private tryFormatDate(value: string | Date): string {
     try {
       return formatDate(value, 'shortDate', 'it-IT');
     } catch {

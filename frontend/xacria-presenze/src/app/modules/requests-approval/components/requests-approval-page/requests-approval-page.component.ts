@@ -1,81 +1,195 @@
 import { Component, OnInit } from '@angular/core';
-import { forkJoin, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { RequestsTableRow } from '../requests-table/requests-table.component';
+import {
+  CalendarService,
+  Pageable,
+  PagedResponseUserRequestResponseDto,
+  UserRequestResponseDto,
+} from 'src/generated-client';
+import { AuthService } from 'src/app/shared/services/auth.service';
+
+type RequestsTab = 'open' | 'closed';
+
+interface RequestsTabState {
+  rows: RequestsTableRow[];
+  total: number;
+  filteredTotal: number;
+  totalPages: number;
+  isLast: boolean;
+  page: number; // zero-based index returned by backend
+  size: number;
+  loading: boolean;
+  initialized: boolean;
+  requestToken: number;
+}
 
 @Component({
   selector: 'app-requests-approval-page',
   templateUrl: './requests-approval-page.component.html',
-  styleUrls: ['./requests-approval-page.component.scss']
+  styleUrls: ['./requests-approval-page.component.scss'],
 })
 export class RequestsApprovalPageComponent implements OnInit {
-  openRequests: RequestsTableRow[] = [];
-  closedRequests: RequestsTableRow[] = [];
-  loading = false;
-  activeTab: 'open' | 'closed' = 'open';
+  activeTab: RequestsTab = 'open';
+  readonly tabState: Record<RequestsTab, RequestsTabState> = {
+    open: this.createInitialState(),
+    closed: this.createInitialState(),
+  };
+  private readonly isPrivilegedUser = this.authService.isPrivilegedUser();
+  private readonly tabStatusFilters: Record<
+    RequestsTab,
+    UserRequestResponseDto.StatusEnum[]
+  > = {
+    open: [UserRequestResponseDto.StatusEnum.PENDING],
+    closed: [
+      UserRequestResponseDto.StatusEnum.ACCEPTED,
+      UserRequestResponseDto.StatusEnum.REJECTED,
+    ],
+  };
+
+  constructor(
+    private calendarService: CalendarService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
-    this.simulateRequestsFetch();
+    this.loadTabData('open');
+    this.loadTabData('closed');
   }
 
-  getNonPrivilegedUserRequests(): void{
-
+  onTabChange(tab: RequestsTab): void {
+    this.activeTab = tab;
+    const state = this.tabState[tab];
+    if (!state.initialized && !state.loading) {
+      this.loadTabData(tab);
+    }
   }
 
-  getRequests(): void{
-    
+  onPageChange(tab: RequestsTab, page: number): void {
+    const state = this.tabState[tab];
+    const nextIndex = Math.max(0, page - 1);
+    if (state.page === nextIndex) {
+      return;
+    }
+    state.page = nextIndex;
+    this.loadTabData(tab);
   }
 
-  private simulateRequestsFetch(): void {
-    this.loading = true;
+  private loadTabData(tab: RequestsTab): void {
+    const state = this.tabState[tab];
+    state.requestToken += 1;
+    const token = state.requestToken;
+    state.loading = true;
+    const pageable: Pageable = { page: state.page, size: state.size, sort: [] };
 
-    forkJoin({
-      open: this.mockOpenRequests(),
-      closed: this.mockClosedRequests(),
-    }).subscribe({
-      next: ({ open, closed }) => {
-        this.openRequests = open;
-        this.closedRequests = closed;
-      },
-      error: () => {
-        this.openRequests = [];
-        this.closedRequests = [];
-      },
-      complete: () => {
-        this.loading = false;
-      },
-    });
+    this.getRequests$(pageable)
+      .pipe(
+        finalize(() => {
+          if (token === state.requestToken) {
+            state.loading = false;
+            state.initialized = true;
+          }
+        })
+      )
+      .subscribe({
+        next: (resp) => this.handleResponse(tab, resp, token),
+        error: () => this.handleError(tab, token),
+      });
   }
 
-  private mockOpenRequests() {
-    const sample: RequestsTableRow[] = [
-      { user: 'giulia.rossi@example.com', date: '2025-02-03', type: 'Ferie' },
-      { user: 'marco.bianchi@example.com', date: '2025-02-05', type: 'Permesso' },
-      { user: 'luca.conti@example.com', date: '2025-02-06', type: 'Malattia' },
-      { user: 'sara.verdi@example.com', date: '2025-02-07', type: 'Congedo' },
-      { user: 'andrea.neri@example.com', date: '2025-02-08', type: 'Trasferta' },
-      { user: 'chiara.gallo@example.com', date: '2025-02-09', type: 'Permesso' },
-      { user: 'davide.riva@example.com', date: '2025-02-10', type: 'Ferie' },
-      { user: 'francesca.moretti@example.com', date: '2025-02-11', type: 'Congedo' },
-      { user: 'giovanni.sala@example.com', date: '2025-02-12', type: 'Malattia' },
-      { user: 'irene.longo@example.com', date: '2025-02-13', type: 'Ferie' },
-      { user: 'leonardo.pini@example.com', date: '2025-02-14', type: 'Trasferta' },
-      { user: 'martina.serra@example.com', date: '2025-02-15', type: 'Permesso' },
-    ];
-    return of(sample).pipe(delay(600));
+  private handleResponse(
+    tab: RequestsTab,
+    resp: PagedResponseUserRequestResponseDto,
+    token: number
+  ): void {
+    const state = this.tabState[tab];
+    if (token !== state.requestToken) {
+      return;
+    }
+    const content = resp.content ?? [];
+    const filtered = content.filter((entry) =>
+      this.matchesTabStatus(tab, entry.status ?? undefined)
+    );
+    state.rows = filtered.map((entry) => this.mapToRow(entry));
+    state.filteredTotal = filtered.length;
+    state.total =
+      typeof resp.totalElements === 'number'
+        ? resp.totalElements
+        : filtered.length;
+    state.page =
+      typeof resp.page === 'number' ? resp.page : state.page ?? 0;
+    if (typeof resp.size === 'number' && resp.size > 0) {
+      state.size = resp.size;
+    }
+    if (typeof resp.totalPages === 'number') {
+      state.totalPages = resp.totalPages;
+    }
+    if (typeof resp.last === 'boolean') {
+      state.isLast = resp.last;
+    }
   }
 
-  private mockClosedRequests() {
-    const sample: RequestsTableRow[] = [
-      { user: 'paolo.ricci@example.com', date: '2025-01-20', type: 'Ferie', status: 'Approvata' },
-      { user: 'selene.danti@example.com', date: '2025-01-18', type: 'Permesso', status: 'Rifiutata' },
-      { user: 'tommaso.vitale@example.com', date: '2025-01-17', type: 'Malattia', status: 'Approvata' },
-      { user: 'ugo.fontana@example.com', date: '2025-01-16', type: 'Congedo', status: 'Approvata' },
-      { user: 'valentina.costa@example.com', date: '2025-01-15', type: 'Trasferta', status: 'Approvata' },
-      { user: 'walter.righi@example.com', date: '2025-01-14', type: 'Permesso', status: 'Rifiutata' },
-      { user: 'ylenia.serra@example.com', date: '2025-01-13', type: 'Malattia', status: 'Approvata' },
-      { user: 'zeno.farina@example.com', date: '2025-01-12', type: 'Congedo', status: 'Approvata' },
-    ];
-    return of(sample).pipe(delay(800));
+  private handleError(tab: RequestsTab, token: number): void {
+    const state = this.tabState[tab];
+    if (token !== state.requestToken) {
+      return;
+    }
+    state.rows = [];
+    state.total = 0;
+    state.filteredTotal = 0;
+    state.totalPages = 0;
+    state.isLast = true;
+    state.page = 0;
+  }
+
+  private matchesTabStatus(
+    tab: RequestsTab,
+    status: UserRequestResponseDto.StatusEnum | undefined
+  ): boolean {
+    if (!status) {
+      return tab === 'open';
+    }
+    return this.tabStatusFilters[tab].includes(status);
+  }
+
+  private mapToRow(request: UserRequestResponseDto): RequestsTableRow {
+    const withTime = request as UserRequestResponseDto & {
+      timeFrom?: string;
+      timeTo?: string;
+    };
+    return {
+      id: request.id,
+      user: request.userEmail ?? '—',
+      dateFrom: request.dateFrom ?? undefined,
+      timeFrom: withTime.timeFrom,
+      dateTo: request.dateTo ?? undefined,
+      timeTo: withTime.timeTo,
+      type: request.type ?? '—',
+      status: request.status ?? undefined,
+    };
+  }
+
+  private createInitialState(): RequestsTabState {
+    return {
+      rows: [],
+      total: 0,
+      filteredTotal: 0,
+      totalPages: 0,
+      isLast: false,
+      page: 0,
+      size: 10,
+      loading: false,
+      initialized: false,
+      requestToken: 0,
+    };
+  }
+
+  private getRequests$(
+    pageable: Pageable
+  ): Observable<PagedResponseUserRequestResponseDto> {
+    return this.isPrivilegedUser
+      ? this.calendarService.getAllRequests(pageable)
+      : this.calendarService.getUserRequests(pageable);
   }
 }

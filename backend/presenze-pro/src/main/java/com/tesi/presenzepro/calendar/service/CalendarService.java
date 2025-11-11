@@ -61,31 +61,36 @@ public class CalendarService {
             throw new IllegalArgumentException("Missing JWT token in request header");
         }
 
+        // Recupera email e ruolo dal token (può servirti per log o future estensioni)
         String currentUserEmail = jwtUtils.getUsernameFromJwt(jwt);
         String currentUserRole = jwtUtils.getRoleFromJwt(jwt);
         boolean isAdmin = currentUserRole != null && userService.isAdmin(currentUserRole);
 
+        // Prendi solo REQUEST e WORKING_TRIP dal database (paginato)
         Page<CalendarEntity> entities = repository.findByEntryTypeIn(
                 List.of(CalendarEntryType.REQUEST, CalendarEntryType.WORKING_TRIP),
                 pageable
         );
 
-        List<UserRequestResponseDto> filteredDtos = entities.getContent().stream()
+        // Mappa le entità in DTO
+        List<UserRequestResponseDto> dtos = entities.getContent().stream()
                 .map(calendarMapper::mapToUserRequestResponseDto)
-                .filter(dto -> !(isAdmin && dto.getUserEmail().equals(currentUserEmail))) // escludi le entry dell'admin
                 .toList();
 
-        Page<UserRequestResponseDto> filteredPage = new PageImpl<>(filteredDtos, pageable, entities.getTotalElements());
+        // Ricrea una Page per compatibilità
+        Page<UserRequestResponseDto> dtoPage = new PageImpl<>(dtos, pageable, entities.getTotalElements());
 
+        // Converte la pagina nel DTO di risposta
         return PagedResponse.<UserRequestResponseDto>builder()
-                .content(filteredPage.getContent())
-                .page(filteredPage.getNumber())
-                .size(filteredPage.getSize())
-                .totalElements(filteredPage.getTotalElements())
-                .totalPages(filteredPage.getTotalPages())
-                .last(filteredPage.isLast())
+                .content(dtoPage.getContent())
+                .page(dtoPage.getNumber())
+                .size(dtoPage.getSize())
+                .totalElements(dtoPage.getTotalElements())
+                .totalPages(dtoPage.getTotalPages())
+                .last(dtoPage.isLast())
                 .build();
     }
+
 
     public PagedResponse<UserRequestResponseDto> getMyRquests(HttpServletRequest request, Pageable pageable) {
         final String jwt = this.jwtUtils.getJwtFromHeader(request);

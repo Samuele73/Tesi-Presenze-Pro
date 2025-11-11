@@ -22,4 +22,8 @@
   [emptyMessage]="emptyMessage"
   [pageSize]="pageSize"
   [maxPages]="maxPages"
+  [totalItems]="totalItems"
+  [currentPage]="currentPage"
+  [serverPagination]="serverPagination"
+  (pageChange)="onPageChanged($event)"
 ></app-dynamic-table>

@@ -19,8 +19,9 @@ import { Observable }                                        from 'rxjs';
 
 import { CalendarEntity } from '../model/calendarEntity';
 import { CalendarResponseDto } from '../model/calendarResponseDto';
+import { Pageable } from '../model/pageable';
+import { PagedResponseUserRequestResponseDto } from '../model/pagedResponseUserRequestResponseDto';
 import { SaveCalendarEntityRequestDto } from '../model/saveCalendarEntityRequestDto';
-import { UserRequestResponseDto } from '../model/userRequestResponseDto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -206,13 +207,35 @@ export class CalendarService {
     /**
      * 
      * Ottieni tutte le richieste in base al ruolo utente: admin, owner
+     * @param pageable 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAllRequests(observe?: 'body', reportProgress?: boolean): Observable<Array<UserRequestResponseDto>>;
-    public getAllRequests(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<UserRequestResponseDto>>>;
-    public getAllRequests(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<UserRequestResponseDto>>>;
-    public getAllRequests(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public getAllRequests(pageable: Pageable, observe?: 'body', reportProgress?: boolean): Observable<PagedResponseUserRequestResponseDto>;
+    public getAllRequests(pageable: Pageable, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<PagedResponseUserRequestResponseDto>>;
+    public getAllRequests(pageable: Pageable, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<PagedResponseUserRequestResponseDto>>;
+    public getAllRequests(pageable: Pageable, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (pageable === null || pageable === undefined) {
+            throw new Error('Required parameter pageable was null or undefined when calling getAllRequests.');
+        }
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (pageable !== undefined && pageable !== null) {
+            if (pageable.page !== undefined && pageable.page !== null) {
+                queryParameters = queryParameters.set('page', <any>pageable.page);
+            }
+            if (pageable.size !== undefined && pageable.size !== null) {
+                queryParameters = queryParameters.set('size', <any>pageable.size);
+            }
+            if (pageable.sort && pageable.sort.length) {
+                pageable.sort.forEach(sortValue => {
+                    if (sortValue !== undefined && sortValue !== null) {
+                        queryParameters = queryParameters.append('sort', <any>sortValue);
+                    }
+                });
+            }
+        }
 
         let headers = this.defaultHeaders;
 
@@ -236,8 +259,9 @@ export class CalendarService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<Array<UserRequestResponseDto>>('get',`${this.basePath}/calendar/requests`,
+        return this.httpClient.request<PagedResponseUserRequestResponseDto>('get',`${this.basePath}/calendar/requests`,
             {
+                params: queryParameters,
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,
@@ -311,13 +335,35 @@ export class CalendarService {
     /**
      * 
      * Ottieni tutte le richieste in base al ruolo utente: admin, owner
+     * @param pageable 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getUserRequests(observe?: 'body', reportProgress?: boolean): Observable<Array<UserRequestResponseDto>>;
-    public getUserRequests(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<UserRequestResponseDto>>>;
-    public getUserRequests(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<UserRequestResponseDto>>>;
-    public getUserRequests(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public getUserRequests(pageable: Pageable, observe?: 'body', reportProgress?: boolean): Observable<PagedResponseUserRequestResponseDto>;
+    public getUserRequests(pageable: Pageable, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<PagedResponseUserRequestResponseDto>>;
+    public getUserRequests(pageable: Pageable, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<PagedResponseUserRequestResponseDto>>;
+    public getUserRequests(pageable: Pageable, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (pageable === null || pageable === undefined) {
+            throw new Error('Required parameter pageable was null or undefined when calling getUserRequests.');
+        }
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (pageable !== undefined && pageable !== null) {
+            if (pageable.page !== undefined && pageable.page !== null) {
+                queryParameters = queryParameters.set('page', <any>pageable.page);
+            }
+            if (pageable.size !== undefined && pageable.size !== null) {
+                queryParameters = queryParameters.set('size', <any>pageable.size);
+            }
+            if (pageable.sort && pageable.sort.length) {
+                pageable.sort.forEach(sortValue => {
+                    if (sortValue !== undefined && sortValue !== null) {
+                        queryParameters = queryParameters.append('sort', <any>sortValue);
+                    }
+                });
+            }
+        }
 
         let headers = this.defaultHeaders;
 
@@ -341,8 +387,9 @@ export class CalendarService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<Array<UserRequestResponseDto>>('get',`${this.basePath}/calendar/my-requests`,
+        return this.httpClient.request<PagedResponseUserRequestResponseDto>('get',`${this.basePath}/calendar/my-requests`,
             {
+                params: queryParameters,
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,
