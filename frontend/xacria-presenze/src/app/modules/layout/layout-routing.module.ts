@@ -31,7 +31,6 @@ const routes: Routes = [
       },
       {
         path: 'requests-approval',
-        canActivate: [RequestsApprovalGuard],
         loadChildren: () =>
           import('../requests-approval/requests-approval.module').then(
             (m) => m.RequestsApprovalModule

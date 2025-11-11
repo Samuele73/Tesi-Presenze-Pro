@@ -28,7 +28,6 @@
     ></app-profile-menu-item>
 
     <app-profile-menu-item
-      *ngIf="authService.isPrivilegedUser()"
       [name]="'Richieste'"
       [route]="APP_ROUTES.REQUESTS_APPROVAL.DEFAULT"
     ></app-profile-menu-item>

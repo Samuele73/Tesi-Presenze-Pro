@@ -38,7 +38,6 @@
       </app-sidebar-item>
 
       <app-sidebar-item
-        *ngIf="authService.isPrivilegedUser()"
         [name]="'Richieste'"
         [route]="APP_ROUTES.REQUESTS_APPROVAL.DEFAULT"
         [icon]="faClipboardList"
