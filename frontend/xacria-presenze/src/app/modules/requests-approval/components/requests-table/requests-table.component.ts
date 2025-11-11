@@ -14,6 +14,7 @@ import {
 import { DynamicTableColumn } from '../dynamic-table/dynamic-table.component';
 import { DropdownOptions } from 'src/app/shared/components/ngb-options/ngb-options.component';
 import { AuthService } from 'src/app/shared/services/auth.service';
+import { UserRequestResponseDto } from 'src/generated-client';
 
 export interface RequestsTableRow {
   id?: string;
@@ -24,6 +25,7 @@ export interface RequestsTableRow {
   timeTo?: string;
   type: string;
   status?: string;
+  original?: UserRequestResponseDto;
 }
 
 @Component({
@@ -46,8 +48,10 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
   @Input() currentPage = 1;
   @Input() serverPagination = false;
   @Output() pageChange = new EventEmitter<number>();
+  @Output() rowSelected = new EventEmitter<RequestsTableRow>();
 
   columns: DynamicTableColumn[] = [];
+  canOpenDetails = this.authService.isPrivilegedUser();
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -128,12 +132,20 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
     ];
   }
 
-  onUserClick(row: RequestsTableRow): void {
+  onUserClick(row: RequestsTableRow, event?: MouseEvent): void {
+    event?.stopPropagation();
     console.log('User clicked:', row);
   }
 
   onPageChanged(page: number): void {
     this.pageChange.emit(page);
+  }
+
+  onRowClick(row: Record<string, any>): void {
+    if (!this.canOpenDetails) {
+      return;
+    }
+    this.rowSelected.emit(row as RequestsTableRow);
   }
 
   private formatDateTime(

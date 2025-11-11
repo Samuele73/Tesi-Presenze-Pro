@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgbNavModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModalModule, NgbNavModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { RequestsApprovalRoutingModule } from './requests-approval-routing.module';
 import { FormsModule } from '@angular/forms';
@@ -13,12 +13,14 @@ import { HttpClient } from '@angular/common/http';
 import { RequestsApprovalPageComponent } from './components/requests-approval-page/requests-approval-page.component';
 import { RequestsTableComponent } from './components/requests-table/requests-table.component';
 import { DynamicTableComponent } from './components/dynamic-table/dynamic-table.component';
+import { RequestDetailsModalComponent } from './components/request-details-modal/request-details-modal.component';
 
 @NgModule({
   declarations: [
     RequestsApprovalPageComponent,
     RequestsTableComponent,
     DynamicTableComponent,
+    RequestDetailsModalComponent,
   ],
   imports: [
     CommonModule,
@@ -37,6 +39,7 @@ import { DynamicTableComponent } from './components/dynamic-table/dynamic-table.
       },
       extend: true,
     }),
+    NgbModalModule
   ],
 })
 export class RequestsApprovalModule {}

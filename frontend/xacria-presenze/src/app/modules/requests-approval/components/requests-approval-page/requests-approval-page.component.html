@@ -41,6 +41,7 @@
           [currentPage]="tabState.open.page + 1"
           [serverPagination]="true"
           (pageChange)="onPageChange('open', $event)"
+          (rowSelected)="onRowSelected($event)"
         ></app-requests-table>
       </ng-container>
       <ng-container *ngSwitchCase="'closed'">
@@ -61,6 +62,7 @@
           [currentPage]="tabState.closed.page + 1"
           [serverPagination]="true"
           (pageChange)="onPageChange('closed', $event)"
+          (rowSelected)="onRowSelected($event)"
         ></app-requests-table>
       </ng-container>
     </ng-container>

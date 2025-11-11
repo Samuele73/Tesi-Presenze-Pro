@@ -9,6 +9,8 @@ import {
   UserRequestResponseDto,
 } from 'src/generated-client';
 import { AuthService } from 'src/app/shared/services/auth.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { RequestDetailsModalComponent } from '../request-details-modal/request-details-modal.component';
 
 type RequestsTab = 'open' | 'closed';
 
@@ -49,7 +51,8 @@ export class RequestsApprovalPageComponent implements OnInit {
 
   constructor(
     private calendarService: CalendarService,
-    private authService: AuthService
+    private authService: AuthService,
+    private modalService: NgbModal
   ) {}
 
   ngOnInit(): void {
@@ -150,6 +153,17 @@ export class RequestsApprovalPageComponent implements OnInit {
     return this.tabStatusFilters[tab].includes(status);
   }
 
+  onRowSelected(row: RequestsTableRow): void {
+    if (!this.authService.isPrivilegedUser() || !row.original) {
+      return;
+    }
+    const modalRef = this.modalService.open(RequestDetailsModalComponent, {
+      size: 'lg',
+      scrollable: true,
+    });
+    modalRef.componentInstance.request = row.original;
+  }
+
   private mapToRow(request: UserRequestResponseDto): RequestsTableRow {
     const withTime = request as UserRequestResponseDto & {
       timeFrom?: string;
@@ -164,6 +178,7 @@ export class RequestsApprovalPageComponent implements OnInit {
       timeTo: withTime.timeTo,
       type: request.type ?? '—',
       status: request.status ?? undefined,
+      original: request,
     };
   }
 

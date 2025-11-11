@@ -9,7 +9,7 @@
   <a
     href="javascript:void(0)"
     class="text-decoration-none"
-    (click)="onUserClick(row)"
+    (click)="onUserClick(row, $event)"
     title="{{ row.user }}"
   >
     {{ row.user }}
@@ -26,4 +26,6 @@
   [currentPage]="currentPage"
   [serverPagination]="serverPagination"
   (pageChange)="onPageChanged($event)"
+  [rowClickable]="canOpenDetails"
+  (rowClick)="onRowClick($event)"
 ></app-dynamic-table>

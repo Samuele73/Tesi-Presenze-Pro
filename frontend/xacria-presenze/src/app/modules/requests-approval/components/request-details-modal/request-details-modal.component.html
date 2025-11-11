@@ -1,0 +1,30 @@
+<div class="modal-header">
+  <h5 class="modal-title">
+    {{ 'Dettagli richiesta' | translate }}
+  </h5>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="activeModal.dismiss('close')"
+  ></button>
+</div>
+
+<div class="modal-body">
+
+  <ng-template #missingData>
+    <p class="text-muted">
+      {{ 'Nessun dato disponibile per questa richiesta' | translate }}
+    </p>
+  </ng-template>
+</div>
+
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-outline-secondary"
+    (click)="activeModal.close('close')"
+  >
+    {{ 'Chiudi' | translate }}
+  </button>
+</div>

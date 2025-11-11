@@ -26,6 +26,7 @@ export class DynamicTableComponent implements OnChanges {
   @Input() columns: DynamicTableColumn[] = [];
   @Input() rows: Record<string, any>[] | null = [];
   @Input() emptyMessage = 'Nessun elemento disponibile';
+  @Input() rowClickable = false;
   private _serverPagination = false;
   @Input() set serverPagination(value: boolean | string | number) {
     const normalized = this.toBoolean(value);
@@ -99,6 +100,7 @@ export class DynamicTableComponent implements OnChanges {
   }
 
   @Output() pageChange = new EventEmitter<number>();
+  @Output() rowClick = new EventEmitter<Record<string, any>>();
 
   paginatedRows: Record<string, any>[] = [];
   collectionSize = 0;
@@ -119,6 +121,13 @@ export class DynamicTableComponent implements OnChanges {
     }
     this.currentPage = page;
     this.updatePaginatedRows();
+  }
+
+  handleRowClick(row: Record<string, any>): void {
+    if (!this.rowClickable) {
+      return;
+    }
+    this.rowClick.emit(row);
   }
 
   trackByRow(_index: number, row: Record<string, any>): any {
