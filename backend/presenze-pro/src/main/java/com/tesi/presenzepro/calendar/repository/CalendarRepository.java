@@ -2,6 +2,9 @@ package com.tesi.presenzepro.calendar.repository;
 
 import com.tesi.presenzepro.calendar.model.CalendarEntity;
 import com.tesi.presenzepro.calendar.model.CalendarEntry;
+import com.tesi.presenzepro.calendar.model.CalendarEntryType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -18,5 +21,16 @@ public interface CalendarRepository extends MongoRepository<CalendarEntity, Stri
 
 //    Optional<CalendarEntity> deleteCalendarEntityByUserEmailAndId(String userEmail, String id);
     Optional<CalendarEntity> findByUserEmailAndId(String userEmail, String id);
+
+    Page<CalendarEntity> findByUserEmailAndEntryTypeIn(
+            String userEmail,
+            List<CalendarEntryType> entryTypes,
+            Pageable pageable
+    );
+
+    Page<CalendarEntity> findByEntryTypeIn(
+            List<CalendarEntryType> entryTypes,
+            Pageable pageable
+    );
 
 }

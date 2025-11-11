@@ -12,6 +12,9 @@ import com.tesi.presenzepro.user.service.UserService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -52,9 +55,7 @@ public class CalendarService {
         }
     }
 
-    public List<UserRequestResponseDto> getAllUserRequests(HttpServletRequest request) {
-        List<CalendarEntity> entities = repository.findAll();
-
+    public PagedResponse<UserRequestResponseDto> getAllUserRequests(HttpServletRequest request, Pageable pageable) {
         final String jwt = jwtUtils.getJwtFromHeader(request);
         if (jwt == null) {
             throw new IllegalArgumentException("Missing JWT token in request header");
@@ -62,27 +63,50 @@ public class CalendarService {
 
         String currentUserEmail = jwtUtils.getUsernameFromJwt(jwt);
         String currentUserRole = jwtUtils.getRoleFromJwt(jwt);
+        boolean isAdmin = currentUserRole != null && userService.isAdmin(currentUserRole);
 
-        boolean isAdmin = currentUserRole != null && this.userService.isAdmin(currentUserRole);
+        Page<CalendarEntity> entities = repository.findByEntryTypeIn(
+                List.of(CalendarEntryType.REQUEST, CalendarEntryType.WORKING_TRIP),
+                pageable
+        );
 
-        return entities.stream()
-                // Se è admin, escludi solo le sue entry
-                .filter(e -> !(isAdmin && e.getUserEmail().equals(currentUserEmail)))
-                .filter(e -> e.getEntryType() == CalendarEntryType.REQUEST
-                        || e.getEntryType() == CalendarEntryType.WORKING_TRIP)
-                .map(this.calendarMapper::mapToUserRequestResponseDto)
+        List<UserRequestResponseDto> filteredDtos = entities.getContent().stream()
+                .map(calendarMapper::mapToUserRequestResponseDto)
+                .filter(dto -> !(isAdmin && dto.getUserEmail().equals(currentUserEmail))) // escludi le entry dell'admin
                 .toList();
+
+        Page<UserRequestResponseDto> filteredPage = new PageImpl<>(filteredDtos, pageable, entities.getTotalElements());
+
+        return PagedResponse.<UserRequestResponseDto>builder()
+                .content(filteredPage.getContent())
+                .page(filteredPage.getNumber())
+                .size(filteredPage.getSize())
+                .totalElements(filteredPage.getTotalElements())
+                .totalPages(filteredPage.getTotalPages())
+                .last(filteredPage.isLast())
+                .build();
     }
 
-    public List<UserRequestResponseDto> getUserRequestsByEmail(HttpServletRequest request) {
+    public PagedResponse<UserRequestResponseDto> getMyRquests(HttpServletRequest request, Pageable pageable) {
         final String jwt = this.jwtUtils.getJwtFromHeader(request);
         final String email = this.jwtUtils.getUsernameFromJwt(jwt);
-        List<CalendarEntity> entities = repository.findAllByUserEmail(email);
-        return entities.stream()
-                .filter(e -> e.getEntryType() == CalendarEntryType.REQUEST
-                        || e.getEntryType() == CalendarEntryType.WORKING_TRIP)
-                .map(this.calendarMapper::mapToUserRequestResponseDto)
-                .toList();
+
+        Page<CalendarEntity> entities = repository.findByUserEmailAndEntryTypeIn(
+                email,
+                List.of(CalendarEntryType.REQUEST, CalendarEntryType.WORKING_TRIP),
+                pageable
+        );
+
+        final Page<UserRequestResponseDto> pages = entities.map(calendarMapper::mapToUserRequestResponseDto);
+
+        return new PagedResponse<UserRequestResponseDto>(
+                pages.getContent(),
+                pages.getNumber(),
+                pages.getSize(),
+                pages.getTotalElements(),
+                pages.getTotalPages(),
+                pages.isLast()
+        );
     }
 
 
