@@ -86,7 +86,18 @@ export class RequestsApprovalPageComponent implements OnInit {
     state.requestToken += 1;
     const token = state.requestToken;
     state.loading = true;
-    const pageable: Pageable = { page: state.page, size: state.size, sort: [] };
+    const pageable: Pageable & { toString(): string } = {
+      page: state.page,
+      size: state.size,
+      sort: [],
+      toString() {
+        return JSON.stringify({
+          page: this.page,
+          size: this.size,
+          sort: this.sort ?? [],
+        });
+      },
+    };
 
     this.getRequests$(pageable)
       .pipe(

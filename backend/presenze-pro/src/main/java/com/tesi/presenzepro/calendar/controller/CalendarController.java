@@ -5,6 +5,7 @@ import com.tesi.presenzepro.calendar.dto.SaveCalendarEntityRequestDto;
 import com.tesi.presenzepro.calendar.dto.UserRequestResponseDto;
 import com.tesi.presenzepro.calendar.model.CalendarEntity;
 import com.tesi.presenzepro.calendar.model.PagedResponse;
+import com.tesi.presenzepro.calendar.model.RequestType;
 import com.tesi.presenzepro.calendar.service.CalendarService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -46,15 +47,16 @@ public class CalendarController {
     @PreAuthorize("hasAnyRole('ADMIN', 'OWNER')")
     @Operation(description = "Ottieni tutte le richieste in base al ruolo utente: admin, owner", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/requests")
-    ResponseEntity<PagedResponse<UserRequestResponseDto>> getAllRequests(HttpServletRequest request,@PageableDefault(size = 10) Pageable pageable){
-        final PagedResponse<UserRequestResponseDto> requests = calendarService.getAllUserRequests(request, pageable);
+    ResponseEntity<PagedResponse<UserRequestResponseDto>> getAllRequests(HttpServletRequest request,@PageableDefault(size = 10) Pageable pageable, @RequestParam(required = false) List<RequestType> types,
+                                                                         @RequestParam(required = false) List<String> users){
+        final PagedResponse<UserRequestResponseDto> requests = calendarService.getAllUserRequests(request, pageable, types, users);
         return ResponseEntity.status(HttpStatus.OK).body(requests);
     }
 
     @Operation(description = "Ottieni tutte le richieste in base al ruolo utente: admin, owner", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/my-requests")
-    ResponseEntity<PagedResponse<UserRequestResponseDto>> getUserRequests(HttpServletRequest request, @PageableDefault(size = 10) Pageable pageable){
-        final PagedResponse<UserRequestResponseDto> requests = calendarService.getMyRquests(request, pageable);
+    ResponseEntity<PagedResponse<UserRequestResponseDto>> getUserRequests(HttpServletRequest request, @PageableDefault(size = 10) Pageable pageable, @RequestParam(required = false) List<RequestType> types){
+        final PagedResponse<UserRequestResponseDto> requests = calendarService.getMyRquests(request, pageable, types);
         return ResponseEntity.status(HttpStatus.OK).body(requests);
     }
 

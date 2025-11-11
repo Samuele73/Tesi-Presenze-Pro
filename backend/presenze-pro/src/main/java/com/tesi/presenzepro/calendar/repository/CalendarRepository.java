@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-public interface CalendarRepository extends MongoRepository<CalendarEntity, String> {
+public interface CalendarRepository extends MongoRepository<CalendarEntity, String>, CalendarRepositoryCustom {
     List<CalendarEntity> findAllByUserEmail(String userEmail);
 
     @Query("{ 'userEmail': ?0, 'calendarEntry.dateFrom': { $gte: ?1, $lte: ?2 } }")

@@ -23,6 +23,7 @@ import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
+import { PageableInterceptor } from './shared/interceptors/pageable.interceptor';
 import { ApiModule } from 'src/generated-client';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { InvitationErrorComponent } from './invitation-error/invitation-error.component';
@@ -68,6 +69,7 @@ import { ToastrModule } from 'ngx-toastr';
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: PageableInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],
 })

@@ -55,64 +55,66 @@ public class CalendarService {
         }
     }
 
-    public PagedResponse<UserRequestResponseDto> getAllUserRequests(HttpServletRequest request, Pageable pageable) {
+    public PagedResponse<UserRequestResponseDto> getAllUserRequests(
+            HttpServletRequest request,
+            Pageable pageable,
+            List<RequestType> types,
+            List<String> users
+    ) {
         final String jwt = jwtUtils.getJwtFromHeader(request);
         if (jwt == null) {
             throw new IllegalArgumentException("Missing JWT token in request header");
         }
 
-        // Recupera email e ruolo dal token (può servirti per log o future estensioni)
-        String currentUserEmail = jwtUtils.getUsernameFromJwt(jwt);
-        String currentUserRole = jwtUtils.getRoleFromJwt(jwt);
-        boolean isAdmin = currentUserRole != null && userService.isAdmin(currentUserRole);
+                // Query con filtri lato DB
+        Page<CalendarEntity> entities = repository.findFilteredRequests(types, users, pageable);
 
-        // Prendi solo REQUEST e WORKING_TRIP dal database (paginato)
-        Page<CalendarEntity> entities = repository.findByEntryTypeIn(
-                List.of(CalendarEntryType.REQUEST, CalendarEntryType.WORKING_TRIP),
-                pageable
-        );
-
-        // Mappa le entità in DTO
+        // Mappa a DTO
         List<UserRequestResponseDto> dtos = entities.getContent().stream()
                 .map(calendarMapper::mapToUserRequestResponseDto)
                 .toList();
 
-        // Ricrea una Page per compatibilità
-        Page<UserRequestResponseDto> dtoPage = new PageImpl<>(dtos, pageable, entities.getTotalElements());
-
-        // Converte la pagina nel DTO di risposta
+        // Costruisci PagedResponse coerente
         return PagedResponse.<UserRequestResponseDto>builder()
-                .content(dtoPage.getContent())
-                .page(dtoPage.getNumber())
-                .size(dtoPage.getSize())
-                .totalElements(dtoPage.getTotalElements())
-                .totalPages(dtoPage.getTotalPages())
-                .last(dtoPage.isLast())
+                .content(dtos)
+                .page(entities.getNumber())
+                .size(entities.getSize())
+                .totalElements(entities.getTotalElements())
+                .totalPages(entities.getTotalPages())
+                .last(entities.isLast())
                 .build();
     }
 
 
-    public PagedResponse<UserRequestResponseDto> getMyRquests(HttpServletRequest request, Pageable pageable) {
-        final String jwt = this.jwtUtils.getJwtFromHeader(request);
-        final String email = this.jwtUtils.getUsernameFromJwt(jwt);
+    public PagedResponse<UserRequestResponseDto> getMyRquests(
+            HttpServletRequest request,
+            Pageable pageable,
+            List<RequestType> types
+    ) {
+        final String jwt = jwtUtils.getJwtFromHeader(request);
+        if (jwt == null) {
+            throw new IllegalArgumentException("Missing JWT token in request header");
+        }
 
-        Page<CalendarEntity> entities = repository.findByUserEmailAndEntryTypeIn(
-                email,
-                List.of(CalendarEntryType.REQUEST, CalendarEntryType.WORKING_TRIP),
-                pageable
-        );
+        final String email = jwtUtils.getUsernameFromJwt(jwt);
 
-        final Page<UserRequestResponseDto> pages = entities.map(calendarMapper::mapToUserRequestResponseDto);
+        List<String> userEmails = List.of(email);
 
-        return new PagedResponse<UserRequestResponseDto>(
-                pages.getContent(),
-                pages.getNumber(),
-                pages.getSize(),
-                pages.getTotalElements(),
-                pages.getTotalPages(),
-                pages.isLast()
+        Page<CalendarEntity> entities =
+                repository.findFilteredRequests(types, userEmails, pageable);
+
+        Page<UserRequestResponseDto> mapped = entities.map(calendarMapper::mapToUserRequestResponseDto);
+
+        return new PagedResponse<>(
+                mapped.getContent(),
+                mapped.getNumber(),
+                mapped.getSize(),
+                mapped.getTotalElements(),
+                mapped.getTotalPages(),
+                mapped.isLast()
         );
     }
+
 
 
     public List<CalendarResponseDto> saveCalendarEntities(HttpServletRequest request, List<SaveCalendarEntityRequestDto> calendarEntities) {

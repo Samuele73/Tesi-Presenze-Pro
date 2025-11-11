@@ -208,33 +208,35 @@ export class CalendarService {
      * 
      * Ottieni tutte le richieste in base al ruolo utente: admin, owner
      * @param pageable 
+     * @param types 
+     * @param users 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAllRequests(pageable: Pageable, observe?: 'body', reportProgress?: boolean): Observable<PagedResponseUserRequestResponseDto>;
-    public getAllRequests(pageable: Pageable, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<PagedResponseUserRequestResponseDto>>;
-    public getAllRequests(pageable: Pageable, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<PagedResponseUserRequestResponseDto>>;
-    public getAllRequests(pageable: Pageable, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public getAllRequests(pageable: Pageable, types?: Array<string>, users?: Array<string>, observe?: 'body', reportProgress?: boolean): Observable<PagedResponseUserRequestResponseDto>;
+    public getAllRequests(pageable: Pageable, types?: Array<string>, users?: Array<string>, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<PagedResponseUserRequestResponseDto>>;
+    public getAllRequests(pageable: Pageable, types?: Array<string>, users?: Array<string>, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<PagedResponseUserRequestResponseDto>>;
+    public getAllRequests(pageable: Pageable, types?: Array<string>, users?: Array<string>, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (pageable === null || pageable === undefined) {
             throw new Error('Required parameter pageable was null or undefined when calling getAllRequests.');
         }
 
+
+
         let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (pageable !== undefined && pageable !== null) {
-            if (pageable.page !== undefined && pageable.page !== null) {
-                queryParameters = queryParameters.set('page', <any>pageable.page);
-            }
-            if (pageable.size !== undefined && pageable.size !== null) {
-                queryParameters = queryParameters.set('size', <any>pageable.size);
-            }
-            if (pageable.sort && pageable.sort.length) {
-                pageable.sort.forEach(sortValue => {
-                    if (sortValue !== undefined && sortValue !== null) {
-                        queryParameters = queryParameters.append('sort', <any>sortValue);
-                    }
-                });
-            }
+            queryParameters = queryParameters.set('pageable', <any>pageable);
+        }
+        if (types) {
+            types.forEach((element) => {
+                queryParameters = queryParameters.append('types', <any>element);
+            })
+        }
+        if (users) {
+            users.forEach((element) => {
+                queryParameters = queryParameters.append('users', <any>element);
+            })
         }
 
         let headers = this.defaultHeaders;
@@ -336,33 +338,28 @@ export class CalendarService {
      * 
      * Ottieni tutte le richieste in base al ruolo utente: admin, owner
      * @param pageable 
+     * @param types 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getUserRequests(pageable: Pageable, observe?: 'body', reportProgress?: boolean): Observable<PagedResponseUserRequestResponseDto>;
-    public getUserRequests(pageable: Pageable, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<PagedResponseUserRequestResponseDto>>;
-    public getUserRequests(pageable: Pageable, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<PagedResponseUserRequestResponseDto>>;
-    public getUserRequests(pageable: Pageable, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public getUserRequests(pageable: Pageable, types?: Array<string>, observe?: 'body', reportProgress?: boolean): Observable<PagedResponseUserRequestResponseDto>;
+    public getUserRequests(pageable: Pageable, types?: Array<string>, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<PagedResponseUserRequestResponseDto>>;
+    public getUserRequests(pageable: Pageable, types?: Array<string>, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<PagedResponseUserRequestResponseDto>>;
+    public getUserRequests(pageable: Pageable, types?: Array<string>, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (pageable === null || pageable === undefined) {
             throw new Error('Required parameter pageable was null or undefined when calling getUserRequests.');
         }
 
+
         let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (pageable !== undefined && pageable !== null) {
-            if (pageable.page !== undefined && pageable.page !== null) {
-                queryParameters = queryParameters.set('page', <any>pageable.page);
-            }
-            if (pageable.size !== undefined && pageable.size !== null) {
-                queryParameters = queryParameters.set('size', <any>pageable.size);
-            }
-            if (pageable.sort && pageable.sort.length) {
-                pageable.sort.forEach(sortValue => {
-                    if (sortValue !== undefined && sortValue !== null) {
-                        queryParameters = queryParameters.append('sort', <any>sortValue);
-                    }
-                });
-            }
+            queryParameters = queryParameters.set('pageable', <any>pageable);
+        }
+        if (types) {
+            types.forEach((element) => {
+                queryParameters = queryParameters.append('types', <any>element);
+            })
         }
 
         let headers = this.defaultHeaders;
