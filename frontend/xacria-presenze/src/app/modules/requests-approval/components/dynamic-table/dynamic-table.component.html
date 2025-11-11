@@ -1,13 +1,16 @@
 <div class="mb-2 text-end">
-  <ngb-pagination
-    *ngIf="showPaginationControls"
-    [collectionSize]="collectionSize"
-    [page]="currentPage"
-    [pageSize]="pageSize"
-    (pageChange)="onPageChange($event)"
-    size="sm"
-    [boundaryLinks]="true"
-  ></ngb-pagination>
+  <app-list-interaction>
+    <ng-container other-buttons
+      ><ngb-pagination
+        *ngIf="showPaginationControls"
+        [collectionSize]="collectionSize"
+        [page]="currentPage"
+        [pageSize]="pageSize"
+        (pageChange)="onPageChange($event)"
+        [boundaryLinks]="true"
+      ></ngb-pagination
+    ></ng-container>
+  </app-list-interaction>
 </div>
 
 <div class="table-responsive">
@@ -19,7 +22,7 @@
           scope="col"
           [ngClass]="column.headerClass"
         >
-          {{ column.label | translate}}
+          {{ column.label | translate }}
         </th>
       </tr>
     </thead>
@@ -29,7 +32,7 @@
           class="text-center text-muted py-4 dynamic-table-empty"
           [attr.colspan]="columns.length || 1"
         >
-          {{ emptyMessage | translate}}
+          {{ emptyMessage | translate }}
         </td>
       </tr>
       <tr

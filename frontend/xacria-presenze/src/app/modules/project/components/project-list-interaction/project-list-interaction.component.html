@@ -1,8 +1,14 @@
-<app-list-interaction
-  [hasAddButtonPermission]="this.authService.isPrivilegedUser()"
-  (addButtonClick)="openAddProjectModal(addProjectModal)"
-  [addButtonName]="addButtonName"
->
+<app-list-interaction>
+  <ng-container other-buttons>
+    <button
+      class="btn btn-primary text-white"
+      *ngIf="authService.isPrivilegedUser()"
+      [disabled]="!authService.isPrivilegedUser()"
+      (click)="openAddProjectModal(addProjectModal)"
+    >
+      {{ addButtonName | translate }}
+    </button>
+  </ng-container>
   <div list-filters class="row g-3">
     <div class="col-md-4">
       <label class="form-label fw-bold">
@@ -83,7 +89,17 @@
     </span>
   </div>
   <div class="modal-footer">
-    <app-button [type]="'button'" [name]="'Annulla'" [mode]="'UNDO'"></app-button>
-    <app-button [type]="'submit'" [name]="'Salva'" [mode]="'SAVE'" [buttonDisabled]="projectFormComp.projectForm.invalid" (buttonClick)="submitAddProjectForm(projectFormComp)"></app-button>
+    <app-button
+      [type]="'button'"
+      [name]="'Annulla'"
+      [mode]="'UNDO'"
+    ></app-button>
+    <app-button
+      [type]="'submit'"
+      [name]="'Salva'"
+      [mode]="'SAVE'"
+      [buttonDisabled]="projectFormComp.projectForm.invalid"
+      (buttonClick)="submitAddProjectForm(projectFormComp)"
+    ></app-button>
   </div>
 </ng-template>

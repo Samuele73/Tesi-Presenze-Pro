@@ -3,6 +3,16 @@
   (addButtonClick)="openInvitationModal(inviteUserModal)"
   [addButtonName]="addButtonName"
 >
+  <ng-container other-buttons>
+    <button
+      class="btn btn-primary text-white"
+      *ngIf="authService.isPrivilegedUser()"
+      [disabled]="!authService.isPrivilegedUser()"
+      (click)="openInvitationModal(inviteUserModal)"
+    >
+      {{ addButtonName | translate }}
+    </button>
+  </ng-container>
   <div class="row g-3" list-filters>
     <div class="col-md-4">
       <!-- Estrai in componente esterno - filtro di ricerca -->

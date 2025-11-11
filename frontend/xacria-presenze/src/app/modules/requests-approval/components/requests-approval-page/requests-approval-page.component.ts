@@ -157,10 +157,7 @@ export class RequestsApprovalPageComponent implements OnInit {
     if (!this.authService.isPrivilegedUser() || !row.original) {
       return;
     }
-    const modalRef = this.modalService.open(RequestDetailsModalComponent, {
-      size: 'lg',
-      scrollable: true,
-    });
+    const modalRef = this.modalService.open(RequestDetailsModalComponent);
     modalRef.componentInstance.request = row.original;
   }
 

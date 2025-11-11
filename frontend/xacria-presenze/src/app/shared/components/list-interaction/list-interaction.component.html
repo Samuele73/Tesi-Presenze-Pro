@@ -15,14 +15,7 @@
         : ("Nascondi Filtri" | translate)
     }}
   </button>
-  <button
-    class="btn btn-primary text-white"
-    *ngIf="hasAddButtonPermission"
-    [disabled]="!hasAddButtonPermission"
-    (click)="onAddButtonClick()"
-  >
-    {{ addButtonName | translate }}
-  </button>
+  <ng-content select="[other-buttons]"></ng-content>
 </div>
 
 <div class="card shadow-sm mb-4" [(ngbCollapse)]="areFiltersCollapsed">
