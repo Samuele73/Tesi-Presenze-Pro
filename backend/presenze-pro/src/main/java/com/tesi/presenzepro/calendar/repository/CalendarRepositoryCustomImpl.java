@@ -35,35 +35,45 @@ public class CalendarRepositoryCustomImpl implements CalendarRepositoryCustom {
     ) {
         Query query = new Query();
 
+        // Includi solo REQUEST e WORKING_TRIP
         query.addCriteria(Criteria.where("entryType")
                 .in(List.of(CalendarEntryType.REQUEST, CalendarEntryType.WORKING_TRIP)));
 
+        // Filtro per utenti (se fornito)
         if (userEmails != null && !userEmails.isEmpty()) {
             query.addCriteria(Criteria.where("userEmail").in(userEmails));
         }
 
+        // Filtro per tipo richiesta (se fornito)
         if (requestTypes != null && !requestTypes.isEmpty()) {
-            // Qui serve un OR perché "requestType" esiste solo in REQUEST
-            // e "TRASFERTA" è rappresentato da entryType WORKING_TRIP.
-            Criteria typeCriteria = new Criteria().orOperator(
-                    Criteria.where("calendarEntry.requestType").in(
-                            requestTypes.stream()
-                                    .map(RequestType::name)
-                                    .toList()
-                    ),
-                    new Criteria().andOperator(
-                            Criteria.where("entryType").is(CalendarEntryType.WORKING_TRIP),
-                            Criteria.where("calendarEntry").exists(true),
-                            Criteria.where("calendarEntry").ne(null),
-                            Criteria.where("calendarEntry").not().size(0),
-                            Criteria.where("calendarEntry.dateFrom").exists(true)
-                    )
-            );
+            boolean includeTransfers = requestTypes.contains(RequestType.TRASFERTA);
+
+            // Lista tipi diversi da TRASFERTA
+            List<String> nonTransferTypes = requestTypes.stream()
+                    .filter(t -> t != RequestType.TRASFERTA)
+                    .map(Enum::name)
+                    .toList();
+
+            Criteria typeCriteria;
+
+            if (includeTransfers && !nonTransferTypes.isEmpty()) {
+                // includi sia TRASFERTA che altri tipi
+                typeCriteria = new Criteria().orOperator(
+                        Criteria.where("calendarEntry.requestType").in(nonTransferTypes),
+                        Criteria.where("entryType").is(CalendarEntryType.WORKING_TRIP)
+                );
+            } else if (includeTransfers) {
+                // solo trasferte
+                typeCriteria = Criteria.where("entryType").is(CalendarEntryType.WORKING_TRIP);
+            } else {
+                // solo richieste non-trasferta
+                typeCriteria = Criteria.where("calendarEntry.requestType").in(nonTransferTypes);
+            }
+
             query.addCriteria(typeCriteria);
         }
 
         long total = mongoTemplate.count(query, CalendarEntity.class);
-
         query.with(pageable);
 
         List<CalendarEntity> content = mongoTemplate.find(query, CalendarEntity.class);

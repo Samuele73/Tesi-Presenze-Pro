@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { RequestsTableRow } from '../requests-table/requests-table.component';
+import {
+  RequestsTableFilters,
+  RequestsTableRow,
+} from '../requests-table/requests-table.component';
 import {
   CalendarService,
   Pageable,
@@ -24,6 +27,7 @@ interface RequestsTabState {
   loading: boolean;
   initialized: boolean;
   requestToken: number;
+  filters: RequestsTableFilters;
 }
 
 @Component({
@@ -81,6 +85,16 @@ export class RequestsApprovalPageComponent implements OnInit {
     this.loadTabData(tab);
   }
 
+  onFiltersChange(tab: RequestsTab, filters: RequestsTableFilters): void {
+    const state = this.tabState[tab];
+    state.filters = {
+      types: filters.types ?? [],
+      users: filters.users ?? [],
+    };
+    state.page = 0;
+    this.loadTabData(tab);
+  }
+
   private loadTabData(tab: RequestsTab): void {
     const state = this.tabState[tab];
     state.requestToken += 1;
@@ -99,7 +113,18 @@ export class RequestsApprovalPageComponent implements OnInit {
       },
     };
 
-    this.getRequests$(pageable)
+    const typesFilter =
+      state.filters.types && state.filters.types.length
+        ? state.filters.types
+        : undefined;
+    const usersFilter =
+      this.isPrivilegedUser &&
+      state.filters.users &&
+      state.filters.users.length
+        ? state.filters.users
+        : undefined;
+
+    this.getRequests$(pageable, typesFilter, usersFilter)
       .pipe(
         finalize(() => {
           if (token === state.requestToken) {
@@ -201,15 +226,25 @@ export class RequestsApprovalPageComponent implements OnInit {
       loading: false,
       initialized: false,
       requestToken: 0,
+      filters: { types: [], users: [] },
     };
   }
 
   private getRequests$(
-    pageable: Pageable
+    pageable: Pageable,
+    types?: UserRequestResponseDto.TypeEnum[],
+    users?: string[]
   ): Observable<PagedResponseUserRequestResponseDto> {
     return this.isPrivilegedUser
-      ? this.calendarService.getAllRequests(pageable)
-      : this.calendarService.getUserRequests(pageable);
+      ? this.calendarService.getAllRequests(
+          pageable,
+          types as string[] | undefined,
+          users
+        )
+      : this.calendarService.getUserRequests(
+          pageable,
+          types as string[] | undefined
+        );
   }
 
   private deriveTotalFromResponse(

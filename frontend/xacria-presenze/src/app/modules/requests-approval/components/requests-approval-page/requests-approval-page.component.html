@@ -42,6 +42,7 @@
           [serverPagination]="true"
           (pageChange)="onPageChange('open', $event)"
           (rowSelected)="onRowSelected($event)"
+          (filtersChange)="onFiltersChange('open', $event)"
         ></app-requests-table>
       </ng-container>
       <ng-container *ngSwitchCase="'closed'">
@@ -63,6 +64,7 @@
           [serverPagination]="true"
           (pageChange)="onPageChange('closed', $event)"
           (rowSelected)="onRowSelected($event)"
+          (filtersChange)="onFiltersChange('closed', $event)"
         ></app-requests-table>
       </ng-container>
     </ng-container>

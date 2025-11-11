@@ -49,7 +49,10 @@ public class CalendarController {
     @GetMapping("/requests")
     ResponseEntity<PagedResponse<UserRequestResponseDto>> getAllRequests(HttpServletRequest request,@PageableDefault(size = 10) Pageable pageable, @RequestParam(required = false) List<RequestType> types,
                                                                          @RequestParam(required = false) List<String> users){
+        System.out.println("Types: " + types);
+        System.out.println("users: " + users);
         final PagedResponse<UserRequestResponseDto> requests = calendarService.getAllUserRequests(request, pageable, types, users);
+        System.out.println("requests: " + requests);
         return ResponseEntity.status(HttpStatus.OK).body(requests);
     }
 

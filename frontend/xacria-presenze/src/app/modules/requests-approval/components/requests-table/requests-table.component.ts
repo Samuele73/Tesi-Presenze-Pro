@@ -29,6 +29,11 @@ export interface RequestsTableRow {
   original?: UserRequestResponseDto;
 }
 
+export interface RequestsTableFilters {
+  types: UserRequestResponseDto.TypeEnum[];
+  users: string[];
+}
+
 @Component({
   selector: 'app-requests-table',
   templateUrl: './requests-table.component.html',
@@ -50,6 +55,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
   @Input() serverPagination = false;
   @Output() pageChange = new EventEmitter<number>();
   @Output() rowSelected = new EventEmitter<RequestsTableRow>();
+  @Output() filtersChange = new EventEmitter<RequestsTableFilters>();
 
   columns: DynamicTableColumn[] = [];
   canOpenDetails = this.authService.isPrivilegedUser();
@@ -151,7 +157,15 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
     ];
   }
 
-  onFilterChange(): void{
+  onFilterChange(): void {
+    this.filtersChange.emit({
+      types: [...(this.selectedRequestTypes ?? [])],
+      users: [...(this.selectedUsers ?? [])],
+    });
+    console.log("OIIII", {
+      types: [...(this.selectedRequestTypes ?? [])],
+      users: [...(this.selectedUsers ?? [])],
+    });
 
   }
 

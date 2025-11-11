@@ -52,6 +52,7 @@ public class CalendarMapper {
     public UserRequestResponseDto mapToUserRequestResponseDto(CalendarEntity e) {
         if (e.getEntryType() == CalendarEntryType.REQUEST) {
             CalendarRequestEntry entry = (CalendarRequestEntry) e.getCalendarEntry();
+            System.out.println("entry: " + entry);
 
             LocalDateTime from = LocalDateTime.of(
                     entry.getDateFrom().toInstant()

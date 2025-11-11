@@ -68,7 +68,7 @@ public class CalendarService {
 
                 // Query con filtri lato DB
         Page<CalendarEntity> entities = repository.findFilteredRequests(types, users, pageable);
-
+        System.out.println("entities: " + entities.getContent());
         // Mappa a DTO
         List<UserRequestResponseDto> dtos = entities.getContent().stream()
                 .map(calendarMapper::mapToUserRequestResponseDto)
