@@ -53,6 +53,14 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
   columns: DynamicTableColumn[] = [];
   canOpenDetails = this.authService.isPrivilegedUser();
 
+  requestTypeOptions = Object.values(UserRequestResponseDto.TypeEnum).map(
+    (value) => ({
+      label: value.charAt(0).toUpperCase() + value.slice(1).toLowerCase(), // "Ferie"
+      value, // il valore effettivo (FERIE, MALATTIA, ecc.)
+    })
+  );
+  selectedRequestTypes: UserRequestResponseDto.TypeEnum[] = [];
+
   constructor(
     private cdr: ChangeDetectorRef,
     private authService: AuthService
@@ -132,6 +140,10 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
     ];
   }
 
+  onFilterChange(): void{
+
+  }
+
   onUserClick(row: RequestsTableRow, event?: MouseEvent): void {
     event?.stopPropagation();
     console.log('User clicked:', row);
@@ -184,9 +196,10 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
     }
   }
 
-  private extractDateComponents(
-    value: string | Date | undefined
-  ): { datePart?: string; timePart?: string } {
+  private extractDateComponents(value: string | Date | undefined): {
+    datePart?: string;
+    timePart?: string;
+  } {
     if (!value) {
       return {};
     }

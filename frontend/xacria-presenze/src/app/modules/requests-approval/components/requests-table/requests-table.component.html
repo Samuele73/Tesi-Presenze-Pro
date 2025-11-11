@@ -28,4 +28,27 @@
   (pageChange)="onPageChanged($event)"
   [rowClickable]="canOpenDetails"
   (rowClick)="onRowClick($event)"
-></app-dynamic-table>
+>
+  <div filters class="row g-3">
+    <!-- Filtro per tipo -->
+    <div class="col-md-4">
+      <label class="form-label fw-bold">
+        <i class="fa fa-bars-progress me-1"></i>
+        {{ "Filtra per tipo" | translate }}
+      </label>
+
+      <p-multiSelect
+        [options]="requestTypeOptions"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Tutti"
+        [(ngModel)]="selectedRequestTypes"
+        (onChange)="onFilterChange()"
+        class="w-100 p-multiselect-sm"
+        [showToggleAll]="false"
+        [filter]="false"
+        [showHeader]="false"
+      ></p-multiSelect>
+    </div>
+  </div>
+</app-dynamic-table>

@@ -1,4 +1,4 @@
-<div class="mb-2 text-end">
+<div class="mb-2">
   <app-list-interaction>
     <ng-container other-buttons
       ><ngb-pagination
@@ -10,6 +10,7 @@
         [boundaryLinks]="true"
       ></ngb-pagination
     ></ng-container>
+    <ng-content list-filters select="[filters]"></ng-content>
   </app-list-interaction>
 </div>
 
@@ -35,11 +36,7 @@
           {{ emptyMessage | translate }}
         </td>
       </tr>
-      <tr
-        *ngFor="let row of paginatedRows; trackBy: trackByRow"
-        (click)="handleRowClick(row)"
-        [class.dynamic-table-row-clickable]="rowClickable"
-      >
+      <tr *ngFor="let row of paginatedRows; trackBy: trackByRow">
         <td *ngFor="let column of columns" [ngClass]="column.cellClass">
           <ng-container *ngIf="column.template; else valueTpl">
             <ng-container

@@ -7,6 +7,7 @@ import {
   SimpleChanges,
   TemplateRef,
 } from '@angular/core';
+import { UserRequestResponseDto } from 'src/generated-client';
 
 export interface DynamicTableColumn {
   field: string;
