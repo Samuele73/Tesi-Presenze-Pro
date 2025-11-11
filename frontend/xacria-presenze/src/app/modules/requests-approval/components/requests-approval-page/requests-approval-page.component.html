@@ -30,7 +30,7 @@
     <ng-container [ngSwitch]="activeTab">
       <ng-container *ngSwitchCase="'open'">
         <div
-          *ngIf="tabState.open.loading"
+          *ngIf="tabState.open.loading && !tabState.open.initialized"
           class="alert alert-info mt-3 text-center"
           role="status"
         >
@@ -49,7 +49,7 @@
       </ng-container>
       <ng-container *ngSwitchCase="'closed'">
         <div
-          *ngIf="tabState.closed.loading"
+          *ngIf="tabState.closed.loading && !tabState.closed.initialized"
           class="alert alert-info mt-3 text-center"
           role="status"
         >
