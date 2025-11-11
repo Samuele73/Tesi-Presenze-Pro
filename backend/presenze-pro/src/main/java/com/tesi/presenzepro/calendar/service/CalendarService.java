@@ -68,10 +68,19 @@ public class CalendarService {
         return entities.stream()
                 // Se è admin, escludi solo le sue entry
                 .filter(e -> !(isAdmin && e.getUserEmail().equals(currentUserEmail)))
-                // Filtra solo richieste e trasferte
                 .filter(e -> e.getEntryType() == CalendarEntryType.REQUEST
                         || e.getEntryType() == CalendarEntryType.WORKING_TRIP)
-                // Mappa in DTO
+                .map(this.calendarMapper::mapToUserRequestResponseDto)
+                .toList();
+    }
+
+    public List<UserRequestResponseDto> getUserRequestsByEmail(HttpServletRequest request) {
+        final String jwt = this.jwtUtils.getJwtFromHeader(request);
+        final String email = this.jwtUtils.getUsernameFromJwt(jwt);
+        List<CalendarEntity> entities = repository.findAllByUserEmail(email);
+        return entities.stream()
+                .filter(e -> e.getEntryType() == CalendarEntryType.REQUEST
+                        || e.getEntryType() == CalendarEntryType.WORKING_TRIP)
                 .map(this.calendarMapper::mapToUserRequestResponseDto)
                 .toList();
     }

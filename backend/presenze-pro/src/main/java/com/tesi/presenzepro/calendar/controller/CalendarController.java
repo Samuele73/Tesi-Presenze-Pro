@@ -47,6 +47,13 @@ public class CalendarController {
         return ResponseEntity.status(HttpStatus.OK).body(requests);
     }
 
+    @Operation(description = "Ottieni tutte le richieste in base al ruolo utente: admin, owner", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/my-requests")
+    ResponseEntity<List<UserRequestResponseDto>> getUserRequests(HttpServletRequest request){
+        final List<UserRequestResponseDto> requests = calendarService.getUserRequestsByEmail(request);
+        return ResponseEntity.status(HttpStatus.OK).body(requests);
+    }
+
     @Operation(description = "Save a new calendar entry", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping("")
     ResponseEntity<CalendarResponseDto> saveCalendarEntity(HttpServletRequest request, @RequestBody SaveCalendarEntityRequestDto calendarEntityEntry){
