@@ -17,6 +17,16 @@
   </a>
 </ng-template>
 
+<ng-template #statusTemplate let-row>
+  <span
+    class="badge"
+    [ngClass]="{
+      'bg-danger': row.status === 'REJECTED',
+      'bg-primary': row.status === 'ACCEPTED'
+    }"
+  >{{(row.status === 'ACCEPTED' ? 'ACCETTATO' : row.status === "REJECTED" ? "RIFIUTATO" : "IDk") | translate}}</span>
+</ng-template>
+
 <app-dynamic-table
   [columns]="columns"
   [rows]="data"
@@ -53,7 +63,8 @@
     </div>
     <div class="col-md-4" *ngIf="authService.isPrivilegedUser()">
       <label class="form-label fw-bold"
-        ><i class="fa fa-user me-2"></i>{{ "Filtra per utente" | translate }}</label
+        ><i class="fa fa-user me-2"></i
+        >{{ "Filtra per utente" | translate }}</label
       >
 
       <p-multiSelect

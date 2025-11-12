@@ -14,7 +14,10 @@ import {
 import { DynamicTableColumn } from '../dynamic-table/dynamic-table.component';
 import { DropdownOptions } from 'src/app/shared/components/ngb-options/ngb-options.component';
 import { AuthService } from 'src/app/shared/services/auth.service';
-import { UserRequestResponseDto } from 'src/generated-client';
+import {
+  ApprovalRequestTab,
+  UserRequestResponseDto,
+} from 'src/generated-client';
 
 export interface RequestsTableRow {
   id?: string;
@@ -43,9 +46,17 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
   actionsTemplate?: TemplateRef<any>;
   @ViewChild('userTemplate', { static: true })
   userTemplate?: TemplateRef<any>;
+  @ViewChild('statusTemplate', { static: true })
+  statusTemplate?: TemplateRef<any>;
 
   @Input() data: RequestsTableRow[] = [];
   @Input() showStatusColumn = false;
+  private _tab: ApprovalRequestTab = 'OPEN';
+  @Input() set tab(value: ApprovalRequestTab){
+    this._tab = value;
+    this.canOpenDetails = this.authService.isPrivilegedUser() && this._tab === 'OPEN';
+  }
+
   @Input() emptyMessage = 'Nessuna richiesta disponibile';
   @Input() pageSize = 10;
   @Input() maxPages = Number.POSITIVE_INFINITY;
@@ -78,7 +89,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
   @Output() filtersChange = new EventEmitter<RequestsTableFilters>();
 
   columns: DynamicTableColumn[] = [];
-  canOpenDetails = this.authService.isPrivilegedUser();
+  canOpenDetails = this.authService.isPrivilegedUser() && this.tab === 'OPEN';
 
   requestTypeOptions = Object.values(UserRequestResponseDto.TypeEnum).map(
     (value) => ({
@@ -138,12 +149,16 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
     ];
 
     if (this.showStatusColumn) {
-      baseColumns.push({ field: 'status', label: 'Stato' });
+      baseColumns.push({
+        field: 'status',
+        label: 'Stato',
+        template: this.statusTemplate,
+      });
     }
 
     if (this.authService.isPrivilegedUser()) {
-      baseColumns.push(this.getActionsColumn());
       baseColumns.unshift(this.getUserColumn());
+      if (this._tab === 'OPEN') baseColumns.push(this.getActionsColumn());
     }
 
     this.columns = baseColumns;

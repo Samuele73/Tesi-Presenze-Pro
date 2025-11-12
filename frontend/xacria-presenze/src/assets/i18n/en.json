@@ -136,5 +136,7 @@
   "Invita Utente" : "Invite User",
   "Mostra Filtri" : "Show Filters",
   "Utente" : "User",
-  "Tipo" : "Type"
+  "Tipo" : "Type",
+  "ACCETTATO" : "ACCEPTED",
+  "RIFIUTATO" : "REJECTED"
  }

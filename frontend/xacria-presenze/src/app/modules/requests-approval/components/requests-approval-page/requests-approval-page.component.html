@@ -45,6 +45,7 @@
           (pageChange)="onPageChange('open', $event)"
           (rowSelected)="onRowSelected($event)"
           (filtersChange)="onFiltersChange('open', $event)"
+          [tab]="'OPEN'"
         ></app-requests-table>
       </ng-container>
       <ng-container *ngSwitchCase="'closed'">
@@ -69,6 +70,7 @@
           (pageChange)="onPageChange('closed', $event)"
           (rowSelected)="onRowSelected($event)"
           (filtersChange)="onFiltersChange('closed', $event)"
+          [tab]="'CLOSED'"
         ></app-requests-table>
       </ng-container>
     </ng-container>
