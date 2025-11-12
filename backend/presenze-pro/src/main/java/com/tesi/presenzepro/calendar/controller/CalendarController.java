@@ -6,6 +6,8 @@ import com.tesi.presenzepro.calendar.model.PagedResponse;
 import com.tesi.presenzepro.calendar.model.RequestType;
 import com.tesi.presenzepro.calendar.service.CalendarService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -66,6 +68,14 @@ public class CalendarController {
     ResponseEntity<OpenClosedRequestNumberResponse> getOpenClosedRequestsNumber(){
         final OpenClosedRequestNumberResponse reqNumber = calendarService.getOpenClosedRequestsNumber();
         return ResponseEntity.status(HttpStatus.OK).body(reqNumber);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'OWNER')")
+    @Operation(description = "Aggiorna lo stato di una richiesta. Accettandola o rifiutandola", security = @SecurityRequirement(name = "bearerAuth"))
+    @PutMapping("/requests/{id}")
+    ResponseEntity<BooleanResponse> updateRequestStatus(@RequestParam ApprovalAction action, @PathVariable String id){
+        final Boolean isUpdated = calendarService.updateRequestStatus(id, action);
+        return ResponseEntity.status(HttpStatus.OK).body(new  BooleanResponse(isUpdated));
     }
 
     @Operation(description = "Save a new calendar entry", security = @SecurityRequirement(name = "bearerAuth"))

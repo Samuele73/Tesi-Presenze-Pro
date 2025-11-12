@@ -17,6 +17,8 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
+import { ApprovalAction } from '../model/approvalAction';
+import { BooleanResponse } from '../model/booleanResponse';
 import { CalendarEntity } from '../model/calendarEntity';
 import { CalendarResponseDto } from '../model/calendarResponseDto';
 import { OpenClosedRequestNumberResponse } from '../model/openClosedRequestNumberResponse';
@@ -668,6 +670,65 @@ export class CalendarService {
         return this.httpClient.request<CalendarResponseDto>('put',`${this.basePath}/calendar/${encodeURIComponent(String(id))}`,
             {
                 body: body,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * Aggiorna lo stato di una richiesta. Accettandola o rifiutandola
+     * @param action 
+     * @param id 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public updateRequestStatus(action: ApprovalAction, id: string, observe?: 'body', reportProgress?: boolean): Observable<BooleanResponse>;
+    public updateRequestStatus(action: ApprovalAction, id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<BooleanResponse>>;
+    public updateRequestStatus(action: ApprovalAction, id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<BooleanResponse>>;
+    public updateRequestStatus(action: ApprovalAction, id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (action === null || action === undefined) {
+            throw new Error('Required parameter action was null or undefined when calling updateRequestStatus.');
+        }
+
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling updateRequestStatus.');
+        }
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (action !== undefined && action !== null) {
+            queryParameters = queryParameters.set('action', <any>action);
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<BooleanResponse>('put',`${this.basePath}/calendar/requests/${encodeURIComponent(String(id))}`,
+            {
+                params: queryParameters,
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,

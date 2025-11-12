@@ -5,6 +5,7 @@ import com.tesi.presenzepro.calendar.mapper.CalendarMapper;
 import com.tesi.presenzepro.calendar.model.*;
 import com.tesi.presenzepro.calendar.repository.CalendarRepository;
 import com.tesi.presenzepro.exception.CalendarEntityNotFound;
+import com.tesi.presenzepro.exception.NoUserFoundException;
 import com.tesi.presenzepro.jwt.JwtUtils;
 import com.tesi.presenzepro.user.service.UserService;
 import io.jsonwebtoken.JwtException;
@@ -18,6 +19,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -236,5 +238,19 @@ public class CalendarService {
         System.out.println("CHECK THIS: " + calendarEntities);
         List<CalendarEntity> updatedCalendarEntities = calendarEntities.stream().map(entity -> this.updateCalendarEntityById(entity.getId(), entity)).toList();
         return calendarMapper.fromCalendarEntitiesToCalendarEntries(updatedCalendarEntities);
+    }
+
+    public Boolean updateRequestStatus(String id, ApprovalAction action){
+        final String userRole = this.userService.getCurrentUserRole();
+        if(userRole.equalsIgnoreCase("ADMIN")){
+            final String requestUserEmail = this.repository.findById(id).orElseThrow(() -> new NoUserFoundException("Richiesta non trovata")).getUserEmail();
+            final String requestUserReole = this.userService.getUserProfileFromEmail(requestUserEmail).role().toString();
+            if(requestUserReole.equalsIgnoreCase(userRole))
+                throw new AccessDeniedException("Gli admin non possono gestire richieste proprie o di altri admin");
+        }
+        RequestStatus newStatus = (action == ApprovalAction.ACCEPT)
+                ? RequestStatus.ACCEPTED
+                : RequestStatus.REJECTED;
+        return this.repository.updateRequestStatus(id, newStatus);
     }
 }

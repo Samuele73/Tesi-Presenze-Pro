@@ -3,6 +3,7 @@ package com.tesi.presenzepro.calendar.repository;
 import com.tesi.presenzepro.calendar.dto.ApprovalRequestTab;
 import com.tesi.presenzepro.calendar.dto.OpenClosedRequestNumberResponse;
 import com.tesi.presenzepro.calendar.model.CalendarEntity;
+import com.tesi.presenzepro.calendar.model.RequestStatus;
 import com.tesi.presenzepro.calendar.model.RequestType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,4 +19,6 @@ public interface CalendarRepositoryCustom {
     );
 
     OpenClosedRequestNumberResponse getOpenClosedRequestsNumber(List<String> usersEmails);
+
+    Boolean updateRequestStatus(String id, RequestStatus newStatus);
 }

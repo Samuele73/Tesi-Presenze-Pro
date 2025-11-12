@@ -3,6 +3,7 @@ package com.tesi.presenzepro.calendar.repository;
 import com.tesi.presenzepro.calendar.model.CalendarEntity;
 import com.tesi.presenzepro.calendar.model.CalendarEntry;
 import com.tesi.presenzepro.calendar.model.CalendarEntryType;
+import com.tesi.presenzepro.calendar.model.RequestStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -19,7 +20,6 @@ public interface CalendarRepository extends MongoRepository<CalendarEntity, Stri
     @Query("{ 'userEmail': ?0, 'calendarEntry.dateFrom': { $gte: ?1, $lte: ?2 } }")
     List<CalendarEntity> findByUserEmailAndDateFromBetween(String userEmail, Date start, Date end);
 
-//    Optional<CalendarEntity> deleteCalendarEntityByUserEmailAndId(String userEmail, String id);
     Optional<CalendarEntity> findByUserEmailAndId(String userEmail, String id);
 
     Page<CalendarEntity> findByUserEmailAndEntryTypeIn(
@@ -32,5 +32,4 @@ public interface CalendarRepository extends MongoRepository<CalendarEntity, Stri
             List<CalendarEntryType> entryTypes,
             Pageable pageable
     );
-
 }

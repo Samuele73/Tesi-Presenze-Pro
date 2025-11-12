@@ -1,5 +1,6 @@
 package com.tesi.presenzepro.calendar.repository;
 
+import com.mongodb.client.result.UpdateResult;
 import com.tesi.presenzepro.calendar.dto.ApprovalRequestTab;
 import com.tesi.presenzepro.calendar.dto.OpenClosedRequestNumberResponse;
 import com.tesi.presenzepro.calendar.model.CalendarEntity;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import lombok.RequiredArgsConstructor;
@@ -153,6 +155,24 @@ public class CalendarRepositoryCustomImpl implements CalendarRepositoryCustom {
                 (int) openCount,
                 (int) closedCount
         );
+    }
+
+    @Override
+    public Boolean updateRequestStatus(String id, RequestStatus newStatus) {
+        // Aggiorna solo REQUEST o WORKING_TRIP
+        Query query = new Query(new Criteria().andOperator(
+                Criteria.where("_id").is(id),
+                Criteria.where("entryType").in(List.of(CalendarEntryType.REQUEST, CalendarEntryType.WORKING_TRIP))
+        ));
+
+        Update update = new Update().set("calendarEntry.status", newStatus);
+
+        UpdateResult result = mongoTemplate.updateFirst(query, update, CalendarEntity.class);
+
+        if (result.getMatchedCount() == 0) {
+            throw new IllegalStateException("Nessuna richiesta trovata o tipo di entry non aggiornabile per ID: " + id);
+        }
+        return true;
     }
 
 }
