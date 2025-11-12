@@ -67,6 +67,7 @@ export class RequestsApprovalPageComponent implements OnInit {
     this.activeTab = tab;
     const state = this.tabState[tab];
     state.page = 0;
+    state.filters = { types: [], users: [] };
     if (!state.initialized && !state.loading) {
       this.loadTabData(tab);
     } else {

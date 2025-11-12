@@ -63,6 +63,16 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
   @Input() totalItems: number | null = null;
   @Input() currentPage = 1;
   @Input() serverPagination = false;
+  private _filters: RequestsTableFilters = { types: [], users: [] };
+  @Input() set filters(value: RequestsTableFilters | null) {
+    this._filters = {
+      types: value?.types ? [...value.types] : [],
+      users: value?.users ? [...value.users] : [],
+    };
+    this.selectedRequestTypes = [...this._filters.types];
+    this.selectedUsers = [...this._filters.users];
+    this.syncSelectedUsers();
+  }
   @Output() pageChange = new EventEmitter<number>();
   @Output() rowSelected = new EventEmitter<RequestsTableRow>();
   @Output() filtersChange = new EventEmitter<RequestsTableFilters>();
@@ -170,10 +180,12 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
   }
 
   onFilterChange(): void {
-    this.filtersChange.emit({
+    const nextFilters: RequestsTableFilters = {
       types: [...(this.selectedRequestTypes ?? [])],
       users: [...(this.selectedUsers ?? [])],
-    });
+    };
+    this._filters = nextFilters;
+    this.filtersChange.emit(nextFilters);
   }
 
   private syncSelectedUsers(): void {
