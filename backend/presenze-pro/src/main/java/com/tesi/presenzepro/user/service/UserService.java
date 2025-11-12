@@ -72,6 +72,34 @@ public class UserService {
                 .orElse(null);
     }
 
+    public String getCurrentUserEmail() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated())
+            return null;
+        return authentication.getName();
+    }
+
+    public List<String> getRoleBasedUsersEmail(){
+        final String currentRole = this.getCurrentUserRole();
+        final String currentEmail = this.getCurrentUserEmail();
+        System.out.println("Current role: " + currentRole);
+        System.out.println("Current email: " + currentEmail);
+        List<String> usersEmail = new ArrayList<>();
+        if(currentRole.equalsIgnoreCase("ADMIN")){
+            this.repository.findAll().forEach(u -> {
+                final Role uRole = u.getRole();
+                if((currentEmail.equals(u.getEmail()))  && u.getRole() == Role.USER)
+                    usersEmail.add(u.getEmail());
+            });
+        }else if(currentRole.equalsIgnoreCase("OWNER")){
+            this.repository.findAll().forEach(u -> {
+                if(!currentEmail.equals(u.getEmail()))
+                    usersEmail.add(u.getEmail());
+            });
+        }
+        return usersEmail;
+    }
+
     public boolean isPrivilegedRole(String role) {
         return role.equalsIgnoreCase("ADMIN") || role.equalsIgnoreCase("OWNER");
     }

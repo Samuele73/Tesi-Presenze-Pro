@@ -161,6 +161,13 @@ public class UserController {
         return ResponseEntity.ok(usersBasicDetails);
     }
 
+    @Operation(description = "Ottieni informazioni di base su tutti gli utenti", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/users-email")
+    public ResponseEntity<List<String>> getRoleBasedUsersEmail(){
+        List<String> usersBasicDetails = this.service.getRoleBasedUsersEmail();
+        return ResponseEntity.ok(usersBasicDetails);
+    }
+
     @PreAuthorize("hasRole('OWNER')")
     @Operation(description = "Rimuovi un utente per email", security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping("/{email}")
