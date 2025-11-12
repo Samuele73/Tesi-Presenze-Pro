@@ -1,9 +1,6 @@
 package com.tesi.presenzepro.calendar.controller;
 
-import com.tesi.presenzepro.calendar.dto.ApprovalRequestTab;
-import com.tesi.presenzepro.calendar.dto.CalendarResponseDto;
-import com.tesi.presenzepro.calendar.dto.SaveCalendarEntityRequestDto;
-import com.tesi.presenzepro.calendar.dto.UserRequestResponseDto;
+import com.tesi.presenzepro.calendar.dto.*;
 import com.tesi.presenzepro.calendar.model.CalendarEntity;
 import com.tesi.presenzepro.calendar.model.PagedResponse;
 import com.tesi.presenzepro.calendar.model.RequestType;
@@ -57,11 +54,18 @@ public class CalendarController {
         return ResponseEntity.status(HttpStatus.OK).body(requests);
     }
 
-    @Operation(description = "Ottieni tutte le richieste in base al ruolo utente: admin, owner", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(description = "Ottieni tutte le tue richieste", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/my-requests")
     ResponseEntity<PagedResponse<UserRequestResponseDto>> getUserRequests(HttpServletRequest request, @PageableDefault(size = 10) Pageable pageable, @RequestParam(required = false) List<RequestType> types, @RequestParam ApprovalRequestTab tab){
         final PagedResponse<UserRequestResponseDto> requests = calendarService.getMyRquests(request, pageable, types, tab);
         return ResponseEntity.status(HttpStatus.OK).body(requests);
+    }
+
+    @Operation(description = "Ottieni tutte le tue richieste", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/requests/split-count")
+    ResponseEntity<OpenClosedRequestNumberResponse> getOpenClosedRequestsNumber(){
+        final OpenClosedRequestNumberResponse reqNumber = calendarService.getOpenClosedRequestsNumber();
+        return ResponseEntity.status(HttpStatus.OK).body(reqNumber);
     }
 
     @Operation(description = "Save a new calendar entry", security = @SecurityRequirement(name = "bearerAuth"))

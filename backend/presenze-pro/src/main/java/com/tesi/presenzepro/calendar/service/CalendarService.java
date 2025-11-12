@@ -1,12 +1,9 @@
 package com.tesi.presenzepro.calendar.service;
 
-import com.tesi.presenzepro.calendar.dto.ApprovalRequestTab;
-import com.tesi.presenzepro.calendar.dto.SaveCalendarEntityRequestDto;
-import com.tesi.presenzepro.calendar.dto.UserRequestResponseDto;
+import com.tesi.presenzepro.calendar.dto.*;
 import com.tesi.presenzepro.calendar.mapper.CalendarMapper;
 import com.tesi.presenzepro.calendar.model.*;
 import com.tesi.presenzepro.calendar.repository.CalendarRepository;
-import com.tesi.presenzepro.calendar.dto.CalendarResponseDto;
 import com.tesi.presenzepro.exception.CalendarEntityNotFound;
 import com.tesi.presenzepro.jwt.JwtUtils;
 import com.tesi.presenzepro.user.service.UserService;
@@ -70,15 +67,17 @@ public class CalendarService {
             throw new IllegalArgumentException("Missing JWT token in request header");
         }
 
-                // Query con filtri lato DB
-        Page<CalendarEntity> entities = repository.findFilteredRequests(types, users, pageable, tab);
+        // se ci sono problemi con la coerenza dei dati in tabella controlla qui
+        // Fa si che otttengo solo le entry permesse in base al ruolo. Direttamente collegato alle email che ottengo nel filtro
+        final List<String> toFilterEmails = users == null ? this.userService.getRoleBasedUsersEmail() : users;
+
+        Page<CalendarEntity> entities = repository.findFilteredRequests(types, toFilterEmails, pageable, tab);
         System.out.println("entities: " + entities.getContent());
-        // Mappa a DTO
+
         List<UserRequestResponseDto> dtos = entities.getContent().stream()
                 .map(calendarMapper::mapToUserRequestResponseDto)
                 .toList();
 
-        // Costruisci PagedResponse coerente
         return PagedResponse.<UserRequestResponseDto>builder()
                 .content(dtos)
                 .page(entities.getNumber())
@@ -120,7 +119,10 @@ public class CalendarService {
         );
     }
 
-
+    public OpenClosedRequestNumberResponse getOpenClosedRequestsNumber(){
+        final List<String> allowedEmailsByRole = this.userService.getRoleBasedUsersEmail();
+        return this.repository.getOpenClosedRequestsNumber(allowedEmailsByRole);
+    }
 
     public List<CalendarResponseDto> saveCalendarEntities(HttpServletRequest request, List<SaveCalendarEntityRequestDto> calendarEntities) {
         List<CalendarEntity> newCalendarEntities = calendarMapper.fromCalendarSaveRequestToEntities(calendarEntities);

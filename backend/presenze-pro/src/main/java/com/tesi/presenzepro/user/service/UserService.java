@@ -96,7 +96,8 @@ public class UserService {
                 if(!currentEmail.equals(u.getEmail()))
                     usersEmail.add(u.getEmail());
             });
-        }
+        }else if(currentRole.equalsIgnoreCase("USER"))
+            usersEmail.add(currentEmail);
         return usersEmail;
     }
 

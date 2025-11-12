@@ -1,8 +1,10 @@
 package com.tesi.presenzepro.calendar.repository;
 
 import com.tesi.presenzepro.calendar.dto.ApprovalRequestTab;
+import com.tesi.presenzepro.calendar.dto.OpenClosedRequestNumberResponse;
 import com.tesi.presenzepro.calendar.model.CalendarEntity;
 import com.tesi.presenzepro.calendar.model.CalendarEntryType;
+import com.tesi.presenzepro.calendar.model.RequestStatus;
 import com.tesi.presenzepro.calendar.model.RequestType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -115,6 +117,41 @@ public class CalendarRepositoryCustomImpl implements CalendarRepositoryCustom {
         return new Criteria().orOperator(
                 Criteria.where("entryType").is(CalendarEntryType.WORKING_TRIP),
                 Criteria.where("entryType").regex(Pattern.compile("working_trip", Pattern.CASE_INSENSITIVE))
+        );
+    }
+
+    @Override
+    public OpenClosedRequestNumberResponse getOpenClosedRequestsNumber(List<String> usersEmails) {
+        // Costruzione criteri comuni (REQUEST + WORKING_TRIP)
+        Criteria baseCriteria = Criteria.where("entryType")
+                .in(List.of(CalendarEntryType.REQUEST, CalendarEntryType.WORKING_TRIP));
+
+        // 🔹 Se viene passato un filtro per email, lo aggiungiamo
+        if (usersEmails != null && !usersEmails.isEmpty()) {
+            baseCriteria = new Criteria().andOperator(
+                    baseCriteria,
+                    Criteria.where("userEmail").in(usersEmails)
+            );
+        }
+
+        // 🔹 Query per richieste APERTE (PENDING)
+        Query openQuery = new Query(baseCriteria).addCriteria(
+                Criteria.where("calendarEntry.status").is(RequestStatus.PENDING.name())
+        );
+
+        // 🔹 Query per richieste CHIUSE (ACCEPTED o REJECTED)
+        Query closedQuery = new Query(baseCriteria).addCriteria(
+                Criteria.where("calendarEntry.status").in(
+                        List.of(RequestStatus.ACCEPTED.name(), RequestStatus.REJECTED.name())
+                )
+        );
+
+        long openCount = mongoTemplate.count(openQuery, CalendarEntity.class);
+        long closedCount = mongoTemplate.count(closedQuery, CalendarEntity.class);
+
+        return new OpenClosedRequestNumberResponse(
+                (int) openCount,
+                (int) closedCount
         );
     }
 
