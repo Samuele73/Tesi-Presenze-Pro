@@ -88,7 +88,7 @@ public class UserService {
         if(currentRole.equalsIgnoreCase("ADMIN")){
             this.repository.findAll().forEach(u -> {
                 final Role uRole = u.getRole();
-                if((currentEmail.equals(u.getEmail()))  && u.getRole() == Role.USER)
+                if((currentEmail.equals(u.getEmail())) || u.getRole() == Role.USER)
                     usersEmail.add(u.getEmail());
             });
         }else if(currentRole.equalsIgnoreCase("OWNER")){

@@ -243,7 +243,9 @@ export class RequestsApprovalPageComponent implements OnInit {
 
   private loadUserEmailOptions(): void {
     this.userService.getRoleBasedUsersEmail().subscribe({
-      next: (emails) => {
+      next: (emails: string[]) => {
+        console.log("Controllami", emails);
+
         const sorted = (emails ?? []).slice().sort();
         (['open', 'closed'] as RequestsTab[]).forEach((tab) => {
           this.userOptionsByTab[tab] = [...sorted];

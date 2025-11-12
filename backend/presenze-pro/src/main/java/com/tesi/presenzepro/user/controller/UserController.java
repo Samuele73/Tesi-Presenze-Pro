@@ -164,8 +164,9 @@ public class UserController {
     @Operation(description = "Ottieni informazioni di base su tutti gli utenti", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/users-email")
     public ResponseEntity<List<String>> getRoleBasedUsersEmail(){
-        List<String> usersBasicDetails = this.service.getRoleBasedUsersEmail();
-        return ResponseEntity.ok(usersBasicDetails);
+        List<String> usersEmail = this.service.getRoleBasedUsersEmail();
+        System.out.println("controlla: " + usersEmail);
+        return ResponseEntity.ok(usersEmail);
     }
 
     @PreAuthorize("hasRole('OWNER')")
