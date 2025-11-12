@@ -5,7 +5,7 @@ import { AuthService } from 'src/app/shared/services/auth.service';
 import { RequestsApprovalPageComponent } from './requests-approval-page.component';
 
 class CalendarServiceStub {
-  getAllRequests(_params?: any) {
+  getAllRequests(_pageable?: any, _tab?: string) {
     return of({
       content: [],
       page: 0,
@@ -14,8 +14,8 @@ class CalendarServiceStub {
     });
   }
 
-  getUserRequests(params: any) {
-    return this.getAllRequests(params);
+  getUserRequests(pageable: any, tab: string) {
+    return this.getAllRequests(pageable, tab);
   }
 }
 

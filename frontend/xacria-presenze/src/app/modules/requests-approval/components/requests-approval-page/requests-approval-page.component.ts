@@ -47,16 +47,6 @@ export class RequestsApprovalPageComponent implements OnInit {
     closed: [],
   };
   readonly isPrivilegedUser = this.authService.isPrivilegedUser();
-  private readonly tabStatusFilters: Record<
-    RequestsTab,
-    UserRequestResponseDto.StatusEnum[]
-  > = {
-    open: [UserRequestResponseDto.StatusEnum.PENDING],
-    closed: [
-      UserRequestResponseDto.StatusEnum.ACCEPTED,
-      UserRequestResponseDto.StatusEnum.REJECTED,
-    ],
-  };
 
   constructor(
     private calendarService: CalendarService,
@@ -133,7 +123,9 @@ export class RequestsApprovalPageComponent implements OnInit {
         ? state.filters.users
         : undefined;
 
-    this.getRequests$(pageable, typesFilter, usersFilter)
+    const tabFilter = this.toBackendTab(tab);
+
+    this.getRequests$(pageable, tabFilter, typesFilter, usersFilter)
       .pipe(
         finalize(() => {
           if (token === state.requestToken) {
@@ -158,11 +150,8 @@ export class RequestsApprovalPageComponent implements OnInit {
       return;
     }
     const content = resp.content ?? [];
-    const filtered = content.filter((entry) =>
-      this.matchesTabStatus(tab, entry.status ?? undefined)
-    );
-    state.rows = filtered.map((entry) => this.mapToRow(entry));
-    state.total = this.deriveTotalFromResponse(resp, filtered.length);
+    state.rows = content.map((entry) => this.mapToRow(entry));
+    state.total = this.deriveTotalFromResponse(resp, content.length);
     state.page =
       typeof resp.page === 'number' ? resp.page : state.page ?? 0;
     if (typeof resp.size === 'number' && resp.size > 0) {
@@ -186,16 +175,6 @@ export class RequestsApprovalPageComponent implements OnInit {
     state.totalPages = 0;
     state.isLast = true;
     state.page = 0;
-  }
-
-  private matchesTabStatus(
-    tab: RequestsTab,
-    status: UserRequestResponseDto.StatusEnum | undefined
-  ): boolean {
-    if (!status) {
-      return tab === 'open';
-    }
-    return this.tabStatusFilters[tab].includes(status);
   }
 
   onRowSelected(row: RequestsTableRow): void {
@@ -257,17 +236,20 @@ export class RequestsApprovalPageComponent implements OnInit {
 
   private getRequests$(
     pageable: Pageable,
+    tab: string,
     types?: UserRequestResponseDto.TypeEnum[],
     users?: string[]
   ): Observable<PagedResponseUserRequestResponseDto> {
     return this.isPrivilegedUser
       ? this.calendarService.getAllRequests(
           pageable,
+          tab,
           types as string[] | undefined,
           users
         )
       : this.calendarService.getUserRequests(
           pageable,
+          tab,
           types as string[] | undefined
         );
   }
@@ -280,5 +262,9 @@ export class RequestsApprovalPageComponent implements OnInit {
       return resp.totalElements;
     }
     return fallback;
+  }
+
+  private toBackendTab(tab: RequestsTab): string {
+    return tab === 'open' ? 'OPEN' : 'CLOSED';
   }
 }

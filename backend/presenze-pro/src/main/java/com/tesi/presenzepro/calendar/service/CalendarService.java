@@ -1,5 +1,6 @@
 package com.tesi.presenzepro.calendar.service;
 
+import com.tesi.presenzepro.calendar.dto.ApprovalRequestTab;
 import com.tesi.presenzepro.calendar.dto.SaveCalendarEntityRequestDto;
 import com.tesi.presenzepro.calendar.dto.UserRequestResponseDto;
 import com.tesi.presenzepro.calendar.mapper.CalendarMapper;
@@ -21,6 +22,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.time.LocalTime;
 
 import java.security.InvalidParameterException;
@@ -59,7 +62,8 @@ public class CalendarService {
             HttpServletRequest request,
             Pageable pageable,
             List<RequestType> types,
-            List<String> users
+            List<String> users,
+            ApprovalRequestTab tab
     ) {
         final String jwt = jwtUtils.getJwtFromHeader(request);
         if (jwt == null) {
@@ -67,7 +71,7 @@ public class CalendarService {
         }
 
                 // Query con filtri lato DB
-        Page<CalendarEntity> entities = repository.findFilteredRequests(types, users, pageable);
+        Page<CalendarEntity> entities = repository.findFilteredRequests(types, users, pageable, tab);
         System.out.println("entities: " + entities.getContent());
         // Mappa a DTO
         List<UserRequestResponseDto> dtos = entities.getContent().stream()
@@ -89,7 +93,8 @@ public class CalendarService {
     public PagedResponse<UserRequestResponseDto> getMyRquests(
             HttpServletRequest request,
             Pageable pageable,
-            List<RequestType> types
+            List<RequestType> types,
+            ApprovalRequestTab tab
     ) {
         final String jwt = jwtUtils.getJwtFromHeader(request);
         if (jwt == null) {
@@ -101,7 +106,7 @@ public class CalendarService {
         List<String> userEmails = List.of(email);
 
         Page<CalendarEntity> entities =
-                repository.findFilteredRequests(types, userEmails, pageable);
+                repository.findFilteredRequests(types, userEmails, pageable, tab);
 
         Page<UserRequestResponseDto> mapped = entities.map(calendarMapper::mapToUserRequestResponseDto);
 

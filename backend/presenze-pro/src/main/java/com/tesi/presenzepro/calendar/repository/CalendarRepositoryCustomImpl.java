@@ -1,5 +1,6 @@
 package com.tesi.presenzepro.calendar.repository;
 
+import com.tesi.presenzepro.calendar.dto.ApprovalRequestTab;
 import com.tesi.presenzepro.calendar.model.CalendarEntity;
 import com.tesi.presenzepro.calendar.model.CalendarEntryType;
 import com.tesi.presenzepro.calendar.model.RequestType;
@@ -23,6 +24,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static com.tesi.presenzepro.calendar.dto.ApprovalRequestTab.CLOSED;
+import static com.tesi.presenzepro.calendar.dto.ApprovalRequestTab.OPEN;
+
 @RequiredArgsConstructor
 public class CalendarRepositoryCustomImpl implements CalendarRepositoryCustom {
 
@@ -32,7 +36,8 @@ public class CalendarRepositoryCustomImpl implements CalendarRepositoryCustom {
     public Page<CalendarEntity> findFilteredRequests(
             List<RequestType> requestTypes,
             List<String> userEmails,
-            Pageable pageable
+            Pageable pageable,
+            ApprovalRequestTab tab
     ) {
         Query query = new Query();
 
@@ -40,12 +45,12 @@ public class CalendarRepositoryCustomImpl implements CalendarRepositoryCustom {
         query.addCriteria(Criteria.where("entryType")
                 .in(List.of(CalendarEntryType.REQUEST, CalendarEntryType.WORKING_TRIP)));
 
-        // Filtro utenti (se fornito)
+        // 🔹 Filtro per utenti (se forniti)
         if (userEmails != null && !userEmails.isEmpty()) {
             query.addCriteria(Criteria.where("userEmail").in(userEmails));
         }
 
-        // Filtro tipi di richiesta (se forniti)
+        // 🔹 Filtro per tipi di richiesta (se forniti)
         if (requestTypes != null && !requestTypes.isEmpty()) {
             boolean includeTransfers = requestTypes.contains(RequestType.TRASFERTA);
 
@@ -74,12 +79,27 @@ public class CalendarRepositoryCustomImpl implements CalendarRepositoryCustom {
             query.addCriteria(typeCriteria);
         }
 
+        // 🔹 Filtro per tab (status)
+        if (tab != null) {
+            Criteria statusCriteria = switch (tab) {
+                case OPEN -> Criteria.where("calendarEntry.status").is("PENDING");
+                case CLOSED -> Criteria.where("calendarEntry.status").in(List.of("ACCEPTED", "REJECTED"));
+            };
+            query.addCriteria(statusCriteria);
+        }
+
+        // 🔹 Conta totale
         long total = mongoTemplate.count(query, CalendarEntity.class);
+
+        // 🔹 Applica paginazione
         query.with(pageable);
+
+        // 🔹 Risultati
         List<CalendarEntity> content = mongoTemplate.find(query, CalendarEntity.class);
 
         return new PageImpl<>(content, pageable, total);
     }
+
 
     private Criteria buildCaseInsensitiveTypeCriteria(List<String> requestTypeNames) {
         if (requestTypeNames == null || requestTypeNames.isEmpty()) {

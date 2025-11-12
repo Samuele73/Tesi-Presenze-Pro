@@ -208,18 +208,23 @@ export class CalendarService {
      * 
      * Ottieni tutte le richieste in base al ruolo utente: admin, owner
      * @param pageable 
+     * @param tab 
      * @param types 
      * @param users 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAllRequests(pageable: Pageable, types?: Array<string>, users?: Array<string>, observe?: 'body', reportProgress?: boolean): Observable<PagedResponseUserRequestResponseDto>;
-    public getAllRequests(pageable: Pageable, types?: Array<string>, users?: Array<string>, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<PagedResponseUserRequestResponseDto>>;
-    public getAllRequests(pageable: Pageable, types?: Array<string>, users?: Array<string>, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<PagedResponseUserRequestResponseDto>>;
-    public getAllRequests(pageable: Pageable, types?: Array<string>, users?: Array<string>, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public getAllRequests(pageable: Pageable, tab: string, types?: Array<string>, users?: Array<string>, observe?: 'body', reportProgress?: boolean): Observable<PagedResponseUserRequestResponseDto>;
+    public getAllRequests(pageable: Pageable, tab: string, types?: Array<string>, users?: Array<string>, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<PagedResponseUserRequestResponseDto>>;
+    public getAllRequests(pageable: Pageable, tab: string, types?: Array<string>, users?: Array<string>, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<PagedResponseUserRequestResponseDto>>;
+    public getAllRequests(pageable: Pageable, tab: string, types?: Array<string>, users?: Array<string>, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (pageable === null || pageable === undefined) {
             throw new Error('Required parameter pageable was null or undefined when calling getAllRequests.');
+        }
+
+        if (tab === null || tab === undefined) {
+            throw new Error('Required parameter tab was null or undefined when calling getAllRequests.');
         }
 
 
@@ -237,6 +242,9 @@ export class CalendarService {
             users.forEach((element) => {
                 queryParameters = queryParameters.append('users', <any>element);
             })
+        }
+        if (tab !== undefined && tab !== null) {
+            queryParameters = queryParameters.set('tab', <any>tab);
         }
 
         let headers = this.defaultHeaders;
@@ -338,17 +346,22 @@ export class CalendarService {
      * 
      * Ottieni tutte le richieste in base al ruolo utente: admin, owner
      * @param pageable 
+     * @param tab 
      * @param types 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getUserRequests(pageable: Pageable, types?: Array<string>, observe?: 'body', reportProgress?: boolean): Observable<PagedResponseUserRequestResponseDto>;
-    public getUserRequests(pageable: Pageable, types?: Array<string>, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<PagedResponseUserRequestResponseDto>>;
-    public getUserRequests(pageable: Pageable, types?: Array<string>, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<PagedResponseUserRequestResponseDto>>;
-    public getUserRequests(pageable: Pageable, types?: Array<string>, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public getUserRequests(pageable: Pageable, tab: string, types?: Array<string>, observe?: 'body', reportProgress?: boolean): Observable<PagedResponseUserRequestResponseDto>;
+    public getUserRequests(pageable: Pageable, tab: string, types?: Array<string>, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<PagedResponseUserRequestResponseDto>>;
+    public getUserRequests(pageable: Pageable, tab: string, types?: Array<string>, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<PagedResponseUserRequestResponseDto>>;
+    public getUserRequests(pageable: Pageable, tab: string, types?: Array<string>, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (pageable === null || pageable === undefined) {
             throw new Error('Required parameter pageable was null or undefined when calling getUserRequests.');
+        }
+
+        if (tab === null || tab === undefined) {
+            throw new Error('Required parameter tab was null or undefined when calling getUserRequests.');
         }
 
 
@@ -360,6 +373,9 @@ export class CalendarService {
             types.forEach((element) => {
                 queryParameters = queryParameters.append('types', <any>element);
             })
+        }
+        if (tab !== undefined && tab !== null) {
+            queryParameters = queryParameters.set('tab', <any>tab);
         }
 
         let headers = this.defaultHeaders;

@@ -1,5 +1,6 @@
 package com.tesi.presenzepro.calendar.repository;
 
+import com.tesi.presenzepro.calendar.dto.ApprovalRequestTab;
 import com.tesi.presenzepro.calendar.model.CalendarEntity;
 import com.tesi.presenzepro.calendar.model.RequestType;
 import org.springframework.data.domain.Page;
@@ -11,6 +12,7 @@ public interface CalendarRepositoryCustom {
     Page<CalendarEntity> findFilteredRequests(
             List<RequestType> requestTypes,
             List<String> userEmails,
-            Pageable pageable
+            Pageable pageable,
+            ApprovalRequestTab tab
     );
 }

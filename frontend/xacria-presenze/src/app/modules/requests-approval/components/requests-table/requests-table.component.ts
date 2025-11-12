@@ -49,7 +49,17 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
   @Input() emptyMessage = 'Nessuna richiesta disponibile';
   @Input() pageSize = 10;
   @Input() maxPages = Number.POSITIVE_INFINITY;
-  @Input() userOptions: string[] = [];
+  private _userOptions: string[] = [];
+  @Input() set userOptions(value: string[] | null) {
+    if (!this.canOpenDetails) {
+      return;
+    }
+    this._userOptions = (value ?? []).slice();
+    this.syncSelectedUsers();
+  }
+  get userOptions(): string[] {
+    return this._userOptions;
+  }
   @Input() totalItems: number | null = null;
   @Input() currentPage = 1;
   @Input() serverPagination = false;
@@ -82,7 +92,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
     ) {
       this.buildColumns();
     }
-    if (changes['userOptions']) {
+    if (this.canOpenDetails && changes['userOptions']) {
       this.syncSelectedUsers();
     } else if (!this.canOpenDetails && changes['data'] && this.data) {
       this.generateUserOptions();
@@ -94,9 +104,9 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
     this.cdr.detectChanges();
   }
 
-  generateUserOptions(): void {
+  private generateUserOptions(): void {
     const extracted = this.data?.map((r) => r.user) ?? [];
-    this.userOptions = Array.from(new Set(extracted));
+    this._userOptions = Array.from(new Set(extracted));
     this.syncSelectedUsers();
   }
 
@@ -148,7 +158,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
       label: 'Azioni',
       valueAccessor: (row: RequestsTableRow) => this.generateOptions(row),
     };
-  }
+  } 
 
   generateOptions(row: RequestsTableRow): DropdownOptions {
     return [
@@ -170,7 +180,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
     if (!this.selectedUsers?.length) {
       return;
     }
-    const allowed = new Set(this.userOptions);
+    const allowed = new Set(this._userOptions);
     const filtered = this.selectedUsers.filter((user) => allowed.has(user));
     if (filtered.length !== this.selectedUsers.length) {
       this.selectedUsers = filtered;
