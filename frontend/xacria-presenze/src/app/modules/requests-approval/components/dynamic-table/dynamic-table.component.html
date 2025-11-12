@@ -51,7 +51,7 @@
             ></ng-container>
           </ng-container>
           <ng-template #valueTpl>
-            {{ getCellValue(row, column) }}
+            {{ getCellValue(row, column) | translate}}
           </ng-template>
         </td>
       </tr>
