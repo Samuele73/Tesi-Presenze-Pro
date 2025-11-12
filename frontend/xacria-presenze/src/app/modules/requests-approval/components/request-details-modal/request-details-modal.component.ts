@@ -13,7 +13,6 @@ type handleRequestMode = 'ACCEPT' | 'REFUSE'
 })
 export class RequestDetailsModalComponent {
   @Input() request?: UserRequestResponseDto;
-  requestForm!: FormGroup;
 
   constructor(public activeModal: NgbActiveModal, public authService: AuthService) {}
 

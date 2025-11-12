@@ -36,7 +36,7 @@
       </label>
       <div>
         {{
-          request?.dateFrom ? (request?.dateFrom | date : "dd/MM/yyyy") : "-"
+          request?.dateFrom ? (request?.dateFrom | date : "dd-MM-yyyy hh:mm") : "-"
         }}
       </div>
     </div>
@@ -45,7 +45,7 @@
         {{ "Al" | translate }}
       </label>
       <div>
-        {{ request?.dateTo ? (request?.dateTo | date : "dd/MM/yyyy") : "-" }}
+        {{ request?.dateTo ? (request?.dateTo | date : "dd-MM-yyyy hh:mm") : "-" }}
       </div>
     </div>
   </div>

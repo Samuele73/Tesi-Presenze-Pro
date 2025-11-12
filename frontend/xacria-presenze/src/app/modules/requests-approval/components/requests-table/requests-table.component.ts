@@ -253,7 +253,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
 
   private tryFormatDate(value: string | Date): string {
     try {
-      return formatDate(value, 'yyyy-MM-dd', 'en-GB');
+      return formatDate(value, 'yyyy-MM-dd', 'it-IT');
     } catch {
       return `${value}`;
     }
@@ -290,8 +290,8 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
         return {};
       }
       return {
-        datePart: formatDate(date, 'yyyy-MM-dd', 'en-GB'),
-        timePart: formatDate(date, 'HH:mm', 'en-GB'),
+        datePart: formatDate(date, 'yyyy-MM-dd', 'it-IT'),
+        timePart: formatDate(date, 'HH:mm', 'it-IT'),
       };
     } catch {
       return {};
