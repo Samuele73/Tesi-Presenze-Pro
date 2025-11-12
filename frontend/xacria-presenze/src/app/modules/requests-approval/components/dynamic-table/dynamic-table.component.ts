@@ -125,9 +125,12 @@ export class DynamicTableComponent implements OnChanges {
   }
 
   handleRowClick(row: Record<string, any>): void {
+    console.log("dynamic row click ", this.rowClickable);
+
     if (!this.rowClickable) {
       return;
     }
+    console.log("sono stato toccato di piu")
     this.rowClick.emit(row);
   }
 

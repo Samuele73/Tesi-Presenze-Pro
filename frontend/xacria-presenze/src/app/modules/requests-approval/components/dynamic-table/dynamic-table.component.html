@@ -36,7 +36,11 @@
           {{ emptyMessage | translate }}
         </td>
       </tr>
-      <tr *ngFor="let row of paginatedRows; trackBy: trackByRow">
+      <tr
+        *ngFor="let row of paginatedRows; trackBy: trackByRow"
+        (click)="handleRowClick(row)"
+        [class.dynamic-table-row-clickable]="rowClickable"
+      >
         <td *ngFor="let column of columns" [ngClass]="column.cellClass">
           <ng-container *ngIf="column.template; else valueTpl">
             <ng-container

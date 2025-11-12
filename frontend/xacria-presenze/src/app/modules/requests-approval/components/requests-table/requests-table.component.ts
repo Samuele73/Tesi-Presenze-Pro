@@ -168,7 +168,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
       label: 'Azioni',
       valueAccessor: (row: RequestsTableRow) => this.generateOptions(row),
     };
-  } 
+  }
 
   generateOptions(row: RequestsTableRow): DropdownOptions {
     return [
@@ -213,6 +213,8 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
     if (!this.canOpenDetails) {
       return;
     }
+    console.log("sono stato toccato");
+
     this.rowSelected.emit(row as RequestsTableRow);
   }
 
