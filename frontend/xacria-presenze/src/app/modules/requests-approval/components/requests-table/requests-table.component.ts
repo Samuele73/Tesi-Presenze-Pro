@@ -15,7 +15,7 @@ import {
 import { DynamicTableColumn } from '../dynamic-table/dynamic-table.component';
 import { DropdownOptions } from 'src/app/shared/components/ngb-options/ngb-options.component';
 import { AuthService } from 'src/app/shared/services/auth.service';
-import { UserRequestResponseDto } from 'src/generated-client';
+import { UserRequestResponseDto, UserService } from 'src/generated-client';
 
 export interface RequestsTableRow {
   id?: string;
@@ -39,7 +39,9 @@ export interface RequestsTableFilters {
   templateUrl: './requests-table.component.html',
   styleUrls: ['./requests-table.component.scss'],
 })
-export class RequestsTableComponent implements OnChanges, AfterViewInit {
+export class RequestsTableComponent
+  implements OnInit, OnChanges, AfterViewInit
+{
   @ViewChild('actionsTemplate', { static: true })
   actionsTemplate?: TemplateRef<any>;
   @ViewChild('userTemplate', { static: true })
@@ -67,13 +69,30 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
     })
   );
   selectedRequestTypes: UserRequestResponseDto.TypeEnum[] = [];
-  userOptions!: string[];
+  userOptions: string[] = [];
   selectedUsers: string[] = [];
 
   constructor(
     private cdr: ChangeDetectorRef,
-    public authService: AuthService
+    public authService: AuthService,
+    private userService: UserService
   ) {}
+
+  ngOnInit(): void {
+    if (this.canOpenDetails) {
+      this.userService.getRoleBasedUsersEmail().subscribe({
+        next: (emails) => {
+          this.userOptions = (emails ?? []).slice().sort();
+          this.syncSelectedUsers();
+        },
+        error: () => {
+          this.generateUserOptions();
+        },
+      });
+    } else {
+      this.generateUserOptions();
+    }
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (
@@ -83,8 +102,8 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
     ) {
       this.buildColumns();
     }
-    if (changes['data'] && this.data) {
-      this.generateUserOptions()
+    if (changes['data'] && this.data && !this.canOpenDetails) {
+      this.generateUserOptions();
     }
   }
 
@@ -93,9 +112,10 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
     this.cdr.detectChanges();
   }
 
-  generateUserOptions(): void{
-    this.userOptions = [...new Set(this.data.map(r => r.user))]
-    console.log("look here", this.userOptions)
+  generateUserOptions(): void {
+    const extracted = this.data?.map((r) => r.user) ?? [];
+    this.userOptions = Array.from(new Set(extracted));
+    this.syncSelectedUsers();
   }
 
   private buildColumns(): void {
@@ -162,11 +182,18 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
       types: [...(this.selectedRequestTypes ?? [])],
       users: [...(this.selectedUsers ?? [])],
     });
-    console.log("OIIII", {
-      types: [...(this.selectedRequestTypes ?? [])],
-      users: [...(this.selectedUsers ?? [])],
-    });
+  }
 
+  private syncSelectedUsers(): void {
+    if (!this.selectedUsers?.length) {
+      return;
+    }
+    const allowed = new Set(this.userOptions);
+    const filtered = this.selectedUsers.filter((user) => allowed.has(user));
+    if (filtered.length !== this.selectedUsers.length) {
+      this.selectedUsers = filtered;
+      this.onFilterChange();
+    }
   }
 
   onUserClick(row: RequestsTableRow, event?: MouseEvent): void {

@@ -361,6 +361,49 @@ export class UserService {
 
     /**
      * 
+     * Ottieni informazioni di base su tutti gli utenti
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getRoleBasedUsersEmail(observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
+    public getRoleBasedUsersEmail(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
+    public getRoleBasedUsersEmail(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
+    public getRoleBasedUsersEmail(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<Array<string>>('get',`${this.basePath}/users/users-email`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
      * Ottieni il campo dati dell&#x27;utente in base al tkn nell&#x27;headder
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
