@@ -227,102 +227,14 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
     row: RequestsTableRow,
     direction: 'from' | 'to'
   ): string {
+    console.log('look at row', row);
     const dateValue = direction === 'from' ? row?.dateFrom : row?.dateTo;
-    const timeValue = direction === 'from' ? row?.timeFrom : row?.timeTo;
 
-    const { datePart, timePart: timeFromDate } =
-      this.extractDateComponents(dateValue);
-
-    if (!datePart && !timeValue) {
+    if (!dateValue) {
       return '—';
     }
-
-    const formattedDate =
-      datePart ?? (dateValue ? this.tryFormatDate(dateValue) : undefined);
-    const shouldSkipTime = this.shouldHideTime(row?.type);
-    if (!formattedDate || shouldSkipTime) {
-      return formattedDate ?? '—';
-    }
-
-    const formattedTime =
-      this.normalizeSimpleTime(timeValue) ??
-      this.normalizeSimpleTime(timeFromDate);
-
-    return formattedTime ? `${formattedDate} ${formattedTime}` : formattedDate;
-  }
-
-  private tryFormatDate(value: string | Date): string {
-    try {
-      return formatDate(value, 'yyyy-MM-dd', 'it-IT');
-    } catch {
-      return `${value}`;
-    }
-  }
-
-  private extractDateComponents(value: string | Date | undefined): {
-    datePart?: string;
-    timePart?: string;
-  } {
-    if (!value) {
-      return {};
-    }
-
-    if (typeof value === 'string') {
-      const trimmed = value.trim();
-      if (!trimmed) {
-        return {};
-      }
-      if (trimmed.includes('T')) {
-        const [datePart, timePartRaw] = trimmed.split('T');
-        return {
-          datePart,
-          timePart: this.normalizeSimpleTime(timePartRaw),
-        };
-      }
-      if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
-        return { datePart: trimmed };
-      }
-    }
-
-    try {
-      const date = typeof value === 'string' ? new Date(value) : value;
-      if (!date || Number.isNaN(date.getTime())) {
-        return {};
-      }
-      return {
-        datePart: formatDate(date, 'yyyy-MM-dd', 'it-IT'),
-        timePart: formatDate(date, 'HH:mm', 'it-IT'),
-      };
-    } catch {
-      return {};
-    }
-  }
-
-  private normalizeSimpleTime(value: string | undefined): string | undefined {
-    if (!value) {
-      return undefined;
-    }
-    const sanitized = value.trim().replace(/Z$/i, '');
-    if (!sanitized) {
-      return undefined;
-    }
-    const colonIndex = sanitized.indexOf(':');
-    if (colonIndex === -1) {
-      return undefined;
-    }
-    const [hours, rest] = [
-      sanitized.slice(0, colonIndex),
-      sanitized.slice(colonIndex + 1),
-    ];
-    const minutes = rest.padEnd(2, '0').slice(0, 2);
-    if (!/^\d{1,2}$/.test(hours) || !/^\d{2}$/.test(minutes)) {
-      const hhmm = sanitized.match(/^(\d{1,2}:\d{2})/);
-      return hhmm ? hhmm[1] : undefined;
-    }
-    return `${hours.padStart(2, '0')}:${minutes}`;
-  }
-
-  private shouldHideTime(type?: string): boolean {
-    return type?.trim().toUpperCase() === 'TRASFERTA';
+    if (row.type == 'TRASFERTA')
+      return formatDate(dateValue, 'dd-MM-yyyy', 'en-GB');
+    return formatDate(dateValue, 'dd-MM-yyyy HH:mm', 'en-GB');
   }
 }
