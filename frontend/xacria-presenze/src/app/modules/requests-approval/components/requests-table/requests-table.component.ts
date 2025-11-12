@@ -123,13 +123,6 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
   private buildColumns(): void {
     const baseColumns: DynamicTableColumn[] = [
       {
-        field: 'user',
-        label: 'Utente',
-        template: this.userTemplate,
-        headerClass: 'requests-table-user-column',
-        cellClass: 'requests-table-user-column',
-      },
-      {
         field: 'from',
         label: 'Da',
         valueAccessor: (row: RequestsTableRow) =>
@@ -148,10 +141,22 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
       baseColumns.push({ field: 'status', label: 'Stato' });
     }
 
-    if (this.authService.isPrivilegedUser())
+    if (this.authService.isPrivilegedUser()) {
       baseColumns.push(this.getActionsColumn());
+      baseColumns.unshift(this.getUserColumn());
+    }
 
     this.columns = baseColumns;
+  }
+
+  private getUserColumn(): DynamicTableColumn {
+    return {
+      field: 'user',
+      label: 'Utente',
+      template: this.userTemplate,
+      headerClass: 'requests-table-user-column',
+      cellClass: 'requests-table-user-column',
+    };
   }
 
   private getActionsColumn(): DynamicTableColumn {
@@ -173,7 +178,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
   generateOptions(row: RequestsTableRow): DropdownOptions {
     return [
       {
-        name: 'Modifica',
+        name: 'Gestisci',
         onclick: () => console.log('Prova modifica:', row),
       },
     ];
@@ -213,7 +218,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
     if (!this.canOpenDetails) {
       return;
     }
-    console.log("sono stato toccato");
+    console.log('sono stato toccato');
 
     this.rowSelected.emit(row as RequestsTableRow);
   }
