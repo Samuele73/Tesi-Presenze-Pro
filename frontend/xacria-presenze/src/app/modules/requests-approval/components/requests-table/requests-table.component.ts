@@ -207,7 +207,6 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
 
   onUserClick(row: RequestsTableRow, event?: MouseEvent): void {
     event?.stopPropagation();
-    console.log('User clicked:', row);
   }
 
   onPageChanged(page: number): void {
@@ -218,7 +217,6 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
     if (!this.canOpenDetails) {
       return;
     }
-    console.log('sono stato toccato');
 
     this.rowSelected.emit(row as RequestsTableRow);
   }
@@ -227,7 +225,6 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
     row: RequestsTableRow,
     direction: 'from' | 'to'
   ): string {
-    console.log('look at row', row);
     const dateValue = direction === 'from' ? row?.dateFrom : row?.dateTo;
 
     if (!dateValue) {
