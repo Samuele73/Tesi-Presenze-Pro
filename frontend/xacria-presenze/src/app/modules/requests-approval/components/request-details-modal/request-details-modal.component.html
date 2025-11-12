@@ -1,7 +1,7 @@
 <div class="modal-header">
-  <h5 class="modal-title">
-    {{ 'Dettagli richiesta' | translate }}
-  </h5>
+  <h3 class="modal-title">
+    {{ "Gestisci richiesta" | translate }}
+  </h3>
   <button
     type="button"
     class="btn-close"
@@ -10,21 +10,61 @@
   ></button>
 </div>
 
-<div class="modal-body">
-
-  <ng-template #missingData>
-    <p class="text-muted">
-      {{ 'Nessun dato disponibile per questa richiesta' | translate }}
-    </p>
-  </ng-template>
+<div class="modal-body" *ngIf="request; else missingData">
+  <div class="d-grid gap-2">
+    <div>
+      <label class="fw-bold">
+        {{ "ID richiesta" | translate }}
+      </label>
+      <div class="">{{ request?.id || "-" }}</div>
+    </div>
+    <div>
+      <label class="fw-bold">
+        {{ "Utente" | translate }}
+      </label>
+      <div>{{ request?.userEmail || "-" }}</div>
+    </div>
+    <div>
+      <label class="fw-bold">
+        {{ "Tipo" | translate }}
+      </label>
+      <div>{{( request?.type || "-" ) | translate}}</div>
+    </div>
+    <div>
+      <label class="fw-bold">
+        {{ "Dal" | translate }}
+      </label>
+      <div>
+        {{
+          request?.dateFrom ? (request?.dateFrom | date : "dd/MM/yyyy") : "-"
+        }}
+      </div>
+    </div>
+    <div>
+      <label class="fw-bold">
+        {{ "Al" | translate }}
+      </label>
+      <div>
+        {{ request?.dateTo ? (request?.dateTo | date : "dd/MM/yyyy") : "-" }}
+      </div>
+    </div>
+  </div>
 </div>
+<ng-template #missingData>
+  <p class="text-muted">
+    {{ "Nessun dato disponibile per questa richiesta" | translate }}
+  </p>
+</ng-template>
 
 <div class="modal-footer">
-  <button
-    type="button"
-    class="btn btn-outline-secondary"
-    (click)="activeModal.close('close')"
-  >
-    {{ 'Chiudi' | translate }}
-  </button>
+  <app-button
+    [mode]="'DELETE'"
+    [name]="'Rifiuta'"
+    (buttonClick)="onFeedback('REFUSE')"
+  ></app-button>
+  <app-button
+    [mode]="'SAVE'"
+    [name]="'Accetta'"
+    (buttonClick)="onFeedback('ACCEPT')"
+  ></app-button>
 </div>

@@ -1,6 +1,9 @@
 import { Component, Input } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { UserRequestResponseDto } from 'src/generated-client';
+
+type handleRequestMode = 'ACCEPT' | 'REFUSE'
 
 @Component({
   selector: 'app-request-details-modal',
@@ -9,10 +12,15 @@ import { UserRequestResponseDto } from 'src/generated-client';
 })
 export class RequestDetailsModalComponent {
   @Input() request?: UserRequestResponseDto;
+  requestForm!: FormGroup;
 
   constructor(public activeModal: NgbActiveModal) {}
 
   trackByIndex(index: number): number {
     return index;
+  }
+
+  onFeedback(mode: handleRequestMode): void{
+
   }
 }

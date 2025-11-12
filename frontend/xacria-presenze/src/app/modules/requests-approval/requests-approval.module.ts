@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { NgbModalModule, NgbNavModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { RequestsApprovalRoutingModule } from './requests-approval-routing.module';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { CalendarCommonModule } from 'angular-calendar';
 import { GeneralModule } from 'src/app/shared/modules/general/general.module';
@@ -32,14 +32,15 @@ import { RequestDetailsModalComponent } from './components/request-details-modal
     NgbNavModule,
     NgbPaginationModule,
     TranslateModule.forChild({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: httpTranslateLoader,
-        deps: [HttpClient],
-      },
-      extend: true,
+        loader: {
+            provide: TranslateLoader,
+            useFactory: httpTranslateLoader,
+            deps: [HttpClient],
+        },
+        extend: true,
     }),
-    NgbModalModule
-  ],
+    NgbModalModule,
+    ReactiveFormsModule
+],
 })
 export class RequestsApprovalModule {}
