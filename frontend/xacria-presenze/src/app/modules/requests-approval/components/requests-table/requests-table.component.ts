@@ -179,7 +179,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
     return [
       {
         name: 'Gestisci',
-        onclick: () => console.log('Prova modifica:', row),
+        onclick: () => this.rowSelected.emit(row),
       },
     ];
   }
