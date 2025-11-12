@@ -7,6 +7,7 @@ import {
 } from '../requests-table/requests-table.component';
 import {
   CalendarService,
+  OpenClosedRequestNumberResponse,
   Pageable,
   PagedResponseUserRequestResponseDto,
   UserRequestResponseDto,
@@ -15,6 +16,7 @@ import {
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RequestDetailsModalComponent } from '../request-details-modal/request-details-modal.component';
+import { HttpErrorResponse } from '@angular/common/http';
 
 type RequestsTab = 'open' | 'closed';
 
@@ -38,6 +40,7 @@ interface RequestsTabState {
 })
 export class RequestsApprovalPageComponent implements OnInit {
   activeTab: RequestsTab = 'open';
+  openClosedCount: OpenClosedRequestNumberResponse | undefined;
   readonly tabState: Record<RequestsTab, RequestsTabState> = {
     open: this.createInitialState(),
     closed: this.createInitialState(),
@@ -59,8 +62,12 @@ export class RequestsApprovalPageComponent implements OnInit {
     if (this.isPrivilegedUser) {
       this.loadUserEmailOptions();
     }
-    this.loadTabData('open');
-    this.loadTabData('closed');
+    this.loadOpenClosedTabCount();
+    this.loadTabData(this.activeTab);
+    /* Prima funzionava
+      this.loadTabData('close');
+      this.loadTabData('open');
+    */
   }
 
   onTabChange(tab: RequestsTab): void {
@@ -93,6 +100,21 @@ export class RequestsApprovalPageComponent implements OnInit {
     };
     state.page = 0;
     this.loadTabData(tab);
+  }
+
+  private loadOpenClosedTabCount(): void{
+    this.calendarService.getOpenClosedRequestsNumber().subscribe({
+      next: (x: OpenClosedRequestNumberResponse) => {
+        this.openClosedCount = x;
+      },
+      error: (err: HttpErrorResponse) => {
+        console.warn("Error on open closed request count fetching", err);
+        this.openClosedCount = {
+          OPEN: 0,
+          CLOSED: 0
+        }
+      }
+    })
   }
 
   private loadTabData(tab: RequestsTab): void {

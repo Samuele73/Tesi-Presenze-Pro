@@ -19,6 +19,7 @@ import { Observable }                                        from 'rxjs';
 
 import { CalendarEntity } from '../model/calendarEntity';
 import { CalendarResponseDto } from '../model/calendarResponseDto';
+import { OpenClosedRequestNumberResponse } from '../model/openClosedRequestNumberResponse';
 import { Pageable } from '../model/pageable';
 import { PagedResponseUserRequestResponseDto } from '../model/pagedResponseUserRequestResponseDto';
 import { SaveCalendarEntityRequestDto } from '../model/saveCalendarEntityRequestDto';
@@ -344,7 +345,50 @@ export class CalendarService {
 
     /**
      * 
-     * Ottieni tutte le richieste in base al ruolo utente: admin, owner
+     * Ottieni tutte le tue richieste
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getOpenClosedRequestsNumber(observe?: 'body', reportProgress?: boolean): Observable<OpenClosedRequestNumberResponse>;
+    public getOpenClosedRequestsNumber(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<OpenClosedRequestNumberResponse>>;
+    public getOpenClosedRequestsNumber(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<OpenClosedRequestNumberResponse>>;
+    public getOpenClosedRequestsNumber(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<OpenClosedRequestNumberResponse>('get',`${this.basePath}/calendar/requests/split-count`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * Ottieni tutte le tue richieste
      * @param pageable 
      * @param tab 
      * @param types 

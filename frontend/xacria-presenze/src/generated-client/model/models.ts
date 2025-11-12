@@ -11,6 +11,7 @@ export * from './fullUserProfileResponseDto';
 export * from './grantedAuthority';
 export * from './loginRequestDto';
 export * from './newPasswordDto';
+export * from './openClosedRequestNumberResponse';
 export * from './pageable';
 export * from './pagedResponseUserRequestResponseDto';
 export * from './project';
