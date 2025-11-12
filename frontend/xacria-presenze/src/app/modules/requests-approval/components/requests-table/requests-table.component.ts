@@ -52,9 +52,13 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
   @Input() data: RequestsTableRow[] = [];
   @Input() showStatusColumn = false;
   private _tab: ApprovalRequestTab = 'OPEN';
-  @Input() set tab(value: ApprovalRequestTab){
+  @Input() set tab(value: ApprovalRequestTab) {
     this._tab = value;
-    this.canOpenDetails = this.authService.isPrivilegedUser() && this._tab === 'OPEN';
+    this.canOpenDetails =
+      this.authService.isPrivilegedUser() && this._tab === 'OPEN';
+  }
+  get tab(): ApprovalRequestTab {
+    return this._tab;
   }
 
   @Input() emptyMessage = 'Nessuna richiesta disponibile';
@@ -62,7 +66,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
   @Input() maxPages = Number.POSITIVE_INFINITY;
   private _userOptions: string[] = [];
   @Input() set userOptions(value: string[] | null) {
-    if (!this.canOpenDetails) {
+    if (!this.authService.isPrivilegedUser()) {
       return;
     }
     this._userOptions = (value ?? []).slice();
@@ -89,7 +93,8 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
   @Output() filtersChange = new EventEmitter<RequestsTableFilters>();
 
   columns: DynamicTableColumn[] = [];
-  canOpenDetails = this.authService.isPrivilegedUser() && this.tab === 'OPEN';
+  canOpenDetails =
+    this.authService.isPrivilegedUser() && this._tab === 'OPEN';
 
   requestTypeOptions = Object.values(UserRequestResponseDto.TypeEnum).map(
     (value) => ({
@@ -113,9 +118,13 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
     ) {
       this.buildColumns();
     }
-    if (this.canOpenDetails && changes['userOptions']) {
+    if (this.authService.isPrivilegedUser() && changes['userOptions']) {
       this.syncSelectedUsers();
-    } else if (!this.canOpenDetails && changes['data'] && this.data) {
+    } else if (
+      !this.authService.isPrivilegedUser() &&
+      changes['data'] &&
+      this.data
+    ) {
       this.generateUserOptions();
     }
   }
