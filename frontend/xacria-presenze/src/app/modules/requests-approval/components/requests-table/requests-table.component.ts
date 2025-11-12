@@ -6,7 +6,6 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  OnInit,
   Output,
   SimpleChanges,
   TemplateRef,
@@ -15,7 +14,7 @@ import {
 import { DynamicTableColumn } from '../dynamic-table/dynamic-table.component';
 import { DropdownOptions } from 'src/app/shared/components/ngb-options/ngb-options.component';
 import { AuthService } from 'src/app/shared/services/auth.service';
-import { UserRequestResponseDto, UserService } from 'src/generated-client';
+import { UserRequestResponseDto } from 'src/generated-client';
 
 export interface RequestsTableRow {
   id?: string;
@@ -39,9 +38,7 @@ export interface RequestsTableFilters {
   templateUrl: './requests-table.component.html',
   styleUrls: ['./requests-table.component.scss'],
 })
-export class RequestsTableComponent
-  implements OnInit, OnChanges, AfterViewInit
-{
+export class RequestsTableComponent implements OnChanges, AfterViewInit {
   @ViewChild('actionsTemplate', { static: true })
   actionsTemplate?: TemplateRef<any>;
   @ViewChild('userTemplate', { static: true })
@@ -52,6 +49,7 @@ export class RequestsTableComponent
   @Input() emptyMessage = 'Nessuna richiesta disponibile';
   @Input() pageSize = 10;
   @Input() maxPages = Number.POSITIVE_INFINITY;
+  @Input() userOptions: string[] = [];
   @Input() totalItems: number | null = null;
   @Input() currentPage = 1;
   @Input() serverPagination = false;
@@ -69,30 +67,12 @@ export class RequestsTableComponent
     })
   );
   selectedRequestTypes: UserRequestResponseDto.TypeEnum[] = [];
-  userOptions: string[] = [];
   selectedUsers: string[] = [];
 
   constructor(
     private cdr: ChangeDetectorRef,
-    public authService: AuthService,
-    private userService: UserService
+    public authService: AuthService
   ) {}
-
-  ngOnInit(): void {
-    if (this.canOpenDetails) {
-      this.userService.getRoleBasedUsersEmail().subscribe({
-        next: (emails) => {
-          this.userOptions = (emails ?? []).slice().sort();
-          this.syncSelectedUsers();
-        },
-        error: () => {
-          this.generateUserOptions();
-        },
-      });
-    } else {
-      this.generateUserOptions();
-    }
-  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (
@@ -102,7 +82,9 @@ export class RequestsTableComponent
     ) {
       this.buildColumns();
     }
-    if (changes['data'] && this.data && !this.canOpenDetails) {
+    if (changes['userOptions']) {
+      this.syncSelectedUsers();
+    } else if (!this.canOpenDetails && changes['data'] && this.data) {
       this.generateUserOptions();
     }
   }

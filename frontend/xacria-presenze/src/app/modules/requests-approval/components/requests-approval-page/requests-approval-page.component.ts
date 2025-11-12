@@ -10,6 +10,7 @@ import {
   Pageable,
   PagedResponseUserRequestResponseDto,
   UserRequestResponseDto,
+  UserService,
 } from 'src/generated-client';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -41,7 +42,11 @@ export class RequestsApprovalPageComponent implements OnInit {
     open: this.createInitialState(),
     closed: this.createInitialState(),
   };
-  private readonly isPrivilegedUser = this.authService.isPrivilegedUser();
+  readonly userOptionsByTab: Record<RequestsTab, string[]> = {
+    open: [],
+    closed: [],
+  };
+  readonly isPrivilegedUser = this.authService.isPrivilegedUser();
   private readonly tabStatusFilters: Record<
     RequestsTab,
     UserRequestResponseDto.StatusEnum[]
@@ -56,10 +61,14 @@ export class RequestsApprovalPageComponent implements OnInit {
   constructor(
     private calendarService: CalendarService,
     private authService: AuthService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
+    if (this.isPrivilegedUser) {
+      this.loadUserEmailOptions();
+    }
     this.loadTabData('open');
     this.loadTabData('closed');
   }
@@ -228,6 +237,22 @@ export class RequestsApprovalPageComponent implements OnInit {
       requestToken: 0,
       filters: { types: [], users: [] },
     };
+  }
+
+  private loadUserEmailOptions(): void {
+    this.userService.getRoleBasedUsersEmail().subscribe({
+      next: (emails) => {
+        const sorted = (emails ?? []).slice().sort();
+        (['open', 'closed'] as RequestsTab[]).forEach((tab) => {
+          this.userOptionsByTab[tab] = [...sorted];
+        });
+      },
+      error: () => {
+        (['open', 'closed'] as RequestsTab[]).forEach((tab) => {
+          this.userOptionsByTab[tab] = [];
+        });
+      },
+    });
   }
 
   private getRequests$(
