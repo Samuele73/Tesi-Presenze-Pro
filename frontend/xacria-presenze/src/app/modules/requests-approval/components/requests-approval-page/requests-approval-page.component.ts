@@ -6,6 +6,7 @@ import {
   RequestsTableRow,
 } from '../requests-table/requests-table.component';
 import {
+  ApprovalRequestTab,
   CalendarService,
   OpenClosedRequestNumberResponse,
   Pageable,
@@ -261,7 +262,7 @@ export class RequestsApprovalPageComponent implements OnInit {
 
   private getRequests$(
     pageable: Pageable,
-    tab: string,
+    tab: ApprovalRequestTab,
     types?: UserRequestResponseDto.TypeEnum[],
     users?: string[]
   ): Observable<PagedResponseUserRequestResponseDto> {
@@ -289,7 +290,7 @@ export class RequestsApprovalPageComponent implements OnInit {
     return fallback;
   }
 
-  private toBackendTab(tab: RequestsTab): string {
+  private toBackendTab(tab: RequestsTab): ApprovalRequestTab {
     return tab === 'open' ? 'OPEN' : 'CLOSED';
   }
 }

@@ -1,4 +1,5 @@
 export * from './approvalAction';
+export * from './approvalRequestTab';
 export * from './basicUserProfileResponse';
 export * from './booleanResponse';
 export * from './calendarAvailabilityEntry';
