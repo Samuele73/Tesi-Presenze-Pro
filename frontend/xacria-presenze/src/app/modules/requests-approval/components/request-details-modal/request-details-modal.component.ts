@@ -1,15 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/shared/services/auth.service';
-import {
-  ApprovalAction,
-  BooleanResponse,
-  CalendarService,
-  UserRequestResponseDto,
-} from 'src/generated-client';
+import { RequestStoreService } from '../../services/request-store.service';
+import { ApprovalAction, UserRequestResponseDto } from 'src/generated-client';
 
 @Component({
   selector: 'app-request-details-modal',
@@ -22,7 +17,7 @@ export class RequestDetailsModalComponent {
   constructor(
     public activeModal: NgbActiveModal,
     public authService: AuthService,
-    private calendarService: CalendarService,
+    private requestStoreService: RequestStoreService,
     private toastrService: ToastrService
   ) {}
 
@@ -31,22 +26,25 @@ export class RequestDetailsModalComponent {
   }
 
   onFeedback(mode: ApprovalAction): void {
-    if (this.request?.id)
-      this.calendarService
-        .updateRequestStatus(mode, this.request.id)
-        .subscribe({
-          next: (value: BooleanResponse) => {
-            value
-              ? this.toastrService.success('Richiesta aggiornata con successo')
-              : this.toastrService.error('richiesta aggiornata con difetto');
-          },
-          error: (err: HttpErrorResponse) => {
-            this.toastrService.error(err.error.message);
-          },
-          complete: () => {
-            this.activeModal.dismiss();
-          }
-        });
-    else this.toastrService.error('Nessun id presente nella richiesta');
+    if (!this.request?.id) {
+      this.toastrService.error('Nessun id presente nella richiesta');
+      return;
+    }
+
+    this.requestStoreService
+      .updateRequestStatus(mode, this.request.id)
+      .subscribe({
+        next: (success: boolean) => {
+          success
+            ? this.toastrService.success('Richiesta aggiornata con successo')
+            : this.toastrService.error('richiesta aggiornata con difetto');
+        },
+        error: (err: HttpErrorResponse) => {
+          this.toastrService.error(err.error?.message ?? 'Errore sconosciuto');
+        },
+        complete: () => {
+          this.activeModal.dismiss();
+        },
+      });
   }
 }

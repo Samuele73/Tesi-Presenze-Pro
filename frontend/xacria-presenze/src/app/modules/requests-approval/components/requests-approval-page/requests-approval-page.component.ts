@@ -1,23 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject, Subscription } from 'rxjs';
+import { finalize, takeUntil } from 'rxjs/operators';
 import {
   RequestsTableFilters,
   RequestsTableRow,
 } from '../requests-table/requests-table.component';
 import {
   ApprovalRequestTab,
-  CalendarService,
   OpenClosedRequestNumberResponse,
   Pageable,
   PagedResponseUserRequestResponseDto,
   UserRequestResponseDto,
-  UserService,
 } from 'src/generated-client';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RequestDetailsModalComponent } from '../request-details-modal/request-details-modal.component';
-import { HttpErrorResponse } from '@angular/common/http';
+import { RequestStoreService } from '../../services/request-store.service';
 
 type RequestsTab = 'open' | 'closed';
 
@@ -39,7 +37,7 @@ interface RequestsTabState {
   templateUrl: './requests-approval-page.component.html',
   styleUrls: ['./requests-approval-page.component.scss'],
 })
-export class RequestsApprovalPageComponent implements OnInit {
+export class RequestsApprovalPageComponent implements OnInit, OnDestroy {
   activeTab: RequestsTab = 'open';
   openClosedCount: OpenClosedRequestNumberResponse | undefined;
   readonly tabState: Record<RequestsTab, RequestsTabState> = {
@@ -51,15 +49,20 @@ export class RequestsApprovalPageComponent implements OnInit {
     closed: [],
   };
   readonly isPrivilegedUser = this.authService.isPrivilegedUser();
+  private destroy$ = new Subject<void>();
+  private tabRequestSubscriptions: Record<RequestsTab, Subscription | null> = {
+    open: null,
+    closed: null,
+  };
 
   constructor(
-    private calendarService: CalendarService,
     private authService: AuthService,
     private modalService: NgbModal,
-    private userService: UserService
+    private requestStoreService: RequestStoreService
   ) {}
 
   ngOnInit(): void {
+    this.subscribeToStore();
     if (this.isPrivilegedUser) {
       this.loadUserEmailOptions();
     }
@@ -69,6 +72,14 @@ export class RequestsApprovalPageComponent implements OnInit {
       this.loadTabData('close');
       this.loadTabData('open');
     */
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    (['open', 'closed'] as RequestsTab[]).forEach((tab) =>
+      this.cancelOngoingRequest(tab)
+    );
   }
 
   onTabChange(tab: RequestsTab): void {
@@ -103,23 +114,16 @@ export class RequestsApprovalPageComponent implements OnInit {
     this.loadTabData(tab);
   }
 
-  private loadOpenClosedTabCount(): void{
-    this.calendarService.getOpenClosedRequestsNumber().subscribe({
-      next: (x: OpenClosedRequestNumberResponse) => {
-        this.openClosedCount = x;
-      },
-      error: (err: HttpErrorResponse) => {
-        console.warn("Error on open closed request count fetching", err);
-        this.openClosedCount = {
-          OPEN: 0,
-          CLOSED: 0
-        }
-      }
-    })
+  private loadOpenClosedTabCount(): void {
+    this.requestStoreService
+      .loadOpenClosedCount()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe();
   }
 
   private loadTabData(tab: RequestsTab): void {
     const state = this.tabState[tab];
+    this.cancelOngoingRequest(tab);
     state.requestToken += 1;
     const token = state.requestToken;
     state.loading = true;
@@ -149,7 +153,8 @@ export class RequestsApprovalPageComponent implements OnInit {
 
     const tabFilter = this.toBackendTab(tab);
 
-    this.getRequests$(pageable, tabFilter, typesFilter, usersFilter)
+    const request$ = this.requestStoreService
+      .loadRequests(pageable, tabFilter, typesFilter, usersFilter)
       .pipe(
         finalize(() => {
           if (token === state.requestToken) {
@@ -157,20 +162,24 @@ export class RequestsApprovalPageComponent implements OnInit {
             state.initialized = true;
           }
         })
-      )
-      .subscribe({
-        next: (resp) => this.handleResponse(tab, resp, token),
-        error: () => this.handleError(tab, token),
-      });
+      );
+
+    this.tabRequestSubscriptions[tab] = request$.subscribe({
+      next: (success) => {
+        if (!success && token === state.requestToken) {
+          this.handleError(tab, token);
+        }
+      },
+      error: () => this.handleError(tab, token),
+    });
   }
 
-  private handleResponse(
+  private handleStoreResponse(
     tab: RequestsTab,
-    resp: PagedResponseUserRequestResponseDto,
-    token: number
+    resp: PagedResponseUserRequestResponseDto | null
   ): void {
     const state = this.tabState[tab];
-    if (token !== state.requestToken) {
+    if (!resp) {
       return;
     }
     const content = resp.content ?? [];
@@ -243,41 +252,10 @@ export class RequestsApprovalPageComponent implements OnInit {
   }
 
   private loadUserEmailOptions(): void {
-    this.userService.getRoleBasedUsersEmail().subscribe({
-      next: (emails: string[]) => {
-        console.log("Controllami", emails);
-
-        const sorted = (emails ?? []).slice().sort();
-        (['open', 'closed'] as RequestsTab[]).forEach((tab) => {
-          this.userOptionsByTab[tab] = [...sorted];
-        });
-      },
-      error: () => {
-        (['open', 'closed'] as RequestsTab[]).forEach((tab) => {
-          this.userOptionsByTab[tab] = [];
-        });
-      },
-    });
-  }
-
-  private getRequests$(
-    pageable: Pageable,
-    tab: ApprovalRequestTab,
-    types?: UserRequestResponseDto.TypeEnum[],
-    users?: string[]
-  ): Observable<PagedResponseUserRequestResponseDto> {
-    return this.isPrivilegedUser
-      ? this.calendarService.getAllRequests(
-          pageable,
-          tab,
-          types as string[] | undefined,
-          users
-        )
-      : this.calendarService.getUserRequests(
-          pageable,
-          tab,
-          types as string[] | undefined
-        );
+    this.requestStoreService
+      .loadUserEmailOptions()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe();
   }
 
   private deriveTotalFromResponse(
@@ -292,5 +270,36 @@ export class RequestsApprovalPageComponent implements OnInit {
 
   private toBackendTab(tab: RequestsTab): ApprovalRequestTab {
     return tab === 'open' ? 'OPEN' : 'CLOSED';
+  }
+
+  private subscribeToStore(): void {
+    (['open', 'closed'] as RequestsTab[]).forEach((tab) => {
+      const backendTab = this.toBackendTab(tab);
+      this.requestStoreService
+        .getRequestsByTab$(backendTab)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((resp) => this.handleStoreResponse(tab, resp));
+    });
+
+    this.requestStoreService.openClosedCount$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((count) => {
+        this.openClosedCount = count ?? undefined;
+      });
+
+    if (this.isPrivilegedUser) {
+      this.requestStoreService.userOptions$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((options) => {
+          (['open', 'closed'] as RequestsTab[]).forEach((tab) => {
+            this.userOptionsByTab[tab] = [...options];
+          });
+        });
+    }
+  }
+
+  private cancelOngoingRequest(tab: RequestsTab): void {
+    this.tabRequestSubscriptions[tab]?.unsubscribe();
+    this.tabRequestSubscriptions[tab] = null;
   }
 }
