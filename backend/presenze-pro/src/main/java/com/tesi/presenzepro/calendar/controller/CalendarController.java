@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +48,7 @@ public class CalendarController {
     @PreAuthorize("hasAnyRole('ADMIN', 'OWNER')")
     @Operation(description = "Ottieni tutte le richieste in base al ruolo utente: admin, owner", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/requests")
-    ResponseEntity<PagedResponse<UserRequestResponseDto>> getAllRequests(HttpServletRequest request, @PageableDefault(size = 10) Pageable pageable, @RequestParam(required = false) List<RequestType> types,
+    ResponseEntity<PagedResponse<UserRequestResponseDto>> getAllRequests(HttpServletRequest request, @PageableDefault(size = 10, sort = "calendarEntry.dateFrom", direction = Sort.Direction.DESC) Pageable pageable, @RequestParam(required = false) List<RequestType> types,
                                                                          @RequestParam(required = false) List<String> users, @RequestParam ApprovalRequestTab tab){
         System.out.println("Types: " + types);
         System.out.println("users: " + users);
@@ -58,7 +59,7 @@ public class CalendarController {
 
     @Operation(description = "Ottieni tutte le tue richieste", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/my-requests")
-    ResponseEntity<PagedResponse<UserRequestResponseDto>> getUserRequests(HttpServletRequest request, @PageableDefault(size = 10) Pageable pageable, @RequestParam(required = false) List<RequestType> types, @RequestParam ApprovalRequestTab tab){
+    ResponseEntity<PagedResponse<UserRequestResponseDto>> getUserRequests(HttpServletRequest request, @PageableDefault(size = 10, sort = "calendarEntry.dateFrom", direction = Sort.Direction.DESC) Pageable pageable, @RequestParam(required = false) List<RequestType> types, @RequestParam ApprovalRequestTab tab){
         final PagedResponse<UserRequestResponseDto> requests = calendarService.getMyRquests(request, pageable, types, tab);
         return ResponseEntity.status(HttpStatus.OK).body(requests);
     }
