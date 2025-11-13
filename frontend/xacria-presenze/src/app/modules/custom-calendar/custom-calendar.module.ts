@@ -21,9 +21,26 @@ import {
 import { DropdownModule } from 'primeng/dropdown';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { CalendarModule } from 'angular-calendar';
+import { InteractiveButtonComponent } from './components/interactive-button/interactive-button.component';
+import { DayCellNotifComponent } from './components/day-cell-notif/day-cell-notif.component';
+import { DayworkModalComponent } from './components/modals/daywork-modal/daywork-modal.component';
+import { RequestModalComponent } from './components/modals/request-modal/request-modal.component';
+import { AvailabilityModalComponent } from './components/modals/availability-modal/availability-modal.component';
+import { WorkingTripModalComponent } from './components/modals/working-trip-modal/working-trip-modal.component';
+import { StatusBadgeComponent } from './components/status-badge/status-badge.component';
+import { CustomCalendarPageComponent } from './components/custom-calendar-page/custom-calendar-page.component';
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    InteractiveButtonComponent,
+    DayCellNotifComponent,
+    DayworkModalComponent,
+    RequestModalComponent,
+    AvailabilityModalComponent,
+    WorkingTripModalComponent,
+    StatusBadgeComponent,
+    CustomCalendarPageComponent
+  ],
   imports: [
     CommonModule,
     CustomCalendarRoutingModule,

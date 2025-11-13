@@ -7,7 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { AuthService } from 'src/app/shared/services/auth.service';
-import { Username } from '../../../modules/layout/shared/models/username';
+import { Username } from '../../../modules/custom-calendar/models/username';
 import { UsernameService } from '../../../modules/layout/shared/services/username.service';
 import {
   BasicUserProfileResponse,

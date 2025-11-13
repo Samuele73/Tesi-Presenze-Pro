@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AttendanceComponent } from './attendance.component';
+import { AttendanceComponent } from './custom-calendar-page.component';
 
 describe('AttendanceComponent', () => {
   let component: AttendanceComponent;

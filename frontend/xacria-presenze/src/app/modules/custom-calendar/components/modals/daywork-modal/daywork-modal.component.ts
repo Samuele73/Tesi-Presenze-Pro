@@ -11,16 +11,15 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { projects } from '../../const-vars';
 import { ModalComponent } from '../modalComponent';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { faIcons } from '../../attendance/attendance.component';
+import { faIcons } from '../../custom-calendar-page/custom-calendar-page.component';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
 import { CalendarWorkingDayEntry, Project, ProjectService } from 'src/generated-client';
-import { identifiableCalendarWorkingDay } from 'src/app/modules/layout/shared/models/calendar';
+import { identifiableCalendarWorkingDay } from 'src/app/modules/custom-calendar/models/calendar';
 import { parse } from 'date-fns';
 import { it as itLocale } from 'date-fns/locale';
-import { CalendarStateService } from 'src/app/modules/layout/shared/services/calendar-state.service';
+import { CalendarStateService } from '../../../services/calendar-state.service';
 
 @Component({
   selector: 'app-daywork-modal',

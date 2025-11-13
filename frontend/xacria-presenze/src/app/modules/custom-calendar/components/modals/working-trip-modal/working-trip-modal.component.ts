@@ -5,48 +5,42 @@ import {
   Input,
   OnInit,
   Output,
-  QueryList,
-  Renderer2,
-  SimpleChanges,
-  TemplateRef,
   ViewChild,
-  ViewChildren,
 } from '@angular/core';
-import { projects } from '../../const-vars';
-import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { inject, TemplateRef } from '@angular/core';
+
+import {
+  ModalDismissReasons,
+  NgbDatepickerModule,
+  NgbModal,
+} from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from '../modalComponent';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { faIcons } from '../../attendance/attendance.component';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
-import {
-  CalendarAvailabilityEntry,
-  CalendarEntity,
-} from 'src/generated-client';
-import { identifiableCalendarAvailability } from 'src/app/modules/layout/shared/models/calendar';
-import { CalendarStateService } from 'src/app/modules/layout/shared/services/calendar-state.service';
+import { faIcons } from '../../custom-calendar-page/custom-calendar-page.component';
+import { CalendarWorkingTripEntry } from 'src/generated-client';
+import { identifiableCalendarWorkingTrip } from 'src/app/modules/custom-calendar/models/calendar';
+import { CalendarStateService } from '../../../services/calendar-state.service';
 
 @Component({
-  selector: 'app-availability-modal',
-  templateUrl: './availability-modal.component.html',
-  styleUrls: ['./availability-modal.component.scss'],
+  selector: 'app-working-trip-modal',
+  templateUrl: './working-trip-modal.component.html',
+  styleUrls: ['./working-trip-modal.component.scss'],
 })
-export class AvailabilityModalComponent implements ModalComponent, OnInit {
-  validProjects: any = projects;
-  @ViewChild('modal', { static: true }) modalElement!: TemplateRef<any>;
-  @Input() calendarEntries!: identifiableCalendarAvailability[];
-  @Input() isModifyMode!: boolean;
-  @Input() currentDate?: Date;
+export class WorkingTripModalComponent implements ModalComponent, OnInit {
+  @ViewChild('modal', { static: true }) modalElement!: ElementRef;
   closeResult = '';
   form!: FormGroup;
-  faIcons = faIcons;
+  @Input() isModifyMode!: boolean;
+  @Input() calendarEntries!: identifiableCalendarWorkingTrip[];
+  @Input() currentDate?: Date;
   toDeleteEntries: string[] = [];
-  @ViewChildren('entry') entryElements!: QueryList<ElementRef>;
-  initialCalendarentries: identifiableCalendarAvailability[] = [];
+  faIcons = faIcons;
+  initialWorkingTrips: identifiableCalendarWorkingTrip[] = [];
 
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
-    private renderer: Renderer2,
     private dateFormat: DateFormatService,
     private calendarStateService: CalendarStateService
   ) {}
@@ -57,51 +51,41 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
   get dateTo() {
     return this.form.get('dateTo');
   }
-  get project() {
-    return this.form.get('project');
-  }
-  get availabilities() {
-    return this.form.get('availabilities') as FormArray;
+  get workingTrips() {
+    return this.form.get('working_trips') as FormArray;
   }
 
   ngOnInit(): void {
-    /* this.initializeForm(); */
+    this.initializeForm();
   }
 
   initializeForm(): void {
-    if (!this.isModifyMode){
+    if (!this.isModifyMode) {
       const formattedCurrentDate = this.dateFormat.manuallyFormatToDateInput(
         this.currentDate ?? new Date()
       );
       this.form = this.fb.group({
         dateFrom: [formattedCurrentDate, Validators.required],
         dateTo: [formattedCurrentDate, Validators.required],
-        project: [this.validProjects[0], Validators.required],
       });
-    }
-
-    else this.initializeModifyForm();
+    } else this.initializeModifyForm();
   }
 
-  //potrebbe essere utile in caso di feature di notifica
-  /* ngOnChanges(changes: SimpleChanges): void {
-    if (changes['calendarEntries'] && this.isModifyMode) {
-      console.log('Modifica delle entries di disponibilità');
-      this.initializeModifyForm();
-    }
-  } */
+  private emptyToDeleteEntries(): void {
+    this.toDeleteEntries = [];
+  }
 
-  initializeModifyForm() {
-    let entries: FormGroup[] = [];
-    this.calendarEntries.forEach((entry) => {
-      entries.push(this.createAvailabilityGroup(entry));
+  initializeModifyForm(): void {
+    let entries: any[] = [];
+    this.calendarEntries.forEach((entry: identifiableCalendarWorkingTrip) => {
+      entries.push(this.createWorkingTripGroup(entry));
     });
     this.form = this.fb.group({
-      availabilities: this.fb.array(entries),
+      working_trips: this.fb.array(entries),
     });
   }
 
-  createAvailabilityGroup(entry: identifiableCalendarAvailability) {
+  createWorkingTripGroup(entry: identifiableCalendarWorkingTrip) {
     const from = this.dateFormat.formatToDateInput(
       entry.calendarEntry.dateFrom ?? new Date()
     );
@@ -112,41 +96,34 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
       id: [entry.id],
       dateFrom: [from, Validators.required],
       dateTo: [to, Validators.required],
-      project: [
-        !entry.calendarEntry.project
-          ? this.validProjects[0]
-          : entry.calendarEntry.project,
-        Validators.required,
-      ],
     });
   }
 
   private updateEntries(): void {
-    const currentEntries: ({ id: string } & CalendarAvailabilityEntry)[] =
-      this.availabilities.value;
-    const changedEntries: identifiableCalendarAvailability[] = currentEntries
-      .filter((entry: { id: string } & CalendarAvailabilityEntry, i) => {
-        const initial = this.initialCalendarentries[i];
+    const currentEntries: ({ id: string } & CalendarWorkingTripEntry)[] =
+      this.workingTrips.value;
+    const changedEntries: identifiableCalendarWorkingTrip[] = currentEntries
+      .filter((entry: { id: string } & CalendarWorkingTripEntry, i) => {
+        const initial = this.initialWorkingTrips[i];
         return JSON.stringify(entry) !== JSON.stringify(initial);
       })
-      .map((entry: { id: string } & CalendarAvailabilityEntry) => {
+      .map((entry: { id: string } & CalendarWorkingTripEntry) => {
         return {
           id: entry.id,
           calendarEntry: {
             dateFrom: entry.dateFrom,
             dateTo: entry.dateTo,
-            project: entry.project,
           },
         };
       });
     console.log('To updated entries', changedEntries);
-    this.calendarStateService.updateCalendarEntries(changedEntries, 'AVAILABILITY');
-    this.initialCalendarentries = this.availabilities.value;
+    this.calendarStateService.updateCalendarEntries(changedEntries, 'WORKING_TRIP');
+    this.initialWorkingTrips = this.workingTrips.value;
   }
 
   private deleteEntries(): void {
     if (this.toDeleteEntries.length) {
-      this.calendarStateService.deleteCalendarEntities(this.toDeleteEntries, 'AVAILABILITY');
+      this.calendarStateService.deleteCalendarEntities(this.toDeleteEntries, 'WORKING_TRIP');
       this.toDeleteEntries = [];
     }
   }
@@ -171,8 +148,6 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
 
     if (this.isModifyMode) {
       this.initializeModifyForm();
-      this.initialCalendarentries = this.availabilities.value;
-      //console.log('INITIAL', this.initialCalendarentries);
     } else {
       this.initializeForm();
     }
@@ -195,10 +170,6 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
       );
   }
 
-  private emptyToDeleteEntries(): void {
-    this.toDeleteEntries = [];
-  }
-
   private getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) {
       return 'by pressing ESC';
@@ -209,8 +180,7 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
     }
   }
 
-  //Da implementare con il server
-  toggleEntryDelete(entry: identifiableCalendarAvailability, i: number): void {
+  toggleEntryDelete(entry: identifiableCalendarWorkingTrip, i: number): void {
     const entryId = entry.id;
     console.log('CONTROLLA IL VALORE ava', entryId, i);
     if (this.toDeleteEntries.includes(entryId)) {
@@ -224,15 +194,12 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
 
   submitNewEntry(): void {
     if (this.form.valid) {
-      const newEntry: CalendarAvailabilityEntry = {
+      const newEntry: CalendarWorkingTripEntry = {
         dateFrom: this.dateFrom?.value,
         dateTo: this.dateTo?.value,
-        project: this.project?.value,
       };
-      this.calendarStateService.saveCalendarEntry(newEntry, 'AVAILABILITY');
+      this.calendarStateService.saveCalendarEntry(newEntry, 'WORKING_TRIP');
       this.form.reset();
     } else console.error('Availability new entry form is invalid');
   }
 }
-
-//COSA FARE: cambia i tipi da any a quelli corretti

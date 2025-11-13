@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { UsernameService } from '../shared/services/username.service';
-import { Username } from '../shared/models/username';
+import { Username } from '../../custom-calendar/models/username';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 

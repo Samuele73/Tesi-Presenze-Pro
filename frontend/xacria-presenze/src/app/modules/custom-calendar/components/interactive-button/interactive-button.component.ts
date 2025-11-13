@@ -23,14 +23,6 @@ import { AvailabilityModalComponent } from '../modals/availability-modal/availab
 import { RequestModalComponent } from '../modals/request-modal/request-modal.component';
 import { WorkingTripModalComponent } from '../modals/working-trip-modal/working-trip-modal.component';
 import { DayworkModalComponent } from '../modals/daywork-modal/daywork-modal.component';
-import {
-  identifiableCalendarAvailability,
-  identifiableCalendarEntry,
-  identifiableCalendarRequest,
-  identifiableCalendarWorkingDay,
-  identifiableCalendarWorkingTrip,
-  calendar,
-} from '../../shared/models/calendar';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
 import {
   CalendarAvailabilityEntry,
@@ -38,6 +30,7 @@ import {
   CalendarWorkingDayEntry,
   CalendarWorkingTripEntry,
 } from 'src/generated-client';
+import { calendar, identifiableCalendarAvailability, identifiableCalendarEntry, identifiableCalendarRequest, identifiableCalendarWorkingDay, identifiableCalendarWorkingTrip } from '../../models/calendar';
 
 declare var bootstrap: any;
 const faIcons = {

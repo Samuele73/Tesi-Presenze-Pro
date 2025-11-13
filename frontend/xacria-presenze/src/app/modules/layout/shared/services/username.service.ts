@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { Username } from '../models/username';
+import { Username } from '../../../custom-calendar/models/username';
 
 @Injectable({
   providedIn: 'root'

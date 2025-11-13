@@ -31,26 +31,17 @@ import {
   faArrowRight,
   faArrowLeft,
 } from '@fortawesome/free-solid-svg-icons';
-import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
-import { hoursValidators } from '../../validators/hours.validators';
-import { datesValidators } from '../../validators/dates.validators';
-import {
-  projects,
-  request_types,
-  monthNamesIt,
-  monthNamesEn,
-} from '../const-vars';
 import { CalendarView } from 'angular-calendar';
 import { WorkingTripModalComponent } from '../modals/working-trip-modal/working-trip-modal.component';
 import { ModalComponent } from '../modals/modalComponent';
 import { AvailabilityModalComponent } from '../modals/availability-modal/availability-modal.component';
 import { RequestModalComponent } from '../modals/request-modal/request-modal.component';
 import { DayworkModalComponent } from '../modals/daywork-modal/daywork-modal.component';
-import { weekDayNamesIt, weekDayNamesEn } from '../const-vars';
-import { CalendarStateService } from '../../shared/services/calendar-state.service';
-import { calendar, identifiableCalendarWorkingDay } from '../../shared/models/calendar';
 import { CalendarAvailabilityEntry, CalendarEntity, CalendarEntry, UserData, UserService } from 'src/generated-client';
 import { Subject, takeUntil } from 'rxjs';
+import { calendar, identifiableCalendarWorkingDay } from '../../models/calendar';
+import { CalendarStateService } from '../../services/calendar-state.service';
+import { monthNamesIt, weekDayNamesIt } from '../../const-vars';
 
 type DistributedModalComponent = AvailabilityModalComponent | RequestModalComponent | WorkingTripModalComponent;
 type ModalComponentType = DistributedModalComponent | DayworkModalComponent;
@@ -60,10 +51,10 @@ declare var bootstrap: any;
 @Component({
   selector: 'app-attendance',
   changeDetection: ChangeDetectionStrategy.OnPush, // Abilitato OnPush
-  styleUrls: ['./attendance.component.scss'],
-  templateUrl: './attendance.component.html',
+  styleUrls: ['./custom-calendar-page.component.scss'],
+  templateUrl: './custom-calendar-page.component.html',
 })
-export class AttendanceComponent implements OnInit, AfterViewInit, OnDestroy {
+export class CustomCalendarPageComponent implements OnInit, AfterViewInit, OnDestroy {
   // Subject per gestire l'unsubscribe
   private destroy$ = new Subject<void>();
 

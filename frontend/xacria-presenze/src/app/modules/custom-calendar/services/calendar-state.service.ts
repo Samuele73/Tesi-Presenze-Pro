@@ -2,16 +2,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { environment } from 'src/environments/environment';
-import {
-  calendar,
-  apiEntry,
-  working_trip,
-  availability,
-  request,
-  day_work,
-  entryType,
-  identifiableCalendarEntry,
-} from '../models/calendar';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import {
@@ -27,6 +17,7 @@ import {
 } from 'src/generated-client';
 import { en } from '@fullcalendar/core/internal-common';
 import { id } from 'date-fns/locale';
+import { calendar, identifiableCalendarEntry } from '../models/calendar';
 
 @Injectable({
   providedIn: 'root',

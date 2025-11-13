@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { LayoutComponent } from './layout/layout.component';
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from '../../shared/components/profile/profile.component';
-import { AttendanceComponent } from './calendar-comps/attendance/attendance.component';
 import { ProjectPageComponent } from '../project/components/project-page/project-page.component';
 import { DetailedProjectComponent } from '../project/components/detailed-project/detailed-project.component';
 import { RequestsApprovalGuard } from './shared/guards/requests-approval.guard';
@@ -16,7 +15,9 @@ const routes: Routes = [
     children: [
       { path: 'home', pathMatch: 'full', component: HomeComponent },
       { path: 'profile', pathMatch: 'full', component: ProfileComponent },
-      { path: 'calendar', pathMatch: 'full', component: AttendanceComponent },
+      { path: 'calendar', loadChildren: () =>
+        import("../custom-calendar/custom-calendar.module").then((m) => m.CustomCalendarModule)
+       }, //{ path: 'calendar', pathMatch: 'full', component: AttendanceComponent },
       {
         path: 'projects',
         loadChildren: () =>

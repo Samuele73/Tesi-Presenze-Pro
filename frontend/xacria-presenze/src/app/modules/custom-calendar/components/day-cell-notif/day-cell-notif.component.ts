@@ -12,7 +12,6 @@ import {
 } from '@angular/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
-import { CalendarEntryType } from '../../interfaces';
 import { ViewChild } from '@angular/core';
 import { WorkingTripModalComponent } from '../modals/working-trip-modal/working-trip-modal.component';
 import { AvailabilityModalComponent } from '../modals/availability-modal/availability-modal.component';
@@ -28,8 +27,9 @@ import {
   CalendarWorkingDayEntry,
   CalendarWorkingTripEntry,
 } from 'src/generated-client';
-import { identifiableCalendarAvailability, identifiableCalendarEntry, identifiableCalendarRequest, identifiableCalendarWorkingDay, identifiableCalendarWorkingTrip } from '../../shared/models/calendar';
-import { CalendarStateService } from '../../shared/services/calendar-state.service';
+import { identifiableCalendarAvailability, identifiableCalendarEntry, identifiableCalendarRequest, identifiableCalendarWorkingDay, identifiableCalendarWorkingTrip } from 'src/app/modules/custom-calendar/models/calendar';
+import { CalendarStateService } from '../../services/calendar-state.service';
+import { CalendarEntryType } from 'src/app/modules/layout/interfaces';
 
 @Component({
   selector: 'app-day-cell-notif',

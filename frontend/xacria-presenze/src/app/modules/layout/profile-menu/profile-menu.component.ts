@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Username } from '../shared/models/username';
+import { Username } from '../../custom-calendar/models/username';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { APP_ROUTES } from 'src/app/shared/constants/route-paths';
 

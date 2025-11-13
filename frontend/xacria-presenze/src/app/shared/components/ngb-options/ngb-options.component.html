@@ -1,4 +1,4 @@
-<div ngbDropdown container="body" class="d-inline-block">
+<div ngbDropdown container="body" class="d-inline-block" (click)="$event.stopPropagation()">
   <button
     type="button"
     ngbDropdownToggle

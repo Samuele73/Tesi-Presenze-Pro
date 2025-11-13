@@ -9,7 +9,6 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HttpClient } from '@angular/common/http';
 import {
   NgbDatepickerModule,
-  NgbDropdown,
   NgbDropdownModule,
   NgbModalModule,
   NgbTooltipModule,
@@ -24,16 +23,8 @@ import { httpTranslateLoader } from '../../app.module';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { ProfileMenuComponent } from './profile-menu/profile-menu.component';
 import { RequestsListComponent } from './requests-list/requests-list.component';
-import { AttendanceComponent } from './calendar-comps/attendance/attendance.component';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
-import { DayCellNotifComponent } from './calendar-comps/day-cell-notif/day-cell-notif.component';
-import { DayworkModalComponent } from './calendar-comps/modals/daywork-modal/daywork-modal.component';
-import { WorkingTripModalComponent } from './calendar-comps/modals/working-trip-modal/working-trip-modal.component';
-import { AvailabilityModalComponent } from './calendar-comps/modals/availability-modal/availability-modal.component';
-import { RequestModalComponent } from './calendar-comps/modals/request-modal/request-modal.component';
-import { InteractiveButtonComponent } from './calendar-comps/interactive-button/interactive-button.component';
-import { StatusBadgeComponent } from './status-badge/status-badge.component';
 import { ProjectPageComponent } from '../project/components/project-page/project-page.component';
 import { FilterPipe } from './shared/pipes/filter.pipe';
 import { ProjectListComponent } from '../project/components/project-list/project-list.component';
@@ -59,14 +50,6 @@ import { ToastContainerModule, ToastrModule } from 'ngx-toastr';
     SidebarComponent,
     ProfileMenuComponent,
     RequestsListComponent,
-    AttendanceComponent,
-    DayCellNotifComponent,
-    DayworkModalComponent,
-    WorkingTripModalComponent,
-    AvailabilityModalComponent,
-    RequestModalComponent,
-    InteractiveButtonComponent,
-    StatusBadgeComponent,
     ProjectPageComponent,
     FilterPipe,
     ProjectListComponent,
@@ -87,12 +70,10 @@ import { ToastContainerModule, ToastrModule } from 'ngx-toastr';
     GeneralModule,
     FormsModule,
     ReactiveFormsModule,
-    FullCalendarModule,
     FontAwesomeModule,
     NgbModalModule,
     NgbTooltipModule,
     NgbDropdownModule,
-    NgbDatepickerModule,
     DropdownModule,
     MultiSelectModule,
     TranslateModule.forChild({
@@ -103,11 +84,6 @@ import { ToastContainerModule, ToastrModule } from 'ngx-toastr';
       },
       extend: true,
     }),
-    CalendarModule.forRoot({
-      provide: DateAdapter,
-      useFactory: adapterFactory,
-    }),
-    NgbCollapse,
     ToastrModule,
     ToastContainerModule
   ],

@@ -7,15 +7,15 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { request_types } from '../../const-vars';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from '../modalComponent';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
-import { faIcons } from '../../attendance/attendance.component';
+import { faIcons } from '../../custom-calendar-page/custom-calendar-page.component';
 import { CalendarRequestEntry } from 'src/generated-client';
-import { identifiableCalendarRequest } from 'src/app/modules/layout/shared/models/calendar';
-import { CalendarStateService } from 'src/app/modules/layout/shared/services/calendar-state.service';
+import { identifiableCalendarRequest } from 'src/app/modules/custom-calendar/models/calendar';
+import { request_types } from '../../../const-vars';
+import { CalendarStateService } from '../../../services/calendar-state.service';
 
 @Component({
   selector: 'app-request-modal',
