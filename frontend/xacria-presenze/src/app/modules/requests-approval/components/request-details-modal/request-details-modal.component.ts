@@ -13,6 +13,8 @@ import { ApprovalAction, UserRequestResponseDto } from 'src/generated-client';
 })
 export class RequestDetailsModalComponent {
   @Input() request?: UserRequestResponseDto;
+  title = this.checkIfClickable() ? "Gestisci richiesta" : 'Visualizza richiesta'
+  isClickable = this.checkIfClickable();
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -23,6 +25,12 @@ export class RequestDetailsModalComponent {
 
   trackByIndex(index: number): number {
     return index;
+  }
+
+  checkIfClickable(): boolean{
+    if(!(this.request?.userEmail === this.authService.email && this.authService.isAdmin()) || this.authService.isOwner())
+      return true
+    return false
   }
 
   onFeedback(mode: ApprovalAction): void {
@@ -37,7 +45,7 @@ export class RequestDetailsModalComponent {
         next: (success: boolean) => {
           success
             ? this.toastrService.success('Richiesta aggiornata con successo')
-            : this.toastrService.error('richiesta aggiornata con difetto');
+            : this.toastrService.error('Impossibile gestire la richiesta');
         },
         error: (err: HttpErrorResponse) => {
           this.toastrService.error(err.error?.message ?? 'Errore sconosciuto');
