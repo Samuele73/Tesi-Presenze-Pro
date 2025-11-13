@@ -12,11 +12,12 @@
         [name]="'Il mio profilo'"
         [route]="APP_ROUTES.PROFILE"
         [icon]="faUser"
-        [queryParams]="{mode: 'ME'}"
+        [queryParams]="{ mode: 'ME' }"
       >
       </app-sidebar-item>
 
       <app-sidebar-item
+        *ngIf="!authService.isOwner()"
         [name]="'Presenze'"
         [route]="APP_ROUTES.CALENDAR"
         [icon]="faCalendar"

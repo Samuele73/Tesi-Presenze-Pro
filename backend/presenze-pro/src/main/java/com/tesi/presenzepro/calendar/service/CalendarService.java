@@ -50,9 +50,10 @@ public class CalendarService {
     }
 
     private void applyDefaultStatus(CalendarEntity entity) {
-        if (entity.getCalendarEntry() instanceof CalendarRequestEntry requestEntry && requestEntry.getStatus() == null) {
+        if (entity.getCalendarEntry() instanceof CalendarRequestEntry requestEntry) {
+            System.out.println("Applying default calendar entry: " + entity.toString());
             requestEntry.setStatus(RequestStatus.PENDING);
-        } else if (entity.getCalendarEntry() instanceof CalendarWorkingTripEntry tripEntry && tripEntry.getStatus() == null) {
+        } else if (entity.getCalendarEntry() instanceof CalendarWorkingTripEntry tripEntry) {
             tripEntry.setStatus(RequestStatus.PENDING);
         }
     }

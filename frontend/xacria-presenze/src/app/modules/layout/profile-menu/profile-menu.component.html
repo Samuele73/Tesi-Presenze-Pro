@@ -13,6 +13,7 @@
     ></app-profile-menu-item>
 
     <app-profile-menu-item
+      *ngIf="!authService.isOwner()"
       [name]="'Presenze'"
       [route]="APP_ROUTES.CALENDAR"
     ></app-profile-menu-item>

@@ -6,6 +6,7 @@ import { ProfileComponent } from '../../shared/components/profile/profile.compon
 import { ProjectPageComponent } from '../project/components/project-page/project-page.component';
 import { DetailedProjectComponent } from '../project/components/detailed-project/detailed-project.component';
 import { RequestsApprovalGuard } from './shared/guards/requests-approval.guard';
+import { CustomCalendarGuard } from './shared/guards/custom-calendar.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -15,9 +16,14 @@ const routes: Routes = [
     children: [
       { path: 'home', pathMatch: 'full', component: HomeComponent },
       { path: 'profile', pathMatch: 'full', component: ProfileComponent },
-      { path: 'calendar', loadChildren: () =>
-        import("../custom-calendar/custom-calendar.module").then((m) => m.CustomCalendarModule)
-       }, //{ path: 'calendar', pathMatch: 'full', component: AttendanceComponent },
+      {
+        path: 'calendar',
+        canActivate: [CustomCalendarGuard],
+        loadChildren: () =>
+          import('../custom-calendar/custom-calendar.module').then(
+            (m) => m.CustomCalendarModule
+          ),
+      }, //{ path: 'calendar', pathMatch: 'full', component: AttendanceComponent },
       {
         path: 'projects',
         loadChildren: () =>
