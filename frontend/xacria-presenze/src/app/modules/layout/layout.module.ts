@@ -41,6 +41,8 @@ import { DropdownModule } from 'primeng/dropdown';
 import { SidebarItemComponent } from './sidebar-item/sidebar-item.component';
 import { ProfileMenuItemComponent } from './profile-menu-item/profile-menu-item.component';
 import { ToastContainerModule, ToastrModule } from 'ngx-toastr';
+import { StatComponent } from './stat/stat.component';
+import { RequestsPreviewComponent } from './requests-preview/requests-preview.component';
 
 @NgModule({
   declarations: [
@@ -62,7 +64,9 @@ import { ToastContainerModule, ToastrModule } from 'ngx-toastr';
     ConfirmModalComponent,
     ProjectFormComponent,
     SidebarItemComponent,
-    ProfileMenuItemComponent
+    ProfileMenuItemComponent,
+    StatComponent,
+    RequestsPreviewComponent
   ],
   imports: [
     CommonModule,

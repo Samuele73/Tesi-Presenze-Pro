@@ -50,10 +50,15 @@ public class UserService {
     private final MessageSource messageSource;
     private final JavaMailSender mailSender;
     private final UserTokenService userTokenService;
+
     @Value("${spring.app.frontend-port}")
     private String frontendPort;
     @Value("${spring.app.frontend-name}")
     private String frontendName;
+    @Value("${spring.app.annualLeaveHours}")
+    private Double annualLeaveHours;
+    @Value("${spring.app.annualPermitHours}")
+    private Double annualPermitHours;
 
     private boolean isUserInvalid(User user){
         return user.getEmail().isBlank() || user.getPwd().isBlank();
@@ -138,6 +143,7 @@ public class UserService {
             throw new DuplicateEmailException(user.getUsername());
         user.setPwd(passwordEncoder.encode(user.getPwd()));
         try{
+            user.setData(new UserData(null, annualLeaveHours, annualPermitHours));
             return repository.save(user);
         }catch (DuplicateKeyException e){
             throw new DuplicateEmailException(user.getUsername());
@@ -294,5 +300,15 @@ public class UserService {
             this.projectRepository.removeUserFromAllProjects(email);
         }
         return deletedUser;
+    }
+
+    public UserVacationHours getMyVacationHours(HttpServletRequest request){
+        String email = this.getUserEmailFromRequest(request);
+        User user = repository.findByEmail(email).orElseThrow(() -> new NoUserFoundException("Nessun utente trovato"));
+        return this.getRemainingVacationHours(user);
+    }
+
+    public UserVacationHours getRemainingVacationHours(User user){
+        return new  UserVacationHours(user.getData().annualLeaveHours(), user.getData().annualPermitHours());
     }
 }

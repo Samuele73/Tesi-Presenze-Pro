@@ -41,7 +41,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
-    //Aggiungere cattura exception di JWTService
     @Operation(description = "Valida il token inviato")
     @PostMapping("/secure")
     public ResponseEntity<Boolean> validToken(@RequestBody String token){
@@ -49,7 +48,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(isTokenValid);
     }
 
-    //Utilizzato per reperire i dati del profilo dell
     @Operation(description = "Ottieni il profilo utente",security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/profile")
     public ResponseEntity<FullUserProfileResponseDto> getMyUserProfile(HttpServletRequest request){
@@ -175,6 +173,13 @@ public class UserController {
     public ResponseEntity<User> deleteUserByEmail(@PathVariable String email){
         User deletedUser = this.service.deleteUserByEmail(email);
         return ResponseEntity.ok(deletedUser);
+    }
+
+    @Operation(description = "Prendi le ore festive rimanenti dell'utente, per ferie e permessi", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/my-remaining-holiday-hours")
+    public ResponseEntity<UserVacationHours> getMyRemainingHolidayHours(HttpServletRequest request){
+        UserVacationHours remainingVacationHours = this.service.getMyVacationHours(request);
+        return ResponseEntity.ok(remainingVacationHours);
     }
 
 }

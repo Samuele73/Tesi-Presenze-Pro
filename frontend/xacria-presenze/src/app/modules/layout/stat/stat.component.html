@@ -1,0 +1,12 @@
+<div class="d-flex flex-column gap-3 align-items-center">
+  <span class="h4">{{ title }}</span>
+
+  <div
+    class="rounded-circle text-white d-flex flex-column justify-content-center align-items-center"
+    [ngClass]="circleClass"
+    style="width: 120px; height: 120px"
+  >
+    <span class="fs-3 fw-bold">{{ value }}</span>
+    <span class="">{{ statName }}</span>
+  </div>
+</div>

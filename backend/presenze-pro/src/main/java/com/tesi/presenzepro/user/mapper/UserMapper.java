@@ -5,6 +5,7 @@ import com.tesi.presenzepro.user.model.Role;
 import com.tesi.presenzepro.user.model.User;
 import com.tesi.presenzepro.user.model.UserData;
 import com.tesi.presenzepro.user.model.UserProfile;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,7 +16,8 @@ public class UserMapper {
                 .profile(new UserProfile(dto.name(), dto.surname()))
                 .email(dto.email())
                 .pwd(dto.password())
-                .role(Role.USER) // Si assume che i privilegi superiori vengano messi manualmente.
+                .role(Role.USER)
+                .data(new UserData(null, 0.0, 0.0))// Si assume che i privilegi superiori vengano messi manualmente.
                 .build();
     }
 
@@ -73,6 +75,6 @@ public class UserMapper {
     }
 
     public UserData fromUserToUserData(User user){
-        return new UserData(user.getData().assignedProjects());
+        return new UserData(user.getData().assignedProjects(), user.getData().annualLeaveHours(), user.getData().annualPermitHours());
     }
 }
