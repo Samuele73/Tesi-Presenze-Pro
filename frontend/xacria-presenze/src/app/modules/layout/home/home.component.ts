@@ -5,6 +5,7 @@ import { AuthService } from 'src/app/shared/services/auth.service';
 import {
   ApprovalRequestTab,
   CalendarService,
+  Pageable,
   PagedResponseUserRequestResponseDto,
   UserService,
   UserVacationHours,
@@ -65,8 +66,20 @@ export class HomeComponent implements OnInit {
   }
 
   private getRequestsFromAPi(): void {
+    const pageable: Pageable & { toString(): string } = {
+      page: 0,
+      size: 10,
+      sort: ['createdAt,desc'],
+      toString() {
+        return JSON.stringify({
+          page: this.page,
+          size: this.size,
+          sort: this.sort ?? [],
+        });
+      },
+    }
     this.calendarService
-      .getAllRequests({ page: 0, size: 10 }, 'OPEN')
+      .getAllRequests(pageable, 'OPEN')
       .subscribe({
         next: (requests: PagedResponseUserRequestResponseDto) => {
           this.requestsByTab['OPEN'] = requests;
@@ -76,7 +89,7 @@ export class HomeComponent implements OnInit {
         },
       });
     this.calendarService
-      .getAllRequests({ page: 0, size: 10 }, 'CLOSED')
+      .getAllRequests(pageable, 'CLOSED')
       .subscribe({
         next: (requests: PagedResponseUserRequestResponseDto) => {
           this.requestsByTab['CLOSED'] = requests;
