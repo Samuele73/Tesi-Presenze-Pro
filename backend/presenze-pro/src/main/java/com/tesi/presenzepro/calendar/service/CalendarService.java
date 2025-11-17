@@ -213,6 +213,8 @@ public class CalendarService {
             throw new CalendarEntityNotFound(id);
         }
 
+        checkWorkingTripAndRequestStatus(existing, newEntity);
+
         Update update = new Update();
 
         // aggiorna solo se non è null
@@ -239,6 +241,33 @@ public class CalendarService {
         }
 
         return updated;
+    }
+
+    private void checkWorkingTripAndRequestStatus(CalendarEntity existing, CalendarEntity newEntity) {
+        final CalendarEntry calendarEntry = existing.getCalendarEntry();
+        RequestStatus status = null;
+
+        if (calendarEntry instanceof CalendarRequestEntry requestEntry) {
+            status = requestEntry.getStatus();
+        } else if (calendarEntry instanceof CalendarWorkingTripEntry workingTripEntry) {
+            status = workingTripEntry.getStatus();
+        } else {
+            // Nessuno status, niente validazioni
+            return;
+        }
+
+        boolean isUser = this.userService.getCurrentUserRole().equals("USER");
+        boolean isOwnerOfRequest = this.userService.getCurrentUserEmail().equals(newEntity.getUserEmail());
+
+        if (status == RequestStatus.ACCEPTED || status == RequestStatus.REJECTED) {
+            System.out.println("SONO QUI con una richiesta di tipo: " + status);
+            throw new AccessDeniedException("Azione negata: " + "SONO QUI con una richiesta di tipo: " + status);
+        }
+
+        if (status == RequestStatus.PENDING && isUser && !isOwnerOfRequest) {
+            System.out.println("SONO QUI");
+            throw new AccessDeniedException("Azione negata " + "SONO QUI");
+        }
     }
 
     private void mergeCalendarEntry(Update update, CalendarEntry newEntry) {

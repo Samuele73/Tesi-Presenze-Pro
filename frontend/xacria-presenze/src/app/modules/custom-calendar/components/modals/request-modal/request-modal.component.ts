@@ -17,6 +17,16 @@ import { identifiableCalendarRequest } from 'src/app/modules/custom-calendar/mod
 import { request_types } from '../../../const-vars';
 import { CalendarStateService } from '../../../services/calendar-state.service';
 
+type reqeustsFormType = {
+  id: string;
+  dateFrom: string;
+  dateTo: string;
+  timeFrom: string;
+  timeTo: string;
+  requestsType: string;
+  status: string;
+};
+
 @Component({
   selector: 'app-request-modal',
   templateUrl: './request-modal.component.html',
@@ -100,7 +110,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
             dateTo: entry.dateTo,
             timeFrom: entry.timeFrom,
             timeTo: entry.timeTo,
-            requestType: entry.requestType
+            requestType: entry.requestType,
           },
         };
       });
@@ -110,10 +120,17 @@ export class RequestModalComponent implements ModalComponent, OnInit {
   }
 
   private deleteEntries(): void {
-    console.log("to delete entries lenght", this.toDeleteEntries.length, this.toDeleteEntries)
+    console.log(
+      'to delete entries lenght',
+      this.toDeleteEntries.length,
+      this.toDeleteEntries
+    );
     if (this.toDeleteEntries.length) {
-      console.log("i am about to delete", this.toDeleteEntries)
-      this.calendarStateService.deleteCalendarEntities(this.toDeleteEntries, 'REQUEST');
+      console.log('i am about to delete', this.toDeleteEntries);
+      this.calendarStateService.deleteCalendarEntities(
+        this.toDeleteEntries,
+        'REQUEST'
+      );
       this.toDeleteEntries = [];
     }
   }
@@ -123,7 +140,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
       console.error('Availability modify form is invalid');
       return;
     }
-    console.log("check here", this.form, this.toDeleteEntries)
+    console.log('check here', this.form, this.toDeleteEntries);
     this.deleteEntries();
     this.updateEntries();
 
@@ -195,11 +212,17 @@ export class RequestModalComponent implements ModalComponent, OnInit {
       timeFrom: [entry.calendarEntry.timeFrom, Validators.required],
       timeTo: [entry.calendarEntry.timeTo, Validators.required],
       requestType: [entry.calendarEntry.requestType, Validators.required],
-      status: [entry.calendarEntry.status, Validators.required]
+      status: [entry.calendarEntry.status, Validators.required],
     });
   }
 
-  toggleEntryDelete(entry: identifiableCalendarRequest, i: number): void {
+  isRequestModifyForbidden(reqeustStatus: CalendarRequestEntry.StatusEnum) {
+    return reqeustStatus === 'ACCEPTED' || reqeustStatus === 'REJECTED';
+  }
+
+  toggleEntryDelete(entry: reqeustsFormType, i: number): void {
+    if(this.isRequestModifyForbidden(entry.status as CalendarRequestEntry.StatusEnum))
+      return;
     const entryId = entry.id;
     console.log('CONTROLLA IL VALORE ava', entryId, i);
     if (this.toDeleteEntries.includes(entryId)) {
@@ -209,7 +232,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     } else {
       this.toDeleteEntries.push(entryId);
     }
-    console.log("status to delete entries:", this.toDeleteEntries)
+    console.log('status to delete entries:', this.toDeleteEntries);
   }
 
   submitNewEntry(): void {

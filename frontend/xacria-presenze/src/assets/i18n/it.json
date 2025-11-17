@@ -139,7 +139,10 @@
   "Tipo": "Tipo",
   "Caricamento richieste": "Caricamento richieste",
   "ACCETTATO": "ACCETTATO",
+  "ACCETTATA": "ACCETTATA",
   "RIFIUTATO": "RIFIUTATO",
+  "RIFIUTATA": "RIFIUTATA",
+  "IN SOSPESO": "IN SOSPESO",
   "PERMESSI": "PERMESSI",
   "CONGEDO": "CONGEDO",
   "TRASFERTA": "TRASFERTA"

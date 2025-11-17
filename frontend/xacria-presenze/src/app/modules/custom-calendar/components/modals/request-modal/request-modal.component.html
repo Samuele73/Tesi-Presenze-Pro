@@ -87,6 +87,7 @@
           <div class="accordion-header">
             <button class="accordion-button" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#' + i" [ngClass]="{'delete-mode': toDeleteEntries.includes(request.value.id)}">
               <strong>#{{i + 1}} {{"Richiesta" | translate}}</strong>
+              <span class="text-muted ms-2 small">{{(request.value.status === 'ACCEPTED' ? 'ACCETTATA' : request.value.status === 'REJECTED' ? 'RIFIUTATA' : 'IN SOSPESO')  | translate}}</span>
             </button>
           </div>
           <div class="accordion-collapse collapse"  id="{{i}}"> <!-- se vuoi che rimanga solo un item aperto rimetti data-bs-parent="#requests_accordion" -->
@@ -99,7 +100,7 @@
                   </select>
                   <app-form-error [formControlRef]="requests.at(i).get('requestType')" [validator]="'required'" [errorText]="'Seleziona il tipo di richiesta'"></app-form-error>
                 </div>
-                <div class="col-2">
+                <div class="col-2" *ngIf="!isRequestModifyForbidden(request.value.status)">
                   <div class="d-flex align-items-end">
                     <button class="rounded bg-danger btn btn-icon" type="button" (click)="toggleEntryDelete(request.value, i)"><fa-icon [icon]="faIcons.xSimbol" class="fa-sm text-light"></fa-icon></button>
                   </div>
