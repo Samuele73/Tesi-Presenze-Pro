@@ -8,10 +8,11 @@ import {
   NewPasswordDto,
   SignInRequestDto,
   User,
+  UserEmailResponse,
   UserService,
 } from 'src/generated-client';
 
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
@@ -24,6 +25,7 @@ export class AuthService {
 
   constructor(private userService: UserService, private router: Router) {
     /* this.checkUserAutentication(this.token); se si hanno problemi controlla*/
+
   }
 
   get token() {
@@ -35,6 +37,16 @@ export class AuthService {
   set email(email: string) {
     this.userEmail = email;
   }
+
+/*   setUserEmail() {
+    if (this.token)
+      this.userService.getEmailFromTkn(this.token).subscribe({
+        next: (email: UserEmailResponse) => {
+          const fetchedEmail: string | undefined = email.email;
+          if (fetchedEmail) this.userEmail = fetchedEmail;
+        },
+      });
+  } */
 
   checkUserAutentication(token: string | null): void {
     /* this._isLoggedIn$.next(false); */
@@ -74,7 +86,7 @@ export class AuthService {
   }
 
   getUserRole(): string | null {
-    const token = this.token
+    const token = this.token;
     if (!token) return null;
     const decoded: any = jwtDecode(token);
     return decoded.role;
@@ -85,11 +97,11 @@ export class AuthService {
     return this.getUserRole() === 'ADMIN';
   }
 
-  isOwner(): boolean{
-    return this.getUserRole() === 'OWNER'
+  isOwner(): boolean {
+    return this.getUserRole() === 'OWNER';
   }
 
-  isPrivilegedUser(): boolean{
+  isPrivilegedUser(): boolean {
     return this.isAdmin() || this.isOwner();
   }
 

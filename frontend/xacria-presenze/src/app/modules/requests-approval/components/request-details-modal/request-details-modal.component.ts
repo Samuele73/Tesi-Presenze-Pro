@@ -1,10 +1,14 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { RequestStoreService } from '../../services/request-store.service';
-import { ApprovalAction, UserRequestResponseDto } from 'src/generated-client';
+import {
+  ApprovalAction,
+  UserEmailResponse,
+  UserRequestResponseDto,
+} from 'src/generated-client';
 
 @Component({
   selector: 'app-request-details-modal',
@@ -13,24 +17,45 @@ import { ApprovalAction, UserRequestResponseDto } from 'src/generated-client';
 })
 export class RequestDetailsModalComponent {
   @Input() request?: UserRequestResponseDto;
-  title = this.checkIfClickable() ? "Gestisci richiesta" : 'Visualizza richiesta'
-  isClickable = this.checkIfClickable();
+  title = '';
+  isClickable?: boolean;
 
   constructor(
     public activeModal: NgbActiveModal,
     public authService: AuthService,
     private requestStoreService: RequestStoreService,
     private toastrService: ToastrService
-  ) {}
+  ) {
+    this.checkIfClickable();
+  }
 
   trackByIndex(index: number): number {
     return index;
   }
 
-  checkIfClickable(): boolean{
-    if(!(this.request?.userEmail === this.authService.email && this.authService.isAdmin()) || this.authService.isOwner())
-      return true
-    return false
+  checkIfClickable(): void {
+    const $userEmail = this.authService.getUserEmail();
+    if ($userEmail)
+      $userEmail.subscribe({
+        next: (email: UserEmailResponse) => {
+          if (
+            (!(this.request?.userEmail === email.email) &&
+              this.authService.isAdmin()) ||
+            this.authService.isOwner()
+          ) {
+            this.isClickable = true;
+            this.title = 'Gestisci richiesta';
+          } else {
+            this.isClickable = false;
+            this.title = 'Visualizza richiesta';
+          }
+        },
+        error: (err: HttpErrorResponse) => {
+          this.toastrService.error(
+            'Errore con il reperimento dell email utente: ' + err.error.message
+          );
+        },
+      });
   }
 
   onFeedback(mode: ApprovalAction): void {
