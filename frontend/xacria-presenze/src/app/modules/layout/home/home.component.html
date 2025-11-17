@@ -3,19 +3,21 @@
     <app-stat
       [title]="'Ferie Rimanenti'"
       [statName]="'giorni'"
-      [referenceMax]="288"
+      [referenceMax]="12"
+      [value]="userVacationHours?.annualLeaveDays ?? 0"
     ></app-stat>
     <app-stat
       [title]="'Permessi rimanenti'"
       [statName]="'ore'"
       [referenceMax]="40"
+      [value]="userVacationHours?.annualPermitHours ?? 0"
     ></app-stat>
-    <app-stat [title]="'Richieste aperte'" [referenceMax]="15"></app-stat>
+    <app-stat [title]="'Richieste aperte'" [referenceMax]="15" ></app-stat>
     <app-stat [title]="'Richieste chiuse'" [referenceMax]="15"></app-stat>
   </div>
   <hr class="mt-5" />
 </div>
-<div class="container-fluid ">
+<div class="container-fluid">
   <div class="row row-cols-2">
     <app-requests-preview [requestMode]="'OPEN'"></app-requests-preview>
     <app-requests-preview [requestMode]="'CLOSED'"></app-requests-preview>

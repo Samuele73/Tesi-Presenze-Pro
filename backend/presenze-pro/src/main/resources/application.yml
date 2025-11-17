@@ -11,8 +11,8 @@ spring:
     jwtExpirationMs: 86400000
     frontend-port: 4200
     frontend-name: localhost
-    annualLeaveHours: 40
-    annualPermitHours: 288 #12 giorni * 24 ore
+    annualLeaveHours: 288 #12 giorni * 24 ore
+    annualPermitHours: 40
 
 
 

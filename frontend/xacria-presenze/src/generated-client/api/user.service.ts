@@ -27,6 +27,7 @@ import { UserAuthResponseDto } from '../model/userAuthResponseDto';
 import { UserBasicDetailsResponse } from '../model/userBasicDetailsResponse';
 import { UserData } from '../model/userData';
 import { UserEmailResponse } from '../model/userEmailResponse';
+import { UserVacationHours } from '../model/userVacationHours';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -307,6 +308,49 @@ export class UserService {
         ];
 
         return this.httpClient.request<FullUserProfileResponseDto>('get',`${this.basePath}/users/full-profile/${encodeURIComponent(String(email))}`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * Prendi le ore festive rimanenti dell&#x27;utente, per ferie e permessi
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getMyRemainingHolidayHours(observe?: 'body', reportProgress?: boolean): Observable<UserVacationHours>;
+    public getMyRemainingHolidayHours(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserVacationHours>>;
+    public getMyRemainingHolidayHours(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserVacationHours>>;
+    public getMyRemainingHolidayHours(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<UserVacationHours>('get',`${this.basePath}/users/my-remaining-holiday-hours`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,

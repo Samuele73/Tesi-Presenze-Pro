@@ -28,3 +28,4 @@ export * from './userData';
 export * from './userEmailResponse';
 export * from './userProfile';
 export * from './userRequestResponseDto';
+export * from './userVacationHours';
