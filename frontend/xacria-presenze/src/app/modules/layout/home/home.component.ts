@@ -77,26 +77,34 @@ export class HomeComponent implements OnInit {
           sort: this.sort ?? [],
         });
       },
+    };
+    let $openTabRequest = this.calendarService.getAllRequests(pageable, 'OPEN');
+    let $closedTabRequest = this.calendarService.getAllRequests(
+      pageable,
+      'CLOSED'
+    );
+    if (!this.authService.isPrivilegedUser()) {
+      $openTabRequest = this.calendarService.getUserRequests(pageable, 'OPEN');
+      $closedTabRequest = this.calendarService.getUserRequests(
+        pageable,
+        'CLOSED'
+      );
     }
-    this.calendarService
-      .getAllRequests(pageable, 'OPEN')
-      .subscribe({
-        next: (requests: PagedResponseUserRequestResponseDto) => {
-          this.requestsByTab['OPEN'] = requests;
-        },
-        error: (err: HttpErrorResponse) => {
-          this.toastrService.error(err.error.message);
-        },
-      });
-    this.calendarService
-      .getAllRequests(pageable, 'CLOSED')
-      .subscribe({
-        next: (requests: PagedResponseUserRequestResponseDto) => {
-          this.requestsByTab['CLOSED'] = requests;
-        },
-        error: (err: HttpErrorResponse) => {
-          this.toastrService.error(err.error.message);
-        },
-      });
+    $openTabRequest.subscribe({
+      next: (requests: PagedResponseUserRequestResponseDto) => {
+        this.requestsByTab['OPEN'] = requests;
+      },
+      error: (err: HttpErrorResponse) => {
+        this.toastrService.error(err.error.message);
+      },
+    });
+    $closedTabRequest.subscribe({
+      next: (requests: PagedResponseUserRequestResponseDto) => {
+        this.requestsByTab['CLOSED'] = requests;
+      },
+      error: (err: HttpErrorResponse) => {
+        this.toastrService.error(err.error.message);
+      },
+    });
   }
 }
