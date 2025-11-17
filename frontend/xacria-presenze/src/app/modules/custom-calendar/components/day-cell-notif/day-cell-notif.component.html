@@ -1,7 +1,18 @@
 <div class="d-flex gap-2 align-items-center" (click)="openModifyModal()">
   <fa-icon [icon]="icon" class="fa-lg"></fa-icon>
-  <div *ngIf="this.notifs" class="d-flex align-items-center gap-1">
-    <app-status-badge [notifs]="this.notifs" [status]="'ACCEPTED'"></app-status-badge>
+  <div *ngIf="this.customNotifs" class="d-flex align-items-center gap-1">
+    <app-status-badge *ngIf="this.customNotifs['ACCEPTED']"
+      [notifs]="this.customNotifs['ACCEPTED']"
+      [status]="'ACCEPTED'"
+    ></app-status-badge>
+    <app-status-badge *ngIf="this.customNotifs['PENDING']"
+      [notifs]="this.customNotifs['PENDING']"
+      [status]="'PENDING'"
+    ></app-status-badge>
+    <app-status-badge *ngIf="this.customNotifs['REJECTED']"
+      [notifs]="this.customNotifs['REJECTED']"
+      [status]="'REJECTED'"
+    ></app-status-badge>
     <!-- <span class="text-primary" style="line-height: 1">{{ this.notifs }}</span> -->
   </div>
   <button
@@ -12,7 +23,6 @@
     {{ buttonText }}
   </button>
   <!-- entry notif. make a component for it -->
-
 </div>
 
 <ng-container *ngIf="isTemplateReady">

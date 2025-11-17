@@ -27,17 +27,27 @@ import {
   CalendarWorkingDayEntry,
   CalendarWorkingTripEntry,
 } from 'src/generated-client';
-import { identifiableCalendarAvailability, identifiableCalendarEntry, identifiableCalendarRequest, identifiableCalendarWorkingDay, identifiableCalendarWorkingTrip } from 'src/app/modules/custom-calendar/models/calendar';
+import {
+  identifiableCalendarAvailability,
+  identifiableCalendarEntry,
+  identifiableCalendarRequest,
+  identifiableCalendarWorkingDay,
+  identifiableCalendarWorkingTrip,
+} from 'src/app/modules/custom-calendar/models/calendar';
 import { CalendarStateService } from '../../services/calendar-state.service';
 import { CalendarEntryType } from 'src/app/modules/layout/interfaces';
+
+type byStatusNotif = Record<CalendarRequestEntry.StatusEnum, number>;
 
 @Component({
   selector: 'app-day-cell-notif',
   templateUrl: './day-cell-notif.component.html',
   styleUrls: ['./day-cell-notif.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
+export class DayCellNotifComponent
+  implements OnInit, OnChanges, AfterViewInit, OnDestroy
+{
   @Input() icon!: IconDefinition;
   @Input() text!: string;
   @Input() notifType!: CalendarEntity.EntryTypeEnum;
@@ -49,7 +59,16 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit, 
   private _lastNotifType?: CalendarEntity.EntryTypeEnum;
 
   // Usa dei setter ottimizzati per catturare i cambiamenti degli input
-  @Input() set modalCalendarEntries(value: Array<identifiableCalendarWorkingDay | identifiableCalendarRequest | identifiableCalendarWorkingTrip | identifiableCalendarAvailability> | undefined) {
+  @Input() set modalCalendarEntries(
+    value:
+      | Array<
+          | identifiableCalendarWorkingDay
+          | identifiableCalendarRequest
+          | identifiableCalendarWorkingTrip
+          | identifiableCalendarAvailability
+        >
+      | undefined
+  ) {
     const newEntries = value ?? [];
     // Verifica se gli entries sono effettivamente cambiati
     if (this._allEntries !== newEntries) {
@@ -61,7 +80,8 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit, 
 
   @Input() set date(value: Date | undefined) {
     const newDate = value ? new Date(value) : undefined;
-    const dateChanged = !this._date || !newDate || this._date.getTime() !== newDate.getTime();
+    const dateChanged =
+      !this._date || !newDate || this._date.getTime() !== newDate.getTime();
 
     if (dateChanged) {
       this._date = newDate;
@@ -70,7 +90,12 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit, 
     }
   }
 
-  private _allEntries: Array<identifiableCalendarWorkingDay | identifiableCalendarRequest | identifiableCalendarWorkingTrip | identifiableCalendarAvailability> = [];
+  private _allEntries: Array<
+    | identifiableCalendarWorkingDay
+    | identifiableCalendarRequest
+    | identifiableCalendarWorkingTrip
+    | identifiableCalendarAvailability
+  > = [];
   public _date?: Date;
 
   @ViewChild('modal') modal!: ModalComponent;
@@ -87,6 +112,7 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit, 
 
   CalendarEntryType = CalendarEntryType;
   notifs: number = 0;
+  customNotifs: byStatusNotif = this.getCustomNotifsDefaultValue();
   filteredEntries: Array<identifiableCalendarEntry> = [];
 
   // Proprietà cached per il template
@@ -113,7 +139,6 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit, 
     return this._hasNotifications;
   }
 
-
   ngAfterViewInit(): void {
     // Usa requestAnimationFrame invece di setTimeout per miglior performance
     requestAnimationFrame(() => {
@@ -132,8 +157,14 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit, 
 
   ngOnInit(): void {}
 
-  ngOnDestroy(): void {
-    // Cleanup se necessario
+  ngOnDestroy(): void {}
+
+  getCustomNotifsDefaultValue(): byStatusNotif{
+    return {
+      'ACCEPTED': 0,
+      'PENDING': 0,
+      'REJECTED': 0
+    }
   }
 
   private hasDateRange(entry: any): entry is { dateFrom: any; dateTo: any } {
@@ -158,7 +189,12 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit, 
 
       if (!this.hasDateRange(calendarEntry)) {
         if (this.areWorkingDayEntries(calendarEntry)) {
-          const fromTime = new Date(calendarEntry.dateFrom).setHours(0, 0, 0, 0);
+          const fromTime = new Date(calendarEntry.dateFrom).setHours(
+            0,
+            0,
+            0,
+            0
+          );
           return currentTime === fromTime;
         }
         return false;
@@ -175,6 +211,7 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit, 
     if (!this._date || !this._allEntries?.length) {
       this.filteredEntries = [];
       this.notifs = 0;
+      this.customNotifs = this.getCustomNotifsDefaultValue();
       this.updateCachedProperties();
       return;
     }
@@ -189,7 +226,15 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit, 
       currentTime
     );
 
-    this.notifs = this.filteredEntries.length;
+    this.filteredEntries.forEach((entry: identifiableCalendarEntry) => {
+      const calendarEntry = entry.calendarEntry;
+      if ('status' in calendarEntry && calendarEntry.status) {
+        this.customNotifs[calendarEntry.status]++;
+      } else this.customNotifs['ACCEPTED']++;
+      console.log('guarda i custom', this.customNotifs);
+    });
+
+    /* this.notifs = this.filteredEntries.length; */
     this.updateCachedProperties();
   }
 
@@ -199,7 +244,7 @@ export class DayCellNotifComponent implements OnInit, OnChanges, AfterViewInit, 
     this._hasNotifications = this.notifs > 0;
     this._buttonClasses = {
       'bg-primary': this._hasNotifications,
-      'bg-secondary': !this._hasNotifications
+      'bg-secondary': !this._hasNotifications,
     };
   }
 
