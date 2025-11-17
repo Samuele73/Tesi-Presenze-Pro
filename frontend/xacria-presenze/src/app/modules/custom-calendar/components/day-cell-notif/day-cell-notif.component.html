@@ -17,7 +17,7 @@
   </div>
   <button
     class="border-0 rounded-2 calendar-button calendar-button-hover bg-secondary-subtle text-muted"
-    [ngClass]="{ 'calendar-button-hover': this.notifs }"
+    [ngClass]="{ 'calendar-button-hover': hasAnyNotifs() }"
     type="button"
   >
     {{ buttonText }}

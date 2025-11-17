@@ -111,7 +111,6 @@ export class DayCellNotifComponent
   isTemplateReady = false;
 
   CalendarEntryType = CalendarEntryType;
-  notifs: number = 0;
   customNotifs: byStatusNotif = this.getCustomNotifsDefaultValue();
   filteredEntries: Array<identifiableCalendarEntry> = [];
 
@@ -159,12 +158,20 @@ export class DayCellNotifComponent
 
   ngOnDestroy(): void {}
 
-  getCustomNotifsDefaultValue(): byStatusNotif{
+  getCustomNotifsDefaultValue(): byStatusNotif {
     return {
-      'ACCEPTED': 0,
-      'PENDING': 0,
-      'REJECTED': 0
-    }
+      ACCEPTED: 0,
+      PENDING: 0,
+      REJECTED: 0,
+    };
+  }
+
+  hasAnyNotifs(): boolean {
+    return (
+      this.customNotifs.ACCEPTED > 0 ||
+      this.customNotifs.PENDING > 0 ||
+      this.customNotifs.REJECTED > 0
+    );
   }
 
   private hasDateRange(entry: any): entry is { dateFrom: any; dateTo: any } {
@@ -210,7 +217,6 @@ export class DayCellNotifComponent
   private recompute(): void {
     if (!this._date || !this._allEntries?.length) {
       this.filteredEntries = [];
-      this.notifs = 0;
       this.customNotifs = this.getCustomNotifsDefaultValue();
       this.updateCachedProperties();
       return;
@@ -225,6 +231,9 @@ export class DayCellNotifComponent
       current,
       currentTime
     );
+
+    //fix bug dove il contatore veniva incrementato per ogni inserimento o cancellazione legato ad una qualsiasi notif della cella specifica del calendario
+    this.customNotifs = this.getCustomNotifsDefaultValue();
 
     this.filteredEntries.forEach((entry: identifiableCalendarEntry) => {
       const calendarEntry = entry.calendarEntry;
@@ -241,7 +250,7 @@ export class DayCellNotifComponent
   // Aggiorna le proprietà cached per il template
   private updateCachedProperties(): void {
     this._buttonText = this.text;
-    this._hasNotifications = this.notifs > 0;
+    this._hasNotifications = this.hasAnyNotifs();
     this._buttonClasses = {
       'bg-primary': this._hasNotifications,
       'bg-secondary': !this._hasNotifications,
