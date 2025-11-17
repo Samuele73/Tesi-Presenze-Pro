@@ -100,7 +100,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
             dateTo: entry.dateTo,
             timeFrom: entry.timeFrom,
             timeTo: entry.timeTo,
-            requestType: entry.requestType,
+            requestType: entry.requestType
           },
         };
       });
@@ -173,7 +173,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
 
   initializeModifyForm(): void {
     let entries: FormGroup[] = [];
-    this.calendarEntries.forEach((entry) => {
+    this.calendarEntries.forEach((entry: identifiableCalendarRequest) => {
       entries.push(this.createRequestGroup(entry));
     });
     this.form = this.fb.group({
@@ -195,6 +195,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
       timeFrom: [entry.calendarEntry.timeFrom, Validators.required],
       timeTo: [entry.calendarEntry.timeTo, Validators.required],
       requestType: [entry.calendarEntry.requestType, Validators.required],
+      status: [entry.calendarEntry.status, Validators.required]
     });
   }
 
