@@ -1,6 +1,15 @@
 <div class="">
-  <h5 class="text-primary mb-2">{{ getRequestTitle() | translate}}</h5>
+  <h5 class="text-primary mb-2">{{ getRequestTitle() | translate }}</h5>
   <div>
-    <i *ngIf="!requests.content?.length" class="text-muted">{{'Nessuna richiesta presente' | translate}}</i>
+    <i *ngIf="!requests.content?.length" class="text-muted">{{
+      "Nessuna richiesta presente" | translate
+    }}</i>
+    <span *ngFor="let request of requests.content" class="d-block" [attr.id]="request.id"
+      ><span class="text-primary">{{ request.userEmail + "&nbsp;" }}</span
+      >{{ "ha richiesto" | translate }}
+      <span class="fw-medium">{{ request.type ?? "" | translate }}</span>
+      {{'da' | translate}} <span class="text-muted">{{formatDateTime(request.dateFrom, request.type)}}</span> {{'a' | translate}} <span class="text-muted">{{formatDateTime(request.dateTo, request.type)}}</span>
+      </span
+    >
   </div>
 </div>
