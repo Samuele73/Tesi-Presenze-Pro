@@ -19,7 +19,7 @@
 </div>
 <div class="container-fluid">
   <div class="row row-cols-2">
-    <app-requests-preview [requestMode]="'OPEN'" [requests]="requestsByTab['OPEN']"></app-requests-preview>
-    <app-requests-preview [requestMode]="'CLOSED'" [requests]="requestsByTab['CLOSED']"></app-requests-preview>
+    <app-requests-preview [requestMode]="'OPEN'" [requests]="requestsByTab['OPEN']" [visualizeNumber]="authService.isOwner()"></app-requests-preview>
+    <app-requests-preview [requestMode]="'CLOSED'" [requests]="requestsByTab['CLOSED']" [visualizeNumber]="authService.isOwner()"></app-requests-preview>
   </div>
 </div>

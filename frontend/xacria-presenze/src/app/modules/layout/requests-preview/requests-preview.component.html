@@ -1,5 +1,9 @@
 <div class="">
-  <h5 class="text-primary mb-2">{{ getRequestTitle() | translate }}</h5>
+  <div class="d-flex align-items-center gap-2">
+    <h5 class="text-primary">{{ getRequestTitle() | translate }}</h5>
+    <span class="badge bg-secondary-subtle text-muted mb-1" *ngIf="visualizeNumber">{{requests.totalElements}}</span>
+  </div>
+
   <div class="ps-2  border border-top-0 border-end-0 border-bottom-0">
     <i *ngIf="!requests.content?.length" class="text-muted">{{
       "Nessuna richiesta presente" | translate

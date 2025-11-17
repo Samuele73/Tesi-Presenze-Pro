@@ -68,7 +68,7 @@ export class HomeComponent implements OnInit {
   private getRequestsFromAPi(): void {
     const pageable: Pageable & { toString(): string } = {
       page: 0,
-      size: 10,
+      size: this.authService.isOwner() ? 25 : 10,
       sort: ['createdAt,desc'],
       toString() {
         return JSON.stringify({

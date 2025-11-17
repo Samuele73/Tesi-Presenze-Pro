@@ -17,6 +17,7 @@ export type requestMode = ApprovalRequestTab;
 export class RequestsPreviewComponent {
   @Input() requests: PagedResponseUserRequestResponseDto = this.requestsInitialState();
   @Input() requestMode!: string;
+  @Input() visualizeNumber: boolean = false;
 
   requestsInitialState(): PagedResponseUserRequestResponseDto {
     return {};
