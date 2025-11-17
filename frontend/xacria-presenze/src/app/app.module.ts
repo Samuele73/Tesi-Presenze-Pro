@@ -39,7 +39,7 @@ import { ToastrModule } from 'ngx-toastr';
     ForgottenPwComponent,
     NotfoundComponent,
     UpdatePwComponent,
-    InvitationErrorComponent
+    InvitationErrorComponent,
   ],
   imports: [
     BrowserModule,
@@ -63,9 +63,7 @@ import { ToastrModule } from 'ngx-toastr';
     FontAwesomeModule,
     ApiModule,
     NgbCollapse,
-    ToastrModule.forRoot({
-      preventDuplicates: true,
-    }),
+    ToastrModule.forRoot({}),
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

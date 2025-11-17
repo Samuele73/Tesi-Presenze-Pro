@@ -12,8 +12,8 @@
       [referenceMax]="40"
       [value]="userVacationHours?.annualPermitHours ?? 0"
     ></app-stat>
-    <app-stat [title]="'Richieste aperte'" [referenceMax]="15" ></app-stat>
-    <app-stat [title]="'Richieste chiuse'" [referenceMax]="15"></app-stat>
+    <app-stat [title]="'Richieste aperte'" [referenceMax]="15" [value]="requestsByTab['OPEN'].totalElements ?? 0"></app-stat>
+    <app-stat [title]="'Richieste chiuse'" [referenceMax]="15" [value]="requestsByTab['CLOSED'].totalElements ?? 0"></app-stat>
   </div>
   <hr class="mt-5" />
 </div>
