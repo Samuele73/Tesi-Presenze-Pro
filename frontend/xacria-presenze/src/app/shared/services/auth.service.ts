@@ -29,7 +29,14 @@ export class AuthService {
   }
 
   get token() {
-    return localStorage.getItem(this.TOKEN_NAME);
+    return sessionStorage.getItem(this.TOKEN_NAME);
+  }
+  set token(value: string | null) {
+    if (value) {
+      sessionStorage.setItem(this.TOKEN_NAME, value);
+    } else {
+      sessionStorage.removeItem(this.TOKEN_NAME);
+    }
   }
   get email() {
     return this.userEmail;
@@ -56,14 +63,7 @@ export class AuthService {
       console.log('ci sono');
       this.userService.validToken(this.token!!).subscribe({
         next: (resp: any) => {
-          console.log('tkn resp: ', resp, this._isLoggedIn$);
-          isTokenValid = resp;
           this._isLoggedIn$.next(true);
-          localStorage.setItem(
-            'user_status',
-            JSON.stringify({ isLogged: true })
-          );
-          console.log('tkn resp22222: ', this._isLoggedIn$.value);
         },
         error: (err: any) => {
           console.error('Error from user tkn validation');
@@ -118,7 +118,7 @@ export class AuthService {
       tap((resp: any) => {
         console.log('Login TAP: ', resp);
         if (resp) {
-          localStorage.setItem(this.TOKEN_NAME, resp.token);
+          this.token = resp.token;
           this._isLoggedIn$.next(true);
           //Estrarre user role da token;
         }
