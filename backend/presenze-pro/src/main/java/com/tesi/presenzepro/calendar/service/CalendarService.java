@@ -192,6 +192,7 @@ public class CalendarService {
     public CalendarResponseDto deleteCalendarEntry(HttpServletRequest request , String entityId) {
         final String userEmail = this.getUserEmailFromRequest(request);
         CalendarEntity entity = getCalendarEntity(entityId, userEmail);
+        checkWorkingTripAndRequestStatus(entity, entity);
         repository.delete(entity);
         return calendarMapper.fromCalendarEntityToCalendarEntry(entity);
     }

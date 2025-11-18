@@ -87,7 +87,23 @@ export class RequestModalComponent implements ModalComponent, OnInit {
         timeFrom: [null, Validators.required],
         timeTo: [null, Validators.required],
       });
-    } else this.initializeModifyForm();
+    } else {
+      this.initializeModifyForm();
+    }
+  }
+
+  private disableClosedRequests(): void {
+    if (this.isModifyMode) {
+      this.requests.controls.forEach((group, i) => {
+        const status = group.get('status')?.value;
+
+        if (this.isRequestModifyForbidden(status)) {
+          group.disable({ emitEvent: false });
+        } else {
+          group.enable({ emitEvent: false });
+        }
+      });
+    }
   }
 
   private emptyToDeleteEntries(): void {
@@ -196,6 +212,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     this.form = this.fb.group({
       requests: this.fb.array(entries),
     });
+    this.disableClosedRequests();
   }
 
   createRequestGroup(entry: identifiableCalendarRequest) {
@@ -221,7 +238,11 @@ export class RequestModalComponent implements ModalComponent, OnInit {
   }
 
   toggleEntryDelete(entry: reqeustsFormType, i: number): void {
-    if(this.isRequestModifyForbidden(entry.status as CalendarRequestEntry.StatusEnum))
+    if (
+      this.isRequestModifyForbidden(
+        entry.status as CalendarRequestEntry.StatusEnum
+      )
+    )
       return;
     const entryId = entry.id;
     console.log('CONTROLLA IL VALORE ava', entryId, i);
