@@ -5,3 +5,9 @@ button.disabled {
   opacity: 0.5;
 }
 
+.delete-mode{
+  background-color: rgba(255, 0, 0, 0.406);
+  padding: $spacer;
+  transition: all 0.2s ease;
+  color: black;
+}

@@ -86,6 +86,7 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
     this.form = this.fb.group({
       working_trips: this.fb.array(entries),
     });
+    this.disableClosedRequests();
   }
 
   createWorkingTripGroup(entry: identifiableCalendarWorkingTrip) {
@@ -99,6 +100,7 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
       id: [entry.id],
       dateFrom: [from, Validators.required],
       dateTo: [to, Validators.required],
+      status: [entry.calendarEntry.status]
     });
   }
 
@@ -134,6 +136,24 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
         }
       });
     this.initialWorkingTrips = this.workingTrips.value;
+  }
+
+  private disableClosedRequests(): void {
+    if (this.isModifyMode) {
+      this.workingTrips.controls.forEach((group, i) => {
+        const status = group.get('status')?.value;
+
+        if (this.isWorkingTripModifyForbidden(status)) {
+          group.disable({ emitEvent: false });
+        } else {
+          group.enable({ emitEvent: false });
+        }
+      });
+    }
+  }
+
+  private isWorkingTripModifyForbidden(status: string): boolean {
+    return status === 'ACCEPTED' || status === 'REJECTED';
   }
 
   private deleteEntries(): void {
