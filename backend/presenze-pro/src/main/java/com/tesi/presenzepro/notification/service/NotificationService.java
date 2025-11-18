@@ -16,9 +16,14 @@ public class NotificationService {
     public void send(String userEmail, String message) {
         NotificationPayload payload = new NotificationPayload(message);
 
-        messagingTemplate.convertAndSend(
-                "/topic/notifications/" + userEmail,
-                payload
-        );
+        try {
+            messagingTemplate.convertAndSend(
+                    "/topic/notifications/" + userEmail,
+                    payload
+            );
+        } catch (Exception e) {
+            System.out.println("WEBSOCKET ERROR: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

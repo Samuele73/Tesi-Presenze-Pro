@@ -8,6 +8,8 @@ import com.tesi.presenzepro.calendar.repository.CalendarRepository;
 import com.tesi.presenzepro.exception.CalendarEntityNotFoundException;
 import com.tesi.presenzepro.exception.NoUserFoundException;
 import com.tesi.presenzepro.jwt.JwtUtils;
+import com.tesi.presenzepro.notification.service.NotificationService;
+import com.tesi.presenzepro.user.model.Role;
 import com.tesi.presenzepro.user.service.UserService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.time.*;
 
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -37,6 +40,7 @@ public class CalendarService {
     private final CalendarMapper calendarMapper;
     private final MongoTemplate mongoTemplate;
     private final UserService userService;
+    private final NotificationService notifService;
 
     public CalendarResponseDto saveNewCalendarEntry(HttpServletRequest request ,SaveCalendarEntityRequestDto calendarEntityData){
         CalendarEntity newCalendarEntity = calendarMapper.fromCalendarSaveRequestToEntity(calendarEntityData);
@@ -44,7 +48,7 @@ public class CalendarService {
         newCalendarEntity.setUserEmail(userEmail);
         this.applyDefaultStatus(newCalendarEntity);
 
-        //Controllo che vi siano le ore necessarie per le ferie o permessi
+        //Controllo che siano disponibili le ore necessarie per le ferie o permessi
         if(newCalendarEntity.getCalendarEntry() instanceof CalendarRequestEntry requestEntry){
             final String requestType = requestEntry.getRequestType();
             if(requestType.equalsIgnoreCase("PERMESSI") || requestType.equalsIgnoreCase("FERIE")){
@@ -58,7 +62,26 @@ public class CalendarService {
         }
 
         CalendarEntity calendarEntity =  this.repository.save(newCalendarEntity);
+
+        try {
+            String approvalReqeustType = this.getApprovalRequestType(calendarEntity);
+            String notifMessage = "L'utente " + userEmail + " ha creato una richiesta di " + approvalReqeustType;
+            this.sendRequestNotifs(notifMessage);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
         return calendarMapper.fromCalendarEntityToCalendarEntry(calendarEntity);
+    }
+
+    private void sendRequestNotifs(String message){
+        final String notifierUserEmail = this.userService.getCurrentUserEmail();
+        List<String> usersEmail = new ArrayList<>(this.userService.findUsersEmailByRoles(List.of(Role.ADMIN, Role.OWNER)));
+        usersEmail.remove(notifierUserEmail);
+        usersEmail.forEach(email -> {
+            this.notifService.send(email, message);
+        });
     }
 
     public Double calculateHours(CalendarRequestEntry request, boolean isLeave) {
@@ -239,13 +262,24 @@ public class CalendarService {
         final String userEmail = this.getUserEmailFromRequest(request);
         CalendarEntity entity = getCalendarEntity(entityId, userEmail);
         checkWorkingTripAndRequestStatus(entity, entity);
-
         recoverUserHoursFromCalendarEntity(entity, userEmail);
         repository.delete(entity);
 
-
+        String approvalRequestType = this.getApprovalRequestType(entity);
+        final String notifMessage = "L'utente " + userEmail + " ha eliminato una richiesta di " + approvalRequestType;
+        this.sendRequestNotifs(notifMessage);
 
         return calendarMapper.fromCalendarEntityToCalendarEntry(entity);
+    }
+
+    private String getApprovalRequestType(CalendarEntity entity){
+        String approvalRequestType = "Error";
+        if(entity.getCalendarEntry() instanceof CalendarRequestEntry requestEntry){
+            approvalRequestType = requestEntry.getRequestType();
+        }else if(entity.getCalendarEntry() instanceof  CalendarWorkingTripEntry workingTripEntry){
+            approvalRequestType = "TRASFERTA";
+        }
+        return approvalRequestType;
     }
 
     private void recoverUserHoursFromCalendarEntity(CalendarEntity entity, String userEmail){
@@ -400,6 +434,9 @@ public class CalendarService {
         final String userEmail = this.getUserEmailFromRequest(request);
         //CalendarEntity entity = getCalendarEntity(entityId, userEmail);
         final CalendarEntity newCalendarEntity = this.updateCalendarEntityById(entityId, updatedCalendarEntity);
+        final String approvalRequestType = this.getApprovalRequestType(newCalendarEntity);
+        final String notifMessage = "L'utente " + userEmail + " ha aggiornato una sua richiesta di " + approvalRequestType;
+        this.sendRequestNotifs(notifMessage);
         return calendarMapper.fromCalendarEntityToCalendarEntry(newCalendarEntity);
     }
 

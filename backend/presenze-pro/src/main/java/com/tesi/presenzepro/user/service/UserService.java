@@ -326,4 +326,8 @@ public class UserService {
     public boolean modifyUserHours(Double hours, HoursType type, String userEmail){
         return this.repository.updateUserHours(userEmail, hours, type);
     }
+
+    public List<String> findUsersEmailByRoles(List<Role> roles){
+        return this.repository.findByRoleIn(roles).stream().map(User::getEmail).toList();
+    }
 }
