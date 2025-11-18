@@ -1,6 +1,7 @@
 package com.tesi.presenzepro.user.service;
 
 import com.mongodb.DuplicateKeyException;
+import com.tesi.presenzepro.calendar.model.HoursType;
 import com.tesi.presenzepro.exception.DuplicateEmailException;
 import com.tesi.presenzepro.exception.NoUserFoundException;
 import com.tesi.presenzepro.jwt.JwtUtils;
@@ -310,5 +311,19 @@ public class UserService {
 
     public UserVacationHours getRemainingVacationHours(User user){
         return new  UserVacationHours(user.getData().annualLeaveHours(), user.getData().annualPermitHours());
+    }
+
+    public boolean modifyPermitHours(Double hours, HttpServletRequest request){
+        String userEmail = this.getUserEmailFromRequest(request);
+        return this.modifyUserHours(hours, HoursType.PERMIT,  userEmail);
+    }
+
+    public boolean modifyLeaveHours(Double hours, HttpServletRequest request){
+        String userEmail = this.getUserEmailFromRequest(request);
+        return this.modifyUserHours(hours, HoursType.LEAVE,  userEmail);
+    }
+
+    public boolean modifyUserHours(Double hours, HoursType type, String userEmail){
+        return this.repository.updateUserHours(userEmail, hours, type);
     }
 }

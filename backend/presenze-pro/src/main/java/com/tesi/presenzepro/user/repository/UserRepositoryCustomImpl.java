@@ -1,8 +1,10 @@
 package com.tesi.presenzepro.user.repository;
 
 import com.mongodb.client.result.UpdateResult;
+import com.tesi.presenzepro.calendar.model.HoursType;
 import com.tesi.presenzepro.user.model.User;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -12,10 +14,17 @@ import org.springframework.data.mongodb.core.query.Update;
 import java.util.List;
 import java.util.Optional;
 
-@AllArgsConstructor
 public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
     private final MongoTemplate mongoTemplate;
+    @Value("${spring.app.annualLeaveHours}")
+    private double maxAnnualLeaveHours;
+    @Value("${spring.app.annualPermitHours}")
+    private double maxAnnualPermitHours;
+
+    public UserRepositoryCustomImpl(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
 
     @Override
     public Optional<User> findByIdAndModify(User user) {
@@ -106,4 +115,57 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
         return result.getModifiedCount();
     }
+
+    @Override
+    public boolean updateUserHours(String email, double hoursDelta, HoursType type) {
+
+        Query query = new Query().addCriteria(Criteria.where("email").is(email));
+        User user = mongoTemplate.findOne(query, User.class);
+
+        if (user == null || user.getData() == null) {
+            System.out.println("non trovo l utente");
+            return false;
+        }
+
+        double currentHours;
+        double maxAllowed;
+        String fieldPath;
+
+        switch (type) {
+            case LEAVE -> {
+                currentHours = user.getData().annualLeaveHours();
+                maxAllowed = this.maxAnnualLeaveHours;
+                fieldPath = "data.annualLeaveHours";
+            }
+            case PERMIT -> {
+                currentHours = user.getData().annualPermitHours();
+                maxAllowed = this.maxAnnualPermitHours;
+                fieldPath = "data.annualPermitHours";
+            }
+            default -> {
+                System.out.println("SONO ih default");
+                return false;
+            }
+        }
+
+        double newValue = currentHours + hoursDelta;
+
+        if (newValue < 0) {
+            System.out.println("il nuovo valore è sotto lo zero: " + newValue + " altro valore: " + hoursDelta);
+            return false;
+        }
+
+        if (newValue > maxAllowed) {
+            newValue = maxAllowed;
+        }
+
+        // 5. Aggiornamento DB
+        Update update = new Update().set(fieldPath, newValue);
+        FindAndModifyOptions options = FindAndModifyOptions.options().returnNew(true);
+
+        User updated = mongoTemplate.findAndModify(query, update, options, User.class);
+
+        return updated != null;
+    }
+
 }

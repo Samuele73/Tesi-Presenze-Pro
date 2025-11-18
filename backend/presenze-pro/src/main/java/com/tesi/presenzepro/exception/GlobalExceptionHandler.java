@@ -1,5 +1,6 @@
 package com.tesi.presenzepro.exception;
 
+import com.tesi.presenzepro.calendar.exception.InsufficientHoursException;
 import com.tesi.presenzepro.project.exception.NoProjectFound;
 import com.tesi.presenzepro.project.exception.NoUserForProjectFound;
 import com.tesi.presenzepro.user.exception.UserNotFoundException;
@@ -99,6 +100,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex) {
         ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Accesso negato");
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+    }
+
+    @ExceptionHandler(InsufficientHoursException.class)
+    public ResponseEntity<?> handleInsufficientHours(InsufficientHoursException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Accesso negato");
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(errorResponse);
     }
 
 }

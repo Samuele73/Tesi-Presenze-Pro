@@ -1,6 +1,7 @@
 package com.tesi.presenzepro.calendar.service;
 
 import com.tesi.presenzepro.calendar.dto.*;
+import com.tesi.presenzepro.calendar.exception.InsufficientHoursException;
 import com.tesi.presenzepro.calendar.mapper.CalendarMapper;
 import com.tesi.presenzepro.calendar.model.*;
 import com.tesi.presenzepro.calendar.repository.CalendarRepository;
@@ -23,10 +24,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalTime;
+import java.time.*;
 
 import java.security.InvalidParameterException;
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -45,9 +45,57 @@ public class CalendarService {
         String userEmail = this.getUserEmailFromRequest(request);
         newCalendarEntity.setUserEmail(userEmail);
         this.applyDefaultStatus(newCalendarEntity);
+
+        //Controllo che vi siano le ore necessarie per le ferie o permessi
+        if(newCalendarEntity.getCalendarEntry() instanceof CalendarRequestEntry requestEntry){
+            final String requestType = requestEntry.getRequestType();
+            if(requestType.equalsIgnoreCase("PERMESSI") || requestType.equalsIgnoreCase("FERIE")){
+                boolean isPermit = requestType.equalsIgnoreCase("PERMESSI");
+                Double hours = isPermit ? this.calculateHours(requestEntry, false) : this.calculateHours(requestEntry, true);
+                boolean isNotForbidden = isPermit ? this.userService.modifyPermitHours(-hours, request) : this.userService.modifyLeaveHours(-hours, request);
+                if(!isNotForbidden){
+                    throw new InsufficientHoursException("Non hai le ore necessarie per questa richiesta");
+                }
+            }
+        }
+
         CalendarEntity calendarEntity =  this.repository.save(newCalendarEntity);
         return calendarMapper.fromCalendarEntityToCalendarEntry(calendarEntity);
     }
+
+    public Double calculateHours(CalendarRequestEntry request, boolean isLeave) {
+
+        // --- Caso FERIE: 24 ore per giorno ---
+        if (isLeave) {
+            LocalDate fromDate = request.getDateFrom().toInstant()
+                    .atZone(ZoneOffset.UTC).toLocalDate();
+
+            LocalDate toDate = request.getDateTo().toInstant()
+                    .atZone(ZoneOffset.UTC).toLocalDate();
+
+            long days = Duration.between(fromDate.atStartOfDay(), toDate.plusDays(1).atStartOfDay()).toDays();
+
+            return days * 24.0;
+        }
+
+        // --- Caso PERMESSI o Richieste normali: usa orari ---
+        LocalDate fromDate = request.getDateFrom().toInstant()
+                .atZone(ZoneOffset.UTC).toLocalDate();
+
+        LocalDate toDate = request.getDateTo().toInstant()
+                .atZone(ZoneOffset.UTC).toLocalDate();
+
+        LocalTime fromTime = LocalTime.parse(request.getTimeFrom());
+        LocalTime toTime = LocalTime.parse(request.getTimeTo());
+
+        LocalDateTime start = LocalDateTime.of(fromDate, fromTime);
+        LocalDateTime end = LocalDateTime.of(toDate, toTime);
+
+        long minutes = Duration.between(start, end).toMinutes();
+
+        return minutes / 60.0;
+    }
+
 
     private void applyDefaultStatus(CalendarEntity entity) {
         if (entity.getCalendarEntry() instanceof CalendarRequestEntry requestEntry) {
