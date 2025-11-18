@@ -251,6 +251,9 @@ public class CalendarService {
     private void recoverUserHoursFromCalendarEntity(CalendarEntity entity, String userEmail){
         CalendarEntry calendarEntry = entity.getCalendarEntry();
         if(calendarEntry instanceof CalendarRequestEntry requestEntry){
+            //in questo caso limite sono state recuperate quando è stata declinata
+            if(requestEntry.getStatus().equals(RequestStatus.REJECTED))
+                return;
             boolean isLeave = requestEntry.getRequestType().equalsIgnoreCase("FERIE");
             Double recoverHours = this.calculateHours(requestEntry, isLeave);
             HoursType type = isLeave ? HoursType.LEAVE : HoursType.PERMIT;
