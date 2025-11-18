@@ -3,6 +3,8 @@ import { UsernameService } from '../shared/services/username.service';
 import { Username } from '../../custom-calendar/models/username';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import { UserEmailResponse, UserService } from 'src/generated-client';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 
 declare var bootstrap: any;
 
@@ -19,7 +21,7 @@ export class LayoutComponent implements OnInit{
   constructor(
     private usernameService: UsernameService,
     private authService: AuthService,
-    private toastrService: ToastrService
+    private toastrService: ToastrService, private userService: UserService, private notifService: NotificationService
   ) {
     this.authService.checkUserAutentication(this.authService.token);
     let userCreds = this.authService.getMyUserProfile();
@@ -41,6 +43,16 @@ export class LayoutComponent implements OnInit{
   }
   ngOnInit(): void {
     this.toastrService.overlayContainer = this.toastContainer;
+    if(this.authService.token)
+      this.userService.getEmailFromTkn(this.authService.token!!).subscribe({
+        next: (email: UserEmailResponse) => {
+          const fetchedEmail: string | undefined = email.email;
+          if (fetchedEmail) {
+            this.authService.email = fetchedEmail;
+            this.notifService.connect(fetchedEmail);
+          }
+        },
+      });
   }
 
   onClick(){
