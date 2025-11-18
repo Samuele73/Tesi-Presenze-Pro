@@ -464,6 +464,17 @@ public class CalendarService {
         if(action == ApprovalAction.REJECT){
             this.recoverUserHoursFromCalendarEntity(request, request.getUserEmail());
         }
+        this.sendNotifsForRequestStatusChange(action, request);
         return updateResult;
+    }
+
+    private void sendNotifsForRequestStatusChange(ApprovalAction action, CalendarEntity request){
+        final String approvalRequestType = this.getApprovalRequestType(request);
+        final String actionString = action.equals(ApprovalAction.ACCEPT) ? "accettata" : "rifiutata";
+        final String requestUserEmail = request.getUserEmail();
+        final String notifMessage = "Una richiesta di " + approvalRequestType + "è stata " + actionString + " per l'utente " + requestUserEmail;
+        this.sendRequestNotifs(notifMessage);
+        final String toUserNotifMessage = "Una tua richiesta di " + approvalRequestType + " è stata " + actionString;
+        this.notifService.send(requestUserEmail, toUserNotifMessage);
     }
 }

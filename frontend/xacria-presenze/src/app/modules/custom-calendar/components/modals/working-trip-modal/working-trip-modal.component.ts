@@ -132,7 +132,7 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
           );
         else {
           this.toastrService.clear();
-          this.toastrService.success('Trasferimenti modificati con successo');
+          this.toastrService.success('Trasferta modificata con successo');
         }
       });
     this.initialWorkingTrips = this.workingTrips.value;
@@ -163,11 +163,11 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
         .subscribe((resp: boolean) => {
           if (!resp)
             this.toastrService.error(
-              this.apiError ?? 'Errore nella cancellazione dei trasferimenti.'
+              this.apiError ?? 'Errore nella cancellazione della trasferte'
             );
           else {
             this.toastrService.clear();
-            this.toastrService.success('Trasferimenti cancellati con successo');
+            this.toastrService.success('Trasferte cancellate con successo');
           }
         });
       this.toDeleteEntries = [];
