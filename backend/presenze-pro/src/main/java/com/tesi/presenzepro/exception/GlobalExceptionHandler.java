@@ -3,8 +3,6 @@ package com.tesi.presenzepro.exception;
 import com.tesi.presenzepro.calendar.exception.InsufficientHoursException;
 import com.tesi.presenzepro.project.exception.NoProjectFound;
 import com.tesi.presenzepro.project.exception.NoUserForProjectFound;
-import com.tesi.presenzepro.user.exception.UserNotFoundException;
-import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -43,8 +41,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
-    @ExceptionHandler(CalendarEntityNotFound.class)
-    public ResponseEntity<ErrorResponse> handleCalendarEntityNotFound(WrongCalendarEntityTypeException ex) {
+    @ExceptionHandler(CalendarEntityNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCalendarEntityNotFound(CalendarEntityNotFoundException ex) {
         ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Calendar entity not found");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }

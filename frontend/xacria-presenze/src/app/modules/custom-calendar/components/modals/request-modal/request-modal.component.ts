@@ -116,7 +116,9 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     const changedEntries: identifiableCalendarRequest[] = currentEntries
       .filter((entry: { id: string } & CalendarRequestEntry, i) => {
         const initial = this.initialRequests[i];
-        return JSON.stringify(entry) !== JSON.stringify(initial);
+        console.log("todelete entries", this.toDeleteEntries, !this.toDeleteEntries.includes(entry.id), entry.id);
+
+        return (JSON.stringify(entry) !== JSON.stringify(initial) && !this.toDeleteEntries.includes(entry.id));
       })
       .map((entry: { id: string } & CalendarRequestEntry) => {
         return {
@@ -157,8 +159,10 @@ export class RequestModalComponent implements ModalComponent, OnInit {
       return;
     }
     console.log('check here', this.form, this.toDeleteEntries);
-    this.deleteEntries();
+
+    /* Importante l ordine */
     this.updateEntries();
+    this.deleteEntries();
 
     this.modalService.dismissAll();
   }

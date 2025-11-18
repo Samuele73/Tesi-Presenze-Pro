@@ -5,7 +5,7 @@ import com.tesi.presenzepro.calendar.exception.InsufficientHoursException;
 import com.tesi.presenzepro.calendar.mapper.CalendarMapper;
 import com.tesi.presenzepro.calendar.model.*;
 import com.tesi.presenzepro.calendar.repository.CalendarRepository;
-import com.tesi.presenzepro.exception.CalendarEntityNotFound;
+import com.tesi.presenzepro.exception.CalendarEntityNotFoundException;
 import com.tesi.presenzepro.exception.NoUserFoundException;
 import com.tesi.presenzepro.jwt.JwtUtils;
 import com.tesi.presenzepro.user.service.UserService;
@@ -13,7 +13,6 @@ import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -22,7 +21,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.*;
 
@@ -234,32 +232,46 @@ public class CalendarService {
         System.out.println("ids: " + entityId );
         return repository
                 .findByUserEmailAndId(userEmail, entityId)
-                .orElseThrow(() -> new CalendarEntityNotFound(entityId));
+                .orElseThrow(() -> new CalendarEntityNotFoundException(entityId));
     }
 
     public CalendarResponseDto deleteCalendarEntry(HttpServletRequest request , String entityId) {
         final String userEmail = this.getUserEmailFromRequest(request);
         CalendarEntity entity = getCalendarEntity(entityId, userEmail);
         checkWorkingTripAndRequestStatus(entity, entity);
+
+        recoverUserHoursFromCalendarEntityDelete(entity, userEmail);
         repository.delete(entity);
+
+
+
         return calendarMapper.fromCalendarEntityToCalendarEntry(entity);
     }
 
-    public List<CalendarResponseDto> deleteCalendarEntries(HttpServletRequest request, List<String> ids) {
+    private void recoverUserHoursFromCalendarEntityDelete(CalendarEntity entity, String userEmail){
+        CalendarEntry calendarEntry = entity.getCalendarEntry();
+        if(calendarEntry instanceof CalendarRequestEntry requestEntry){
+            boolean isLeave = requestEntry.getRequestType().equalsIgnoreCase("FERIE");
+            Double recoverHours = this.calculateHours(requestEntry, isLeave);
+            HoursType type = isLeave ? HoursType.LEAVE : HoursType.PERMIT;
+            System.out.println("User hours: " + recoverHours);
+            this.userService.modifyUserHours(recoverHours, type, userEmail);
+        }
+    }
+
+    public boolean deleteCalendarEntries(HttpServletRequest request, List<String> ids) {
         if(ids == null || ids.isEmpty()){
             throw new InvalidParameterException("ids is null or empty");
         }
-        final String userEmail = this.getUserEmailFromRequest(request);
-        List<CalendarEntity> entities = ids.stream().map(id -> this.getCalendarEntity(id, userEmail)).toList();
-        repository.deleteAll(entities);
-        return calendarMapper.fromCalendarEntitiesToCalendarEntries(entities);
+        ids.forEach(id -> {deleteCalendarEntry(request, id);});
+        return true;
     }
 
     private CalendarEntity updateCalendarEntityById(String id, CalendarEntity newEntity) {
         CalendarEntity existing = mongoTemplate.findById(id, CalendarEntity.class);
 
         if (existing == null) {
-            throw new CalendarEntityNotFound(id);
+            throw new CalendarEntityNotFoundException(id);
         }
 
         checkWorkingTripAndRequestStatus(existing, newEntity);
@@ -287,7 +299,7 @@ public class CalendarService {
         );
 
         if (updated == null) {
-            throw new CalendarEntityNotFound(id);
+            throw new CalendarEntityNotFoundException(id);
         }
 
         return updated;
