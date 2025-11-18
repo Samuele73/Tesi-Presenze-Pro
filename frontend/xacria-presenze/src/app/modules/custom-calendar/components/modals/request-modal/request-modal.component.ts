@@ -76,8 +76,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
   ngOnInit(): void {
     this.initializeForm();
     this.calendarStateService.error.subscribe((error: string | null) => {
-      if (error)
-        this.apiError = error;
+      if (error) this.apiError = error;
     });
   }
 
@@ -123,9 +122,17 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     const changedEntries: identifiableCalendarRequest[] = currentEntries
       .filter((entry: { id: string } & CalendarRequestEntry, i) => {
         const initial = this.initialRequests[i];
-        console.log("todelete entries", this.toDeleteEntries, !this.toDeleteEntries.includes(entry.id), entry.id);
+        console.log(
+          'todelete entries',
+          this.toDeleteEntries,
+          !this.toDeleteEntries.includes(entry.id),
+          entry.id
+        );
 
-        return (JSON.stringify(entry) !== JSON.stringify(initial) && !this.toDeleteEntries.includes(entry.id));
+        return (
+          JSON.stringify(entry) !== JSON.stringify(initial) &&
+          !this.toDeleteEntries.includes(entry.id)
+        );
       })
       .map((entry: { id: string } & CalendarRequestEntry) => {
         return {
@@ -140,10 +147,18 @@ export class RequestModalComponent implements ModalComponent, OnInit {
         };
       });
     console.log('To updated entries', changedEntries);
-    this.calendarStateService.updateCalendarEntries(changedEntries, 'REQUEST').subscribe((resp: boolean) => {
-      if(!resp)
-        this.toastrService.error(this.apiError ?? "Errore nella modifica della richiesta.");
-    })
+    this.calendarStateService
+      .updateCalendarEntries(changedEntries, 'REQUEST')
+      .subscribe((resp: boolean) => {
+        if (!resp)
+          this.toastrService.error(
+            this.apiError ?? 'Errore nella modifica della richiesta.'
+          );
+        else {
+          this.toastrService.clear();
+          this.toastrService.success('Richiesta modificata con successo');
+        }
+      });
     this.initialRequests = this.requests.value;
   }
 
@@ -155,13 +170,18 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     );
     if (this.toDeleteEntries.length) {
       console.log('i am about to delete', this.toDeleteEntries);
-      this.calendarStateService.deleteCalendarEntities(
-        this.toDeleteEntries,
-        'REQUEST'
-      ).subscribe((resp: boolean) => {
-        if(!resp)
-          this.toastrService.error(this.apiError ?? "Errore nella cancellazione della richiesta.");
-      })
+      this.calendarStateService
+        .deleteCalendarEntities(this.toDeleteEntries, 'REQUEST')
+        .subscribe((resp: boolean) => {
+          if (!resp)
+            this.toastrService.error(
+              this.apiError ?? 'Errore nella cancellazione della richiesta.'
+            );
+          else {
+            this.toastrService.clear();
+            this.toastrService.success('Richiesta cancellata con successo');
+          }
+        });
       this.toDeleteEntries = [];
     }
   }
@@ -282,12 +302,15 @@ export class RequestModalComponent implements ModalComponent, OnInit {
         timeFrom: this.timeFrom?.value,
         timeTo: this.timeTo?.value,
       };
-      this.calendarStateService.saveCalendarEntry(newEntry, 'REQUEST').subscribe((resp: boolean) => {
-        if(!resp)
-          this.toastrService.error(this.apiError ?? "Errore nella creazione della richiesta.");
-        else
-          this.toastrService.success("Richiesta creata con successo");
-      })
+      this.calendarStateService
+        .saveCalendarEntry(newEntry, 'REQUEST')
+        .subscribe((resp: boolean) => {
+          if (!resp)
+            this.toastrService.error(
+              this.apiError ?? 'Errore nella creazione della richiesta.'
+            );
+          else this.toastrService.success('Richiesta creata con successo');
+        });
       this.form.reset();
     } else console.error('Availability new entry form is invalid');
   }

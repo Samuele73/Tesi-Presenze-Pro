@@ -72,7 +72,7 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
   }
 
   initializeForm(): void {
-    if (!this.isModifyMode){
+    if (!this.isModifyMode) {
       const formattedCurrentDate = this.dateFormat.manuallyFormatToDateInput(
         this.currentDate ?? new Date()
       );
@@ -81,9 +81,7 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
         dateTo: [formattedCurrentDate, Validators.required],
         project: [this.validProjects[0], Validators.required],
       });
-    }
-
-    else this.initializeModifyForm();
+    } else this.initializeModifyForm();
   }
 
   //potrebbe essere utile in caso di feature di notifica
@@ -143,19 +141,35 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
         };
       });
     console.log('To updated entries', changedEntries);
-    this.calendarStateService.updateCalendarEntries(changedEntries, 'AVAILABILITY').subscribe((resp: boolean) => {
-      if(!resp)
-        this.toastrService.error(this.apiError ?? "Errore nella modifica delle disponibilità.");
-    })
+    this.calendarStateService
+      .updateCalendarEntries(changedEntries, 'AVAILABILITY')
+      .subscribe((resp: boolean) => {
+        if (!resp)
+          this.toastrService.error(
+            this.apiError ?? 'Errore nella modifica delle disponibilità.'
+          );
+        else {
+          this.toastrService.clear();
+          this.toastrService.success('Disponibilità modificate con successo');
+        }
+      });
     this.initialCalendarentries = this.availabilities.value;
   }
 
   private deleteEntries(): void {
     if (this.toDeleteEntries.length) {
-      this.calendarStateService.deleteCalendarEntities(this.toDeleteEntries, 'AVAILABILITY').subscribe((resp: boolean) => {
-        if(!resp)
-          this.toastrService.error(this.apiError ?? "Errore nella cancellazione delle disponibilità.");
-      })
+      this.calendarStateService
+        .deleteCalendarEntities(this.toDeleteEntries, 'AVAILABILITY')
+        .subscribe((resp: boolean) => {
+          if (!resp)
+            this.toastrService.error(
+              this.apiError ?? 'Errore nella cancellazione delle disponibilità.'
+            );
+          else {
+            this.toastrService.clear();
+            this.toastrService.success('Disponibilità cancellate con successo');
+          }
+        });
       this.toDeleteEntries = [];
     }
   }
@@ -238,12 +252,15 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
         dateTo: this.dateTo?.value,
         project: this.project?.value,
       };
-      this.calendarStateService.saveCalendarEntry(newEntry, 'AVAILABILITY').subscribe((resp: boolean) => {
-        if(!resp)
-          this.toastrService.error(this.apiError ?? "Errore nella creazione della reperibiillità");
-        else
-          this.toastrService.success("Reperibilità creata con successo");
-      })
+      this.calendarStateService
+        .saveCalendarEntry(newEntry, 'AVAILABILITY')
+        .subscribe((resp: boolean) => {
+          if (!resp)
+            this.toastrService.error(
+              this.apiError ?? 'Errore nella creazione della reperibiillità'
+            );
+          else this.toastrService.success('Reperibilità creata con successo');
+        });
       this.form.reset();
     } else console.error('Availability new entry form is invalid');
   }

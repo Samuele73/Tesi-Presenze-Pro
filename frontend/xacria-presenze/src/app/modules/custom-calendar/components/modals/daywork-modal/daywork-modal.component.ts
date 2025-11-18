@@ -154,6 +154,11 @@ export class DayworkModalComponent
       this.calendarStateService.deleteCalendarEntities(this.toDeleteEntries, "WORKING_DAY").subscribe((resp: boolean) => {
         if(!resp)
           this.toastrService.error(this.apiError ?? "Errore nella cancellazione dei lavori giornalieri.");
+        else{
+          this.toastrService.clear();
+          this.toastrService.success("Lavori giornalieri cancellati con successo");
+        }
+
       })
       this.toDeleteEntries = [];
     }
@@ -247,6 +252,11 @@ export class DayworkModalComponent
     this.calendarStateService.updateCalendarEntries(changedEntries, "WORKING_DAY").subscribe((resp: boolean) => {
       if(!resp)
         this.toastrService.error(this.apiError ?? "Errore nella modifica dei lavori giornalieri.");
+      else{
+        this.toastrService.clear();
+        this.toastrService.success("Lavori giornalieri modificati con successo");
+      }
+
     })
     this.initialWorkingDays = this.dayWorks.value;
   }

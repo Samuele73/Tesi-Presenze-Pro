@@ -105,6 +105,7 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
   private updateEntries(): void {
     const currentEntries: ({ id: string } & CalendarWorkingTripEntry)[] =
       this.workingTrips.value;
+    let result: boolean = false;
     const changedEntries: identifiableCalendarWorkingTrip[] = currentEntries
       .filter((entry: { id: string } & CalendarWorkingTripEntry, i) => {
         const initial = this.initialWorkingTrips[i];
@@ -120,19 +121,35 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
         };
       });
     console.log('To updated entries', changedEntries);
-    this.calendarStateService.updateCalendarEntries(changedEntries, 'WORKING_TRIP').subscribe((resp: boolean) => {
-      if(!resp)
-        this.toastrService.error(this.apiError ?? "Errore nella modifica dei trasferimenti.");
-    })
+    this.calendarStateService
+      .updateCalendarEntries(changedEntries, 'WORKING_TRIP')
+      .subscribe((resp: boolean) => {
+        if (!resp)
+          this.toastrService.error(
+            this.apiError ?? 'Errore nella modifica dei trasferimenti.'
+          );
+        else {
+          this.toastrService.clear();
+          this.toastrService.success('Trasferimenti modificati con successo');
+        }
+      });
     this.initialWorkingTrips = this.workingTrips.value;
   }
 
   private deleteEntries(): void {
     if (this.toDeleteEntries.length) {
-      this.calendarStateService.deleteCalendarEntities(this.toDeleteEntries, 'WORKING_TRIP').subscribe((resp: boolean) => {
-        if(!resp)
-          this.toastrService.error(this.apiError ?? "Errore nella cancellazione dei trasferimenti.");
-      })
+      this.calendarStateService
+        .deleteCalendarEntities(this.toDeleteEntries, 'WORKING_TRIP')
+        .subscribe((resp: boolean) => {
+          if (!resp)
+            this.toastrService.error(
+              this.apiError ?? 'Errore nella cancellazione dei trasferimenti.'
+            );
+          else {
+            this.toastrService.clear();
+            this.toastrService.success('Trasferimenti cancellati con successo');
+          }
+        });
       this.toDeleteEntries = [];
     }
   }
@@ -207,12 +224,15 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
         dateFrom: this.dateFrom?.value,
         dateTo: this.dateTo?.value,
       };
-      this.calendarStateService.saveCalendarEntry(newEntry, 'WORKING_TRIP').subscribe((resp: boolean) => {
-        if(!resp)
-          this.toastrService.error(this.apiError ?? "Errore nella creazione della trasferta");
-        else
-          this.toastrService.success("Trasferta creata con successo");
-      })
+      this.calendarStateService
+        .saveCalendarEntry(newEntry, 'WORKING_TRIP')
+        .subscribe((resp: boolean) => {
+          if (!resp)
+            this.toastrService.error(
+              this.apiError ?? 'Errore nella creazione della trasferta'
+            );
+          else this.toastrService.success('Trasferta creata con successo');
+        });
       this.form.reset();
     } else console.error('Availability new entry form is invalid');
   }
