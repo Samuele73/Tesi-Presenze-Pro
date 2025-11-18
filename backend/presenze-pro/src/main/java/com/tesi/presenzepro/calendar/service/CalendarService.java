@@ -240,7 +240,7 @@ public class CalendarService {
         CalendarEntity entity = getCalendarEntity(entityId, userEmail);
         checkWorkingTripAndRequestStatus(entity, entity);
 
-        recoverUserHoursFromCalendarEntityDelete(entity, userEmail);
+        recoverUserHoursFromCalendarEntity(entity, userEmail);
         repository.delete(entity);
 
 
@@ -248,7 +248,7 @@ public class CalendarService {
         return calendarMapper.fromCalendarEntityToCalendarEntry(entity);
     }
 
-    private void recoverUserHoursFromCalendarEntityDelete(CalendarEntity entity, String userEmail){
+    private void recoverUserHoursFromCalendarEntity(CalendarEntity entity, String userEmail){
         CalendarEntry calendarEntry = entity.getCalendarEntry();
         if(calendarEntry instanceof CalendarRequestEntry requestEntry){
             boolean isLeave = requestEntry.getRequestType().equalsIgnoreCase("FERIE");
@@ -409,15 +409,21 @@ public class CalendarService {
 
     public Boolean updateRequestStatus(String id, ApprovalAction action){
         final String userRole = this.userService.getCurrentUserRole();
+        final CalendarEntity request = this.repository.findById(id).orElseThrow(() -> new NoUserFoundException("Richiesta non trovata"));
         if(userRole.equalsIgnoreCase("ADMIN")){
-            final String requestUserEmail = this.repository.findById(id).orElseThrow(() -> new NoUserFoundException("Richiesta non trovata")).getUserEmail();
-            final String requestUserReole = this.userService.getUserProfileFromEmail(requestUserEmail).role().toString();
-            if(requestUserReole.equalsIgnoreCase(userRole))
+            final String requestUserEmail = request.getUserEmail();
+            final String requestUserRole = this.userService.getUserProfileFromEmail(requestUserEmail).role().toString();
+            if(requestUserRole.equalsIgnoreCase(userRole))
                 throw new AccessDeniedException("Gli admin non possono gestire richieste proprie o di altri admin");
         }
         RequestStatus newStatus = (action == ApprovalAction.ACCEPT)
                 ? RequestStatus.ACCEPTED
                 : RequestStatus.REJECTED;
-        return this.repository.updateRequestStatus(id, newStatus);
+        final boolean updateResult = this.repository.updateRequestStatus(id, newStatus);
+        // Recupera le ore di permessi o ferie nel caso in cui la richiesta non venga accettata
+        if(action == ApprovalAction.REJECT){
+            this.recoverUserHoursFromCalendarEntity(request, request.getUserEmail());
+        }
+        return updateResult;
     }
 }
