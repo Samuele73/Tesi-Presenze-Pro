@@ -125,8 +125,8 @@ export class CustomCalendarPageComponent implements OnInit, AfterViewInit, OnDes
       .pipe(takeUntil(this.destroy$))
       .subscribe((error: string | null) => {
         this.errorMessage = error;
-        if(this.errorMessage)
-          this.toastrService.error(this.errorMessage);
+        /* if(this.errorMessage)
+          this.toastrService.error(this.errorMessage); */
         this.cdr.markForCheck();
       });
   }
@@ -152,7 +152,10 @@ export class CustomCalendarPageComponent implements OnInit, AfterViewInit, OnDes
     this.calendarStateService.getCalendarByMonthYear(
       this.currentMonth,
       this.currentYear
-    );
+    ).subscribe((resp: boolean) => {
+      if(!resp)
+        this.toastrService.error("Errore nel caricamento del calendario.");
+    });
   }
 
 
@@ -189,7 +192,10 @@ export class CustomCalendarPageComponent implements OnInit, AfterViewInit, OnDes
     this.calendarStateService.getCalendarByMonthYear(
       this.currentMonth,
       this.currentYear
-    );
+    ).subscribe((resp: boolean) => {
+      if(!resp)
+        this.toastrService.error("Errore nel caricamento del calendario.");
+    });
     this.cdr.markForCheck();
   }
 
@@ -199,7 +205,10 @@ export class CustomCalendarPageComponent implements OnInit, AfterViewInit, OnDes
     this.calendarStateService.getCalendarByMonthYear(
       this.currentMonth,
       this.currentYear
-    );
+    ).subscribe((resp: boolean) => {
+      if(!resp)
+        this.toastrService.error("Errore nel caricamento del calendario.");
+    });
     this.cdr.markForCheck();
   }
 

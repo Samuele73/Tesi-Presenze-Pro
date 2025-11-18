@@ -354,12 +354,12 @@ public class CalendarService {
 
         if (status == RequestStatus.ACCEPTED || status == RequestStatus.REJECTED) {
             System.out.println("SONO QUI con una richiesta di tipo: " + status);
-            throw new AccessDeniedException("Azione negata: " + "SONO QUI con una richiesta di tipo: " + status);
+            throw new AccessDeniedException("Non è possibile manipolare richieste non più in sospeso");
         }
 
         if (status == RequestStatus.PENDING && isUser && !isOwnerOfRequest) {
             System.out.println("SONO QUI");
-            throw new AccessDeniedException("Azione negata " + "SONO QUI");
+            throw new AccessDeniedException("Azione non consentita");
         }
     }
 

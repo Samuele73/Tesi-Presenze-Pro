@@ -24,6 +24,7 @@ import {
 import { identifiableCalendarAvailability } from 'src/app/modules/custom-calendar/models/calendar';
 import { projects } from '../../../const-vars';
 import { CalendarStateService } from '../../../services/calendar-state.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-availability-modal',
@@ -42,13 +43,15 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
   toDeleteEntries: string[] = [];
   @ViewChildren('entry') entryElements!: QueryList<ElementRef>;
   initialCalendarentries: identifiableCalendarAvailability[] = [];
+  apiError: string | null = null;
 
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
     private renderer: Renderer2,
     private dateFormat: DateFormatService,
-    private calendarStateService: CalendarStateService
+    private calendarStateService: CalendarStateService,
+    private toastrService: ToastrService
   ) {}
 
   get dateFrom() {
@@ -140,13 +143,19 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
         };
       });
     console.log('To updated entries', changedEntries);
-    this.calendarStateService.updateCalendarEntries(changedEntries, 'AVAILABILITY');
+    this.calendarStateService.updateCalendarEntries(changedEntries, 'AVAILABILITY').subscribe((resp: boolean) => {
+      if(!resp)
+        this.toastrService.error(this.apiError ?? "Errore nella modifica delle disponibilità.");
+    })
     this.initialCalendarentries = this.availabilities.value;
   }
 
   private deleteEntries(): void {
     if (this.toDeleteEntries.length) {
-      this.calendarStateService.deleteCalendarEntities(this.toDeleteEntries, 'AVAILABILITY');
+      this.calendarStateService.deleteCalendarEntities(this.toDeleteEntries, 'AVAILABILITY').subscribe((resp: boolean) => {
+        if(!resp)
+          this.toastrService.error(this.apiError ?? "Errore nella cancellazione delle disponibilità.");
+      })
       this.toDeleteEntries = [];
     }
   }
@@ -229,7 +238,12 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
         dateTo: this.dateTo?.value,
         project: this.project?.value,
       };
-      this.calendarStateService.saveCalendarEntry(newEntry, 'AVAILABILITY');
+      this.calendarStateService.saveCalendarEntry(newEntry, 'AVAILABILITY').subscribe((resp: boolean) => {
+        if(!resp)
+          this.toastrService.error(this.apiError ?? "Errore nella creazione della reperibiillità");
+        else
+          this.toastrService.success("Reperibilità creata con successo");
+      })
       this.form.reset();
     } else console.error('Availability new entry form is invalid');
   }

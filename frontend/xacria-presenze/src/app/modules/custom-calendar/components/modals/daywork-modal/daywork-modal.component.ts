@@ -20,6 +20,7 @@ import { identifiableCalendarWorkingDay } from 'src/app/modules/custom-calendar/
 import { parse } from 'date-fns';
 import { it as itLocale } from 'date-fns/locale';
 import { CalendarStateService } from '../../../services/calendar-state.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-daywork-modal',
@@ -40,6 +41,7 @@ export class DayworkModalComponent
   faIcons: any = faIcons;
   toDeleteEntries: string[] = [];
   initialWorkingDays: identifiableCalendarWorkingDay[] = [];
+  apiError: string | null = null;
 
   constructor(
     private modalService: NgbModal,
@@ -47,7 +49,8 @@ export class DayworkModalComponent
     private cdr: ChangeDetectorRef,
     private dateFormat: DateFormatService,
     private calendarStateService: CalendarStateService,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private toastrService: ToastrService
   ) {}
 
   get hourFrom() {
@@ -148,7 +151,10 @@ export class DayworkModalComponent
   private deleteEntries(): void {
     if (this.toDeleteEntries.length) {
       console.log('To delete entries', this.toDeleteEntries);
-      this.calendarStateService.deleteCalendarEntities(this.toDeleteEntries, "WORKING_DAY");
+      this.calendarStateService.deleteCalendarEntities(this.toDeleteEntries, "WORKING_DAY").subscribe((resp: boolean) => {
+        if(!resp)
+          this.toastrService.error(this.apiError ?? "Errore nella cancellazione dei lavori giornalieri.");
+      })
       this.toDeleteEntries = [];
     }
   }
@@ -238,7 +244,10 @@ export class DayworkModalComponent
       });
     console.log('la data', this.parseItalianDate(this.dateString));
     console.log('To updated entries', changedEntries);
-    this.calendarStateService.updateCalendarEntries(changedEntries, "WORKING_DAY");
+    this.calendarStateService.updateCalendarEntries(changedEntries, "WORKING_DAY").subscribe((resp: boolean) => {
+      if(!resp)
+        this.toastrService.error(this.apiError ?? "Errore nella modifica dei lavori giornalieri.");
+    })
     this.initialWorkingDays = this.dayWorks.value;
   }
 
@@ -270,7 +279,12 @@ export class DayworkModalComponent
         hourTo: this.hourTo?.value,
         dateFrom: normalizedDate,
       });
-      this.calendarStateService.saveCalendarEntities(newDayWorkEntries, "WORKING_DAY");
+      this.calendarStateService.saveCalendarEntities(newDayWorkEntries, "WORKING_DAY").subscribe((resp: boolean) => {
+        if(!resp)
+          this.toastrService.error(this.apiError ?? "Errore nella creazione del lavoro giornaliero.");
+        else
+          this.toastrService.success("Lavoro giornaliero creato con successo");
+      })
     } else console.error('Availability new entry form is invalid');
   }
 }

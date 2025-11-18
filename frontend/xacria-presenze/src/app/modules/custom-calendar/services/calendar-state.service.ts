@@ -1,9 +1,9 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { environment } from 'src/environments/environment';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of, tap } from 'rxjs';
 import {
   CalendarAvailabilityEntry,
   CalendarEntity,
@@ -94,33 +94,37 @@ export class CalendarStateService {
     return newCalendarData;
   }
 
-  getCalendarByMonthYear(month: string, year: string): void {
-    this.calendarApi.getCalendarEntitiesByMonthYear(month, year).subscribe({
-      next: (calendarData: CalendarResponseDto[]) => {
+  getCalendarByMonthYear(month: string, year: string): Observable<boolean> {
+    return this.calendarApi.getCalendarEntitiesByMonthYear(month, year).pipe(
+      tap((calendarData: CalendarResponseDto[]) => {
         console.log('GUARDAAA', calendarData);
-        const newCalendarData: calendar =
+        const newCalendarData =
           this.fromCalendarResponseDtoToCalendar(calendarData);
         this.calendar$.next(newCalendarData);
-      },
-      error: (error) => {
+        // Opzionale: resetta l'errore se la chiamata ha successo
+        // this.error$.next(null);
+      }),
+      map(() => true),
+      catchError((error: HttpErrorResponse) => {
         console.error('Error fetch calendar:', error);
-        this.error$.next('Errore nella raccolta dati del calendario');
-      },
-    });
+        this.error$.next(error.error.message || "Errore nel recupero del calendario");
+        return of(false);
+      })
+    );
   }
 
   saveCalendarEntry(
     calendarEntry: CalendarEntry,
     entryType: CalendarEntity.EntryTypeEnum
-  ) {
+  ): Observable<boolean> {
     console.log('Sto salvandoooooo');
     const saveCalendarEntityRequest: SaveCalendarEntityRequestDto = {
       entryType: entryType,
       calendarEntry: calendarEntry,
     };
 
-    this.calendarApi.saveCalendarEntity(saveCalendarEntityRequest).subscribe({
-      next: (response: CalendarResponseDto) => {
+    return this.calendarApi.saveCalendarEntity(saveCalendarEntityRequest).pipe(
+      tap((response: CalendarResponseDto) => {
         console.log('Calendar entry saved successfully:', response);
 
         // Ottieni il calendario corrente
@@ -151,34 +155,36 @@ export class CalendarStateService {
 
         // Aggiorna lo stato
         this.calendar$.next(updatedCalendar);
-      },
-      error: (error) => {
+      }),
+      map(() => true),
+      catchError((error: HttpErrorResponse) => {
         console.error('Error saving calendar entry:', error);
-        this.error$.next("Errore nel salvataggio dell'entry del calendario");
-      },
-    });
+        this.error$.next(error.error.message || "Errore nel salvataggio dell'entry del calendario");
+        return of(false);
+      })
+    );
   }
 
   saveCalendarEntities(
     calendarEntry: CalendarEntry[],
     entryType: CalendarEntity.EntryTypeEnum
-  ) {
+  ): Observable<boolean> {
     const saveCalendarEntityRequest: SaveCalendarEntityRequestDto[] =
       calendarEntry.map((entry) => ({
         entryType: entryType,
         calendarEntry: entry,
       }));
 
-    this.calendarApi
+    return this.calendarApi
       .saveMultipleCalendarEntities(saveCalendarEntityRequest)
-      .subscribe({
-        next: (response: CalendarResponseDto[]) => {
+      .pipe(
+        tap((response: CalendarResponseDto[]) => {
           console.log('Calendar entry saved successfully:', response);
 
           // Ottieni il calendario corrente
           const currentCalendar = this.calendar$.getValue();
 
-          // Converti la response in un oggetto calendar (ma è una lista, quindi ti ritorna 1 solo entry mappata)
+          // Converti la response in un oggetto calendar
           const newCalendarData: calendar =
             this.fromCalendarResponseDtoToCalendar(response);
 
@@ -205,20 +211,22 @@ export class CalendarStateService {
 
           // Aggiorna lo stato
           this.calendar$.next(updatedCalendar);
-        },
-        error: (error) => {
+        }),
+        map(() => true),
+        catchError((error: HttpErrorResponse) => {
           console.error('Error saving calendar entry:', error);
-          this.error$.next("Errore nel salvataggio dell'entry del calendario");
-        },
-      });
+          this.error$.next(error.error.message || "Errore nel salvataggio dell'entry del calendario");
+          return of(false);
+        })
+      );
   }
 
   deleteCalendarEntities(
     entryIds: string[],
     entryType: CalendarEntity.EntryTypeEnum
-  ) {
-    this.calendarApi.deleteMultipleCalendarEntities(entryIds).subscribe({
-      next: () => {
+  ): Observable<boolean> {
+    return this.calendarApi.deleteMultipleCalendarEntities(entryIds).pipe(
+      tap(() => {
         console.log('Calendar entries deleted successfully');
 
         // Ottieni il calendario corrente
@@ -258,37 +266,41 @@ export class CalendarStateService {
 
         // Aggiorna lo stato
         this.calendar$.next(updatedCalendar);
-      },
-      error: (error) => {
+      }),
+      map(() => true),
+      catchError((error: HttpErrorResponse) => {
         console.error('Error deleting calendar entries:', error);
         this.error$.next(
-          "Errore nella cancellazione dell'entry del calendario"
+          error.error.message || "Errore nella cancellazione dell'entry del calendario"
         );
-      },
-    });
+        return of(false);
+      })
+    );
   }
 
   updateCalendarEntries(
     entries: identifiableCalendarEntry[],
     entryType: CalendarEntity.EntryTypeEnum
-  ) {
-    console.log("sto updatting", entries);
-    const updateCalendarEntities: CalendarEntity[] =
-      entries.map((entry: identifiableCalendarEntry) => ({
+  ): Observable<boolean> {
+    console.log('sto updatting', entries);
+    const updateCalendarEntities: CalendarEntity[] = entries.map(
+      (entry: identifiableCalendarEntry) => ({
         id: entry.id,
-        userEmail: "", // TO DO: create a dto to remove this field (it is not used)
+        userEmail: '', // TO DO: create a dto to remove this field (it is not used)
         entryType: entryType,
         calendarEntry: entry.calendarEntry,
-      }));
-      console.log("updateCalendarEntities", updateCalendarEntities);
-    this.calendarApi.updateCalendarEntities(updateCalendarEntities).subscribe({
-      next: (response: CalendarResponseDto[]) => {
+      })
+    );
+    console.log('updateCalendarEntities', updateCalendarEntities);
+
+    return this.calendarApi.updateCalendarEntities(updateCalendarEntities).pipe(
+      tap((response: CalendarResponseDto[]) => {
         console.log('Calendar entries updated successfully:', response);
 
         // Ottieni il calendario corrente
         const currentCalendar = this.calendar$.getValue();
 
-        // Converti la response in un oggetto calendar (ma è una lista, quindi ti ritorna 1 solo entry mappata)
+        // Converti la response in un oggetto calendar
         const newCalendarData: calendar =
           this.fromCalendarResponseDtoToCalendar(response);
 
@@ -342,11 +354,13 @@ export class CalendarStateService {
 
         // Aggiorna lo stato
         this.calendar$.next(updatedCalendar);
-      },
-      error: (error) => {
+      }),
+      map(() => true),
+      catchError((error: HttpErrorResponse) => {
         console.error('Error updating calendar entries:', error);
-        this.error$.next("Errore nell'aggiornamento dell'entry del calendario");
-      },
-    });
+        this.error$.next(error.error.message || "Errore nell'aggiornamento dell'entry del calendario");
+        return of(false);
+      })
+    );
   }
 }
