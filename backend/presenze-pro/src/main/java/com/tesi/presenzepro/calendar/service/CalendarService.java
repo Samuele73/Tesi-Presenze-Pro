@@ -65,7 +65,7 @@ public class CalendarService {
 
     public Double calculateHours(CalendarRequestEntry request, boolean isLeave) {
 
-        // --- Caso FERIE: 24 ore per giorno ---
+        // Caso FERIE: 24 ore per giorno
         if (isLeave) {
             LocalDate fromDate = request.getDateFrom().toInstant()
                     .atZone(ZoneOffset.UTC).toLocalDate();
@@ -78,7 +78,7 @@ public class CalendarService {
             return days * 24.0;
         }
 
-        // --- Caso PERMESSI o Richieste normali: usa orari ---
+        // Caso PERMESSI o Richieste normali: usa orari
         LocalDate fromDate = request.getDateFrom().toInstant()
                 .atZone(ZoneOffset.UTC).toLocalDate();
 
@@ -263,6 +263,7 @@ public class CalendarService {
         }
 
         checkWorkingTripAndRequestStatus(existing, newEntity);
+        triggerUserHoursUpdate(existing, newEntity);
 
         Update update = new Update();
 
@@ -290,6 +291,37 @@ public class CalendarService {
         }
 
         return updated;
+    }
+
+    private void triggerUserHoursUpdate(CalendarEntity existing, CalendarEntity newEntity) {
+        checkWorkingTripAndRequestStatus(existing, newEntity);
+
+        CalendarEntry oldEntry = existing.getCalendarEntry();
+        CalendarEntry newEntry = newEntity.getCalendarEntry();
+        if (oldEntry instanceof CalendarRequestEntry oldReq &&
+                newEntry instanceof CalendarRequestEntry newReq) {
+
+            boolean isLeave = oldReq.getRequestType().equalsIgnoreCase("FERIE");
+
+            double oldHours = calculateHours(oldReq, isLeave);
+            double newHours = calculateHours(newReq, isLeave);
+
+            double delta = oldHours - newHours;
+
+            if (delta != 0) {
+                HoursType type = isLeave ? HoursType.LEAVE : HoursType.PERMIT;
+
+                boolean updated = userService.modifyUserHours(
+                        delta,
+                        type,
+                        existing.getUserEmail()
+                );
+
+                if (!updated) {
+                    throw new InsufficientHoursException("Saldo ore negativo");
+                }
+            }
+        }
     }
 
     private void checkWorkingTripAndRequestStatus(CalendarEntity existing, CalendarEntity newEntity) {

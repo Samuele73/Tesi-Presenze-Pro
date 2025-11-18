@@ -42,6 +42,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { calendar, identifiableCalendarWorkingDay } from '../../models/calendar';
 import { CalendarStateService } from '../../services/calendar-state.service';
 import { monthNamesIt, weekDayNamesIt } from '../../const-vars';
+import { ToastrService } from 'ngx-toastr';
 
 type DistributedModalComponent = AvailabilityModalComponent | RequestModalComponent | WorkingTripModalComponent;
 type ModalComponentType = DistributedModalComponent | DayworkModalComponent;
@@ -101,7 +102,8 @@ export class CustomCalendarPageComponent implements OnInit, AfterViewInit, OnDes
   constructor(
     private calendarStateService: CalendarStateService,
     private cdr: ChangeDetectorRef,
-    private userService: UserService
+    private userService: UserService,
+    private toastrService: ToastrService
   ) {
     this.weekDayNames = weekDayNamesIt;
     this.monthNames = monthNamesIt;
@@ -121,8 +123,10 @@ export class CustomCalendarPageComponent implements OnInit, AfterViewInit, OnDes
 
     this.calendarStateService.error
       .pipe(takeUntil(this.destroy$))
-      .subscribe((error) => {
+      .subscribe((error: string | null) => {
         this.errorMessage = error;
+        if(this.errorMessage)
+          this.toastrService.error(this.errorMessage);
         this.cdr.markForCheck();
       });
   }

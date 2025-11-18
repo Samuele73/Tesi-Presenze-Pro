@@ -72,21 +72,21 @@ public class CalendarController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'OWNER')")
-    @Operation(description = "Aggiorna lo stato di una richiesta. Accettandola o rifiutandola", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(description = "Aggiorna lo stato di una richiesta da approvare (RICHIESTA, TRASFERTA). Accettandola o rifiutandola", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping("/requests/{id}")
     ResponseEntity<BooleanResponse> updateRequestStatus(@RequestParam ApprovalAction action, @PathVariable String id){
         final Boolean isUpdated = calendarService.updateRequestStatus(id, action);
         return ResponseEntity.status(HttpStatus.OK).body(new  BooleanResponse(isUpdated));
     }
 
-    @Operation(description = "Save a new calendar entry", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(description = "Salva un nuova entry nel calendario", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping("")
     ResponseEntity<CalendarResponseDto> saveCalendarEntity(HttpServletRequest request, @RequestBody SaveCalendarEntityRequestDto calendarEntityEntry){
         final CalendarResponseDto savedCalendarEntityEntry = calendarService.saveNewCalendarEntry(request, calendarEntityEntry);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCalendarEntityEntry);
     }
 
-    @Operation(description = "Save calendar entries in bulk", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(description = "Salva nuove entries del calendario in bulk", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping("/bulk")
     ResponseEntity<List<CalendarResponseDto>> saveMultipleCalendarEntities(HttpServletRequest request, @RequestBody List<SaveCalendarEntityRequestDto> calendarEntities){
         final List<CalendarResponseDto> savedCalendarEntities = calendarService.saveCalendarEntities(request, calendarEntities);
