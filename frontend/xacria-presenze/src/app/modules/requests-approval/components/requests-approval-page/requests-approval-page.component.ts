@@ -389,5 +389,17 @@ export class RequestsApprovalPageComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.request = request;
     modalRef.componentInstance.tab =
       this.activeTab === 'closed' ? 'CLOSED' : 'OPEN';
+    modalRef.closed.subscribe(() => this.clearRequestIdQueryParam());
+    modalRef.dismissed.subscribe(() => this.clearRequestIdQueryParam());
+  }
+
+  private clearRequestIdQueryParam() {
+    const url = new URL(window.location.href);
+
+    // Rimuovi il query param
+    url.searchParams.delete('selectedRequestId');
+
+    // Aggiorna l'URL SENZA NAVIGARE
+    window.history.replaceState({}, '', url.toString());
   }
 }
