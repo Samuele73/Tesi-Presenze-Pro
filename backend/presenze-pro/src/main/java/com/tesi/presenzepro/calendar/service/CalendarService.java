@@ -473,7 +473,13 @@ public class CalendarService {
         final String actionString = action.equals(ApprovalAction.ACCEPT) ? "accettata" : "rifiutata";
         final String requestUserEmail = request.getUserEmail();
         final String notifMessage = "Una richiesta di " + approvalRequestType + "è stata " + actionString + " per l'utente " + requestUserEmail;
-        this.sendRequestNotifs(notifMessage);
+        final String notifierUserEmail = this.userService.getCurrentUserEmail();
+        List<String> usersEmail = new ArrayList<>(this.userService.findUsersEmailByRoles(List.of(Role.ADMIN, Role.OWNER)));
+        usersEmail.remove(notifierUserEmail);
+        usersEmail.remove(requestUserEmail);
+        usersEmail.forEach(email -> {
+            this.notifService.send(email, notifMessage);
+        });
         final String toUserNotifMessage = "Una tua richiesta di " + approvalRequestType + " è stata " + actionString;
         this.notifService.send(requestUserEmail, toUserNotifMessage);
     }
