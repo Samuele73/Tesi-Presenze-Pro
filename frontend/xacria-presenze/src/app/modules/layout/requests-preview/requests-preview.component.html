@@ -53,6 +53,6 @@
         </span>
       </ng-template>
     </span>
-    <span *ngIf="requests.content?.length" class="text-muted">{{ "..." }}</span>
+    <span *ngIf="!requests.last" class="text-muted">{{ "..." }}</span>
   </div>
 </div>
