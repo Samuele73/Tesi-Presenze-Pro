@@ -343,7 +343,7 @@ public class CalendarService {
     }
 
     private void triggerUserHoursUpdate(CalendarEntity existing, CalendarEntity newEntity) {
-        checkWorkingTripAndRequestStatus(existing, newEntity);
+        //checkWorkingTripAndRequestStatus(existing, newEntity);
 
         CalendarEntry oldEntry = existing.getCalendarEntry();
         CalendarEntry newEntry = newEntity.getCalendarEntry();
@@ -387,7 +387,9 @@ public class CalendarService {
         }
 
         boolean isUser = this.userService.getCurrentUserRole().equals("USER");
-        boolean isOwnerOfRequest = this.userService.getCurrentUserEmail().equals(newEntity.getUserEmail());
+        boolean isOwnerOfRequest = this.userService.getCurrentUserEmail().equals(existing.getUserEmail());
+        System.out.println("isowner of request: " + isOwnerOfRequest);
+        System.out.println(this.userService.getCurrentUserEmail() + " - " + existing.getUserEmail());
 
         if (status == RequestStatus.ACCEPTED || status == RequestStatus.REJECTED) {
             System.out.println("SONO QUI con una richiesta di tipo: " + status);
