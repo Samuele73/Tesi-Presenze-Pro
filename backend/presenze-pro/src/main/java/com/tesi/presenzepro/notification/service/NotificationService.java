@@ -16,5 +16,6 @@ public class NotificationService {
                 "/topic/notifications/" + email,
                 new NotificationPayload(message)
         );
+        System.out.println("NOTIFICA MANDATA: " + message + " a " + email);
     }
 }

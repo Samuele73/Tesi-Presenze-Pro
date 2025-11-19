@@ -79,6 +79,7 @@ public class CalendarService {
         final String notifierUserEmail = this.userService.getCurrentUserEmail();
         List<String> usersEmail = new ArrayList<>(this.userService.findUsersEmailByRoles(List.of(Role.ADMIN, Role.OWNER)));
         usersEmail.remove(notifierUserEmail);
+        System.out.println("GUARDA email NOTIFHCE: " +  usersEmail);
         usersEmail.forEach(email -> {
             this.notifService.send(email, message);
         });
@@ -446,6 +447,11 @@ public class CalendarService {
         final String userEmail = this.getUserEmailFromRequest(request);
         System.out.println("CHECK THIS: " + calendarEntities);
         List<CalendarEntity> updatedCalendarEntities = calendarEntities.stream().map(entity -> this.updateCalendarEntityById(entity.getId(), entity)).toList();
+        calendarEntities.forEach(calendarEntity -> {
+            final String approvalRequestType = this.getApprovalRequestType(calendarEntity);
+            final String notifMessage = "L'utente " + userEmail + " ha aggiornato una sua richiesta di " + approvalRequestType;
+            this.sendRequestNotifs(notifMessage);
+        });
         return calendarMapper.fromCalendarEntitiesToCalendarEntries(updatedCalendarEntities);
     }
 
