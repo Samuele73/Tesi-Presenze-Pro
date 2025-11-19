@@ -2,3 +2,13 @@
   cursor: pointer;
   background-color: #f0f0f0;
 }
+
+
+.external-link{
+  transition: all 0.3s ease;
+}
+
+.external-link:hover{
+  cursor: pointer;
+  color: var(--bs-primary);
+}

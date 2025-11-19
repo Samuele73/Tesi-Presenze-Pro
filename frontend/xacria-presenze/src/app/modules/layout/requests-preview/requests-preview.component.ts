@@ -52,4 +52,8 @@ export class RequestsPreviewComponent {
       this.router.navigate([APP_ROUTES.REQUESTS_APPROVAL.DEFAULT], { queryParams: queryParams });
       this.notifService.readNotif();
     }
+
+    redirectToRequests(requestMode: string){
+      this.router.navigate([APP_ROUTES.REQUESTS_APPROVAL.DEFAULT], { queryParams: { tab: requestMode.toUpperCase() } });
+    }
 }
