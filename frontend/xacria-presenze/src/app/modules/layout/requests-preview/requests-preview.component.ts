@@ -18,42 +18,72 @@ export type requestMode = ApprovalRequestTab;
   styleUrls: ['./requests-preview.component.scss'],
 })
 export class RequestsPreviewComponent {
-  @Input() requests: PagedResponseUserRequestResponseDto = this.requestsInitialState();
+  @Input() requests: PagedResponseUserRequestResponseDto =
+    this.requestsInitialState();
   @Input() requestMode!: string;
   @Input() visualizeNumber: boolean = false;
 
-  constructor(private router: Router, private notifService: NotificationService) {}
+  constructor(
+    private router: Router,
+    private notifService: NotificationService
+  ) {}
 
   requestsInitialState(): PagedResponseUserRequestResponseDto {
     return {};
   }
 
-  getRequestTitle(): string{
-    return this.requestMode == 'OPEN' ? 'Richieste aperte' : 'Richieste chiuse'
+  getRequestTitle(): string {
+    return this.requestMode == 'OPEN' ? 'Richieste aperte' : 'Richieste chiuse';
   }
 
   formatDateTime(
-      date: Date | undefined,
-      requestType: UserRequestResponseDto.TypeEnum | undefined
-    ): string {
-
-      if (!date || !requestType) {
-        return '—';
-      }
-      if (requestType == 'TRASFERTA')
-        return formatDate(date, 'dd-MM-yyyy', 'en-GB');
-      return formatDate(date, 'dd-MM-yyyy HH:mm', 'en-GB');
+    date: Date | undefined,
+    requestType: UserRequestResponseDto.TypeEnum | undefined,
+    noTime: boolean = false
+  ): string {
+    if (!date || !requestType) {
+      return '—';
     }
+    if (requestType == 'TRASFERTA' || requestType == 'FERIE' || noTime)
+      return formatDate(date, 'dd-MM-yyyy', 'en-GB');
+    return formatDate(date, 'dd-MM-yyyy HH:mm', 'en-GB');
+  }
 
-    onRequestClick(request: UserRequestResponseDto){
-      let queryParams = { selectedRequestId: request.id, tab : "CLOSED"};
-      if(this.requestMode.toUpperCase() == 'OPEN')
-        queryParams = { selectedRequestId: request.id, tab: "OPEN"};
-      this.router.navigate([APP_ROUTES.REQUESTS_APPROVAL.DEFAULT], { queryParams: queryParams });
-      this.notifService.readNotif();
+  getTimeFromDate(date: Date | undefined): string {
+    if (!date) {
+      return '—';
     }
+    return formatDate(date, 'HH:mm', 'en-GB');
+  }
 
-    redirectToRequests(requestMode: string){
-      this.router.navigate([APP_ROUTES.REQUESTS_APPROVAL.DEFAULT], { queryParams: { tab: requestMode.toUpperCase() } });
-    }
+  onRequestClick(request: UserRequestResponseDto) {
+    let queryParams = { selectedRequestId: request.id, tab: 'CLOSED' };
+    if (this.requestMode.toUpperCase() == 'OPEN')
+      queryParams = { selectedRequestId: request.id, tab: 'OPEN' };
+    this.router.navigate([APP_ROUTES.REQUESTS_APPROVAL.DEFAULT], {
+      queryParams: queryParams,
+    });
+    this.notifService.readNotif();
+  }
+
+  redirectToRequests(requestMode: string) {
+    this.router.navigate([APP_ROUTES.REQUESTS_APPROVAL.DEFAULT], {
+      queryParams: { tab: requestMode.toUpperCase() },
+    });
+  }
+
+  areDatesEqual(dateFrom: any, dateTo: any): boolean {
+    if (!dateFrom || !dateTo) return false;
+
+    const d1 = new Date(dateFrom);
+    const d2 = new Date(dateTo);
+
+    if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return false;
+
+    return (
+      d1.getFullYear() === d2.getFullYear() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate()
+    );
+  }
 }

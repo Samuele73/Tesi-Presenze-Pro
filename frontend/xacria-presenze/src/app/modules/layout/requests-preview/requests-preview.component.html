@@ -1,11 +1,18 @@
 <div class="">
   <div class="d-flex align-items-center gap-2">
     <h5 class="text-primary">{{ getRequestTitle() | translate }}</h5>
-    <span class="badge bg-secondary-subtle text-muted mb-1" *ngIf="visualizeNumber">{{requests.totalElements}}</span>
-    <i class="fa-solid fa-arrow-up-right-from-square mb-1 external-link" (click)="redirectToRequests(requestMode)"></i>
+    <span
+      class="badge bg-secondary-subtle text-muted mb-1"
+      *ngIf="visualizeNumber"
+      >{{ requests.totalElements }}</span
+    >
+    <i
+      class="fa-solid fa-arrow-up-right-from-square mb-1 external-link"
+      (click)="redirectToRequests(requestMode)"
+    ></i>
   </div>
 
-  <div class="ps-2  border border-top-0 border-end-0 border-bottom-0">
+  <div class="ps-2 border border-top-0 border-end-0 border-bottom-0">
     <i *ngIf="!requests.content?.length" class="text-muted">{{
       "Nessuna richiesta presente" | translate
     }}</i>
@@ -16,18 +23,36 @@
       (click)="onRequestClick(request)"
       ><span class="text-muted">{{ request.userEmail + "&nbsp;" }}</span
       >{{ "ha richiesto" | translate }}
-      <span class="fw-medium">{{ request.type ?? "" | translate }}</span>
-      {{ "da" | translate }}
-      <span class="text-muted">{{
-        formatDateTime(request.dateFrom, request.type)
-      }}</span>
-      {{ "a" | translate }}
-      <span class="text-muted">{{
-        formatDateTime(request.dateTo, request.type)
-      }}</span>
+      <span
+        *ngIf="
+          !areDatesEqual(request.dateFrom, request.dateTo);
+          else singleDate
+        "
+      >
+        <span class="fw-medium">{{ request.type ?? "" | translate }}</span>
+        {{ "da" | translate }}
+        <span class="text-muted">{{
+          formatDateTime(request.dateFrom, request.type)
+        }}</span>
+        {{ "a" | translate }}
+        <span class="text-muted">{{
+          formatDateTime(request.dateTo, request.type)
+        }}</span>
+      </span>
+      <ng-template #singleDate>
+        <span class="fw-medium">{{ request.type ?? "" | translate }}</span>
+        {{ "per il" | translate }}
+        <span class="text-muted">{{
+          formatDateTime(request.dateFrom, request.type, true)
+        }}</span>
+        <span *ngIf="request.type !== 'FERIE' && request.type !== 'TRASFERTA'">
+          {{ "dalle" | translate }}
+          <span>{{ getTimeFromDate(request.dateFrom) }}</span>
+          {{ "alle" | translate }}
+          <span>{{ getTimeFromDate(request.dateTo) }}</span>
+        </span>
+      </ng-template>
     </span>
-    <span *ngIf="requests.content?.length" class="text-muted">{{
-      "..."
-    }}</span>
+    <span *ngIf="requests.content?.length" class="text-muted">{{ "..." }}</span>
   </div>
 </div>
