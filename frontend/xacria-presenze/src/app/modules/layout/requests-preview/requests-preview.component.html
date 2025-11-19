@@ -14,7 +14,7 @@
       class="d-block reqeust-preview"
       [attr.id]="request.id"
       (click)="onRequestClick(request)"
-      ><span class="text-primary">{{ request.userEmail + "&nbsp;" }}</span
+      ><span class="text-muted">{{ request.userEmail + "&nbsp;" }}</span
       >{{ "ha richiesto" | translate }}
       <span class="fw-medium">{{ request.type ?? "" | translate }}</span>
       {{ "da" | translate }}
