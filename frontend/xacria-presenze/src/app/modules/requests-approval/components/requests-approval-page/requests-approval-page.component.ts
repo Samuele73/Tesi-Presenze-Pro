@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
 import {
@@ -18,6 +18,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RequestDetailsModalComponent } from '../request-details-modal/request-details-modal.component';
 import { RequestStoreService } from '../../services/request-store.service';
 import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from 'src/app/shared/services/notification.service';
+import { APP_ROUTES } from 'src/app/shared/constants/route-paths';
 
 export type RequestsTab = 'open' | 'closed';
 
@@ -63,11 +65,14 @@ export class RequestsApprovalPageComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private requestStoreService: RequestStoreService,
     private activatedRoute: ActivatedRoute,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private notificationService: NotificationService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.subscribeToStore();
+    this.subscriteToNotifications();
     this.listenToRouteParams();
     if (this.isPrivilegedUser) {
       this.loadUserEmailOptions();
@@ -86,6 +91,24 @@ export class RequestsApprovalPageComponent implements OnInit, OnDestroy {
     (['open', 'closed'] as RequestsTab[]).forEach((tab) =>
       this.cancelOngoingRequest(tab)
     );
+  }
+
+  private subscriteToNotifications(): void {
+    this.notificationService.$notif
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((message: string | null) => {
+        if (
+          message !== null &&
+          this.router.url.startsWith(APP_ROUTES.REQUESTS_APPROVAL.DEFAULT)
+        ) {
+          if (this.isPrivilegedUser) {
+            this.loadUserEmailOptions();
+          }
+          this.loadOpenClosedTabCount();
+          this.loadTabData(this.activeTab);
+          this.notificationService.readNotif();
+        }
+      });
   }
 
   onTabChange(tab: RequestsTab): void {
@@ -151,9 +174,7 @@ export class RequestsApprovalPageComponent implements OnInit, OnDestroy {
         ? state.filters.types
         : undefined;
     const usersFilter =
-      this.isPrivilegedUser &&
-      state.filters.users &&
-      state.filters.users.length
+      this.isPrivilegedUser && state.filters.users && state.filters.users.length
         ? state.filters.users
         : undefined;
 
@@ -191,8 +212,7 @@ export class RequestsApprovalPageComponent implements OnInit, OnDestroy {
     const content = resp.content ?? [];
     state.rows = content.map((entry) => this.mapToRow(entry));
     state.total = this.deriveTotalFromResponse(resp, content.length);
-    state.page =
-      typeof resp.page === 'number' ? resp.page : state.page ?? 0;
+    state.page = typeof resp.page === 'number' ? resp.page : state.page ?? 0;
     if (typeof resp.size === 'number' && resp.size > 0) {
       state.size = resp.size;
     }
@@ -323,7 +343,11 @@ export class RequestsApprovalPageComponent implements OnInit, OnDestroy {
     }
     const normalized = tabParam.trim().toUpperCase();
     const tabFromRoute: RequestsTab | null =
-      normalized === 'CLOSED' ? 'closed' : normalized === 'OPEN' ? 'open' : null;
+      normalized === 'CLOSED'
+        ? 'closed'
+        : normalized === 'OPEN'
+        ? 'open'
+        : null;
     if (tabFromRoute && tabFromRoute !== this.activeTab) {
       this.onTabChange(tabFromRoute);
     }
