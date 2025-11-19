@@ -55,7 +55,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
   @Input() set tab(value: ApprovalRequestTab) {
     this._tab = value;
     this.canOpenDetails =
-      this.authService.isPrivilegedUser() && this._tab === 'OPEN';
+      this.authService.isPrivilegedUser();
   }
   get tab(): ApprovalRequestTab {
     return this._tab;
@@ -94,7 +94,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
 
   columns: DynamicTableColumn[] = [];
   canOpenDetails =
-    this.authService.isPrivilegedUser() && this._tab === 'OPEN';
+    this.authService.isPrivilegedUser();
 
   requestTypeOptions = Object.values(UserRequestResponseDto.TypeEnum).map(
     (value) => ({

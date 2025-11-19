@@ -18,7 +18,7 @@ import {
 export class RequestDetailsModalComponent {
   @Input() request?: UserRequestResponseDto;
   title = '';
-  isClickable?: boolean;
+  isEditMode?: boolean;
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -26,14 +26,15 @@ export class RequestDetailsModalComponent {
     private requestStoreService: RequestStoreService,
     private toastrService: ToastrService
   ) {
-    this.checkIfClickable();
+    if(this.isEditMode === undefined)
+      this.checkIfEditMode();
   }
 
   trackByIndex(index: number): number {
     return index;
   }
 
-  checkIfClickable(): void {
+  checkIfEditMode(): void {
     const $userEmail = this.authService.getUserEmail();
     if ($userEmail)
       $userEmail.subscribe({
@@ -43,10 +44,10 @@ export class RequestDetailsModalComponent {
               this.authService.isAdmin()) ||
             this.authService.isOwner()
           ) {
-            this.isClickable = true;
+            this.isEditMode = true;
             this.title = 'Gestisci richiesta';
           } else {
-            this.isClickable = false;
+            this.isEditMode = false;
             this.title = 'Visualizza richiesta';
           }
         },

@@ -10,8 +10,9 @@
     }}</i>
     <span
       *ngFor="let request of requests.content"
-      class="d-block"
+      class="d-block reqeust-preview"
       [attr.id]="request.id"
+      (click)="onRequestClick(request)"
       ><span class="text-primary">{{ request.userEmail + "&nbsp;" }}</span
       >{{ "ha richiesto" | translate }}
       <span class="fw-medium">{{ request.type ?? "" | translate }}</span>

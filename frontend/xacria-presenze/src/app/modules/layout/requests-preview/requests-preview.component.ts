@@ -6,6 +6,9 @@ import {
 } from 'src/generated-client';
 import { RequestStoreService } from '../../requests-approval/services/request-store.service';
 import { formatDate } from '@angular/common';
+import { Router } from '@angular/router';
+import { APP_ROUTES } from 'src/app/shared/constants/route-paths';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 
 export type requestMode = ApprovalRequestTab;
 
@@ -18,6 +21,8 @@ export class RequestsPreviewComponent {
   @Input() requests: PagedResponseUserRequestResponseDto = this.requestsInitialState();
   @Input() requestMode!: string;
   @Input() visualizeNumber: boolean = false;
+
+  constructor(private router: Router, private notifService: NotificationService) {}
 
   requestsInitialState(): PagedResponseUserRequestResponseDto {
     return {};
@@ -38,5 +43,13 @@ export class RequestsPreviewComponent {
       if (requestType == 'TRASFERTA')
         return formatDate(date, 'dd-MM-yyyy', 'en-GB');
       return formatDate(date, 'dd-MM-yyyy HH:mm', 'en-GB');
+    }
+
+    onRequestClick(request: UserRequestResponseDto){
+      let queryParams = { selectedRequestId: request.id, tab : "CLOSED"};
+      if(this.requestMode.toUpperCase() == 'OPEN')
+        queryParams = { selectedRequestId: request.id, tab: "OPEN"};
+      this.router.navigate([APP_ROUTES.REQUESTS_APPROVAL.DEFAULT], { queryParams: queryParams });
+      this.notifService.readNotif();
     }
 }

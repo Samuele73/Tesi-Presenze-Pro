@@ -216,6 +216,7 @@ export class RequestsApprovalPageComponent implements OnInit, OnDestroy {
     }
     const modalRef = this.modalService.open(RequestDetailsModalComponent);
     modalRef.componentInstance.request = row.original;
+    modalRef.componentInstance.isEditMode = this.activeTab === 'closed' ? false : undefined;
   }
 
   private mapToRow(request: UserRequestResponseDto): RequestsTableRow {
