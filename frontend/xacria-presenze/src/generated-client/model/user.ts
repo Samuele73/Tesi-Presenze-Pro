@@ -24,9 +24,9 @@ export interface User {
     password?: string;
     username?: string;
     authorities?: Array<GrantedAuthority>;
-    accountNonExpired?: boolean;
     accountNonLocked?: boolean;
     credentialsNonExpired?: boolean;
+    accountNonExpired?: boolean;
 }
 export namespace User {
     export type RoleEnum = 'USER' | 'ADMIN' | 'OWNER';

@@ -9,6 +9,7 @@ import {
   UserEmailResponse,
   UserRequestResponseDto,
 } from 'src/generated-client';
+import { RequestsTab } from '../requests-approval-page/requests-approval-page.component';
 
 @Component({
   selector: 'app-request-details-modal',
@@ -17,6 +18,7 @@ import {
 })
 export class RequestDetailsModalComponent {
   @Input() request?: UserRequestResponseDto;
+  @Input() tab!: RequestsTab;
   title = '';
   isEditMode?: boolean;
 
@@ -39,6 +41,11 @@ export class RequestDetailsModalComponent {
     if ($userEmail)
       $userEmail.subscribe({
         next: (email: UserEmailResponse) => {
+          if(this.tab.toUpperCase() === 'CLOSED'){
+            this.isEditMode = false;
+            this.title = 'Visualizza richiesta';
+            return;
+          }
           if (
             (!(this.request?.userEmail === email.email) &&
               this.authService.isAdmin()) ||

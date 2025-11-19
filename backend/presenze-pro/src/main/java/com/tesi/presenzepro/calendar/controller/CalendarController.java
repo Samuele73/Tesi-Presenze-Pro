@@ -50,11 +50,15 @@ public class CalendarController {
     @GetMapping("/requests")
     ResponseEntity<PagedResponse<UserRequestResponseDto>> getAllRequests(HttpServletRequest request, @PageableDefault(size = 10, sort = "calendarEntry.dateFrom", direction = Sort.Direction.DESC) Pageable pageable, @RequestParam(required = false) List<RequestType> types,
                                                                          @RequestParam(required = false) List<String> users, @RequestParam ApprovalRequestTab tab){
-        System.out.println("Types: " + types);
-        System.out.println("users: " + users);
         final PagedResponse<UserRequestResponseDto> requests = calendarService.getAllUserRequests(request, pageable, types, users, tab);
-        System.out.println("requests: " + requests);
         return ResponseEntity.status(HttpStatus.OK).body(requests);
+    }
+
+    @Operation(description = "Ottieni la richiesta per id", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/requests/{id}")
+    ResponseEntity<UserRequestResponseDto> getRequestById(@PathVariable String id){
+        final UserRequestResponseDto request = calendarService.getUserRequest(id);
+        return ResponseEntity.status(HttpStatus.OK).body(request);
     }
 
     @Operation(description = "Ottieni tutte le tue richieste", security = @SecurityRequirement(name = "bearerAuth"))

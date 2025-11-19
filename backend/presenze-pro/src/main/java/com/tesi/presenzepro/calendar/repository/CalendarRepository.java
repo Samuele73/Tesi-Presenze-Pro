@@ -22,6 +22,8 @@ public interface CalendarRepository extends MongoRepository<CalendarEntity, Stri
 
     Optional<CalendarEntity> findByUserEmailAndId(String userEmail, String id);
 
+    Optional<CalendarEntity> findById(String id);
+
     Page<CalendarEntity> findByUserEmailAndEntryTypeIn(
             String userEmail,
             List<CalendarEntryType> entryTypes,

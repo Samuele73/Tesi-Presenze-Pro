@@ -26,6 +26,7 @@ import { OpenClosedRequestNumberResponse } from '../model/openClosedRequestNumbe
 import { Pageable } from '../model/pageable';
 import { PagedResponseUserRequestResponseDto } from '../model/pagedResponseUserRequestResponseDto';
 import { SaveCalendarEntityRequestDto } from '../model/saveCalendarEntityRequestDto';
+import { UserRequestResponseDto } from '../model/userRequestResponseDto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -118,9 +119,9 @@ export class CalendarService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public deleteMultipleCalendarEntities(body: Array<string>, observe?: 'body', reportProgress?: boolean): Observable<Array<CalendarResponseDto>>;
-    public deleteMultipleCalendarEntities(body: Array<string>, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<CalendarResponseDto>>>;
-    public deleteMultipleCalendarEntities(body: Array<string>, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<CalendarResponseDto>>>;
+    public deleteMultipleCalendarEntities(body: Array<string>, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public deleteMultipleCalendarEntities(body: Array<string>, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public deleteMultipleCalendarEntities(body: Array<string>, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
     public deleteMultipleCalendarEntities(body: Array<string>, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
@@ -154,7 +155,7 @@ export class CalendarService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<Array<CalendarResponseDto>>('post',`${this.basePath}/calendar/batchDelete`,
+        return this.httpClient.request<any>('post',`${this.basePath}/calendar/batchDelete`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,
@@ -391,6 +392,54 @@ export class CalendarService {
 
     /**
      * 
+     * Ottieni la richiesta per id
+     * @param id 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getRequestById(id: string, observe?: 'body', reportProgress?: boolean): Observable<UserRequestResponseDto>;
+    public getRequestById(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserRequestResponseDto>>;
+    public getRequestById(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserRequestResponseDto>>;
+    public getRequestById(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling getRequestById.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<UserRequestResponseDto>('get',`${this.basePath}/calendar/requests/${encodeURIComponent(String(id))}`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
      * Ottieni tutte le tue richieste
      * @param pageable 
      * @param tab 
@@ -460,7 +509,7 @@ export class CalendarService {
 
     /**
      * 
-     * Save a new calendar entry
+     * Salva un nuova entry nel calendario
      * @param body 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -514,7 +563,7 @@ export class CalendarService {
 
     /**
      * 
-     * Save calendar entries in bulk
+     * Salva nuove entries del calendario in bulk
      * @param body 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -681,7 +730,7 @@ export class CalendarService {
 
     /**
      * 
-     * Aggiorna lo stato di una richiesta. Accettandola o rifiutandola
+     * Aggiorna lo stato di una richiesta da approvare (RICHIESTA, TRASFERTA). Accettandola o rifiutandola
      * @param action 
      * @param id 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

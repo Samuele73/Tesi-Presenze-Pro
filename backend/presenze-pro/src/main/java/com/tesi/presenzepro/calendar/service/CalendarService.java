@@ -491,4 +491,9 @@ public class CalendarService {
         final String toUserNotifMessage = "Una tua richiesta di " + approvalRequestType + " è stata " + actionString;
         this.notifService.send(requestUserEmail, toUserNotifMessage);
     }
+
+    public UserRequestResponseDto getUserRequest(String id){
+        CalendarEntity entity = repository.findById(id).orElseThrow(() -> new NoUserFoundException("Richiesta non trovata"));
+        return this.calendarMapper.mapToUserRequestResponseDto(entity);
+    }
 }

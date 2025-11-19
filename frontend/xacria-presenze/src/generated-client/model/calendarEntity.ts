@@ -19,6 +19,7 @@ export interface CalendarEntity {
     calendarEntry?: CalendarEntry;
     id?: string;
     userEmail?: string;
+    createdAt?: Date;
 }
 export namespace CalendarEntity {
     export type EntryTypeEnum = 'WORKING_DAY' | 'REQUEST' | 'WORKING_TRIP' | 'AVAILABILITY';

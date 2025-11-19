@@ -17,7 +17,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RequestDetailsModalComponent } from '../request-details-modal/request-details-modal.component';
 import { RequestStoreService } from '../../services/request-store.service';
 
-type RequestsTab = 'open' | 'closed';
+export type RequestsTab = 'open' | 'closed';
 
 interface RequestsTabState {
   rows: RequestsTableRow[];
@@ -211,12 +211,12 @@ export class RequestsApprovalPageComponent implements OnInit, OnDestroy {
   }
 
   onRowSelected(row: RequestsTableRow): void {
-    if (!this.authService.isPrivilegedUser() || !row.original) {
+    if (!row.original) {
       return;
     }
     const modalRef = this.modalService.open(RequestDetailsModalComponent);
     modalRef.componentInstance.request = row.original;
-    modalRef.componentInstance.isEditMode = this.activeTab === 'closed' ? false : undefined;
+    modalRef.componentInstance.tab = this.activeTab === 'closed' ? 'CLOSED' : 'OPEN';
   }
 
   private mapToRow(request: UserRequestResponseDto): RequestsTableRow {
