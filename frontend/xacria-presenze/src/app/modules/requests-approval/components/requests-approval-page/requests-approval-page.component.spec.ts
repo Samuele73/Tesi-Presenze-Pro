@@ -8,6 +8,8 @@ import {
   PagedResponseUserRequestResponseDto,
 } from 'src/generated-client';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 class AuthServiceStub {
   isPrivilegedUser(): boolean {
@@ -49,6 +51,10 @@ class RequestStoreServiceStub {
   loadUserEmailOptions() {
     return of(true);
   }
+
+  getRequestById() {
+    return of(null);
+  }
 }
 
 class NgbModalStub {
@@ -64,12 +70,18 @@ describe('RequestsApprovalPageComponent', () => {
   let fixture: ComponentFixture<RequestsApprovalPageComponent>;
 
   beforeEach(async () => {
+    const queryParamMap$ = new BehaviorSubject(
+      convertToParamMap({})
+    );
+
     await TestBed.configureTestingModule({
       declarations: [RequestsApprovalPageComponent],
       providers: [
         { provide: AuthService, useClass: AuthServiceStub },
         { provide: RequestStoreService, useClass: RequestStoreServiceStub },
         { provide: NgbModal, useClass: NgbModalStub },
+        { provide: ActivatedRoute, useValue: { queryParamMap: queryParamMap$.asObservable() } },
+        { provide: ToastrService, useValue: { error: () => {} } },
       ],
     })
       .compileComponents();

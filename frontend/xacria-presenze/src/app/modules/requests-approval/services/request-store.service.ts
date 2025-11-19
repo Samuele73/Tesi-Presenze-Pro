@@ -148,6 +148,15 @@ export class RequestStoreService {
     );
   }
 
+  getRequestById(requestId: string): Observable<UserRequestResponseDto | null> {
+    return this.calendarService.getRequestById(requestId).pipe(
+      catchError((err: HttpErrorResponse) => {
+        console.warn('Error while loading request by id', err);
+        return of(null);
+      })
+    );
+  }
+
   private removeRequestFromAllTabs(requestId: string): void {
     const currentState = this.requestsSubject.value;
     const nextState: RequestsState = { ...currentState };

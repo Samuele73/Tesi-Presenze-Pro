@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
 import {
@@ -16,6 +17,7 @@ import { AuthService } from 'src/app/shared/services/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RequestDetailsModalComponent } from '../request-details-modal/request-details-modal.component';
 import { RequestStoreService } from '../../services/request-store.service';
+import { ToastrService } from 'ngx-toastr';
 
 export type RequestsTab = 'open' | 'closed';
 
@@ -54,15 +56,19 @@ export class RequestsApprovalPageComponent implements OnInit, OnDestroy {
     open: null,
     closed: null,
   };
+  private currentRouteRequestId: string | null = null;
 
   constructor(
     private authService: AuthService,
     private modalService: NgbModal,
-    private requestStoreService: RequestStoreService
+    private requestStoreService: RequestStoreService,
+    private activatedRoute: ActivatedRoute,
+    private toastrService: ToastrService
   ) {}
 
   ngOnInit(): void {
     this.subscribeToStore();
+    this.listenToRouteParams();
     if (this.isPrivilegedUser) {
       this.loadUserEmailOptions();
     }
@@ -214,9 +220,7 @@ export class RequestsApprovalPageComponent implements OnInit, OnDestroy {
     if (!row.original) {
       return;
     }
-    const modalRef = this.modalService.open(RequestDetailsModalComponent);
-    modalRef.componentInstance.request = row.original;
-    modalRef.componentInstance.tab = this.activeTab === 'closed' ? 'CLOSED' : 'OPEN';
+    this.openRequestDetailsModal(row.original);
   }
 
   private mapToRow(request: UserRequestResponseDto): RequestsTableRow {
@@ -302,5 +306,63 @@ export class RequestsApprovalPageComponent implements OnInit, OnDestroy {
   private cancelOngoingRequest(tab: RequestsTab): void {
     this.tabRequestSubscriptions[tab]?.unsubscribe();
     this.tabRequestSubscriptions[tab] = null;
+  }
+
+  private listenToRouteParams(): void {
+    this.activatedRoute.queryParamMap
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((params) => {
+        this.handleTabQueryParam(params.get('tab'));
+        this.handleSelectedRequestId(params.get('selectedRequestId'));
+      });
+  }
+
+  private handleTabQueryParam(tabParam: string | null): void {
+    if (!tabParam) {
+      return;
+    }
+    const normalized = tabParam.trim().toUpperCase();
+    const tabFromRoute: RequestsTab | null =
+      normalized === 'CLOSED' ? 'closed' : normalized === 'OPEN' ? 'open' : null;
+    if (tabFromRoute && tabFromRoute !== this.activeTab) {
+      this.onTabChange(tabFromRoute);
+    }
+  }
+
+  private handleSelectedRequestId(requestId: string | null): void {
+    if (!requestId) {
+      this.currentRouteRequestId = null;
+      return;
+    }
+    if (requestId === this.currentRouteRequestId) {
+      return;
+    }
+    this.currentRouteRequestId = requestId;
+    this.requestStoreService
+      .getRequestById(requestId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (request) => {
+          if (request) {
+            this.openRequestDetailsModal(request);
+          } else {
+            this.toastrService.error(
+              'Impossibile caricare la richiesta selezionata'
+            );
+          }
+        },
+        error: () => {
+          this.toastrService.error(
+            'Impossibile caricare la richiesta selezionata'
+          );
+        },
+      });
+  }
+
+  private openRequestDetailsModal(request: UserRequestResponseDto): void {
+    const modalRef = this.modalService.open(RequestDetailsModalComponent);
+    modalRef.componentInstance.request = request;
+    modalRef.componentInstance.tab =
+      this.activeTab === 'closed' ? 'CLOSED' : 'OPEN';
   }
 }
