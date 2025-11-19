@@ -26,5 +26,8 @@
         formatDateTime(request.dateTo, request.type)
       }}</span>
     </span>
+    <span *ngIf="requests.content?.length" class="text-muted">{{
+      "..."
+    }}</span>
   </div>
 </div>
