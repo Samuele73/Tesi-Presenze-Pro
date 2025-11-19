@@ -144,5 +144,7 @@
   "IN SOSPESO" : "PENDING",
   "PERMESSI": "LEAVE",
   "CONGEDO": "ABSENCE",
-  "TRASFERTA": "BUSINESS TRIP"
+  "TRASFERTA": "BUSINESS TRIP",
+  "dalle": "from",
+  "alle": "to"
 }

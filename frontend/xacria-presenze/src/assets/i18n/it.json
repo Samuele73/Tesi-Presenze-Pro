@@ -145,5 +145,7 @@
   "IN SOSPESO": "IN SOSPESO",
   "PERMESSI": "PERMESSI",
   "CONGEDO": "CONGEDO",
-  "TRASFERTA": "TRASFERTA"
+  "TRASFERTA": "TRASFERTA",
+  "dalle": "dalle",
+  "alle": "alle"
 }
