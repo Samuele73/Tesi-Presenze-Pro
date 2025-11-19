@@ -43,6 +43,7 @@ import { ProfileMenuItemComponent } from './profile-menu-item/profile-menu-item.
 import { ToastContainerModule, ToastrModule } from 'ngx-toastr';
 import { StatComponent } from './stat/stat.component';
 import { RequestsPreviewComponent } from './requests-preview/requests-preview.component';
+import { NotificationComponent } from './notification/notification.component';
 
 @NgModule({
   declarations: [
@@ -66,7 +67,8 @@ import { RequestsPreviewComponent } from './requests-preview/requests-preview.co
     SidebarItemComponent,
     ProfileMenuItemComponent,
     StatComponent,
-    RequestsPreviewComponent
+    RequestsPreviewComponent,
+    NotificationComponent
   ],
   imports: [
     CommonModule,

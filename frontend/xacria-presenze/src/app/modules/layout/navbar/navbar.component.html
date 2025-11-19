@@ -1,17 +1,42 @@
 <nav class="navbar navbar-expand navbar-light bg-primary px-3 position-sticky">
   <a href="#" class="navbar-brand">
-    <img src="/assets/img/app-logo.png" alt="" width="40px" height="40px" class="d-inline-block">
+    <img
+      src="/assets/img/app-logo.png"
+      alt=""
+      width="40px"
+      height="40px"
+      class="d-inline-block"
+    />
     <span class="align-bottom text-dark fw-bold fs-4 ms-3">PRESENZE PRO</span>
   </a>
   <ul class="navbar-nav ms-auto">
+    <li class="nav-item">
+      <a class="nav-link" href="#">
+        <app-notification></app-notification>
+      </a>
+    </li>
     <li class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" >
+      <a
+        class="nav-link dropdown-toggle"
+        href="#"
+        id="navbarDropdownMenuLink"
+        role="button"
+        data-bs-toggle="dropdown"
+      >
         <i class="fa-solid fa-user fa-lg"></i>
       </a>
       <ul class="dropdown-menu dropdown-menu-end">
-        <li><a class="dropdown-item" routerLink="/app/profile">{{"Il mio profilo" | translate}}</a></li>
+        <li>
+          <a class="dropdown-item" routerLink="/app/profile">{{
+            "Il mio profilo" | translate
+          }}</a>
+        </li>
         <li class="dropdown-divider"></li>
-        <li><a class="dropdown-item" routerLink="/login"><b>{{"Logout"}}</b></a></li>
+        <li>
+          <a class="dropdown-item" routerLink="/login"
+            ><b>{{ "Logout" }}</b></a
+          >
+        </li>
       </ul>
     </li>
     <li class="nav-item">
@@ -19,4 +44,3 @@
     </li>
   </ul>
 </nav>
-

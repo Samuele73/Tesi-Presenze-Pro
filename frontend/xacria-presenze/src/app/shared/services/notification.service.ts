@@ -9,10 +9,12 @@ import SockJS from 'sockjs-client/dist/sockjs.min.js';
 })
 export class NotificationService {
 
-  constructor(private toastrService: ToastrService){}
+  constructor(private toastrService: ToastrService){
+    this.notifSubject.next(sessionStorage.getItem('isNotified') === 'true' ? 'Hai nuove notifiche' : null);
+  }
 
   private stompClient!: Client;
-  private notifSubject = new BehaviorSubject<boolean>(false);
+  private notifSubject = new BehaviorSubject<string | null>(null);
 
   get $notif() {
     return this.notifSubject.asObservable();
@@ -35,8 +37,8 @@ export class NotificationService {
         (msg: IMessage) => {
           const payload = JSON.parse(msg.body);
           console.log("NOTIFICA:", payload.message);
-          this.notifSubject.next(true);
-          this.toastrService.info(payload.message);
+          this.notifSubject.next(payload.message);
+          /* this.toastrService.info(payload.message); */
         }
       );
     };
@@ -55,6 +57,6 @@ export class NotificationService {
   }
 
   readNotif() {
-    this.notifSubject.next(false);
+    this.notifSubject.next(null);
   }
 }
