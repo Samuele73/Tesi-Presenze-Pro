@@ -26,6 +26,14 @@ public class NotFoundAfterAuthFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String path = request.getRequestURI();
+
+        // ✅ ESCLUDI COMPLETAMENTE I WEBSOCKET
+        if (path.startsWith("/ws")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // Escludi swagger
         if (path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")) {
             filterChain.doFilter(request, response);
             return;
@@ -49,6 +57,7 @@ public class NotFoundAfterAuthFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             logger.debug("Error checking handler for path: " + path, e);
         }
+
         filterChain.doFilter(request, response);
     }
 }

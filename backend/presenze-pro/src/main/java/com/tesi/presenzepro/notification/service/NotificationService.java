@@ -1,8 +1,6 @@
 package com.tesi.presenzepro.notification.service;
 
 import com.tesi.presenzepro.notification.model.NotificationPayload;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -13,17 +11,10 @@ public class NotificationService {
 
     private final SimpMessagingTemplate messagingTemplate;
 
-    public void send(String userEmail, String message) {
-        NotificationPayload payload = new NotificationPayload(message);
-
-        try {
-            messagingTemplate.convertAndSend(
-                    "/topic/notifications/" + userEmail,
-                    payload
-            );
-        } catch (Exception e) {
-            System.out.println("WEBSOCKET ERROR: " + e.getMessage());
-            e.printStackTrace();
-        }
+    public void send(String email, String message) {
+        messagingTemplate.convertAndSend(
+                "/topic/notifications/" + email,
+                new NotificationPayload(message)
+        );
     }
 }

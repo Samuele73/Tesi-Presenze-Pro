@@ -1,26 +1,31 @@
 import { Injectable } from '@angular/core';
 import { Client, IMessage, Stomp } from '@stomp/stompjs';
+import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject } from 'rxjs';
 import SockJS from 'sockjs-client/dist/sockjs.min.js';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class NotificationService {
-  private notifSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
-    false
-  );
+
+  constructor(private toastrService: ToastrService){}
+
   private stompClient!: Client;
+  private notifSubject = new BehaviorSubject<boolean>(false);
 
-  constructor() {}
-
-  get $notif(){return this.notifSubject.asObservable();}
+  get $notif() {
+    return this.notifSubject.asObservable();
+  }
 
   connect(userEmail: string) {
 
     const ws = new SockJS('http://localhost:8080/ws');
 
     this.stompClient = Stomp.over(() => ws);
+
+    // disabilito il log verboso
+    this.stompClient.debug = () => {};
 
     this.stompClient.onConnect = () => {
       console.log("STOMP connected!");
@@ -31,12 +36,14 @@ export class NotificationService {
           const payload = JSON.parse(msg.body);
           console.log("NOTIFICA:", payload.message);
           this.notifSubject.next(true);
+          this.toastrService.info(payload.message);
         }
       );
     };
 
-    this.stompClient.onStompError = (frame) =>
+    this.stompClient.onStompError = (frame) => {
       console.error("Errore STOMP", frame);
+    };
 
     this.stompClient.activate();
   }
@@ -47,5 +54,7 @@ export class NotificationService {
     }
   }
 
-  readNotif(){this.notifSubject.next(false);}
+  readNotif() {
+    this.notifSubject.next(false);
+  }
 }
