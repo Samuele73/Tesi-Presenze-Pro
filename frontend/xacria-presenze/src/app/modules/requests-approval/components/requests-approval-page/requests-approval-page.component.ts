@@ -66,7 +66,7 @@ export class RequestsApprovalPageComponent implements OnInit, OnDestroy {
     private requestStoreService: RequestStoreService,
     private activatedRoute: ActivatedRoute,
     private toastrService: ToastrService,
-    private notificationService: NotificationService,
+    private notifService: NotificationService,
     private router: Router
   ) {}
 
@@ -94,7 +94,7 @@ export class RequestsApprovalPageComponent implements OnInit, OnDestroy {
   }
 
   private subscriteToNotifications(): void {
-    this.notificationService.$notif
+    this.notifService.$notif
       .pipe(takeUntil(this.destroy$))
       .subscribe((message: string | null) => {
         if (
@@ -106,7 +106,8 @@ export class RequestsApprovalPageComponent implements OnInit, OnDestroy {
           }
           this.loadOpenClosedTabCount();
           this.loadTabData(this.activeTab);
-          this.notificationService.readNotif();
+          this.notifService.readNotif();
+          this.notifService.readNotif();
         }
       });
   }
