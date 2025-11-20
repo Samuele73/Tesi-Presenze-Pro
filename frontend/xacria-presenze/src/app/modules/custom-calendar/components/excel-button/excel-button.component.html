@@ -1,10 +1,15 @@
 <button
   type="buttton"
-  class=" d-flex gap-2 align-items-center"
+  class="d-flex gap-2 align-items-center"
   tabindex="0"
   [ngClass]="buttonClass"
   role="button"
+  (click)="openExportModal(exportModal)"
 >
   <fa-icon [icon]="faDownload"></fa-icon>
   <span class="text-black">{{ "Scarica" }}.csv</span>
 </button>
+<app-calendar-csv-modal
+  [currentDate]="currentDate"
+  #exportModal
+></app-calendar-csv-modal>
