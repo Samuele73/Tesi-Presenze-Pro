@@ -165,23 +165,17 @@
             <!-- HEADER -->
             <h2 class="accordion-header" id="heading-{{ i }}">
               <button
-                class="accordion-button"
+                class="accordion-button d-flex gap-2 align-items-center"
                 type="button"
-                [ngClass]="{ collapsed: activePanelIndex !== i }"
+                [ngClass]="{ collapsed: activePanelIndex !== i, 'delete-mode': toDeleteEntries.includes(request.value.id) }"
                 (click)="togglePanel(i)"
               >
-                <strong>#{{ i + 1 }} {{ "Richiesta" | translate }}</strong>
-
-                <span class="text-muted ms-2 small">
-                  {{
-                    (request.value.status === "ACCEPTED"
-                      ? "ACCETTATA"
-                      : request.value.status === "REJECTED"
-                      ? "RIFIUTATA"
-                      : "IN SOSPESO"
-                    ) | translate
-                  }}
-                </span>
+                <span class="fw-medium">#{{ i + 1 }} {{ "Richiesta" | translate }}</span>
+                <app-card-badge
+                  [labelMap]="statusLabelMap"
+                  [mapValue]="request.value.status"
+                  [classMap]="statusClassMap"
+                ></app-card-badge>
               </button>
             </h2>
 

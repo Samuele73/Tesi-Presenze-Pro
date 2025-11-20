@@ -15,19 +15,18 @@ button.disabled {
 }
 
 .delete-mode{
-  background-color: rgba(255, 0, 0, 0.406);
-  padding: $spacer;
-  transition: all 0.2s ease;
-  color: black;
+  border: 2px solid $danger;
+  transition: all 0.05s ease;
 }
 
 .accordion-button{
   background-color: transparent !important;
-  border: 1px solid $gray-300 !important;
   color: black;
 }
+.accordion-button:focus {
+  box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
 
-.accordion-button::after{
-  background-color: transparent !important;
-  border: 0 !important;
+.accordion-button.delete-mode:focus {
+  box-shadow: 0 0 0 0.25rem rgba(var(--bs-danger-rgb), 0.25);
 }

@@ -45,6 +45,16 @@ export class RequestModalComponent implements ModalComponent, OnInit {
   toDeleteEntries: string[] = [];
   initialRequests: identifiableCalendarRequest[] = [];
   apiError: string | null = null;
+  statusLabelMap: { [key: string]: string } = {
+    PENDING: 'IN ATTESA',
+    ACCEPTED: 'ACCETTATA',
+    REJECTED: 'RIFIUTATA',
+  };
+  statusClassMap: { [key: string]: string } = {
+    PENDING: 'bg-warning',
+    ACCEPTED: 'bg-primary',
+    REJECTED: 'bg-danger',
+  };
 
   constructor(
     private modalService: NgbModal,
@@ -74,7 +84,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
   }
 
   activePanelIndex: number | null = null;
-  
+
 
   togglePanel(i: number) {
     this.activePanelIndex = this.activePanelIndex === i ? null : i;
