@@ -21,4 +21,6 @@ public interface CalendarRepositoryCustom {
     OpenClosedRequestNumberResponse getOpenClosedRequestsNumber(List<String> usersEmails);
 
     Boolean updateRequestStatus(String id, RequestStatus newStatus);
+
+    List<CalendarEntity> findUserYearMonthEntities(String userEmail, int year, int month);
 }

@@ -51,7 +51,7 @@ public class UserController {
     @Operation(description = "Ottieni il profilo utente",security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/profile")
     public ResponseEntity<FullUserProfileResponseDto> getMyUserProfile(HttpServletRequest request){
-         final FullUserProfileResponseDto user = service.getUserProfile(request);
+         final FullUserProfileResponseDto user = service.getFullUserProfileResponseDtoFromRequest(request);
         System.out.println("profile user: " + user);
          return ResponseEntity.ok(user);
     }
@@ -60,7 +60,7 @@ public class UserController {
     @Operation(description = "Ottieni l'intero profilo dell'utente indicati (permessi permettendo)",security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/full-profile/{email}")
     public ResponseEntity<FullUserProfileResponseDto> getFullUserProfile(@PathVariable String email){
-        final FullUserProfileResponseDto user = service.getUserProfileFromEmail(email);
+        final FullUserProfileResponseDto user = service.getFullUserProfileResponseDtoFromEmail(email);
         System.out.println("profile user: " + user);
         return ResponseEntity.ok(user);
     }
@@ -76,7 +76,7 @@ public class UserController {
     @Operation(description = "Ottieni il campo dati dell'utente in base al tkn nell'headder", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/data")
     public ResponseEntity<UserData> getUserData(HttpServletRequest request){
-        final UserData userData = service.getUserData(request);
+        final UserData userData = service.getUserDataFromRequest(request);
         return ResponseEntity.ok(userData);
     }
     

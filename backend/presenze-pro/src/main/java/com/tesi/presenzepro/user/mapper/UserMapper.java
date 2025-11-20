@@ -5,7 +5,6 @@ import com.tesi.presenzepro.user.model.Role;
 import com.tesi.presenzepro.user.model.User;
 import com.tesi.presenzepro.user.model.UserData;
 import com.tesi.presenzepro.user.model.UserProfile;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,7 +27,7 @@ public class UserMapper {
                 .build();
     }
 
-    public FullUserProfileResponseDto fromUserToUserProfile(User user){
+    public FullUserProfileResponseDto fromUserToFullUserProfileResponseDto(User user){
         final UserProfile userProfile = user.getProfile();
         if (userProfile == null) {
             return new FullUserProfileResponseDto(
@@ -76,5 +75,9 @@ public class UserMapper {
 
     public UserData fromUserToUserData(User user){
         return new UserData(user.getData().assignedProjects(), user.getData().annualLeaveHours(), user.getData().annualPermitHours(), user.getData().dailyHours());
+    }
+
+    public UserProfile fromUserToUserProfile(User user){
+        return user.getProfile();
     }
 }

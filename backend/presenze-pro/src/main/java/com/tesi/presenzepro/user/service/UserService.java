@@ -5,9 +5,7 @@ import com.tesi.presenzepro.calendar.model.HoursType;
 import com.tesi.presenzepro.exception.DuplicateEmailException;
 import com.tesi.presenzepro.exception.NoUserFoundException;
 import com.tesi.presenzepro.jwt.JwtUtils;
-import com.tesi.presenzepro.project.exception.NoUserForProjectFound;
 import com.tesi.presenzepro.project.repository.ProjectRepository;
-import com.tesi.presenzepro.project.repository.ProjectRepositoryCustomImpl;
 import com.tesi.presenzepro.user.dto.*;
 import com.tesi.presenzepro.user.mapper.UserMapper;
 import com.tesi.presenzepro.user.model.*;
@@ -175,24 +173,24 @@ public class UserService {
         return jwtUtils.getUsernameFromJwt(tkn);
     }
 
-    public FullUserProfileResponseDto getUserProfile(HttpServletRequest request){
+    public FullUserProfileResponseDto getFullUserProfileResponseDtoFromRequest(HttpServletRequest request){
         String email = this.getUserEmailFromRequest(request);
-        return this.getUserProfileFromEmail(email);
+        return this.getFullUserProfileResponseDtoFromEmail(email);
     }
 
-    public FullUserProfileResponseDto getUserProfileFromEmail(String email){
+    public FullUserProfileResponseDto getFullUserProfileResponseDtoFromEmail(String email){
         User user = repository.findByEmail(email).orElseThrow(() -> new NoUserFoundException("Utente non trovato"));
-        return this.userMapper.fromUserToUserProfile(user);
+        return this.userMapper.fromUserToFullUserProfileResponseDto(user);
     }
 
     public FullUserProfileResponseDto updateUserProfile(User updatedUserProfile){
         Optional<User> newUserProfile = repository.findByIdAndModify(updatedUserProfile);
-        return newUserProfile.map(userMapper::fromUserToUserProfile).orElse(null);
+        return newUserProfile.map(userMapper::fromUserToFullUserProfileResponseDto).orElse(null);
     }
 
     public FullUserProfileResponseDto updateUserProfileByEmail(User updatedUserProfile, String email){
         Optional<User> newUserProfile = repository.findByEmailAndModify(updatedUserProfile, email);
-        return newUserProfile.map(userMapper::fromUserToUserProfile).orElse(null);
+        return newUserProfile.map(userMapper::fromUserToFullUserProfileResponseDto).orElse(null);
     }
 
     public BasicUserProfileResponse getBasicUserProfileFromEmail(String email){
@@ -276,10 +274,19 @@ public class UserService {
         return jwtUtils.getUsernameFromJwt(tkn);
     }
 
-    public UserData getUserData(HttpServletRequest request) {
+    public UserData getUserDataFromRequest(HttpServletRequest request) {
         String email = this.getUserEmailFromRequest(request);
-        Optional<User> user = repository.findByEmail(email);
+        return this.getUserDataFromEmail(email);
+    }
+
+    public UserData getUserDataFromEmail(String userEmail) {
+        Optional<User> user = repository.findByEmail(userEmail);
         return user.map(userMapper::fromUserToUserData).orElse(null);
+    }
+
+    public UserProfile getUserProfileFromEmail(String userEmail) {
+        Optional<User> user = repository.findByEmail(userEmail);
+        return user.map(userMapper::fromUserToUserProfile).orElse(null);
     }
 
     public UserData getFullUserData(String email) {

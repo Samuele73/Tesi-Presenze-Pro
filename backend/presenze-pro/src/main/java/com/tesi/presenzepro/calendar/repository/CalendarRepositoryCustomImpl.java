@@ -23,6 +23,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -171,6 +173,32 @@ public class CalendarRepositoryCustomImpl implements CalendarRepositoryCustom {
             throw new IllegalStateException("Nessuna richiesta trovata o tipo di entry non aggiornabile per ID: " + id);
         }
         return true;
+    }
+
+    @Override
+    public List<CalendarEntity> findUserYearMonthEntities(String userEmail, int year, int month) {
+        Calendar startCal = Calendar.getInstance();
+        startCal.set(Calendar.YEAR, year);
+        startCal.set(Calendar.MONTH, month);
+        startCal.set(Calendar.DAY_OF_MONTH, 1);
+
+        startCal.set(Calendar.HOUR_OF_DAY, 0);
+        startCal.set(Calendar.MINUTE, 0);
+        startCal.set(Calendar.SECOND, 0);
+        startCal.set(Calendar.MILLISECOND, 0);
+
+        Date startDate = startCal.getTime();
+        Calendar endCal = (Calendar) startCal.clone();
+        endCal.add(Calendar.MONTH, 1); // Aggiunge 1 al mese (gestisce cambio anno automaticamente)
+        Date endDate = endCal.getTime();
+
+        Query query = new Query();
+        Criteria emailCriteria = Criteria.where("userEmail").is(userEmail);
+        Criteria dateCriteria = Criteria.where("calendarEntry.dateFrom")
+                .gte(startDate)
+                .lt(endDate);
+        query.addCriteria(new Criteria().andOperator(emailCriteria, dateCriteria));
+        return mongoTemplate.find(query, CalendarEntity.class);
     }
 
 }
