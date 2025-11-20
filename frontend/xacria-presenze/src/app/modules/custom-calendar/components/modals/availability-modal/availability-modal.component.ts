@@ -179,8 +179,10 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
       console.error('Availability modify form is invalid');
       return;
     }
-    this.deleteEntries();
+
     this.updateEntries();
+    this.deleteEntries();
+
 
     this.modalService.dismissAll();
   }

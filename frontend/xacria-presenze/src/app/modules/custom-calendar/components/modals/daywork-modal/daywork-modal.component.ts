@@ -169,8 +169,10 @@ export class DayworkModalComponent
       console.error('Availability modify form is invalid');
       return;
     }
-    this.deleteEntries();
+    
     this.updateEntries();
+    this.deleteEntries();
+
 
     this.modalService.dismissAll();
   }
