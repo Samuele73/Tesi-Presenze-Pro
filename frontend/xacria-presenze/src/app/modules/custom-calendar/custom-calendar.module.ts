@@ -30,6 +30,7 @@ import { AvailabilityModalComponent } from './components/modals/availability-mod
 import { WorkingTripModalComponent } from './components/modals/working-trip-modal/working-trip-modal.component';
 import { StatusBadgeComponent } from './components/status-badge/status-badge.component';
 import { CustomCalendarPageComponent } from './components/custom-calendar-page/custom-calendar-page.component';
+import { ExcelButtonComponent } from './components/excel-button/excel-button.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { CustomCalendarPageComponent } from './components/custom-calendar-page/c
     AvailabilityModalComponent,
     WorkingTripModalComponent,
     StatusBadgeComponent,
-    CustomCalendarPageComponent
+    CustomCalendarPageComponent,
+    ExcelButtonComponent
   ],
   imports: [
     CommonModule,
