@@ -5,9 +5,28 @@ button.disabled {
   opacity: 0.5;
 }
 
+.btn-icon{
+  width: 2em;
+  height: 2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
 .delete-mode{
-  background-color: rgba(255, 0, 0, 0.406);
-  padding: $spacer;
-  transition: all 0.2s ease;
+  border: 2px solid $danger;
+  transition: all 0.05s ease;
+}
+
+.accordion-button{
+  background-color: transparent !important;
   color: black;
+}
+.accordion-button:focus {
+  box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+.accordion-button.delete-mode:focus {
+  box-shadow: 0 0 0 0.25rem rgba(var(--bs-danger-rgb), 0.25);
 }

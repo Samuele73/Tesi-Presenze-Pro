@@ -40,6 +40,17 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
   initialWorkingTrips: identifiableCalendarWorkingTrip[] = [];
   apiError: string | null = null;
 
+  statusLabelMap: { [key: string]: string } = {
+    PENDING: 'IN ATTESA',
+    ACCEPTED: 'ACCETTATA',
+    REJECTED: 'RIFIUTATA',
+  };
+  statusClassMap: { [key: string]: string } = {
+    PENDING: 'bg-warning',
+    ACCEPTED: 'bg-primary',
+    REJECTED: 'bg-danger',
+  };
+
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -60,6 +71,12 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
+  }
+
+  activePanelIndex: number | null = null;
+
+  togglePanel(index: number) {
+    this.activePanelIndex = this.activePanelIndex === index ? null : index;
   }
 
   initializeForm(): void {
@@ -100,7 +117,7 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
       id: [entry.id],
       dateFrom: [from, Validators.required],
       dateTo: [to, Validators.required],
-      status: [entry.calendarEntry.status]
+      status: [entry.calendarEntry.status],
     });
   }
 
