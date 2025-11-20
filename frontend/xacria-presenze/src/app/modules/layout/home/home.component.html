@@ -18,8 +18,8 @@
   <hr class="mt-5" />
 </div>
 <div class="container-fluid">
-  <div class="row row-cols-2">
-    <app-requests-preview [requestMode]="'OPEN'" [requests]="requestsByTab['OPEN']" [visualizeNumber]="authService.isOwner()"></app-requests-preview>
-    <app-requests-preview [requestMode]="'CLOSED'" [requests]="requestsByTab['CLOSED']" [visualizeNumber]="authService.isOwner()"></app-requests-preview>
+  <div class="row row-cols-2" [ngClass]="containerLayoutBasedOnRole()">
+    <app-requests-preview [requestMode]="'OPEN'" [requests]="requestsByTab['OPEN']" [visualizeNumber]="authService.isOwner()" ></app-requests-preview>
+    <app-requests-preview *ngIf="!authService.isOwner()" [requestMode]="'CLOSED'" [requests]="requestsByTab['CLOSED']" [visualizeNumber]="authService.isOwner()"></app-requests-preview>
   </div>
 </div>

@@ -123,4 +123,8 @@ export class HomeComponent implements OnInit {
       },
     });
   }
+  
+  containerLayoutBasedOnRole(): string{
+    return this.authService.isOwner() ? 'row-cols-1 justify-content-center' : 'row-cols-2';
+  }
 }
