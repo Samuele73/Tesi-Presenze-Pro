@@ -2,7 +2,7 @@
   <div class="modal-header">
     <div>
       <h3 class="modal-title" id="modal-basic-title">
-        {{ "Scarica mese" | translate }}
+        {{ ("Scarica mese del " | translate) + " " + currentDate!.getFullYear() }}
       </h3>
       <span class="form-text">* {{"Seleziona il mese valido da esportare in formato .csv" | translate}}</span>
     </div>
@@ -13,22 +13,44 @@
       (click)="thisModal.dismiss('Cross click')"
     ></button>
   </div>
-  <div class="modal-body">
-    idk
-  </div>
-  <div class="modal-footer">
-    <app-button
-      [type]="'button'"
-      [name]="'Annulla'"
-      [mode]="'UNDO'"
-      (buttonClick)="thisModal.close()"
-    ></app-button>
-    <app-button
-      [type]="'submit'"
-      [name]="'Salva'"
-      [mode]="'SAVE'"
-      [buttonDisabled]="true"
-      (buttonClick)="submitMonthExport()"
-    ></app-button>
-  </div>
+  <form #monthForm="ngForm" (ngSubmit)="submitMonthExport(monthForm)" novalidate>
+    <div class="modal-body">
+      <div class="mb-3">
+        <label class="form-label" for="month-select">
+          {{ "Mese da esportare" | translate }}
+        </label>
+        <select
+          id="month-select"
+          class="form-select"
+          name="selectedMonth"
+          required
+          [(ngModel)]="selectedMonth"
+        >
+          <option *ngFor="let month of availableMonths" [ngValue]="month.value">
+            {{ month.label | titlecase }}
+          </option>
+        </select>
+        <div
+          *ngIf="monthForm.submitted && monthForm.controls['selectedMonth']?.invalid"
+          class="invalid-feedback d-block"
+        >
+          {{ "Seleziona un mese valido" | translate }}
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <app-button
+        [type]="'button'"
+        [name]="'Annulla'"
+        [mode]="'UNDO'"
+        (buttonClick)="thisModal.close()"
+      ></app-button>
+      <app-button
+        [type]="'submit'"
+        [name]="'Salva'"
+        [mode]="'SAVE'"
+        [buttonDisabled]="!!monthForm?.invalid"
+      ></app-button>
+    </div>
+  </form>
 </ng-template>
