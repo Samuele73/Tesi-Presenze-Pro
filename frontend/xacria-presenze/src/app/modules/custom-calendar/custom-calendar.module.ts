@@ -12,6 +12,7 @@ import { CalendarCommonModule, DateAdapter } from 'angular-calendar';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
+  NgbAccordionModule,
   NgbCollapse,
   NgbDatepickerModule,
   NgbDropdownModule,
@@ -68,7 +69,7 @@ import { CustomCalendarPageComponent } from './components/custom-calendar-page/c
       provide: DateAdapter,
       useFactory: adapterFactory,
     }),
-    NgbCollapse,
+    NgbCollapse
   ],
 })
 export class CustomCalendarModule {}

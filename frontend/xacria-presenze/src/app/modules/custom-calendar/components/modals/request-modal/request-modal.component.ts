@@ -73,6 +73,13 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     return this.form.get('requests') as FormArray;
   }
 
+  activePanelIndex: number | null = null;
+  
+
+  togglePanel(i: number) {
+    this.activePanelIndex = this.activePanelIndex === i ? null : i;
+  }
+
   ngOnInit(): void {
     this.initializeForm();
     this.calendarStateService.error.subscribe((error: string | null) => {
