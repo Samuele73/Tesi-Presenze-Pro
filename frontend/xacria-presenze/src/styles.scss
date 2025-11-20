@@ -15,33 +15,6 @@
   --focus-ring: 0 0 0 0.2rem rgba(19, 173, 106, 0.4);
 }
 
-/* Forza bordi e hover del MultiSelect */
-.p-multiselect:not(.p-disabled).p-focus,
-.p-multiselect:not(.p-disabled):hover,
-.p-dropdown:not(.p-disabled).p-focus,
-.p-dropdown:not(.p-disabled):hover {
-  border-color: #13ad6a !important;
-  box-shadow: 0 0 0 0.25rem rgba(19, 173, 106, 0.25) !important;
-}
-
-/* Checkbox nella lista */
-/* .p-multiselect-panel .p-checkbox-box.p-highlight {
-  background: var(--primary-color) !important;
-  border-color: var(--primary-color) !important;
-} */
-
-/* Tag del valore selezionato */
-/* .p-multiselect-token {
-  background: var(--primary-color) !important;
-  color: white !important;
-} */
-
-/* Checkbox quando è selezionato */
-/* .p-checkbox .p-checkbox-box.p-highlight {
-  background: var(--primary-color) !important;
-  border-color: var(--primary-color) !important;
-} */
-
 :root {
   /* Colore primario coerente con Bootstrap */
   --primary-color: #13ad6a;
@@ -59,6 +32,15 @@
 }
 
 /* INIZIO MODIFICA PRIMENG */
+
+/* Forza bordi e hover del MultiSelect */
+.p-multiselect:not(.p-disabled).p-focus,
+.p-multiselect:not(.p-disabled):hover,
+.p-dropdown:not(.p-disabled).p-focus,
+.p-dropdown:not(.p-disabled):hover {
+  border-color: #13ad6a !important;
+  box-shadow: 0 0 0 0.25rem rgba(19, 173, 106, 0.25) !important;
+}
 
 /* Dropdown & Multiselect per matchare Bootstrap */
 .p-dropdown,
