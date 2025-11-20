@@ -60,6 +60,8 @@ public class UserService {
     private Double annualLeaveHours;
     @Value("${spring.app.annualPermitHours}")
     private Double annualPermitHours;
+    @Value("${spring.app.standardDailyHours}")
+    private Integer standardDailyHours;
 
     private boolean isUserInvalid(User user){
         return user.getEmail().isBlank() || user.getPwd().isBlank();
@@ -144,7 +146,7 @@ public class UserService {
             throw new DuplicateEmailException(user.getUsername());
         user.setPwd(passwordEncoder.encode(user.getPwd()));
         try{
-            user.setData(new UserData(null, annualLeaveHours, annualPermitHours));
+            user.setData(new UserData(null, annualLeaveHours, annualPermitHours, standardDailyHours));
             return repository.save(user);
         }catch (DuplicateKeyException e){
             throw new DuplicateEmailException(user.getUsername());

@@ -13,6 +13,7 @@ spring:
     frontend-name: localhost
     annualLeaveHours: 288 #12 giorni * 24 ore
     annualPermitHours: 40
+    standardDailyHours: 8
 
 
 

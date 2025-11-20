@@ -17,7 +17,7 @@ public class UserMapper {
                 .email(dto.email())
                 .pwd(dto.password())
                 .role(Role.USER)
-                .data(new UserData(null, 0.0, 0.0))// Si assume che i privilegi superiori vengano messi manualmente.
+                .data(new UserData(null, 0.0, 0.0, 0))// Si assume che i privilegi superiori vengano messi manualmente.
                 .build();
     }
 
@@ -75,6 +75,6 @@ public class UserMapper {
     }
 
     public UserData fromUserToUserData(User user){
-        return new UserData(user.getData().assignedProjects(), user.getData().annualLeaveHours(), user.getData().annualPermitHours());
+        return new UserData(user.getData().assignedProjects(), user.getData().annualLeaveHours(), user.getData().annualPermitHours(), user.getData().dailyHours());
     }
 }

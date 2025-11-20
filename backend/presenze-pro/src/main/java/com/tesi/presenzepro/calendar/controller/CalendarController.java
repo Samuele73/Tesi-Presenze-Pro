@@ -126,4 +126,10 @@ public class CalendarController {
         final List<CalendarResponseDto> updatedCalendarEntities = calendarService.updateCalendarEntities(request, calendarEntities);
         return ResponseEntity.status(HttpStatus.OK).body(updatedCalendarEntities);
     }
+
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/export/month", produces = "text/csv")
+    public ResponseEntity<Byte[]> exportMonthFromCurrentYear(@RequestParam String month){
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }
