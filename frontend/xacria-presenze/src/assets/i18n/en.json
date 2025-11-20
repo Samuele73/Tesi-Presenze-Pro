@@ -146,5 +146,6 @@
   "CONGEDO": "ABSENCE",
   "TRASFERTA": "BUSINESS TRIP",
   "dalle": "from",
-  "alle": "to"
+  "alle": "to",
+  "Seleziona il mese valido da esportare in formato .csv": "Select the valid month to export in .csv format"
 }

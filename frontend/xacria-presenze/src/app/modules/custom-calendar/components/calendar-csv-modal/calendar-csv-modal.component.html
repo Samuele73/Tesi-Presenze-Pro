@@ -1,0 +1,33 @@
+<ng-template #addProjectModal let-modal>
+  <div class="modal-header">
+    <div>
+      <h3 class="modal-title" id="modal-basic-title">
+        {{ "Aggiungi Progetto" | translate }}
+      </h3>
+      <span class="form-text">* {{"Seleziona il mese valido da esportare in formato .csv" | translate}}</span>
+    </div>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    idk
+  </div>
+  <div class="modal-footer">
+    <app-button
+      [type]="'button'"
+      [name]="'Annulla'"
+      [mode]="'UNDO'"
+    ></app-button>
+    <app-button
+      [type]="'submit'"
+      [name]="'Salva'"
+      [mode]="'SAVE'"
+      [buttonDisabled]="true"
+      (buttonClick)="submitMonthExport()"
+    ></app-button>
+  </div>
+</ng-template>
