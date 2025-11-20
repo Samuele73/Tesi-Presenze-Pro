@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -503,104 +504,66 @@ public class CalendarService {
         return this.calendarMapper.mapToUserRequestResponseDto(entity);
     }
 
-//    import com.tesi.presenzepro.calendar.model.*;
-//import com.tesi.presenzepro.user.model.UserData;
-//import com.tesi.presenzepro.user.model.UserProfile;
-//import org.apache.poi.ss.usermodel.*;
-//import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-//
-//import java.time.*;
-//import java.time.temporal.ChronoUnit;
-//import java.util.*;
-
     public XSSFWorkbook generateMonthlyReportFromCurrentYear(int month) {
         int currentYear = Year.now().getValue();
         String userEmail = this.userService.getCurrentUserEmail();
-        List<CalendarEntity> yearmonthEntities =
-                this.repository.findUserYearMonthEntities(userEmail, currentYear, month);
+
+        // Recupero Dati dal DB
+        List<CalendarEntity> yearmonthEntities = new ArrayList<>(this.repository.findUserYearMonthEntities(userEmail, currentYear, month));
         UserData userData = this.userService.getUserDataFromEmail(userEmail);
         UserProfile userProfile = this.userService.getUserProfileFromEmail(userEmail);
-        System.out.println("CHECK THIS: " + yearmonthEntities.toString());
 
-        month++;
-        int dailyHours = Optional.ofNullable(userData.dailyHours()).orElse(8); // fallback
+        String fullName = userProfile.name() + " " + userProfile.surname();
 
-        YearMonth ym = YearMonth.of(currentYear, month);
+        // Correzione mese per YearMonth (Java Time usa 1-12)
+        int calcMonth = month + 1;
+
+        // Ore giornaliere (default 8 se null)
+        int dailyHours = Optional.ofNullable(userData.dailyHours()).orElse(8);
+
+        YearMonth ym = YearMonth.of(currentYear, calcMonth);
         int daysInMonth = ym.lengthOfMonth();
 
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Presenze " + currentYear + "-" + String.format("%02d", month));
-
-        // === STILI BASE ===
-        CellStyle headerStyle = workbook.createCellStyle();
-        Font boldFont = workbook.createFont();
-        boldFont.setBold(true);
-        headerStyle.setFont(boldFont);
-
-        CellStyle borderCenter = workbook.createCellStyle();
-        borderCenter.setBorderTop(BorderStyle.THIN);
-        borderCenter.setBorderBottom(BorderStyle.THIN);
-        borderCenter.setBorderLeft(BorderStyle.THIN);
-        borderCenter.setBorderRight(BorderStyle.THIN);
-        borderCenter.setAlignment(HorizontalAlignment.CENTER);
-        borderCenter.setVerticalAlignment(VerticalAlignment.CENTER);
-
-        CellStyle borderLeft = workbook.createCellStyle();
-        borderLeft.cloneStyleFrom(borderCenter);
-        borderLeft.setAlignment(HorizontalAlignment.LEFT);
-
-        CellStyle boldBorderCenter = workbook.createCellStyle();
-        boldBorderCenter.cloneStyleFrom(borderCenter);
-        boldBorderCenter.setFont(boldFont);
-
-        // ========= PRE-AGGREGAZIONE DATI PER GIORNO =========
-        double[] ordHours = new double[daysInMonth + 1];      // 1-based
+        // 1. FASE DI CALCOLO
+        double[] ordHours = new double[daysInMonth + 1];
         double[] extraHours = new double[daysInMonth + 1];
-        String[] giustificativi = new String[daysInMonth + 1]; // FE, 4PE, MAL, T, ecc.
-
-        // Per reperibilità (availability) e note
+        String[] giustificativi = new String[daysInMonth + 1];
         Map<Integer, List<CalendarAvailabilityEntry>> availabilityByDay = new HashMap<>();
-        // colonne Note lasciate vuote → non serve mappa note
 
-        // 1) Working Trips (TRASFERTA) – devono avere precedenza sulle ore ord
+        // A) Working Trips (TRASFERTA)
         for (CalendarEntity entity : yearmonthEntities) {
             if (entity.getEntryType() != CalendarEntryType.WORKING_TRIP) continue;
-
             CalendarWorkingTripEntry trip = (CalendarWorkingTripEntry) entity.getCalendarEntry();
-            if (trip.getStatus() == null || trip.getStatus() != RequestStatus.ACCEPTED) continue;
+            if (trip.getStatus() != RequestStatus.ACCEPTED) continue;
 
             LocalDate from = toLocalDate(trip.getDateFrom());
             LocalDate to = toLocalDate(trip.getDateTo());
 
             for (LocalDate d = from; !d.isAfter(to); d = d.plusDays(1)) {
-                if (d.getYear() != currentYear || d.getMonthValue() != month) continue;
+                if (d.getYear() != currentYear || d.getMonthValue() != calcMonth) continue;
                 int day = d.getDayOfMonth();
 
-                // ore ord alla massima giornata
-                ordHours[day] = dailyHours;
-                extraHours[day] = 0;
-
-                // giustificativo "T" (trasferta) – se c’è già altro testo, lo concateniamo
+                ordHours[day] = dailyHours; // Forza ore standard
+                extraHours[day] = 0;        // Azzera straordinari pre-esistenti (se logica lo richiede)
                 giustificativi[day] = appendCode(giustificativi[day], "T");
             }
         }
 
-        // 2) Working Day – solo dove NON c’è trasferta che ha già forzato le ore
+        // B) Working Day (Task Giornaliere)
         for (CalendarEntity entity : yearmonthEntities) {
             if (entity.getEntryType() != CalendarEntryType.WORKING_DAY) continue;
-
             CalendarWorkingDayEntry wd = (CalendarWorkingDayEntry) entity.getCalendarEntry();
             LocalDate d = toLocalDate(wd.getDateFrom());
-            if (d.getYear() != currentYear || d.getMonthValue() != month) continue;
+            if (d.getYear() != currentYear || d.getMonthValue() != calcMonth) continue;
 
             int day = d.getDayOfMonth();
 
-            // se quel giorno è già TRASFERTA, le ore ord restano quelle massime, non aggiungiamo
-            if ("T".equals(giustificativi[day])) {
-                continue;
-            }
+            // Se c'è già una Trasferta (T), le ore sono già al massimo
+            if (containsCode(giustificativi[day], "T")) continue;
 
             double hours = diffHours(wd.getHourFrom(), wd.getHourTo());
+
+            // Accumula ore se ci sono più entry nello stesso giorno
             double total = ordHours[day] + extraHours[day] + hours;
 
             if (total <= dailyHours) {
@@ -612,35 +575,38 @@ public class CalendarService {
             }
         }
 
-        // 3) Requests (FERIE, PERMESSI, MALATTIA, CONGEDO)
+        // C) Requests (Ferie, Permessi, ecc.)
         for (CalendarEntity entity : yearmonthEntities) {
             if (entity.getEntryType() != CalendarEntryType.REQUEST) continue;
-
             CalendarRequestEntry req = (CalendarRequestEntry) entity.getCalendarEntry();
+
+            // Controllo Status (se necessario, es. solo ACCEPTED)
+            // if (req.getStatus() != RequestStatus.ACCEPTED) continue;
+
             LocalDate from = toLocalDate(req.getDateFrom());
             LocalDate to = toLocalDate(req.getDateTo());
-            String type = req.getRequestType();   // "FERIE", "PERMESSI", "MALATTIA", "CONGEDO"
+            // Normalizza a uppercase per evitare problemi di case sensitive
+            String type = (req.getRequestType() != null) ? req.getRequestType().toUpperCase() : "";
 
             for (LocalDate d = from; !d.isAfter(to); d = d.plusDays(1)) {
-                if (d.getYear() != currentYear || d.getMonthValue() != month) continue;
+                if (d.getYear() != currentYear || d.getMonthValue() != calcMonth) continue;
                 int day = d.getDayOfMonth();
 
                 String code = null;
-
-                switch (type) {
-                    case "FERIE" -> code = "FE";
-                    case "PERMESSI" -> {
-                        // PE con ore: es: "4PE"
-                        if (req.getTimeFrom() != null && req.getTimeTo() != null) {
-                            double h = diffHours(req.getTimeFrom(), req.getTimeTo());
-                            // se vuoi interi, fai (int) h
-                            code = ((h % 1 == 0) ? String.valueOf((int) h) : String.valueOf(h)) + "PE";
-                        } else {
-                            code = "PE";
-                        }
+                // Usiamo contains o equalsIgnoreCase per sicurezza
+                if (type.contains("FERIE")) code = "FE";
+                else if (type.contains("MALATTIA")) code = "MAL";
+                else if (type.contains("CONGEDO")) code = "CO";
+                else if (type.contains("PERMESSI") || type.contains("PERMESSO")) {
+                    // Calcolo ore permesso: es. "4PE"
+                    if (req.getTimeFrom() != null && req.getTimeTo() != null) {
+                        double h = diffHours(req.getTimeFrom(), req.getTimeTo());
+                        // Se intero (es 4.0) stampa 4, altrimenti 4.5
+                        String hStr = (h % 1 == 0) ? String.valueOf((int) h) : String.valueOf(h);
+                        code = hStr + "PE";
+                    } else {
+                        code = "PE";
                     }
-                    case "MALATTIA" -> code = "MAL";
-                    case "CONGEDO" -> code = "CO"; // codice a tua scelta
                 }
 
                 if (code != null) {
@@ -649,177 +615,252 @@ public class CalendarService {
             }
         }
 
-        // 4) Availability -> Reperibilità (una sola cella a destra con testo)
+        // D) Availability (Reperibilità)
         for (CalendarEntity entity : yearmonthEntities) {
             if (entity.getEntryType() != CalendarEntryType.AVAILABILITY) continue;
-
             CalendarAvailabilityEntry av = (CalendarAvailabilityEntry) entity.getCalendarEntry();
             LocalDate from = toLocalDate(av.getDateFrom());
             LocalDate to = toLocalDate(av.getDateTo());
 
             for (LocalDate d = from; !d.isAfter(to); d = d.plusDays(1)) {
-                if (d.getYear() != currentYear || d.getMonthValue() != month) continue;
-                int day = d.getDayOfMonth();
-                availabilityByDay
-                        .computeIfAbsent(day, k -> new ArrayList<>())
-                        .add(av);
+                if (d.getYear() != currentYear || d.getMonthValue() != calcMonth) continue;
+                availabilityByDay.computeIfAbsent(d.getDayOfMonth(), k -> new ArrayList<>()).add(av);
             }
         }
 
-        // ========= INTESTAZIONE SUPERIORE =========
+        // 2. FASE DI RENDERING EXCEL
 
-        int rowIdx = 0;
-        Row r0 = sheet.createRow(rowIdx++);
-        Cell c0 = r0.createCell(0);
-        c0.setCellValue("PRESENZE MESE DI");
-        c0.setCellStyle(headerStyle);
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("Presenze " + currentYear + "-" + String.format("%02d", calcMonth));
 
-        Cell c1 = r0.createCell(1);
-        c1.setCellValue(currentYear + "-" + String.format("%02d", month));
-        c1.setCellStyle(headerStyle);
+        // --- DEFINIZIONE STILI ---
 
-        // Riga “Dipendente”
-        Row r1 = sheet.createRow(rowIdx++);
-        r1.createCell(0).setCellValue("Progr.");
-        r1.createCell(1).setCellValue("Dipendente");
-        r1.createCell(2).setCellValue("Cognome e nome");
+        // Bordo completo + Centrato
+        CellStyle borderCenter = workbook.createCellStyle();
+        borderCenter.setBorderTop(BorderStyle.THIN);
+        borderCenter.setBorderBottom(BorderStyle.THIN);
+        borderCenter.setBorderLeft(BorderStyle.THIN);
+        borderCenter.setBorderRight(BorderStyle.THIN);
+        borderCenter.setAlignment(HorizontalAlignment.CENTER);
+        borderCenter.setVerticalAlignment(VerticalAlignment.CENTER);
 
-        // Riga dati dipendente
-        Row r2 = sheet.createRow(rowIdx++);
-        r2.createCell(0).setCellValue(1); // numero progressivo fisso 1
-        r2.createCell(1).setCellValue(""); // vuoto (come nel modello)
-        r2.createCell(2).setCellValue(userProfile.name() + " " + userProfile.surname());
+        // Bordo completo + Allineato a Sinistra
+        CellStyle borderLeft = workbook.createCellStyle();
+        borderLeft.cloneStyleFrom(borderCenter);
+        borderLeft.setAlignment(HorizontalAlignment.LEFT);
 
-        // Riga intestazione giorni: giorno della settimana (L M M G V S D ...)
-        Row rowWeekday = sheet.createRow(rowIdx++);
-        // lasciamo le prime colonne per etichette (0..3)
-        rowWeekday.createCell(3).setCellValue(""); // intestazione tipo
-        for (int d = 1; d <= daysInMonth; d++) {
-            LocalDate date = ym.atDay(d);
-            String dayInitial = dayOfWeekInitial(date.getDayOfWeek());
-            Cell cell = rowWeekday.createCell(3 + d);
-            cell.setCellValue(dayInitial);
-            cell.setCellStyle(borderCenter);
+        Font boldFont = workbook.createFont();
+        boldFont.setBold(true);
+
+        // Header Tabella generale
+        CellStyle headerStyle = workbook.createCellStyle();
+        headerStyle.cloneStyleFrom(borderCenter);
+        headerStyle.setFont(boldFont);
+        headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        // Titolo foglio
+        CellStyle titleStyle = workbook.createCellStyle();
+        titleStyle.setAlignment(HorizontalAlignment.LEFT);
+        titleStyle.setFont(boldFont);
+
+        // --- COSTRUZIONE GRIGLIA ---
+
+        // RIGA 2: Titolo
+        Row row2 = sheet.createRow(1);
+        createCell(row2, 1, "PRESENZE MESE DI", titleStyle);
+        createCell(row2, 2, currentYear + "-" + String.format("%02d", calcMonth), titleStyle);
+
+        //  INTESTAZIONI
+        Row row4 = sheet.createRow(3);
+        Row row5 = sheet.createRow(4);
+
+        // Col A: Progr. (Merge A4:A5)
+        createMergedCell(sheet, 3, 4, 0, 0, "Progr.", headerStyle);
+
+        // Col B: "Dipendente" (B4) e "Cognome e nome" (B5) - Celle singole impilate
+        createCell(row4, 1, "Dipendente", headerStyle);
+        createCell(row5, 1, "Cognome e nome", headerStyle);
+
+        // Col C: Vuote ma con stile header (per chiudere la griglia)
+        createCell(row4, 2, "", headerStyle);
+        createCell(row5, 2, "", headerStyle);
+
+        // Col D: Giorni
+        int firstDayCol = 3;
+        for (int day = 1; day <= daysInMonth; day++) {
+            int colIdx = firstDayCol + day - 1;
+            LocalDate date = ym.atDay(day);
+
+            // Iniziale Giorno
+            createCell(row4, colIdx, dayOfWeekInitial(date.getDayOfWeek()), headerStyle);
+            // Numero Giorno
+            createCell(row5, colIdx, day, headerStyle);
         }
 
-        // Riga numeri giorno
-        Row rowDayNum = sheet.createRow(rowIdx++);
-        rowDayNum.createCell(3).setCellValue(""); // etichetta vuota
-        for (int d = 1; d <= daysInMonth; d++) {
-            Cell cell = rowDayNum.createCell(3 + d);
-            cell.setCellValue(d);
-            cell.setCellStyle(borderCenter);
-        }
+        // headers Reperibilità e Note
+        int colAfterDays = firstDayCol + daysInMonth;
+        int reperCol = colAfterDays;
+        int noteCol = colAfterDays + 1;
 
-        // ====== RIGA "Ore ord" ======
-        Row rowOreOrd = sheet.createRow(rowIdx++);
-        Cell lblOrd = rowOreOrd.createCell(2);
-        lblOrd.setCellValue("Ore ord");
-        lblOrd.setCellStyle(borderLeft);
+        createMergedCell(sheet, 3, 4, reperCol, reperCol, "Reperibilità", headerStyle);
+        createMergedCell(sheet, 3, 4, noteCol, noteCol, "Note", headerStyle);
 
-        for (int d = 1; d <= daysInMonth; d++) {
-            Cell cell = rowOreOrd.createCell(3 + d);
-            if (ordHours[d] != 0) {
-                cell.setCellValue(ordHours[d]);
+        // DATI DIPENDENTE
+        Row row6 = sheet.createRow(5);
+        Row row7 = sheet.createRow(6);
+        Row row8 = sheet.createRow(7);
+
+        // Col A: "1" (Progr)
+        createMergedCell(sheet, 5, 7, 0, 0, 1, borderCenter);
+
+        // Col B: Nome Cognome
+        createMergedCell(sheet, 5, 7, 1, 1, fullName, borderCenter);
+
+        // Col C: Labels - Celle singole
+        createCell(row6, 2, "Ore ord", borderCenter);
+        createCell(row7, 2, "Ore str", borderCenter);
+        createCell(row8, 2, "Giustif", borderCenter);
+
+        // DATI GIORNALIERR
+        for (int day = 1; day <= daysInMonth; day++) {
+            int colIdx = firstDayCol + day - 1;
+            LocalDate date = ym.atDay(day);
+            boolean isWeekend = (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY);
+
+            // 1. ORE ORDINARIE (Riga 6)
+            Cell cOrd = row6.createCell(colIdx);
+            cOrd.setCellStyle(borderCenter);
+
+            if (ordHours[day] > 0) {
+                // Se c'è un valore calcolato, lo scriviamo
+                cOrd.setCellValue(ordHours[day]);
+            } else if (!isWeekend) {
+                // Se è feriale e non ci sono ore, scriviamo 0
+                cOrd.setCellValue(0);
             }
-            cell.setCellStyle(borderCenter);
-        }
+            // Se è weekend e 0 ore, la cella resta vuota
 
-        // ====== RIGA "Ore str" ======
-        Row rowOreStr = sheet.createRow(rowIdx++);
-        Cell lblStr = rowOreStr.createCell(2);
-        lblStr.setCellValue("Ore str");
-        lblStr.setCellStyle(borderLeft);
-
-        for (int d = 1; d <= daysInMonth; d++) {
-            Cell cell = rowOreStr.createCell(3 + d);
-            if (extraHours[d] != 0) {
-                cell.setCellValue(extraHours[d]);
+            // 2. ORE STRAORDINARIE (Riga 7)
+            Cell cStr = row7.createCell(colIdx);
+            cStr.setCellStyle(borderCenter);
+            if (extraHours[day] > 0) {
+                cStr.setCellValue(extraHours[day]);
+            } else if (!isWeekend) {
+                cStr.setCellValue(0);
             }
-            cell.setCellStyle(borderCenter);
-        }
 
-        // ====== RIGA "Giustif" ======
-        Row rowGiustif = sheet.createRow(rowIdx++);
-        Cell lblGiust = rowGiustif.createCell(2);
-        lblGiust.setCellValue("Giustif");
-        lblGiust.setCellStyle(borderLeft);
-
-        for (int d = 1; d <= daysInMonth; d++) {
-            Cell cell = rowGiustif.createCell(3 + d);
-            if (giustificativi[d] != null) {
-                cell.setCellValue(giustificativi[d]);
+            // 3. GIUSTIFICATIVI (Riga 8)
+            Cell cGiu = row8.createCell(colIdx);
+            cGiu.setCellStyle(borderCenter);
+            if (giustificativi[day] != null) {
+                cGiu.setCellValue(giustificativi[day]);
             }
-            cell.setCellStyle(borderCenter);
         }
 
-        // ====== COLONNE "Reperibilità" e "Note" ======
-        int reperCol = 3 + daysInMonth + 1;
-        int noteCol = reperCol + 1;
-
-        // header
-        rowWeekday.createCell(reperCol).setCellValue("Reperibilità");
-        rowWeekday.getCell(reperCol).setCellStyle(boldBorderCenter);
-
-        rowWeekday.createCell(noteCol).setCellValue("Note");
-        rowWeekday.getCell(noteCol).setCellStyle(boldBorderCenter);
-
-        // contenuto reperibilità (riga giustif come nel modello)
         String reperText = buildReperibilitaText(availabilityByDay);
-        Cell reperCell = rowGiustif.createCell(reperCol);
-        reperCell.setCellValue(reperText); // senza X0001, solo giorni
-        reperCell.setCellStyle(borderLeft);
+        createMergedCell(sheet, 5, 7, reperCol, reperCol, reperText, borderCenter); // CENTRATO
+        createMergedCell(sheet, 5, 7, noteCol, noteCol, "", borderCenter);
 
-        // Note vuote
-        Cell noteCell = rowGiustif.createCell(noteCol);
-        noteCell.setCellValue("");
-        noteCell.setCellStyle(borderLeft);
+        int legRowIdx = 10; // Lascia riga 9 vuota
+        Row legTitleRow = sheet.createRow(legRowIdx++);
 
-        // ====== LEGENDA GIUSTIFICATIVI (in basso a sinistra) ======
-        rowIdx += 1; // una riga vuota
-        Row legendTitleRow = sheet.createRow(rowIdx++);
-        Cell legendTitleCell = legendTitleRow.createCell(0);
-        legendTitleCell.setCellValue("LEGENDA GIUSTIFICATIVI");
-        legendTitleCell.setCellStyle(headerStyle);
+        createCell(legTitleRow, 0, "LEGENDA GIUSTIFICATIVI", headerStyle);
+        createCell(legTitleRow, 1, "", headerStyle); // Bordo cella adiacente
 
-        createLegendRow(sheet, rowIdx++, "FERIE", "FE");
-        createLegendRow(sheet, rowIdx++, "PERMESSI", "PE (es. 4PE = 4 ore)");
-        createLegendRow(sheet, rowIdx++, "MALATTIA", "MAL");
-        createLegendRow(sheet, rowIdx++, "TRASFERTA", "T");
-        // niente FESTIVO perché mi hai detto che non lo usate
+        createLegendRow(sheet, legRowIdx++, "FERIE", "FE", borderLeft);
+        createLegendRow(sheet, legRowIdx++, "PERMESSI", "PE (es. 4PE = 4 ore)", borderLeft);
+        createLegendRow(sheet, legRowIdx++, "MALATTIA", "MAL", borderLeft);
+        createLegendRow(sheet, legRowIdx++, "CONGEDO", "CO", borderLeft);
+        createLegendRow(sheet, legRowIdx++, "TRASFERTA", "T", borderLeft);
 
-        // ====== AUTO-SIZE COLONNE ======
-        int lastCol = noteCol;
-        for (int c = 0; c <= lastCol; c++) {
-            sheet.autoSizeColumn(c);
+        // Adatta colonne
+        for (int c = firstDayCol; c < colAfterDays; c++) {
+            sheet.setColumnWidth(c, 4 * 256);
         }
+
+        sheet.autoSizeColumn(0); // Per adattarsi a "LEGENDA GIUSTIFICATIVI"
+        sheet.autoSizeColumn(1); // Nome dipendente / Descrizioni Legenda
+        sheet.setColumnWidth(1, sheet.getColumnWidth(1) + (2 * 256));
+        sheet.setColumnWidth(2, 10 * 256); // Labels fisse
+        sheet.setColumnWidth(reperCol, 20 * 256);
+        sheet.setColumnWidth(noteCol, 15 * 256);
 
         return workbook;
     }
 
-    /* ===================== HELPER METHODS ===================== */
+    private void createCell(Row row, int colIndex, String value, CellStyle style) {
+        Cell cell = row.createCell(colIndex);
+        cell.setCellValue(value);
+        cell.setCellStyle(style);
+    }
+
+    private void createCell(Row row, int colIndex, double value, CellStyle style) {
+        Cell cell = row.createCell(colIndex);
+        cell.setCellValue(value);
+        cell.setCellStyle(style);
+    }
+
+    private void createLegendRow(XSSFSheet sheet, int rowIndex, String label, String code, CellStyle style) {
+        Row row = sheet.createRow(rowIndex);
+
+        Cell c0 = row.createCell(0);
+        c0.setCellValue(label);
+        c0.setCellStyle(style); // Applica bordo
+
+        Cell c1 = row.createCell(1);
+        c1.setCellValue(code);
+        c1.setCellStyle(style); // Applica bordo
+    }
+
+    private void createMergedCell(XSSFSheet sheet, int firstRow, int lastRow, int firstCol, int lastCol, Object value, CellStyle style) {
+        CellRangeAddress region = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
+        sheet.addMergedRegion(region);
+
+        Row row = sheet.getRow(firstRow);
+        if (row == null) row = sheet.createRow(firstRow);
+        Cell cell = row.createCell(firstCol);
+        cell.setCellStyle(style);
+
+        if (value instanceof String) cell.setCellValue((String) value);
+        else if (value instanceof Integer) cell.setCellValue((Integer) value);
+        else if (value instanceof Double) cell.setCellValue((Double) value);
+
+        // Applica bordi alla regione
+        RegionUtil.setBorderTop(BorderStyle.THIN, region, sheet);
+        RegionUtil.setBorderBottom(BorderStyle.THIN, region, sheet);
+        RegionUtil.setBorderLeft(BorderStyle.THIN, region, sheet);
+        RegionUtil.setBorderRight(BorderStyle.THIN, region, sheet);
+    }
 
     private static LocalDate toLocalDate(Date date) {
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
-    /** differenza in ore tra due stringhe HH:mm */
     private static double diffHours(String from, String to) {
         if (from == null || to == null) return 0;
-        LocalTime tFrom = LocalTime.parse(from);
-        LocalTime tTo = LocalTime.parse(to);
-
-        long mins = ChronoUnit.MINUTES.between(tFrom, tTo);
-        return mins / 60.0;
+        // Gestione base eccezioni per formati errati
+        try {
+            LocalTime tFrom = LocalTime.parse(from);
+            LocalTime tTo = LocalTime.parse(to);
+            long mins = ChronoUnit.MINUTES.between(tFrom, tTo);
+            return mins / 60.0;
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
-    /** concatena codici giustificativo, se già esiste qualcosa nel giorno */
     private static String appendCode(String existing, String code) {
         if (existing == null || existing.isBlank()) return code;
+        if (existing.contains(code)) return existing; // Evita duplicati (es. T,T)
         return existing + "," + code;
     }
 
-    /** iniziale del giorno della settimana in stile italiano */
+    private static boolean containsCode(String existing, String codeToCheck) {
+        if (existing == null) return false;
+        return existing.contains(codeToCheck);
+    }
+
     private static String dayOfWeekInitial(DayOfWeek dow) {
         return switch (dow) {
             case MONDAY -> "L";
@@ -832,15 +873,11 @@ public class CalendarService {
         };
     }
 
-    /** costruisce stringa "giorni 6-10, 14, 16" ecc. senza X0001 */
     private static String buildReperibilitaText(Map<Integer, List<CalendarAvailabilityEntry>> availabilityByDay) {
         if (availabilityByDay.isEmpty()) return "";
-
-        // prendiamo solo la lista dei giorni, ordinati
         List<Integer> days = new ArrayList<>(availabilityByDay.keySet());
         Collections.sort(days);
 
-        // comprime in range (es. 6-10, 14, 16)
         StringBuilder sb = new StringBuilder("giorni ");
         int start = days.get(0);
         int prev = start;
@@ -856,20 +893,12 @@ public class CalendarService {
             }
         }
         appendRange(sb, start, prev);
-
         return sb.toString();
     }
 
     private static void appendRange(StringBuilder sb, int start, int end) {
         if (start == end) sb.append(start);
         else sb.append(start).append("-").append(end);
-    }
-
-    /** riga della legenda tipo:  "FERIE | FE" */
-    private static void createLegendRow(Sheet sheet, int rowIndex, String label, String code) {
-        Row row = sheet.createRow(rowIndex);
-        row.createCell(0).setCellValue(label);
-        row.createCell(1).setCellValue(code);
     }
 
 }
