@@ -1,4 +1,4 @@
-<div class="d-flex gap-2 align-items-center" (click)="openModifyModal()">
+<div class="d-flex gap-2 align-items-center" >
   <fa-icon [icon]="icon" class="fa-lg"></fa-icon>
   <div *ngIf="this.customNotifs" class="d-flex align-items-center gap-1">
     <app-status-badge *ngIf="this.customNotifs['ACCEPTED']"
@@ -19,6 +19,7 @@
     class="border-0 rounded-2 calendar-button calendar-button-hover bg-secondary-subtle text-muted"
     [ngClass]="{ 'calendar-button-hover': hasAnyNotifs() }"
     type="button"
+    (click)="openModifyModal()"
   >
     {{ buttonText }}
   </button>
