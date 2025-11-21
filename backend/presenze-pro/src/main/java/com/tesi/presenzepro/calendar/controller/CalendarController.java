@@ -4,6 +4,7 @@ import com.tesi.presenzepro.calendar.dto.*;
 import com.tesi.presenzepro.calendar.model.CalendarEntity;
 import com.tesi.presenzepro.calendar.model.PagedResponse;
 import com.tesi.presenzepro.calendar.model.RequestType;
+import com.tesi.presenzepro.calendar.service.CalendarReportService;
 import com.tesi.presenzepro.calendar.service.CalendarService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -36,6 +37,7 @@ import java.util.List;
 @Tag(name = "Calendar", description = "Operazioni relative al calendario")
 public class CalendarController {
     private final CalendarService calendarService;
+    private final CalendarReportService calendarReportService;
 
     @Operation(description = "Obtain all entries from the provided user", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("")
@@ -137,7 +139,7 @@ public class CalendarController {
     @GetMapping(value = "/export/month", produces = "text/csv")
     public ResponseEntity<byte[]> exportMonthFromCurrentYear(@RequestParam int month) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        XSSFWorkbook workbook = this.calendarService.generateMonthlyReportFromCurrentYear(month);
+        XSSFWorkbook workbook = this.calendarReportService.generateMonthlyReportFromCurrentYear(month);
         workbook.write(out);
         workbook.close();
 

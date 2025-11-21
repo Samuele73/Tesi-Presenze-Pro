@@ -41,9 +41,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
-    @ExceptionHandler(CalendarEntityNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleCalendarEntityNotFound(CalendarEntityNotFoundException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "Calendar entity not found");
+    @ExceptionHandler(NoDataFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCalendarEntityNotFound(NoDataFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), "No data found");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 

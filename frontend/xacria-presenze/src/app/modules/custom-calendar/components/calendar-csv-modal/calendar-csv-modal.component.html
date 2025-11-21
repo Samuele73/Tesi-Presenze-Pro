@@ -4,7 +4,7 @@
       <h3 class="modal-title" id="modal-basic-title">
         {{ ("Scarica mese del " | translate) + " " + currentDate!.getFullYear() }}
       </h3>
-      <span class="form-text">* {{"Seleziona il mese valido da esportare in formato .csv" | translate}}</span>
+      <span class="form-text">* {{"Seleziona un mese dell'anno valido da esportare" | translate}}</span>
     </div>
     <button
       type="button"
@@ -15,10 +15,7 @@
   </div>
   <form #monthForm="ngForm" (ngSubmit)="submitMonthExport(monthForm)" novalidate>
     <div class="modal-body">
-      <div class="mb-3">
-        <label class="form-label fw-bold" for="month-select">
-          {{ "Mese da esportare" | translate }}
-        </label>
+      <div class="">
         <select
           id="month-select"
           class="form-select"
@@ -47,7 +44,7 @@
       ></app-button>
       <app-button
         [type]="'submit'"
-        [name]="'Salva'"
+        [name]="'Scarica'"
         [mode]="'SAVE'"
         [buttonDisabled]="!!monthForm?.invalid"
       ></app-button>

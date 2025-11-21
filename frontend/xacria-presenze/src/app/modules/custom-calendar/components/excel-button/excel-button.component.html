@@ -7,7 +7,7 @@
   (click)="openExportModal(exportModal)"
 >
   <fa-icon [icon]="faDownload"></fa-icon>
-  <span class="text-black">{{ "Scarica" }}.csv</span>
+  <span class="text-black">{{ "Scarica" | translate }} report</span>
 </button>
 <app-calendar-csv-modal
   [currentDate]="currentDate"
