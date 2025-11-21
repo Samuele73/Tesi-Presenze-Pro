@@ -47,6 +47,7 @@
         [name]="'Scarica'"
         [mode]="'SAVE'"
         [buttonDisabled]="!!monthForm?.invalid"
+        (buttonClick)="downloadReport()"
       ></app-button>
     </div>
   </form>

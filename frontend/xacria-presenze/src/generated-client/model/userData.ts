@@ -14,4 +14,5 @@ export interface UserData {
     assignedProjects?: Array<string>;
     annualLeaveHours?: number;
     annualPermitHours?: number;
+    dailyHours?: number;
 }

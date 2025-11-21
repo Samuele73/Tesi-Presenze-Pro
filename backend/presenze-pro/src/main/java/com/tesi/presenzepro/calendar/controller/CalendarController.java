@@ -8,7 +8,9 @@ import com.tesi.presenzepro.calendar.service.CalendarReportService;
 import com.tesi.presenzepro.calendar.service.CalendarService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -135,8 +137,19 @@ public class CalendarController {
         return ResponseEntity.status(HttpStatus.OK).body(updatedCalendarEntities);
     }
 
-    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/export/month", produces = "text/csv")
+    @Operation(
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(
+                            description = "Excel file",
+                            content = @Content(
+                                    mediaType = "application/octet-stream",
+                                    schema = @Schema(type = "string", format = "binary")
+                            )
+                    )
+            }
+    )
+    @GetMapping(value = "/export/month", produces = "application/octet-stream")
     public ResponseEntity<byte[]> exportMonthFromCurrentYear(@RequestParam int month) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         XSSFWorkbook workbook = this.calendarReportService.generateMonthlyReportFromCurrentYear(month);
@@ -144,11 +157,10 @@ public class CalendarController {
         workbook.close();
 
         int year = Year.now().getValue();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.set(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=presenze_" + year + "-" + month + ".xlsx");
 
-        return new ResponseEntity<>(out.toByteArray(), headers, HttpStatus.OK);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=presenze_" + year + "-" + month + ".xlsx")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(out.toByteArray());
     }
 }

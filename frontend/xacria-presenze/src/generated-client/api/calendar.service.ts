@@ -168,6 +168,62 @@ export class CalendarService {
 
     /**
      * 
+     * 
+     * @param month 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public exportMonthFromCurrentYear(month: number, observe?: 'body', reportProgress?: boolean): Observable<Blob>;
+    public exportMonthFromCurrentYear(month: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Blob>>;
+    public exportMonthFromCurrentYear(month: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Blob>>;
+    public exportMonthFromCurrentYear(month: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (month === null || month === undefined) {
+            throw new Error('Required parameter month was null or undefined when calling exportMonthFromCurrentYear.');
+        }
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (month !== undefined && month !== null) {
+            queryParameters = queryParameters.set('month', <any>month);
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*',
+            'application/octet-stream'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request('get',`${this.basePath}/calendar/export/month`,
+            {
+                params: queryParameters,
+                responseType: "blob",
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
      * Obtain all entries from the provided user
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
