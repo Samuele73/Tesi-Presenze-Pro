@@ -14,27 +14,20 @@ import { ToastrService } from 'ngx-toastr';
 export class CalendarCsvModalComponent {
   @ViewChild('addProjectModal', { static: true })
   modalElement!: TemplateRef<Modal>;
-  @Input() currentDate?: Date;
+  @Input() calendarSelectedDate?: Date;
   availableMonths: { value: number; label: string }[] = [];
   selectedMonth: number | null = null;
   private readonly locale =
     typeof navigator !== 'undefined' && navigator.language
       ? navigator.language
       : 'it-IT';
+  todayYear: number = new Date().getFullYear();
 
   constructor(
     private modalService: NgbModal,
     private calendarService: CalendarService,
     private toastrService: ToastrService
   ) {}
-
-  submitMonthExport(form?: NgForm) {
-    if (form && (form.invalid || this.selectedMonth === null)) {
-      form.control.markAllAsTouched();
-      return;
-    }
-    // TODO: handle month export with this.selectedMonth
-  }
 
   initializeForm(): void {
     const today = new Date();
@@ -58,8 +51,8 @@ export class CalendarCsvModalComponent {
       this.selectedMonth = null;
       return;
     }
-    const initialMonth = this.currentDate
-      ? this.currentDate.getMonth()
+    const initialMonth = this.calendarSelectedDate
+      ? this.calendarSelectedDate.getMonth()
       : currentMonthIndex;
     const limitedInitialMonth = Math.min(initialMonth, currentMonthIndex);
     const matchedMonth = this.availableMonths.find(
@@ -85,7 +78,11 @@ export class CalendarCsvModalComponent {
       );
   }
 
-  downloadReport(): void {
+  submitReportExport(form?: NgForm): void {
+    if (form && (form.invalid || this.selectedMonth === null)) {
+      form.control.markAllAsTouched();
+      return;
+    }
     this.calendarService
       .exportMonthFromCurrentYear(this.selectedMonth!)
       .subscribe({
@@ -96,12 +93,14 @@ export class CalendarCsvModalComponent {
           const monthLabel =
             this.availableMonths.find((m) => m.value === this.selectedMonth)
               ?.label || 'report';
-          a.download = `report_${monthLabel}_${this.currentDate?.getFullYear()}.csv`;
+          a.download = `report_${monthLabel}_${this.todayYear}.csv`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
           window.URL.revokeObjectURL(url);
-          this.modalService.dismissAll();
+          setTimeout(() => {
+            this.modalService.dismissAll();
+          }, 300);
         },
         error: (err: HttpErrorResponse) => {
           if (err.status === 404) {

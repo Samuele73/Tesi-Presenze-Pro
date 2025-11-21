@@ -2,9 +2,9 @@
   <div class="modal-header">
     <div>
       <h3 class="modal-title" id="modal-basic-title">
-        {{ ("Scarica mese del " | translate) + " " + currentDate!.getFullYear() }}
+        {{ ("Scarica mese del " | translate) + " " + todayYear }}
       </h3>
-      <span class="form-text">* {{"Seleziona un mese dell'anno valido da esportare" | translate}}</span>
+      <span class="form-text">* {{"Seleziona un mese valido dell'anno corrente" | translate}}</span>
     </div>
     <button
       type="button"
@@ -13,7 +13,7 @@
       (click)="thisModal.dismiss('Cross click')"
     ></button>
   </div>
-  <form #monthForm="ngForm" (ngSubmit)="submitMonthExport(monthForm)" novalidate>
+  <form #monthForm="ngForm" (ngSubmit)="submitReportExport(monthForm)" novalidate>
     <div class="modal-body">
       <div class="">
         <select
@@ -47,7 +47,6 @@
         [name]="'Scarica'"
         [mode]="'SAVE'"
         [buttonDisabled]="!!monthForm?.invalid"
-        (buttonClick)="downloadReport()"
       ></app-button>
     </div>
   </form>
