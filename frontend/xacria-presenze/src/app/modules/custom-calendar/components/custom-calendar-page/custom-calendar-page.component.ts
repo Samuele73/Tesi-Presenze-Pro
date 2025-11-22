@@ -301,7 +301,7 @@ export const faIcons = {
   minus: faMinus,
   briefcase: faBriefcase,
   calendar: faCalendarMinus,
-  xSimbol: faX,
+  xSymbol: faX,
   route: faRoute,
   request: faPenToSquare,
   bell: faBell,

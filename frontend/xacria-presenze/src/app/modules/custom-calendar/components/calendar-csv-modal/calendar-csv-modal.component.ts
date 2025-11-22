@@ -68,7 +68,7 @@ export class CalendarCsvModalComponent {
     this.modalService
       .open(this.modalElement, {
         ariaLabelledBy: 'modal-basic-title',
-        windowClass: 'custom-modal',
+        windowClass: 'custom-modal'
       })
       .result.then(
         (result) => {},

@@ -2,12 +2,11 @@
 @import "bootstrap/scss/variables";
 
 .btn-icon{
-  width: 2em; /* Dimensione del bottone */
-  height: 2em; /* Dimensione del bottone */
+  
   display: flex; /* Per centrare l'icona */
   align-items: center;
   justify-content: center;
-  padding: 0; /* Rimuove il padding interno */
+
 }
 
 .btn-icon:hover{
