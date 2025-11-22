@@ -21,6 +21,9 @@ export class ProjectStoreService {
     new BehaviorSubject<ApiError | null>(null);
   private isLoadingSubject: BehaviorSubject<boolean | null> =
     new BehaviorSubject<boolean | null>(null);
+  private userProjectsName: BehaviorSubject<string[]> = new BehaviorSubject<
+    string[]
+  >([]);
 
   constructor(
     private authService: AuthService,
@@ -35,6 +38,9 @@ export class ProjectStoreService {
   }
   get isLoading$() {
     return this.isLoadingSubject.asObservable();
+  }
+  get userProjectsName$() {
+    return this.userProjectsName.asObservable();
   }
 
   loadProjects(): void {
@@ -56,6 +62,20 @@ export class ProjectStoreService {
       },
       complete: () => this.isLoadingSubject.next(false),
     });
+  }
+
+  getUserProjectsNames(): Observable<boolean> {
+    return this.projectService.getMyProjects().pipe(
+      tap((projects: Project[]) => {
+        const projectNames = projects.map((project) => project.name!);
+        this.userProjectsName.next(projectNames);
+      }),
+      map(() => true),
+      catchError((err) => {
+        console.error('Error fetching user projects:', err);
+        return of(false);
+      })
+    )
   }
 
   addProject(project: CreateProjectRequest): Observable<boolean> {

@@ -43,6 +43,7 @@ import { calendar, identifiableCalendarWorkingDay } from '../../models/calendar'
 import { CalendarStateService } from '../../services/calendar-state.service';
 import { monthNamesIt, weekDayNamesIt } from '../../const-vars';
 import { ToastrService } from 'ngx-toastr';
+import { ProjectStoreService } from 'src/app/modules/project/services/project-store.service';
 
 type DistributedModalComponent = AvailabilityModalComponent | RequestModalComponent | WorkingTripModalComponent;
 type ModalComponentType = DistributedModalComponent | DayworkModalComponent;
@@ -103,7 +104,8 @@ export class CustomCalendarPageComponent implements OnInit, AfterViewInit, OnDes
     private calendarStateService: CalendarStateService,
     private cdr: ChangeDetectorRef,
     private userService: UserService,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private projectStoreService: ProjectStoreService
   ) {
     this.weekDayNames = weekDayNamesIt;
     this.monthNames = monthNamesIt;
@@ -148,6 +150,11 @@ export class CustomCalendarPageComponent implements OnInit, AfterViewInit, OnDes
   }
 
   ngOnInit(): void {
+    this.projectStoreService.getUserProjectsNames().subscribe((success: boolean) => {
+      if (!success) {
+        this.toastrService.error("Errore nel caricamento dei progetti utente.");
+      }
+    });
     this.subscriteToCalendarStateServices();
     this.calendarStateService.getCalendarByMonthYear(
       this.currentMonth,

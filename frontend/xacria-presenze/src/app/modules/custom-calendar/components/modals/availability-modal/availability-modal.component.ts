@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -20,11 +21,14 @@ import { DateFormatService } from 'src/app/shared/services/date-format.service';
 import {
   CalendarAvailabilityEntry,
   CalendarEntity,
+  Project,
+  ProjectService,
 } from 'src/generated-client';
 import { identifiableCalendarAvailability } from 'src/app/modules/custom-calendar/models/calendar';
 import { projects } from '../../../const-vars';
 import { CalendarStateService } from '../../../services/calendar-state.service';
 import { ToastrService } from 'ngx-toastr';
+import { ProjectStoreService } from 'src/app/modules/project/services/project-store.service';
 
 @Component({
   selector: 'app-availability-modal',
@@ -32,7 +36,7 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./availability-modal.component.scss'],
 })
 export class AvailabilityModalComponent implements ModalComponent, OnInit {
-  validProjects: any = projects;
+  validProjects: string[] = [];
   @ViewChild('modal', { static: true }) modalElement!: TemplateRef<any>;
   @Input() calendarEntries!: identifiableCalendarAvailability[];
   @Input() isModifyMode!: boolean;
@@ -51,7 +55,10 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
     private renderer: Renderer2,
     private dateFormat: DateFormatService,
     private calendarStateService: CalendarStateService,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private projectService: ProjectService,
+    private cdr: ChangeDetectorRef,
+    private projectStoreService: ProjectStoreService
   ) {}
 
   get dateFrom() {
@@ -68,7 +75,13 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
   }
 
   ngOnInit(): void {
-    /* this.initializeForm(); */
+    this.syncUserProjects();
+  }
+
+  syncUserProjects(): void {
+    this.projectStoreService.userProjectsName$.subscribe((names: string[]) => {
+      this.validProjects = names;
+    });
   }
 
   initializeForm(): void {
@@ -183,7 +196,6 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
     this.updateEntries();
     this.deleteEntries();
 
-
     this.modalService.dismissAll();
   }
 
@@ -193,7 +205,6 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
       this.isModifyMode
     )
       return;
-
     if (this.isModifyMode) {
       this.initializeModifyForm();
       this.initialCalendarentries = this.availabilities.value;

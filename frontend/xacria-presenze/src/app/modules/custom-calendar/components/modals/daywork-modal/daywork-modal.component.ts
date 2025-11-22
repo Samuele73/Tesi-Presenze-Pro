@@ -21,6 +21,7 @@ import { parse } from 'date-fns';
 import { it as itLocale } from 'date-fns/locale';
 import { CalendarStateService } from '../../../services/calendar-state.service';
 import { ToastrService } from 'ngx-toastr';
+import { ProjectStoreService } from 'src/app/modules/project/services/project-store.service';
 
 @Component({
   selector: 'app-daywork-modal',
@@ -50,7 +51,8 @@ export class DayworkModalComponent
     private dateFormat: DateFormatService,
     private calendarStateService: CalendarStateService,
     private projectService: ProjectService,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private projectStoreService: ProjectStoreService
   ) {}
 
   get hourFrom() {
@@ -67,19 +69,13 @@ export class DayworkModalComponent
   }
 
   ngOnInit(): void {
-    this.getUserProjects();
+    this.syncUserProjects();
     this.initializeForm();
   }
 
-  getUserProjects(): void {
-    this.projectService.getMyProjects().subscribe({
-      next: (projects: Project[]) => {
-        this.validProjects = projects.map((project) => project.name!);
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Error fetching user projects:', err);
-      },
+  syncUserProjects(): void {
+    this.projectStoreService.userProjectsName$.subscribe((names: string[]) => {
+      this.validProjects = names;
     });
   }
 
@@ -169,7 +165,7 @@ export class DayworkModalComponent
       console.error('Availability modify form is invalid');
       return;
     }
-    
+
     this.updateEntries();
     this.deleteEntries();
 
