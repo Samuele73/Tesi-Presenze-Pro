@@ -1,6 +1,6 @@
 <div class="">
   <div class="d-flex align-items-center gap-2">
-    <h5 class="text-primary">{{ getRequestTitle() | translate }}</h5>
+    <h4 class="text-primary">{{ getRequestTitle() | translate }}</h4>
     <span
       class="badge bg-secondary-subtle text-muted mb-1"
       *ngIf="visualizeNumber"
@@ -18,7 +18,7 @@
     }}</i>
     <span
       *ngFor="let request of requests.content"
-      class="d-block reqeust-preview"
+      class="d-block reqeust-preview "
       [attr.id]="request.id"
       (click)="onRequestClick(request)"
       ><span class="text-muted">{{ request.userEmail + "&nbsp;" }}</span

@@ -7,6 +7,11 @@
   </div>
   <div class="menu">
     <app-profile-menu-item
+      [name]="'Home'"
+      [route]="APP_ROUTES.HOME"
+    ></app-profile-menu-item>
+
+    <app-profile-menu-item
       [name]="'Il mio profilo'"
       [route]="APP_ROUTES.PROFILE"
       [queryParams]="{ mode: 'ME' }"
