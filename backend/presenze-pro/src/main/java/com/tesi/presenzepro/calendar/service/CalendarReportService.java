@@ -31,9 +31,12 @@ public class CalendarReportService {
 
         // Recupero Dati dal DB
         List<CalendarEntity> yearmonthEntities = new ArrayList<>(this.calendarRepository.findUserYearMonthEntities(userEmail, currentYear, month));
+
+        // Se non ci sono dati, lancia eccezione (gestita dal controller advice -> 404)
         if (yearmonthEntities.isEmpty()) {
             throw new NoDataFoundException("Nessuna presenza trovata per il mese selezionato");
         }
+
         UserData userData = this.userService.getUserDataFromEmail(userEmail);
         UserProfile userProfile = this.userService.getUserProfileFromEmail(userEmail);
 
@@ -48,7 +51,9 @@ public class CalendarReportService {
         YearMonth ym = YearMonth.of(currentYear, calcMonth);
         int daysInMonth = ym.lengthOfMonth();
 
+        // ============================================================
         // 1. FASE DI CALCOLO
+        // ============================================================
         double[] ordHours = new double[daysInMonth + 1];
         double[] extraHours = new double[daysInMonth + 1];
         String[] giustificativi = new String[daysInMonth + 1];
@@ -58,6 +63,8 @@ public class CalendarReportService {
         for (CalendarEntity entity : yearmonthEntities) {
             if (entity.getEntryType() != CalendarEntryType.WORKING_TRIP) continue;
             CalendarWorkingTripEntry trip = (CalendarWorkingTripEntry) entity.getCalendarEntry();
+
+            // FILTRO STATUS: Solo ACCEPTED
             if (trip.getStatus() != RequestStatus.ACCEPTED) continue;
 
             LocalDate from = toLocalDate(trip.getDateFrom());
@@ -68,12 +75,12 @@ public class CalendarReportService {
                 int day = d.getDayOfMonth();
 
                 ordHours[day] = dailyHours; // Forza ore standard
-                extraHours[day] = 0;        // Azzera straordinari pre-esistenti (se logica lo richiede)
+                extraHours[day] = 0;        // Azzera straordinari
                 giustificativi[day] = appendCode(giustificativi[day], "T");
             }
         }
 
-        // B) Working Day (Task Giornaliere)
+        // B) Working Day (Task Giornaliere) - Non hanno status, vengono prese tutte
         for (CalendarEntity entity : yearmonthEntities) {
             if (entity.getEntryType() != CalendarEntryType.WORKING_DAY) continue;
             CalendarWorkingDayEntry wd = (CalendarWorkingDayEntry) entity.getCalendarEntry();
@@ -104,11 +111,13 @@ public class CalendarReportService {
             if (entity.getEntryType() != CalendarEntryType.REQUEST) continue;
             CalendarRequestEntry req = (CalendarRequestEntry) entity.getCalendarEntry();
 
-            // Controllo Status (se necessario, es. solo ACCEPTED)
-            // if (req.getStatus() != RequestStatus.ACCEPTED) continue;
+            // FILTRO STATUS: Solo ACCEPTED
+            // Se status è null o diverso da ACCEPTED, salta l'iterazione
+            if (req.getStatus() != RequestStatus.ACCEPTED) continue;
 
             LocalDate from = toLocalDate(req.getDateFrom());
             LocalDate to = toLocalDate(req.getDateTo());
+
             // Normalizza a uppercase per evitare problemi di case sensitive
             String type = (req.getRequestType() != null) ? req.getRequestType().toUpperCase() : "";
 
@@ -152,7 +161,9 @@ public class CalendarReportService {
             }
         }
 
+        // ============================================================
         // 2. FASE DI RENDERING EXCEL
+        // ============================================================
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Presenze " + currentYear + "-" + String.format("%02d", calcMonth));
@@ -204,7 +215,7 @@ public class CalendarReportService {
 
         // Col B: "Dipendente" (B4) e "Cognome e nome" (B5) - Celle singole impilate
         createCell(row4, 1, "Dipendente", headerStyle);
-        createCell(row5, 1, "Nome e Cognome", headerStyle);
+        createCell(row5, 1, "Cognome e nome", headerStyle);
 
         // Col C: Vuote ma con stile header (per chiudere la griglia)
         createCell(row4, 2, "", headerStyle);
@@ -236,7 +247,7 @@ public class CalendarReportService {
         Row row8 = sheet.createRow(7);
 
         // Col A: "1" (Progr)
-        createMergedCell(sheet, 5, 7, 0, 0, "", borderCenter);
+        createMergedCell(sheet, 5, 7, 0, 0, 1, borderCenter);
 
         // Col B: Nome Cognome
         createMergedCell(sheet, 5, 7, 1, 1, fullName, borderCenter);
@@ -246,7 +257,7 @@ public class CalendarReportService {
         createCell(row7, 2, "Ore str", borderCenter);
         createCell(row8, 2, "Giustif", borderCenter);
 
-        // DATI GIORNALIERR
+        // DATI GIORNALIERI
         for (int day = 1; day <= daysInMonth; day++) {
             int colIdx = firstDayCol + day - 1;
             LocalDate date = ym.atDay(day);
