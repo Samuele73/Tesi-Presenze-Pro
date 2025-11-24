@@ -103,6 +103,17 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
   selectedRequestTypes: UserRequestResponseDto.TypeEnum[] = [];
   selectedUsers: string[] = [];
 
+  statusLabelMap: { [key: string]: string } = {
+    PENDING: 'IN ATTESA',
+    ACCEPTED: 'ACCETTATA',
+    REJECTED: 'RIFIUTATA',
+  };
+  statusClassMap: { [key: string]: string } = {
+    PENDING: 'bg-warning',
+    ACCEPTED: 'bg-primary',
+    REJECTED: 'bg-danger',
+  };
+
   constructor(
     private cdr: ChangeDetectorRef,
     public authService: AuthService
@@ -236,7 +247,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
   }
 
   onRowClick(row: Record<string, any>): void {
-   
+
 
     this.rowSelected.emit(row as RequestsTableRow);
   }

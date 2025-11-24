@@ -18,13 +18,12 @@
 </ng-template>
 
 <ng-template #statusTemplate let-row>
-  <span
-    class="badge"
-    [ngClass]="{
-      'bg-danger': row.status === 'REJECTED',
-      'bg-primary': row.status === 'ACCEPTED'
-    }"
-  >{{(row.status === 'ACCEPTED' ? 'ACCETTATO' : row.status === "REJECTED" ? "RIFIUTATO" : "IDk") | translate}}</span>
+  <app-card-badge
+      *ngIf="tab.toUpperCase() === 'CLOSED'"
+      [labelMap]="statusLabelMap"
+      [classMap]="statusClassMap"
+      [mapValue]="row.status"
+    ></app-card-badge>
 </ng-template>
 
 <app-dynamic-table

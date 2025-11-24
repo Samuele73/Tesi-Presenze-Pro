@@ -1,7 +1,16 @@
 <div class="modal-header">
-  <h3 class="modal-title">
-    {{ title | translate }}
-  </h3>
+  <div class="d-flex align-items-center gap-2">
+    <h3 class="modal-title">
+      {{ title | translate }}
+    </h3>
+    <app-card-badge
+      *ngIf="tab.toUpperCase() === 'CLOSED'"
+      [labelMap]="statusLabelMap"
+      [classMap]="statusClassMap"
+      [mapValue]="request?.status"
+    ></app-card-badge>
+  </div>
+
   <button
     type="button"
     class="btn-close"
@@ -30,34 +39,57 @@
       </label>
       <div>{{ request.type || "-" | translate }}</div>
     </div>
-    <div>
-      <label class="fw-bold">
-        {{ "Dal" | translate }}
-      </label>
+    <div
+      *ngIf="
+        !dateService.areDatesEqual(request.dateFrom, request.dateTo);
+        else singleDate
+      "
+    >
       <div>
-        {{
-          request.dateFrom
-            ? request.type != "TRASFERTA"
-              ? (request.dateFrom | date : "dd-MM-yyyy hh:mm")
-              : (request.dateFrom | date : "dd-MM-yyyy")
-            : "-"
-        }}
+        <label class="fw-bold">
+          {{ "Dal" | translate }}
+        </label>
+        <div>
+          {{
+            request.dateFrom
+              ? request.type != "TRASFERTA"
+                ? (request.dateFrom | date : "dd-MM-yyyy hh:mm")
+                : (request.dateFrom | date : "dd-MM-yyyy")
+              : "-"
+          }}
+        </div>
+      </div>
+      <div>
+        <label class="fw-bold">
+          {{ "Al" | translate }}
+        </label>
+        <div>
+          {{
+            request.dateFrom
+              ? request.type != "TRASFERTA"
+                ? (request.dateTo | date : "dd-MM-yyyy hh:mm")
+                : (request.dateTo | date : "dd-MM-yyyy")
+              : "-"
+          }}
+        </div>
       </div>
     </div>
-    <div>
-      <label class="fw-bold">
-        {{ "Al" | translate }}
-      </label>
+    <ng-template #singleDate>
       <div>
-        {{
-          request.dateFrom
-            ? request.type != "TRASFERTA"
-              ? (request.dateTo | date : "dd-MM-yyyy hh:mm")
-              : (request.dateTo | date : "dd-MM-yyyy")
-            : "-"
-        }}
+        <label class="fw-bold">
+          {{ "Per il" | translate }}
+        </label>
+        <div>
+          {{
+            request.dateFrom
+              ? request.type != "TRASFERTA"
+                ? (request.dateFrom | date : "dd-MM-yyyy")
+                : (request.dateFrom | date : "dd-MM-yyyy")
+              : "-"
+          }}
+        </div>
       </div>
-    </div>
+    </ng-template>
   </div>
 </div>
 <ng-template #missingData>

@@ -10,6 +10,7 @@ import {
   UserRequestResponseDto,
 } from 'src/generated-client';
 import { RequestsTab } from '../requests-approval-page/requests-approval-page.component';
+import { DateFormatService } from 'src/app/shared/services/date-format.service';
 
 @Component({
   selector: 'app-request-details-modal',
@@ -21,12 +22,23 @@ export class RequestDetailsModalComponent {
   @Input() tab!: RequestsTab;
   title = '';
   isEditMode?: boolean;
+  statusLabelMap: { [key: string]: string } = {
+    PENDING: 'IN ATTESA',
+    ACCEPTED: 'ACCETTATA',
+    REJECTED: 'RIFIUTATA',
+  };
+  statusClassMap: { [key: string]: string } = {
+    PENDING: 'bg-warning',
+    ACCEPTED: 'bg-primary',
+    REJECTED: 'bg-danger',
+  };
 
   constructor(
     public activeModal: NgbActiveModal,
     public authService: AuthService,
     private requestStoreService: RequestStoreService,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    public dateService: DateFormatService
   ) {
     if(this.isEditMode === undefined)
       this.checkIfEditMode();
