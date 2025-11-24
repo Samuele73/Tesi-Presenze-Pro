@@ -150,5 +150,7 @@
   "dalle": "dalle",
   "alle": "alle",
   "Seleziona il mese valido da esportare in formato .csv": "Seleziona il mese valido da esportare in formato .csv",
-  "Per il" : "Per il"
+  "Per il" : "Per il",
+  "Dal" : "Dal",
+  "Al" : "Al"
 }

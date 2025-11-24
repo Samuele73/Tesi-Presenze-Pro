@@ -21,12 +21,6 @@
 
 <div class="modal-body" *ngIf="request; else missingData">
   <div class="d-grid gap-2">
-    <div *ngIf="authService.isOwner()">
-      <label class="fw-bold">
-        {{ "ID richiesta" | translate }}
-      </label>
-      <div class="">{{ request.id || "-" }}</div>
-    </div>
     <div>
       <label class="fw-bold">
         {{ "Utente" | translate }}
