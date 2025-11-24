@@ -25,31 +25,31 @@
       >{{ "ha richiesto" | translate }}
       <span
         *ngIf="
-          !areDatesEqual(request.dateFrom, request.dateTo);
+          !dateService.areDatesEqual(request.dateFrom, request.dateTo);
           else singleDate
         "
       >
         <span class="fw-medium">{{ request.type ?? "" | translate }}</span>
         {{ "da" | translate }}
         <span class="text-muted">{{
-          formatDateTime(request.dateFrom, request.type)
+          dateService.formatDateTimeBasedOnRequest(request.dateFrom, request.type)
         }}</span>
         {{ "a" | translate }}
         <span class="text-muted">{{
-          formatDateTime(request.dateTo, request.type)
+          dateService.formatDateTimeBasedOnRequest(request.dateTo, request.type)
         }}</span>
       </span>
       <ng-template #singleDate>
         <span class="fw-medium">{{ request.type ?? "" | translate }}</span>
         {{ "per il" | translate }}
         <span class="text-muted">{{
-          formatDateTime(request.dateFrom, request.type, true)
+          dateService.formatDateTimeBasedOnRequest(request.dateFrom, request.type, true)
         }}</span>
         <span *ngIf="request.type !== 'FERIE' && request.type !== 'TRASFERTA'">
           {{ "dalle" | translate }}
-          <span>{{ getTimeFromDate(request.dateFrom) }}</span>
+          <span>{{ dateService.getTimeFromDate(request.dateFrom) }}</span>
           {{ "alle" | translate }}
-          <span>{{ getTimeFromDate(request.dateTo) }}</span>
+          <span>{{ dateService.getTimeFromDate(request.dateTo) }}</span>
         </span>
       </ng-template>
     </span>
