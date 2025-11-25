@@ -331,6 +331,7 @@ public class CalendarService {
         if (newEntity.getCalendarEntry() != null) {
             mergeCalendarEntry(update, newEntity.getCalendarEntry());
         }
+        update.set("updatedAt", new Date());
 
         Query query = new Query(Criteria.where("_id").is(id));
 

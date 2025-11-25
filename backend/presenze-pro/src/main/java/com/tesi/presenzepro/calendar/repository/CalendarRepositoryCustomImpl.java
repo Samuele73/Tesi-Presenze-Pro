@@ -165,7 +165,7 @@ public class CalendarRepositoryCustomImpl implements CalendarRepositoryCustom {
                 Criteria.where("entryType").in(List.of(CalendarEntryType.REQUEST, CalendarEntryType.WORKING_TRIP))
         ));
 
-        Update update = new Update().set("calendarEntry.status", newStatus);
+        Update update = new Update().set("calendarEntry.status", newStatus).set("updatedAt", new Date()); ;
 
         UpdateResult result = mongoTemplate.updateFirst(query, update, CalendarEntity.class);
 

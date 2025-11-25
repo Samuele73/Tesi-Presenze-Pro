@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -30,4 +31,6 @@ public class CalendarEntity extends BaseCalendarEntity{
     private String userEmail; //User Email associated with the calendar Entry
     @CreatedDate
     private Date createdAt;
+    @LastModifiedDate
+    private Date updatedAt;
 }
