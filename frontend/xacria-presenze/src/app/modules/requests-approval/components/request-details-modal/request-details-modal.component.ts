@@ -100,4 +100,8 @@ export class RequestDetailsModalComponent {
         },
       });
   }
+
+  shouldHaveTime(type: UserRequestResponseDto.TypeEnum | undefined){
+    return type !== "TRASFERTA" && type !== "CONGEDO" && type !== "FERIE"
+  }
 }

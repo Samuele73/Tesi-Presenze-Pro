@@ -26,7 +26,7 @@ export interface RequestsTableRow {
   timeFrom?: string;
   dateTo?: string | Date;
   timeTo?: string;
-  type: string;
+  type: UserRequestResponseDto.TypeEnum | '—';
   status?: string;
   original?: UserRequestResponseDto;
 }
@@ -261,7 +261,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
     if (!dateValue) {
       return '—';
     }
-    if (row.type == 'TRASFERTA')
+    if (row.type == 'TRASFERTA' || row.type == 'CONGEDO' || row.type == 'FERIE')
       return formatDate(dateValue, 'dd-MM-yyyy', 'en-GB');
     return formatDate(dateValue, 'dd-MM-yyyy HH:mm', 'en-GB');
   }
