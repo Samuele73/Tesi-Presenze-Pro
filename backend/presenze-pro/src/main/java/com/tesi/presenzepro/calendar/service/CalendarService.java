@@ -312,10 +312,9 @@ public class CalendarService {
 
     private CalendarEntity updateCalendarEntityById(String id, CalendarEntity newEntity) {
         CalendarEntity existing = mongoTemplate.findById(id, CalendarEntity.class);
-
+        System.out.println("HO FATTO UPDATE DI: " + id + " " + newEntity.toString());
         checkWorkingTripAndRequestStatus(existing, newEntity);
         triggerUserHoursUpdate(existing, newEntity);
-
         return this.repository.updateCalendarEntityById(id, newEntity);
     }
 
