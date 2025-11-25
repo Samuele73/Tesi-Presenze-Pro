@@ -16,9 +16,10 @@
   <form #monthForm="ngForm" (ngSubmit)="submitReportExport(monthForm)" novalidate>
     <div class="modal-body">
       <div class="">
+        <label for="month-select" class="form-label fw-bold">{{"Mese"}}</label>
         <select
           id="month-select"
-          class="form-select"
+          class="form-select w-50"
           name="selectedMonth"
           required
           [(ngModel)]="selectedMonth"
