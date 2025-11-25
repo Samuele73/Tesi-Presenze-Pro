@@ -18,8 +18,8 @@
     </div>
     <form [formGroup]="form" (ngSubmit)="submitNewEntry()">
       <div class="modal-body">
-        <div class="mb-3 ">
-          <div  class="d-flex gap-4 text-primary">
+        <div class="mb-3">
+          <div class="d-flex gap-4 text-primary">
             <div>
               <label for="dateFrom" class="form-label h5">{{
                 "Da" | translate
@@ -128,7 +128,7 @@
             formGroupName="{{ i }}"
           >
             <div
-              class="mb-3 "
+              class="mb-3"
               #entry
               [ngClass]="{
                 'delete-mode': toDeleteEntries.includes(availability.value.id)

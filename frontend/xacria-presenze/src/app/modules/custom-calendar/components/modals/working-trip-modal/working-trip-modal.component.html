@@ -18,39 +18,48 @@
     </div>
     <form action="" [formGroup]="form" (ngSubmit)="submitNewEntry()">
       <div class="modal-body">
-        <div class="mb-3 d-flex gap-4 text-primary">
-          <div>
-            <label for="dateFrom" class="form-label h5">{{
-              "Da" | translate
-            }}</label>
-            <input
-              type="date"
-              class="form-control"
-              id="dateFrom"
-              formControlName="dateFrom"
-            />
-            <app-form-error
-              [formControlRef]="dateFrom"
-              [validator]="'required'"
-              [errorText]="'Seleziona la data di inizio'"
-            ></app-form-error>
+        <div class="mb-3">
+          <div class="d-flex gap-4 text-primary">
+            <div>
+              <label for="dateFrom" class="form-label h5">{{
+                "Da" | translate
+              }}</label>
+              <input
+                type="date"
+                class="form-control"
+                id="dateFrom"
+                formControlName="dateFrom"
+              />
+              <app-form-error
+                [formControlRef]="dateFrom"
+                [validator]="'required'"
+                [errorText]="'Seleziona la data di inizio'"
+              ></app-form-error>
+            </div>
+            <div>
+              <label for="dateTo" class="form-label h5">{{
+                "A" | translate
+              }}</label>
+              <input
+                type="date"
+                class="form-control"
+                id="dateTo"
+                formControlName="dateTo"
+              />
+              <app-form-error
+                [formControlRef]="dateTo"
+                [validator]="'required'"
+                [errorText]="'Seleziona la data di fine'"
+              ></app-form-error>
+            </div>
           </div>
-          <div>
-            <label for="dateTo" class="form-label h5">{{
-              "A" | translate
-            }}</label>
-            <input
-              type="date"
-              class="form-control"
-              id="dateTo"
-              formControlName="dateTo"
-            />
-            <app-form-error
-              [formControlRef]="dateTo"
-              [validator]="'required'"
-              [errorText]="'Seleziona la data di fine'"
-            ></app-form-error>
-          </div>
+          <app-form-error
+            [formControlRef]="form"
+            [validator]="'invalidDateRange'"
+            [errorText]="
+              'La data di inizio deve essere maggiore di quella finale'
+            "
+          ></app-form-error>
         </div>
       </div>
       <div class="modal-footer">
@@ -116,61 +125,64 @@
                 ></app-card-badge>
               </button>
             </h2>
-
-            <!-- COLLAPSE (solo Angular) -->
             <div
               class="accordion-collapse collapse"
               [ngClass]="{ show: activePanelIndex === i }"
             >
               <div class="accordion-body">
-                <!-- ROW INPUTS -->
-                <div class="mb-3 d-flex gap-4 text-primary">
-                  <!-- DATE FROM -->
-                  <div>
-                    <label class="form-label h5">{{ "Da" | translate }}</label>
-                    <input
-                      type="date"
-                      class="form-control"
-                      formControlName="dateFrom"
-                    />
-                    <app-form-error
-                      [formControlRef]="workingTrips.at(i).get('dateFrom')"
-                      validator="required"
-                      errorText="Seleziona la data di inizio"
-                    ></app-form-error>
-                  </div>
-
-                  <!-- DATE TO -->
-                  <div>
-                    <label class="form-label h5">{{ "A" | translate }}</label>
-                    <input
-                      type="date"
-                      class="form-control"
-                      formControlName="dateTo"
-                    />
-                    <app-form-error
-                      [formControlRef]="workingTrips.at(i).get('dateTo')"
-                      validator="required"
-                      errorText="Seleziona la data di fine"
-                    ></app-form-error>
-                  </div>
-
-                  <!-- DELETE BUTTON -->
-                  <div
-                    class="d-flex align-items-end"
-                    *ngIf="workingTrip.get('status')?.value === 'PENDING'"
-                  >
-                    <button
-                      class="rounded bg-danger btn btn-icon"
-                      type="button"
-                      (click)="toggleEntryDelete(workingTrip.value, i)"
+                <div class="mb-3">
+                  <div class="d-flex gap-4 text-primary">
+                    <div>
+                      <label class="form-label h5">{{
+                        "Da" | translate
+                      }}</label>
+                      <input
+                        type="date"
+                        class="form-control"
+                        formControlName="dateFrom"
+                      />
+                      <app-form-error
+                        [formControlRef]="workingTrips.at(i).get('dateFrom')"
+                        validator="required"
+                        errorText="Seleziona la data di inizio"
+                      ></app-form-error>
+                    </div>
+                    <div>
+                      <label class="form-label h5">{{ "A" | translate }}</label>
+                      <input
+                        type="date"
+                        class="form-control"
+                        formControlName="dateTo"
+                      />
+                      <app-form-error
+                        [formControlRef]="workingTrips.at(i).get('dateTo')"
+                        validator="required"
+                        errorText="Seleziona la data di fine"
+                      ></app-form-error>
+                    </div>
+                    <div
+                      class="d-flex align-items-end"
+                      *ngIf="workingTrip.get('status')?.value === 'PENDING'"
                     >
-                      <fa-icon
-                        [icon]="faIcons.xSymbol"
-                        class="fa-sm text-light"
-                      ></fa-icon>
-                    </button>
+                      <button
+                        class="rounded bg-danger btn btn-icon"
+                        type="button"
+                        (click)="toggleEntryDelete(workingTrip.value, i)"
+                      >
+                        <fa-icon
+                          [icon]="faIcons.xSymbol"
+                          class="fa-sm text-light"
+                        ></fa-icon>
+                      </button>
+                    </div>
                   </div>
+                  <app-form-error
+                    [formControlRef]="workingTrips.at(i)"
+                    [validator]="'invalidDateRange'"
+                    [errorText]="
+                      'La data di inizio deve essere maggiore di quella finale'
+                    "
+                  ></app-form-error>
                 </div>
               </div>
             </div>
