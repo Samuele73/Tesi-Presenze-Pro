@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.Year;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -150,13 +151,14 @@ public class CalendarController {
             }
     )
     @GetMapping(value = "/export/month", produces = "application/octet-stream")
-    public ResponseEntity<byte[]> exportMonthFromCurrentYear(@RequestParam int month) throws IOException {
+    public ResponseEntity<byte[]> exportMonthFromCurrentYear(@RequestParam int month, @RequestParam int year) throws IOException {
+        final Date currentDate = new Date();
+        if(currentDate.getMonth() < month && currentDate.getYear() < year)
+            throw new IllegalArgumentException("Data non valida per la creazione del report");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         XSSFWorkbook workbook = this.calendarReportService.generateMonthlyReportFromCurrentYear(month);
         workbook.write(out);
         workbook.close();
-
-        int year = Year.now().getValue();
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=presenze_" + year + "-" + month + ".xlsx")

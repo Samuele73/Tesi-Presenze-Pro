@@ -31,30 +31,38 @@ export class CalendarCsvModalComponent {
 
   initializeForm(): void {
     const today = new Date();
-    const currentMonthIndex = today.getMonth();
-    this.availableMonths = Array.from(
-      { length: currentMonthIndex + 1 },
-      (_, idx) => {
-        const monthIndex = currentMonthIndex - idx;
-        return {
-          value: monthIndex,
-          label: new Date(today.getFullYear(), monthIndex, 1).toLocaleString(
-            this.locale,
-            {
-              month: 'long',
-            }
-          ),
-        };
-      }
-    );
+    const selectedDateYear = this.calendarSelectedDate?.getFullYear();
+    const isPreviousYearSelection =
+      selectedDateYear === today.getFullYear() - 1;
+    const referenceYear = isPreviousYearSelection
+      ? selectedDateYear!
+      : today.getFullYear();
+    const startMonthIndex = isPreviousYearSelection
+      ? 11
+      : today.getMonth();
+    const monthsCount = startMonthIndex + 1;
+
+    this.todayYear = referenceYear;
+    this.availableMonths = Array.from({ length: monthsCount }, (_, idx) => {
+      const monthIndex = idx;
+      return {
+        value: monthIndex,
+        label: new Date(referenceYear, monthIndex, 1).toLocaleString(
+          this.locale,
+          {
+            month: 'long',
+          }
+        ),
+      };
+    });
     if (!this.availableMonths.length) {
       this.selectedMonth = null;
       return;
     }
     const initialMonth = this.calendarSelectedDate
       ? this.calendarSelectedDate.getMonth()
-      : currentMonthIndex;
-    const limitedInitialMonth = Math.min(initialMonth, currentMonthIndex);
+      : startMonthIndex;
+    const limitedInitialMonth = Math.min(initialMonth, startMonthIndex);
     const matchedMonth = this.availableMonths.find(
       (month) => month.value === limitedInitialMonth
     );
