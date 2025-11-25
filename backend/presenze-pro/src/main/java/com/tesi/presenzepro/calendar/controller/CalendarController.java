@@ -156,7 +156,7 @@ public class CalendarController {
         if(currentDate.getMonth() < month && currentDate.getYear() < year)
             throw new IllegalArgumentException("Data non valida per la creazione del report");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        XSSFWorkbook workbook = this.calendarReportService.generateMonthlyReportFromCurrentYear(month);
+        XSSFWorkbook workbook = this.calendarReportService.generateMonthlyReportFromCurrentYear(month, year);
         workbook.write(out);
         workbook.close();
 

@@ -25,12 +25,11 @@ public class CalendarReportService {
     private final CalendarRepository calendarRepository;
     private final UserService userService;
 
-    public XSSFWorkbook generateMonthlyReportFromCurrentYear(int month) {
-        int currentYear = Year.now().getValue();
+    public XSSFWorkbook generateMonthlyReportFromCurrentYear(int month, int year) {
         String userEmail = this.userService.getCurrentUserEmail();
 
         // Recupero Dati dal DB
-        List<CalendarEntity> yearmonthEntities = new ArrayList<>(this.calendarRepository.findUserYearMonthEntities(userEmail, currentYear, month));
+        List<CalendarEntity> yearmonthEntities = new ArrayList<>(this.calendarRepository.findUserYearMonthEntities(userEmail, year, month));
 
         // Se non ci sono dati, lancia eccezione (gestita dal controller advice -> 404)
         if (yearmonthEntities.isEmpty()) {
@@ -48,7 +47,7 @@ public class CalendarReportService {
         // Ore giornaliere (default 8 se null)
         int dailyHours = Optional.ofNullable(userData.dailyHours()).orElse(8);
 
-        YearMonth ym = YearMonth.of(currentYear, calcMonth);
+        YearMonth ym = YearMonth.of(year, calcMonth);
         int daysInMonth = ym.lengthOfMonth();
 
         // ============================================================
@@ -71,7 +70,7 @@ public class CalendarReportService {
             LocalDate to = toLocalDate(trip.getDateTo());
 
             for (LocalDate d = from; !d.isAfter(to); d = d.plusDays(1)) {
-                if (d.getYear() != currentYear || d.getMonthValue() != calcMonth) continue;
+                if (d.getYear() != year || d.getMonthValue() != calcMonth) continue;
                 int day = d.getDayOfMonth();
 
                 ordHours[day] = dailyHours; // Forza ore standard
@@ -85,7 +84,7 @@ public class CalendarReportService {
             if (entity.getEntryType() != CalendarEntryType.WORKING_DAY) continue;
             CalendarWorkingDayEntry wd = (CalendarWorkingDayEntry) entity.getCalendarEntry();
             LocalDate d = toLocalDate(wd.getDateFrom());
-            if (d.getYear() != currentYear || d.getMonthValue() != calcMonth) continue;
+            if (d.getYear() != year || d.getMonthValue() != calcMonth) continue;
 
             int day = d.getDayOfMonth();
 
@@ -122,7 +121,7 @@ public class CalendarReportService {
             String type = (req.getRequestType() != null) ? req.getRequestType().toUpperCase() : "";
 
             for (LocalDate d = from; !d.isAfter(to); d = d.plusDays(1)) {
-                if (d.getYear() != currentYear || d.getMonthValue() != calcMonth) continue;
+                if (d.getYear() != year || d.getMonthValue() != calcMonth) continue;
                 int day = d.getDayOfMonth();
 
                 String code = null;
@@ -156,7 +155,7 @@ public class CalendarReportService {
             LocalDate to = toLocalDate(av.getDateTo());
 
             for (LocalDate d = from; !d.isAfter(to); d = d.plusDays(1)) {
-                if (d.getYear() != currentYear || d.getMonthValue() != calcMonth) continue;
+                if (d.getYear() != year || d.getMonthValue() != calcMonth) continue;
                 availabilityByDay.computeIfAbsent(d.getDayOfMonth(), k -> new ArrayList<>()).add(av);
             }
         }
@@ -166,7 +165,7 @@ public class CalendarReportService {
         // ============================================================
 
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("Presenze " + currentYear + "-" + String.format("%02d", calcMonth));
+        XSSFSheet sheet = workbook.createSheet("Presenze " + year + "-" + String.format("%02d", calcMonth));
 
         // --- DEFINIZIONE STILI ---
 
@@ -204,7 +203,7 @@ public class CalendarReportService {
         // RIGA 2: Titolo
         Row row2 = sheet.createRow(1);
         createCell(row2, 1, "PRESENZE MESE DI", titleStyle);
-        createCell(row2, 2, currentYear + "-" + String.format("%02d", calcMonth), titleStyle);
+        createCell(row2, 2, year + "-" + String.format("%02d", calcMonth), titleStyle);
 
         //  INTESTAZIONI
         Row row4 = sheet.createRow(3);

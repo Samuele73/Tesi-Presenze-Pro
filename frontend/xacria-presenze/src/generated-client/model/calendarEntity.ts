@@ -20,6 +20,7 @@ export interface CalendarEntity {
     id?: string;
     userEmail?: string;
     createdAt?: Date;
+    updatedAt?: Date;
 }
 export namespace CalendarEntity {
     export type EntryTypeEnum = 'WORKING_DAY' | 'REQUEST' | 'WORKING_TRIP' | 'AVAILABILITY';

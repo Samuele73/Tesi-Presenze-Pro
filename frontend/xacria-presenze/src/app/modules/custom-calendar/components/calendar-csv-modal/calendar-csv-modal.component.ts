@@ -37,9 +37,7 @@ export class CalendarCsvModalComponent {
     const referenceYear = isPreviousYearSelection
       ? selectedDateYear!
       : today.getFullYear();
-    const startMonthIndex = isPreviousYearSelection
-      ? 11
-      : today.getMonth();
+    const startMonthIndex = isPreviousYearSelection ? 11 : today.getMonth();
     const monthsCount = startMonthIndex + 1;
 
     this.todayYear = referenceYear;
@@ -71,12 +69,20 @@ export class CalendarCsvModalComponent {
       : this.availableMonths[0].value;
   }
 
+  private getReferenceYear() {
+    const today = new Date();
+    const selectedDateYear = this.calendarSelectedDate?.getFullYear();
+    const isPreviousYearSelection =
+      selectedDateYear === today.getFullYear() - 1;
+    return isPreviousYearSelection ? selectedDateYear! : today.getFullYear();
+  }
+
   open(): void {
     this.initializeForm();
     this.modalService
       .open(this.modalElement, {
         ariaLabelledBy: 'modal-basic-title',
-        windowClass: 'calendar-report-modal'
+        windowClass: 'calendar-report-modal',
       })
       .result.then(
         (result) => {},
@@ -87,12 +93,21 @@ export class CalendarCsvModalComponent {
   }
 
   submitReportExport(form?: NgForm): void {
-    if (form && (form.invalid || this.selectedMonth === null)) {
+    const referenceYear = this.getReferenceYear();
+    const currentDate = new Date();
+    if (
+      form &&
+      (form.invalid ||
+        this.selectedMonth === null ||
+        this.calendarSelectedDate!.getFullYear() === null ||
+        currentDate.getMonth() < this.selectedMonth)
+    ) {
       form.control.markAllAsTouched();
       return;
     }
+
     this.calendarService
-      .exportMonthFromCurrentYear(this.selectedMonth!)
+      .exportMonthFromCurrentYear(this.selectedMonth!, referenceYear)
       .subscribe({
         next: (blob: Blob) => {
           const url = window.URL.createObjectURL(blob);
