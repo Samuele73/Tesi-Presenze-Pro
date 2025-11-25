@@ -44,6 +44,7 @@ import { ToastContainerModule, ToastrModule } from 'ngx-toastr';
 import { StatComponent } from './stat/stat.component';
 import { RequestsPreviewComponent } from './requests-preview/requests-preview.component';
 import { NotificationComponent } from './notification/notification.component';
+import { UserDropdownComponent } from './user-dropdown/user-dropdown.component';
 
 @NgModule({
   declarations: [
@@ -68,7 +69,8 @@ import { NotificationComponent } from './notification/notification.component';
     ProfileMenuItemComponent,
     StatComponent,
     RequestsPreviewComponent,
-    NotificationComponent
+    NotificationComponent,
+    UserDropdownComponent
   ],
   imports: [
     CommonModule,
