@@ -11,6 +11,7 @@ import {
 } from 'src/generated-client';
 import { RequestsTab } from '../requests-approval-page/requests-approval-page.component';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-request-details-modal',
@@ -103,5 +104,12 @@ export class RequestDetailsModalComponent {
 
   shouldHaveTime(type: UserRequestResponseDto.TypeEnum | undefined){
     return type !== "TRASFERTA" && type !== "CONGEDO" && type !== "FERIE"
+  }
+
+  getSingleDateWithTime(dateFrom: string | Date, dateTo: string | Date): string{
+    const date = formatDate(dateFrom, 'dd-MM-yyyy', 'en-GB');
+    const timeFrom = formatDate(dateFrom, 'HH:mm', 'en-GB');
+    const timeTo = formatDate(dateTo, 'HH:mm', 'en-GB')
+    return date + " " + timeFrom + "-" + timeTo
   }
 }

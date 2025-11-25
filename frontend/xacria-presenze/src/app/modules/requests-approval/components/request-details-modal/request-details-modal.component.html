@@ -77,7 +77,7 @@
           {{
             request.dateFrom
               ? shouldHaveTime(request.type)
-                ? (request.dateFrom | date : "dd-MM-yyyy HH:mm")
+                ? getSingleDateWithTime(request.dateFrom, request.dateTo!)
                 : (request.dateFrom | date : "dd-MM-yyyy")
               : "-"
           }}
