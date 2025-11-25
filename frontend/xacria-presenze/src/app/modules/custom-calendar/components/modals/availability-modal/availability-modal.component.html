@@ -18,62 +18,71 @@
     </div>
     <form [formGroup]="form" (ngSubmit)="submitNewEntry()">
       <div class="modal-body">
-        <div class="mb-3 d-flex gap-4 text-primary">
-          <div>
-            <label for="dateFrom" class="form-label h5">{{
-              "Da" | translate
-            }}</label>
-            <input
-              type="date"
-              class="form-control"
-              id="dateFrom"
-              formControlName="dateFrom"
-            />
-            <app-form-error
-              [formControlRef]="dateFrom"
-              [validator]="'required'"
-              [errorText]="'Seleziona la data di inizio'"
-            ></app-form-error>
-          </div>
-          <div>
-            <label for="dateTo" class="form-label h5">{{
-              "A" | translate
-            }}</label>
-            <input
-              type="date"
-              class="form-control"
-              id="dateTo"
-              formControlName="dateTo"
-            />
-            <app-form-error
-              [formControlRef]="dateTo"
-              [validator]="'required'"
-              [errorText]="'Seleziona la data di fine'"
-            ></app-form-error>
-          </div>
-          <div>
-            <label for="projects" class="form-label h5">{{
-              "Progetto" | translate
-            }}</label>
-            <select
-              name="project_"
-              id="projects"
-              class="form-select"
-              formControlName="project"
-            >
-              <option
-                value="{{ project }}"
-                *ngFor="let project of validProjects"
+        <div class="mb-3 ">
+          <div  class="d-flex gap-4 text-primary">
+            <div>
+              <label for="dateFrom" class="form-label h5">{{
+                "Da" | translate
+              }}</label>
+              <input
+                type="date"
+                class="form-control"
+                id="dateFrom"
+                formControlName="dateFrom"
+              />
+              <app-form-error
+                [formControlRef]="dateFrom"
+                [validator]="'required'"
+                [errorText]="'Seleziona la data di inizio'"
+              ></app-form-error>
+            </div>
+            <div>
+              <label for="dateTo" class="form-label h5">{{
+                "A" | translate
+              }}</label>
+              <input
+                type="date"
+                class="form-control"
+                id="dateTo"
+                formControlName="dateTo"
+              />
+              <app-form-error
+                [formControlRef]="dateTo"
+                [validator]="'required'"
+                [errorText]="'Seleziona la data di fine'"
+              ></app-form-error>
+            </div>
+            <div>
+              <label for="projects" class="form-label h5">{{
+                "Progetto" | translate
+              }}</label>
+              <select
+                name="project_"
+                id="projects"
+                class="form-select"
+                formControlName="project"
               >
-                {{ project }}
-              </option>
-            </select>
-            <app-form-error
-              [formControlRef]="project"
-              [validator]="'required'"
-              [errorText]="'Seleziona il progetto'"
-            ></app-form-error>
+                <option
+                  value="{{ project }}"
+                  *ngFor="let project of validProjects"
+                >
+                  {{ project }}
+                </option>
+              </select>
+              <app-form-error
+                [formControlRef]="project"
+                [validator]="'required'"
+                [errorText]="'Seleziona il progetto'"
+              ></app-form-error>
+            </div>
           </div>
+          <app-form-error
+            [formControlRef]="form"
+            [validator]="'invalidDateRange'"
+            [errorText]="
+              'La data di inizio deve essere maggiore di quella finale'
+            "
+          ></app-form-error>
         </div>
       </div>
       <div class="modal-footer">
@@ -119,81 +128,89 @@
             formGroupName="{{ i }}"
           >
             <div
-              class="mb-3 d-flex gap-4 text-primary"
+              class="mb-3 "
               #entry
               [ngClass]="{
                 'delete-mode': toDeleteEntries.includes(availability.value.id)
               }"
             >
-              <div>
-                <label for="dateFrom" class="form-label h5">{{
-                  "Da" | translate
-                }}</label>
-                <input
-                  type="date"
-                  class="form-control"
-                  id="dateFrom"
-                  formControlName="dateFrom"
-                />
-                <app-form-error
-                  [formControlRef]="availabilities.at(i).get('dateFrom')"
-                  [validator]="'required'"
-                  [errorText]="'Seleziona la data di inizio'"
-                ></app-form-error>
-              </div>
-              <div>
-                <label for="dateTo" class="form-label h5">{{
-                  "A" | translate
-                }}</label>
-                <input
-                  type="date"
-                  class="form-control"
-                  id="dateTo"
-                  formControlName="dateTo"
-                />
-                <app-form-error
-                  [formControlRef]="availabilities.at(i).get('dateTo')"
-                  [validator]="'required'"
-                  [errorText]="'Seleziona la data di fine'"
-                ></app-form-error>
-              </div>
-              <div>
-                <label for="projects" class="form-label h5">{{
-                  "Progetto" | translate
-                }}</label>
-                <select
-                  name="project_"
-                  id="projects"
-                  class="form-select"
-                  formControlName="project"
-                >
-                  <option
-                    value="{{ project }}"
-                    *ngFor="let project of validProjects"
+              <div class="d-flex gap-4 text-primary">
+                <div>
+                  <label for="dateFrom" class="form-label h5">{{
+                    "Da" | translate
+                  }}</label>
+                  <input
+                    type="date"
+                    class="form-control"
+                    id="dateFrom"
+                    formControlName="dateFrom"
+                  />
+                  <app-form-error
+                    [formControlRef]="availabilities.at(i).get('dateFrom')"
+                    [validator]="'required'"
+                    [errorText]="'Seleziona la data di inizio'"
+                  ></app-form-error>
+                </div>
+                <div>
+                  <label for="dateTo" class="form-label h5">{{
+                    "A" | translate
+                  }}</label>
+                  <input
+                    type="date"
+                    class="form-control"
+                    id="dateTo"
+                    formControlName="dateTo"
+                  />
+                  <app-form-error
+                    [formControlRef]="availabilities.at(i).get('dateTo')"
+                    [validator]="'required'"
+                    [errorText]="'Seleziona la data di fine'"
+                  ></app-form-error>
+                </div>
+                <div>
+                  <label for="projects" class="form-label h5">{{
+                    "Progetto" | translate
+                  }}</label>
+                  <select
+                    name="project_"
+                    id="projects"
+                    class="form-select"
+                    formControlName="project"
                   >
-                    {{ project }}
-                  </option>
-                </select>
+                    <option
+                      value="{{ project }}"
+                      *ngFor="let project of validProjects"
+                    >
+                      {{ project }}
+                    </option>
+                  </select>
 
-
-                <app-form-error
-                  [formControlRef]="availabilities.at(i).get('project')"
-                  [validator]="'required'"
-                  [errorText]="'Seleziona il progetto'"
-                ></app-form-error>
+                  <app-form-error
+                    [formControlRef]="availabilities.at(i).get('project')"
+                    [validator]="'required'"
+                    [errorText]="'Seleziona il progetto'"
+                  ></app-form-error>
+                </div>
+                <div class="d-flex align-items-end">
+                  <button
+                    class="btn btn-danger"
+                    type="button"
+                    (click)="toggleEntryDelete(availability.value, i)"
+                  >
+                    <fa-icon
+                      [icon]="faIcons.xSymbol"
+                      class="fa-sm text-light"
+                    ></fa-icon>
+                  </button>
+                </div>
               </div>
-              <div class="d-flex align-items-end">
-                <button
-                  class="btn btn-danger"
-                  type="button"
-                  (click)="toggleEntryDelete(availability.value, i)"
-                >
-                  <fa-icon
-                    [icon]="faIcons.xSymbol"
-                    class="fa-sm text-light"
-                  ></fa-icon>
-                </button>
-              </div>
+              <app-form-error
+                [formControlRef]="availabilities.at(i)"
+                [validator]="'invalidDateRange'"
+                [errorText]="
+                  'La data di inizio deve essere maggiore di quella finale'
+                "
+              ></app-form-error>
             </div>
             <hr
               class="my-4 border-1"

@@ -29,6 +29,7 @@ import { projects } from '../../../const-vars';
 import { CalendarStateService } from '../../../services/calendar-state.service';
 import { ToastrService } from 'ngx-toastr';
 import { ProjectStoreService } from 'src/app/modules/project/services/project-store.service';
+import { dateRangeValidator } from '../../../validators/dateRange.validators';
 
 @Component({
   selector: 'app-availability-modal',
@@ -89,11 +90,16 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
       const formattedCurrentDate = this.dateFormat.manuallyFormatToDateInput(
         this.currentDate ?? new Date()
       );
-      this.form = this.fb.group({
-        dateFrom: [formattedCurrentDate, Validators.required],
-        dateTo: [formattedCurrentDate, Validators.required],
-        project: [this.validProjects[0], Validators.required],
-      });
+      this.form = this.fb.group(
+        {
+          dateFrom: [formattedCurrentDate, Validators.required],
+          dateTo: [formattedCurrentDate, Validators.required],
+          project: [this.validProjects[0], Validators.required],
+        },
+        {
+          validators: dateRangeValidator('dateFrom', 'dateTo'),
+        }
+      );
     } else this.initializeModifyForm();
   }
 
@@ -122,17 +128,22 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
     const to = this.dateFormat.formatToDateInput(
       entry.calendarEntry.dateTo ?? new Date()
     );
-    return this.fb.group({
-      id: [entry.id],
-      dateFrom: [from, Validators.required],
-      dateTo: [to, Validators.required],
-      project: [
-        !entry.calendarEntry.project
-          ? this.validProjects[0]
-          : entry.calendarEntry.project,
-        Validators.required,
-      ],
-    });
+    return this.fb.group(
+      {
+        id: [entry.id],
+        dateFrom: [from, Validators.required],
+        dateTo: [to, Validators.required],
+        project: [
+          !entry.calendarEntry.project
+            ? this.validProjects[0]
+            : entry.calendarEntry.project,
+          Validators.required,
+        ],
+      },
+      {
+        validators: dateRangeValidator('dateFrom', 'dateTo'),
+      }
+    );
   }
 
   private updateEntries(): void {
