@@ -20,7 +20,7 @@ import { UserBasicDetailsStoreService } from '../../services/user-basic-details-
   styleUrls: ['./user-list-item.component.scss'],
 })
 export class UserListItemComponent implements OnInit {
-  APP_ROUTES = APP_ROUTES
+  APP_ROUTES = APP_ROUTES;
   @Input() userBasicDetails: UserBasicDetailsResponse | null = null;
   fullName!: string;
   apiError: string = '';
@@ -71,19 +71,23 @@ export class UserListItemComponent implements OnInit {
   }
 
   deleteUser() {
-    console.log("controlla di nuovo", this.userBasicDetails?.email, !this.userBasicDetails?.email || !this.userAuth.isOwner());
+    console.log(
+      'controlla di nuovo',
+      this.userBasicDetails?.email,
+      !this.userBasicDetails?.email || !this.userAuth.isOwner()
+    );
     if (!this.userBasicDetails?.email || !this.userAuth.isOwner()) {
       this.apiError = 'Impossibile eliminare l utente';
       return;
     }
-    this.UserBasicStoreService.deleteUser(this.userBasicDetails.email).subscribe();
+    this.UserBasicStoreService.deleteUser(
+      this.userBasicDetails.email
+    ).subscribe();
   }
 
   openConfirmDeletionModal() {
-    console.log("Controllasdafadsfsfa")
-    const modalRef = this.modalService.open(ConfirmModalComponent, {
-      centered: true,
-    });
+    console.log('Controllasdafadsfsfa');
+    const modalRef = this.modalService.open(ConfirmModalComponent, {});
     modalRef.componentInstance.title = 'Conferma eliminazione!';
     modalRef.componentInstance.message =
       'Sei sicuro di voler eliminare questo utente? Questa azione non può essere annullata.';
@@ -101,7 +105,9 @@ export class UserListItemComponent implements OnInit {
     }
     let params = { email: toGoUserEmail, mode: '' };
     if (email === this.userBasicDetails?.email) {
-      this.router.navigate([APP_ROUTES.PROFILE], { queryParams: { mode: 'ME' } });
+      this.router.navigate([APP_ROUTES.PROFILE], {
+        queryParams: { mode: 'ME' },
+      });
       return;
     } else if (this.userAuth.isOwner()) params = { ...params, mode: 'FULL' };
     else params = { ...params, mode: 'BASIC' };

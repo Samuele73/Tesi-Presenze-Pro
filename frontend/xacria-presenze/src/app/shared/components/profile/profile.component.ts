@@ -149,9 +149,7 @@ export class ProfileComponent implements OnInit {
 
   openConfirmDeletionModal() {
     console.log('Controllasdafadsfsfa');
-    const modalRef = this.modalService.open(ConfirmModalComponent, {
-      centered: true,
-    });
+    const modalRef = this.modalService.open(ConfirmModalComponent, {});
     modalRef.componentInstance.title = 'Conferma eliminazione!';
     modalRef.componentInstance.message =
       'Sei sicuro di voler eliminare questo utente? Questa azione non può essere annullata.';
@@ -162,22 +160,26 @@ export class ProfileComponent implements OnInit {
   }
 
   deleteUser() {
-    const email = this.email?.value
-    console.log("controlla di nuovo", email, !email || !this.authService.isOwner());
+    const email = this.email?.value;
+    console.log(
+      'controlla di nuovo',
+      email,
+      !email || !this.authService.isOwner()
+    );
     if (!email || !this.authService.isOwner()) {
       this.apiError = 'Impossibile eliminare l utente';
       return;
     }
-    console.log("e invece ecccomi")
+    console.log('e invece ecccomi');
     this.userService.deleteUserByEmail(email).subscribe({
       next: (deletedUser: User) => {
-        console.log("Delted user: ", deletedUser)
+        console.log('Delted user: ', deletedUser);
         this.router.navigate(['/app/users-management']);
       },
       error: (err: HttpErrorResponse) => {
         this.apiError = err.error.message;
-      }
-    })
+      },
+    });
   }
 
   retrieveUserCreds(): void {

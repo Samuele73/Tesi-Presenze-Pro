@@ -35,9 +35,7 @@ export class ProjectListItemComponent implements OnInit {
 
   openConfirmDeletionModal() {
     console.log('Controllasdafadsfsfa');
-    const modalRef = this.modalService.open(ConfirmModalComponent, {
-      centered: true,
-    });
+    const modalRef = this.modalService.open(ConfirmModalComponent, {});
     modalRef.componentInstance.title = 'Conferma eliminazione!';
     modalRef.componentInstance.message =
       'Sei sicuro di voler eliminare questo progetto? Questa azione non può essere annullata.';
@@ -77,7 +75,7 @@ export class ProjectListItemComponent implements OnInit {
     if (this.project?.id) {
       this.projectStoreService.deleteProject(this.project?.id).subscribe();
     }
-    this.apiError = "Non è stato possibile eliminare il progetto"
+    this.apiError = 'Non è stato possibile eliminare il progetto';
   }
 
   goToProject() {
