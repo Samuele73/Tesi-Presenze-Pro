@@ -23,7 +23,7 @@
     <form action="" [formGroup]="form" (ngSubmit)="submitNewEntries()">
       <div class="modal-body">
         <h4>{{ "Orario lavorativo" | translate }}</h4>
-        <div class="mb-4 d-flex gap-4 text-primary">
+        <div class="mb-3 d-flex gap-4 text-primary">
           <div>
             <label for="date-from" class="form-label h5">{{
               "Da" | translate
@@ -80,6 +80,14 @@
             ></app-form-error>
           </div>
         </div>
+        <app-form-error
+          [formControlRef]="form"
+          [validator]="'invalidTimeRange'"
+          [errorText]="
+            'L\'orario di inizio deve essere minore dell\'orario di fine.'
+          "
+          [styleClass]="'mb-1'"
+        ></app-form-error>
         <div class="d-flex gap-2 align-items-center">
           <h4>{{ "Aggiungi orario lavorativo" | translate }}</h4>
           <button
@@ -95,7 +103,7 @@
             *ngFor="let daywork of dayWorks.controls; let i = index"
             formGroupName="{{ i }}"
           >
-            <div class="mb-3 d-flex gap-4 text-primary w-100">
+            <div class="mb-2 d-flex gap-4 text-primary w-100">
               <div>
                 <label for="hourFrom" class="form-label h5">{{
                   "Da" | translate
@@ -160,6 +168,13 @@
                 </button>
               </div>
             </div>
+            <app-form-error
+              [formControlRef]="dayWorks.at(i)"
+              [validator]="'invalidTimeRange'"
+              [errorText]="
+                'L\'orario di inizio deve essere minore dell\'orario di fine.'
+              "
+            ></app-form-error>
             <hr
               class="my-4 border-1"
               *ngIf="i != dayWorks.controls.length - 1"

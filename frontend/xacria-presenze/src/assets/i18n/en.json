@@ -151,5 +151,6 @@
   "Seleziona il mese valido da esportare in formato .csv": "Select the valid month to export in .csv format",
   "Per il" : "For",
   "Dal" : "From",
-  "Al" : "To"
+  "Al" : "To",
+  "L'orario di inizio deve essere minore dell'orario di fine." : "The start time must be earlier than the end time"
 }

@@ -15,13 +15,18 @@ import { ModalComponent } from '../modalComponent';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { faIcons } from '../../custom-calendar-page/custom-calendar-page.component';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
-import { CalendarWorkingDayEntry, Project, ProjectService } from 'src/generated-client';
+import {
+  CalendarWorkingDayEntry,
+  Project,
+  ProjectService,
+} from 'src/generated-client';
 import { identifiableCalendarWorkingDay } from 'src/app/modules/custom-calendar/models/calendar';
 import { parse } from 'date-fns';
 import { it as itLocale } from 'date-fns/locale';
 import { CalendarStateService } from '../../../services/calendar-state.service';
 import { ToastrService } from 'ngx-toastr';
 import { ProjectStoreService } from 'src/app/modules/project/services/project-store.service';
+import { timeRangeValidator } from '../../../validators/timeRange.validators';
 
 @Component({
   selector: 'app-daywork-modal',
@@ -81,12 +86,17 @@ export class DayworkModalComponent
 
   initializeForm(): void {
     if (!this.isModifyMode)
-      this.form = this.fb.group({
-        hourFrom: [null, Validators.required],
-        hourTo: [null, Validators.required],
-        project: [this.validProjects[0], Validators.required],
-        day_works: this.fb.array([]),
-      });
+      this.form = this.fb.group(
+        {
+          hourFrom: [null, Validators.required],
+          hourTo: [null, Validators.required],
+          project: [this.validProjects[0], Validators.required],
+          day_works: this.fb.array([]),
+        },
+        {
+          validators: timeRangeValidator,
+        }
+      );
     else this.initializeModifyForm();
   }
 
@@ -108,18 +118,24 @@ export class DayworkModalComponent
   createNewDayWork(entry?: identifiableCalendarWorkingDay): FormGroup {
     let group: FormGroup;
     if (!entry)
-      group = this.fb.group({
-        hourFrom: [null, Validators.required],
-        hourTo: [null, Validators.required],
-        project: [this.validProjects[0], Validators.required],
-      });
+      group = this.fb.group(
+        {
+          hourFrom: [null, Validators.required],
+          hourTo: [null, Validators.required],
+          project: [this.validProjects[0], Validators.required],
+        },
+        { validators: timeRangeValidator }
+      );
     else {
-      group = this.fb.group({
-        id: [entry.id],
-        hourFrom: [entry.calendarEntry.hourFrom, Validators.required],
-        hourTo: [entry.calendarEntry.hourTo, Validators.required],
-        project: [entry.calendarEntry.project, Validators.required],
-      });
+      group = this.fb.group(
+        {
+          id: [entry.id],
+          hourFrom: [entry.calendarEntry.hourFrom, Validators.required],
+          hourTo: [entry.calendarEntry.hourTo, Validators.required],
+          project: [entry.calendarEntry.project, Validators.required],
+        },
+        { validators: timeRangeValidator }
+      );
     }
     return group;
   }
@@ -147,15 +163,21 @@ export class DayworkModalComponent
   private deleteEntries(): void {
     if (this.toDeleteEntries.length) {
       console.log('To delete entries', this.toDeleteEntries);
-      this.calendarStateService.deleteCalendarEntities(this.toDeleteEntries, "WORKING_DAY").subscribe((resp: boolean) => {
-        if(!resp)
-          this.toastrService.error(this.apiError ?? "Errore nella cancellazione dei lavori giornalieri.");
-        else{
-          this.toastrService.clear();
-          this.toastrService.success("Lavori giornalieri cancellati con successo");
-        }
-
-      })
+      this.calendarStateService
+        .deleteCalendarEntities(this.toDeleteEntries, 'WORKING_DAY')
+        .subscribe((resp: boolean) => {
+          if (!resp)
+            this.toastrService.error(
+              this.apiError ??
+                'Errore nella cancellazione dei lavori giornalieri.'
+            );
+          else {
+            this.toastrService.clear();
+            this.toastrService.success(
+              'Lavori giornalieri cancellati con successo'
+            );
+          }
+        });
       this.toDeleteEntries = [];
     }
   }
@@ -168,7 +190,6 @@ export class DayworkModalComponent
 
     this.updateEntries();
     this.deleteEntries();
-
 
     this.modalService.dismissAll();
   }
@@ -247,15 +268,20 @@ export class DayworkModalComponent
       });
     console.log('la data', this.parseItalianDate(this.dateString));
     console.log('To updated entries', changedEntries);
-    this.calendarStateService.updateCalendarEntries(changedEntries, "WORKING_DAY").subscribe((resp: boolean) => {
-      if(!resp)
-        this.toastrService.error(this.apiError ?? "Errore nella modifica dei lavori giornalieri.");
-      else{
-        this.toastrService.clear();
-        this.toastrService.success("Lavori giornalieri modificati con successo");
-      }
-
-    })
+    this.calendarStateService
+      .updateCalendarEntries(changedEntries, 'WORKING_DAY')
+      .subscribe((resp: boolean) => {
+        if (!resp)
+          this.toastrService.error(
+            this.apiError ?? 'Errore nella modifica dei lavori giornalieri.'
+          );
+        else {
+          this.toastrService.clear();
+          this.toastrService.success(
+            'Lavori giornalieri modificati con successo'
+          );
+        }
+      });
     this.initialWorkingDays = this.dayWorks.value;
   }
 
@@ -287,12 +313,18 @@ export class DayworkModalComponent
         hourTo: this.hourTo?.value,
         dateFrom: normalizedDate,
       });
-      this.calendarStateService.saveCalendarEntities(newDayWorkEntries, "WORKING_DAY").subscribe((resp: boolean) => {
-        if(!resp)
-          this.toastrService.error(this.apiError ?? "Errore nella creazione del lavoro giornaliero.");
-        else
-          this.toastrService.success("Lavoro giornaliero creato con successo");
-      })
+      this.calendarStateService
+        .saveCalendarEntities(newDayWorkEntries, 'WORKING_DAY')
+        .subscribe((resp: boolean) => {
+          if (!resp)
+            this.toastrService.error(
+              this.apiError ?? 'Errore nella creazione del lavoro giornaliero.'
+            );
+          else
+            this.toastrService.success(
+              'Lavoro giornaliero creato con successo'
+            );
+        });
     } else console.error('Availability new entry form is invalid');
   }
 }

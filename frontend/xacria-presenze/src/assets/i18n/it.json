@@ -152,5 +152,6 @@
   "Seleziona il mese valido da esportare in formato .csv": "Seleziona il mese valido da esportare in formato .csv",
   "Per il" : "Per il",
   "Dal" : "Dal",
-  "Al" : "Al"
+  "Al" : "Al",
+  "L'orario di inizio deve essere minore dell'orario di fine." : "L'orario di inizio deve essere minore dell'orario di fine."
 }

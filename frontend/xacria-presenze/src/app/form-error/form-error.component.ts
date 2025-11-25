@@ -12,4 +12,5 @@ export class FormErrorComponent {
   @Input() formControlRef?: FormControl | AbstractControl<any,any> | null;
   @Input() validator!: string;
   @Input() errorText?: string;
+  @Input() styleClass?: string;
 }
