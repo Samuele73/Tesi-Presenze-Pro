@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from '../modalComponent';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
 import { faIcons } from '../../custom-calendar-page/custom-calendar-page.component';
 import { CalendarRequestEntry } from 'src/generated-client';
@@ -98,17 +98,17 @@ export class RequestModalComponent implements ModalComponent, OnInit {
   }
 
   initializeForm(): void {
-    console.log('initialized date', this.currentDate);
     if (!this.isModifyMode) {
       const formattedCurrentDate = this.dateFormat.manuallyFormatToDateInput(
         this.currentDate ?? new Date()
       );
+      const defaultTime: string = "09:00";
       this.form = this.fb.group({
         requestType: [request_types[0], Validators.required],
         dateFrom: [formattedCurrentDate, Validators.required],
         dateTo: [formattedCurrentDate, Validators.required],
-        timeFrom: [null, Validators.required],
-        timeTo: [null, Validators.required],
+        timeFrom: [defaultTime, Validators.required],
+        timeTo: [defaultTime, Validators.required],
       });
     } else {
       this.initializeModifyForm();
@@ -330,5 +330,9 @@ export class RequestModalComponent implements ModalComponent, OnInit {
         });
       this.form.reset();
     } else console.error('Availability new entry form is invalid');
+  }
+
+  showTimeBasedOnRequestType(requestType: AbstractControl | null): boolean{
+    return requestType?.value !== 'Ferie' && requestType?.value !== 'Congedo'
   }
 }
