@@ -23,4 +23,6 @@ public interface CalendarRepositoryCustom {
     Boolean updateRequestStatus(String id, RequestStatus newStatus);
 
     List<CalendarEntity> findUserYearMonthEntities(String userEmail, int year, int month);
+
+    CalendarEntity updateCalendarEntityById(String id, CalendarEntity newEntity);
 }

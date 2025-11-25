@@ -313,40 +313,10 @@ public class CalendarService {
     private CalendarEntity updateCalendarEntityById(String id, CalendarEntity newEntity) {
         CalendarEntity existing = mongoTemplate.findById(id, CalendarEntity.class);
 
-        if (existing == null) {
-            throw new NoDataFoundException(id);
-        }
-
         checkWorkingTripAndRequestStatus(existing, newEntity);
         triggerUserHoursUpdate(existing, newEntity);
 
-        Update update = new Update();
-
-        // aggiorna solo se non è null
-        if (newEntity.getEntryType() != null) {
-            update.set("entryType", newEntity.getEntryType());
-        }
-
-        // merge dei campi del sotto-documento calendarEntry
-        if (newEntity.getCalendarEntry() != null) {
-            mergeCalendarEntry(update, newEntity.getCalendarEntry());
-        }
-        update.set("updatedAt", new Date());
-
-        Query query = new Query(Criteria.where("_id").is(id));
-
-        CalendarEntity updated = mongoTemplate.findAndModify(
-                query,
-                update,
-                FindAndModifyOptions.options().returnNew(true),
-                CalendarEntity.class
-        );
-
-        if (updated == null) {
-            throw new NoDataFoundException(id);
-        }
-
-        return updated;
+        return this.repository.updateCalendarEntityById(id, newEntity);
     }
 
     private void triggerUserHoursUpdate(CalendarEntity existing, CalendarEntity newEntity) {
@@ -406,36 +376,6 @@ public class CalendarService {
         if (status == RequestStatus.PENDING && isUser && !isOwnerOfRequest) {
             System.out.println("SONO QUI");
             throw new AccessDeniedException("Azione non consentita");
-        }
-    }
-
-    private void mergeCalendarEntry(Update update, CalendarEntry newEntry) {
-        if (newEntry instanceof CalendarRequestEntry req) {
-            if (req.getRequestType() != null) update.set("calendarEntry.requestType", req.getRequestType());
-            if (req.getDateFrom() != null) update.set("calendarEntry.dateFrom", req.getDateFrom());
-            if (req.getDateTo() != null) update.set("calendarEntry.dateTo", req.getDateTo());
-            if (req.getTimeFrom() != null) update.set("calendarEntry.timeFrom", req.getTimeFrom());
-            if (req.getTimeTo() != null) update.set("calendarEntry.timeTo", req.getTimeTo());
-            if (req.getStatus() != null) update.set("calendarEntry.status", req.getStatus());
-        }
-
-        if (newEntry instanceof CalendarWorkingTripEntry trip) {
-            if (trip.getDateFrom() != null) update.set("calendarEntry.dateFrom", trip.getDateFrom());
-            if (trip.getDateTo() != null) update.set("calendarEntry.dateTo", trip.getDateTo());
-            if (trip.getStatus() != null) update.set("calendarEntry.status", trip.getStatus());
-        }
-
-        if (newEntry instanceof CalendarWorkingDayEntry day) {
-            if (day.getProject() != null) update.set("calendarEntry.project", day.getProject());
-            if (day.getHourFrom() != null) update.set("calendarEntry.hourFrom", day.getHourFrom());
-            if (day.getHourTo() != null) update.set("calendarEntry.hourTo", day.getHourTo());
-            if (day.getDateFrom() != null) update.set("calendarEntry.dateFrom", day.getDateFrom());
-        }
-
-        if (newEntry instanceof CalendarAvailabilityEntry av) {
-            if (av.getProject() != null) update.set("calendarEntry.project", av.getProject());
-            if (av.getDateFrom() != null) update.set("calendarEntry.dateFrom", av.getDateFrom());
-            if (av.getDateTo() != null) update.set("calendarEntry.dateTo", av.getDateTo());
         }
     }
 
