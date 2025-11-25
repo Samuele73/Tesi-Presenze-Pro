@@ -13,7 +13,6 @@ export class NotificationComponent implements OnInit {
   isNotified: boolean = false;
 
   constructor(private notifService: NotificationService, private toastrService: ToastrService, private router: Router) {
-    this.isNotified = sessionStorage.getItem('isNotified') === 'true';
   }
 
   ngOnInit(): void {
@@ -26,6 +25,8 @@ export class NotificationComponent implements OnInit {
   }
 
   onClick() {
+    if(!this.isNotified)
+      return;
     this.notifService.readNotif();
     this.router.navigate([APP_ROUTES.HOME]);
   }
