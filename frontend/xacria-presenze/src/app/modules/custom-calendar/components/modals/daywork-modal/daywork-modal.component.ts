@@ -94,7 +94,7 @@ export class DayworkModalComponent
           day_works: this.fb.array([]),
         },
         {
-          validators: timeRangeValidator,
+          validators: timeRangeValidator('hourFrom', 'hourTo'),
         }
       );
     else this.initializeModifyForm();
@@ -124,7 +124,7 @@ export class DayworkModalComponent
           hourTo: [null, Validators.required],
           project: [this.validProjects[0], Validators.required],
         },
-        { validators: timeRangeValidator }
+        { validators: timeRangeValidator('hourFrom', 'hourTo') }
       );
     else {
       group = this.fb.group(
@@ -134,7 +134,7 @@ export class DayworkModalComponent
           hourTo: [entry.calendarEntry.hourTo, Validators.required],
           project: [entry.calendarEntry.project, Validators.required],
         },
-        { validators: timeRangeValidator }
+        { validators: timeRangeValidator('hourFrom', 'hourTo') }
       );
     }
     return group;

@@ -1,18 +1,22 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
-export const timeRangeValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-  const hourFrom = control.get('hourFrom')?.value;
-  const hourTo = control.get('hourTo')?.value;
+export function timeRangeValidator(
+  timeFromField: string,
+  timeToField: string
+): ValidatorFn {
+  return (group: AbstractControl): ValidationErrors | null => {
+    const hourFrom = group.get(timeFromField)?.value;
+    const hourTo = group.get(timeToField)?.value;
 
-  console.log("STO CONTROLLANDO l orario");
+    console.log('STO CONTROLLANDO l orario');
 
+    if (!hourFrom || !hourTo) return null;
 
-  if (!hourFrom || !hourTo) return null;
+    // Assumo formato stringa "HH:mm" oppure numero
+    if (hourFrom > hourTo) {
+      return { invalidTimeRange: true };
+    }
 
-  // Assumo formato stringa "HH:mm" oppure numero
-  if (hourFrom >= hourTo) {
-    return { invalidTimeRange: true };
-  }
-
-  return null;
-};
+    return null;
+  };
+}

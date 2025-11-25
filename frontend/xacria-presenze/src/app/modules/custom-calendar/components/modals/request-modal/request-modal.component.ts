@@ -9,7 +9,14 @@ import {
 } from '@angular/core';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from '../modalComponent';
-import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
 import { faIcons } from '../../custom-calendar-page/custom-calendar-page.component';
 import { CalendarRequestEntry } from 'src/generated-client';
@@ -17,6 +24,8 @@ import { identifiableCalendarRequest } from 'src/app/modules/custom-calendar/mod
 import { request_types } from '../../../const-vars';
 import { CalendarStateService } from '../../../services/calendar-state.service';
 import { ToastrService } from 'ngx-toastr';
+import { dateRangeValidator } from '../../../validators/dateRange.validators';
+import { timeRangeValidator } from '../../../validators/timeRange.validators';
 
 type reqeustsFormType = {
   id: string;
@@ -85,7 +94,6 @@ export class RequestModalComponent implements ModalComponent, OnInit {
 
   activePanelIndex: number | null = null;
 
-
   togglePanel(i: number) {
     this.activePanelIndex = this.activePanelIndex === i ? null : i;
   }
@@ -102,14 +110,19 @@ export class RequestModalComponent implements ModalComponent, OnInit {
       const formattedCurrentDate = this.dateFormat.manuallyFormatToDateInput(
         this.currentDate ?? new Date()
       );
-      const defaultTime: string = "09:00";
-      this.form = this.fb.group({
-        requestType: [request_types[0], Validators.required],
-        dateFrom: [formattedCurrentDate, Validators.required],
-        dateTo: [formattedCurrentDate, Validators.required],
-        timeFrom: [defaultTime, Validators.required],
-        timeTo: [defaultTime, Validators.required],
-      });
+      const defaultTime: string = '09:00';
+      this.form = this.fb.group(
+        {
+          requestType: [request_types[0], Validators.required],
+          dateFrom: [formattedCurrentDate, Validators.required],
+          dateTo: [formattedCurrentDate, Validators.required],
+          timeFrom: [defaultTime, Validators.required],
+          timeTo: [defaultTime, Validators.required],
+        },
+        {
+          validators: [dateRangeValidator('dateFrom', 'dateTo'), timeRangeValidator('timeFrom', 'timeTo')],
+        }
+      );
     } else {
       this.initializeModifyForm();
     }
@@ -276,15 +289,20 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     const to = this.dateFormat.formatToDateInput(
       entry.calendarEntry.dateTo ?? new Date()
     );
-    return this.fb.group({
-      id: [entry.id],
-      dateFrom: [from, Validators.required],
-      dateTo: [to, Validators.required],
-      timeFrom: [entry.calendarEntry.timeFrom, Validators.required],
-      timeTo: [entry.calendarEntry.timeTo, Validators.required],
-      requestType: [entry.calendarEntry.requestType, Validators.required],
-      status: [entry.calendarEntry.status, Validators.required],
-    });
+    return this.fb.group(
+      {
+        id: [entry.id],
+        dateFrom: [from, Validators.required],
+        dateTo: [to, Validators.required],
+        timeFrom: [entry.calendarEntry.timeFrom, Validators.required],
+        timeTo: [entry.calendarEntry.timeTo, Validators.required],
+        requestType: [entry.calendarEntry.requestType, Validators.required],
+        status: [entry.calendarEntry.status, Validators.required],
+      },
+      {
+        validators: [dateRangeValidator('dateFrom', 'dateTo'), timeRangeValidator('timeFrom', 'timeTo')],
+      }
+    );
   }
 
   isRequestModifyForbidden(reqeustStatus: CalendarRequestEntry.StatusEnum) {
@@ -332,7 +350,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     } else console.error('Availability new entry form is invalid');
   }
 
-  showTimeBasedOnRequestType(requestType: AbstractControl | null): boolean{
-    return requestType?.value !== 'Ferie' && requestType?.value !== 'Congedo'
+  showTimeBasedOnRequestType(requestType: AbstractControl | null): boolean {
+    return requestType?.value !== 'Ferie' && requestType?.value !== 'Congedo';
   }
 }
