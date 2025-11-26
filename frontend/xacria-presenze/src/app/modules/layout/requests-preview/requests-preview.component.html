@@ -47,9 +47,9 @@
         }}</span>
         <span *ngIf="request.type !== 'FERIE' && request.type !== 'TRASFERTA'">
           {{ "dalle" | translate }}
-          <span>{{ dateService.getTimeFromDate(request.dateFrom) }}</span>
+          <span class="text-muted">{{ dateService.getTimeFromDate(request.dateFrom) }}</span>
           {{ "alle" | translate }}
-          <span>{{ dateService.getTimeFromDate(request.dateTo) }}</span>
+          <span class="text-muted">{{ dateService.getTimeFromDate(request.dateTo) }}</span>
         </span>
       </ng-template>
     </span>
