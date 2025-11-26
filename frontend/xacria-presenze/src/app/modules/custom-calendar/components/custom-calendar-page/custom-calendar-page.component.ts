@@ -44,7 +44,7 @@ import {
   UserData,
   UserService,
 } from 'src/generated-client';
-import { Subject, takeUntil } from 'rxjs';
+import { delay, Subject, takeUntil } from 'rxjs';
 import {
   calendar,
   identifiableCalendarWorkingDay,
@@ -164,13 +164,19 @@ export class CustomCalendarPageComponent
       });
   }
 
+  //delay spezza l esecuzione asincrona. Questo assicura che il 'null' venga emesso SOLO DOPO che il 'message' è stato processato da tutti (inclusa la campanella).
   private subscriteToNotifications(): void {
-    this.notifService.$notif.subscribe((message: string | null) => {
-      if (message !== null && this.router.url.startsWith(APP_ROUTES.CALENDAR)) {
-        this.fetchEssentialDate();
-        this.notifService.readNotif();
-      }
-    });
+    this.notifService.$notif
+      .pipe(delay(0))
+      .subscribe((message: string | null) => {
+        if (
+          message !== null &&
+          this.router.url.startsWith(APP_ROUTES.CALENDAR)
+        ) {
+          this.fetchEssentialDate();
+          this.notifService.readNotif();
+        }
+      });
   }
 
   // Aggiorna i riferimenti agli array per evitare accesso a proprietà nei template

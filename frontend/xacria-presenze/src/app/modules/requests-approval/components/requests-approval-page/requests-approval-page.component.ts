@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
-import { finalize, takeUntil } from 'rxjs/operators';
+import { delay, finalize, takeUntil } from 'rxjs/operators';
 import {
   RequestsTableFilters,
   RequestsTableRow,
@@ -95,7 +95,7 @@ export class RequestsApprovalPageComponent implements OnInit, OnDestroy {
 
   private subscriteToNotifications(): void {
     this.notifService.$notif
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntil(this.destroy$), delay(0)) //delay spezza l esecuzione asincrona. Questo assicura che il 'null' venga emesso SOLO DOPO che il 'message' è stato processato da tutti (inclusa la campanella).
       .subscribe((message: string | null) => {
         if (
           message !== null &&

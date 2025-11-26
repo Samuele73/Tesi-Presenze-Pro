@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { delay } from 'rxjs';
 import { APP_ROUTES } from 'src/app/shared/constants/route-paths';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
@@ -49,8 +50,9 @@ export class HomeComponent implements OnInit {
     this.subscriteToNotifications();
   }
 
+ // Delay spezza l esecuzione asincrona. Questo assicura che il 'null' venga emesso SOLO DOPO che il 'message' è stato processato da tutti (inclusa la campanella).
   private subscriteToNotifications(): void {
-    this.notifService.$notif.subscribe((message: string | null) => {
+    this.notifService.$notif.pipe(delay(0)).subscribe((message: string | null) => {
       if (message !== null && this.router.url.startsWith(APP_ROUTES.HOME)) {
         this.getRemainingHolidayHours();
         this.getRequestsFromAPi();
