@@ -152,5 +152,7 @@
   "Per il" : "For",
   "Dal" : "From",
   "Al" : "To",
-  "L'orario di inizio deve essere minore dell'orario di fine." : "The start time must be earlier than the end time"
+  "L'orario di inizio deve essere minore dell'orario di fine." : "The start time must be earlier than the end time",
+  "Scarica report" : "Download report",
+  "Scarica" : "Download"
 }
