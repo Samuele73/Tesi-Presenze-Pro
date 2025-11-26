@@ -14,7 +14,7 @@ const routes: Routes = [
   {path: "signin", component: SignInComponent, canActivate: [SigninInvitationGuard]},
   {path: "invitation-error", component: InvitationErrorComponent},
   {path: "forgotten-pw", component: ForgottenPwComponent},
-  {path: "updatePassword", component: UpdatePwComponent},
+  {path: "changePassword", component: UpdatePwComponent},
   {path: "", pathMatch: "full", redirectTo: "/app/home"},
   {path: "app", pathMatch: "prefix", loadChildren: (() => import("./modules/layout/layout.module").then((module) => module.LayoutModule)), canActivate: [IsAuthenticatedGuard]},
   {path: "**", component: NotfoundComponent}

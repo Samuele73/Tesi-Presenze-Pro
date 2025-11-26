@@ -120,8 +120,7 @@ public class UserController {
     @Operation(description = "Cambio della password con quella nuova indicata", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping("/savePassword")
     public ResponseEntity<?> saveNewPassword(@RequestBody NewPasswordDto newPasswordDto){
-        if(!this.service.savePassword(newPasswordDto))
-            return ResponseEntity.status(401).build();
+        this.service.savePassword(newPasswordDto);
         return ResponseEntity.ok().build();
     }
 

@@ -7,6 +7,7 @@ import com.tesi.presenzepro.exception.NoUserFoundException;
 import com.tesi.presenzepro.jwt.JwtUtils;
 import com.tesi.presenzepro.project.repository.ProjectRepository;
 import com.tesi.presenzepro.user.dto.*;
+import com.tesi.presenzepro.user.exception.UserTokenNotValidException;
 import com.tesi.presenzepro.user.mapper.UserMapper;
 import com.tesi.presenzepro.user.model.*;
 import com.tesi.presenzepro.user.repository.UserTokenRepository;
@@ -212,7 +213,7 @@ public class UserService {
             return false;
         String token = UUID.randomUUID().toString();
         this.userTokenService.saveUserToken(userEmail, token, PASSWORD_RESET);
-        mailSender.send(constructResetTokenEmail("http://" + request.getServerName() + ":" + request.getServerPort(), request.getLocale(), token, userEmail));
+        mailSender.send(constructResetTokenEmail("http://" + frontendName + ':' + frontendPort, request.getLocale(), token, userEmail));
         return true;
     }
 
@@ -231,9 +232,9 @@ public class UserService {
     }
 
     private SimpleMailMessage constructResetTokenEmail(String contextPath, Locale locale, String token, String userEmail){
-        String url = contextPath + "/users/changePassword?token=" + token;
+        String url = contextPath + "/changePassword?token=" + token;
         String body = messageSource.getMessage("message.resetPassword", null, locale);
-        return constructEmail("Reset password", body + " \r\n" + url, userEmail);
+        return constructEmail("Reimposta la Password", body + " \r\n" + url, userEmail);
     }
 
     private SimpleMailMessage constructEmail(String subject, String body, String userEmail){
@@ -251,23 +252,23 @@ public class UserService {
         boolean result = this.userTokenService.isUserTokenValid(newPasswordDto.token());
 
         if(!result){
-            System.out.println("Token per salvataggio di una nuova password non presente");
-            return false;
+            throw new UserTokenNotValidException("Token per il cambio password non valido");
         }
         UserToken userToken = this.userTokenRepository.findByToken(newPasswordDto.token());
         if(userToken != null){
             Optional<User> user = this.repository.findByEmail(userToken.getUserEmail());
             if(user.isPresent()){
                 User theUser = user.get();
-                System.out.println("UTENTE DA MODIFICAREEEEEEEEEEEEEE" + theUser);
                 theUser.setPwd(passwordEncoder.encode(newPasswordDto.password()));
                 Optional<User> userResult = this.repository.findByIdAndModify(theUser);
-                if(userResult.isPresent())
+                if(userResult.isPresent()){
+                    this.userTokenRepository.delete(userToken);
                     return true;
+                }
+
             }
         }
-        System.out.println("Errore con il salvataggio della nuova password");
-        return false;
+        throw new UserTokenNotValidException("Token per il cambio password non valido");
     }
 
     public String getEmailFromTkn(String tkn){

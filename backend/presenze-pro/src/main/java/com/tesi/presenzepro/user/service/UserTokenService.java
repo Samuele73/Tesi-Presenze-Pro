@@ -31,7 +31,8 @@ public class UserTokenService {
 
     public boolean isUserTokenValid(String token){
         final UserToken resetToken = userTokenRepository.findByToken(token);
-        return !isUserTokenFound(resetToken) || resetToken.isExpired();
+        System.out.println("CONTROLLA user tkn: " + resetToken + " " + (!isUserTokenFound(resetToken) || !resetToken.isExpired()) );
+        return isUserTokenFound(resetToken) && !resetToken.isExpired();
     }
 
     private boolean isUserTokenFound(UserToken resetToken){

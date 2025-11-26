@@ -21,12 +21,12 @@ export interface User {
     data?: UserData;
     role?: User.RoleEnum;
     enabled?: boolean;
-    password?: string;
     username?: string;
     authorities?: Array<GrantedAuthority>;
     accountNonLocked?: boolean;
     credentialsNonExpired?: boolean;
     accountNonExpired?: boolean;
+    password?: string;
 }
 export namespace User {
     export type RoleEnum = 'USER' | 'ADMIN' | 'OWNER';
