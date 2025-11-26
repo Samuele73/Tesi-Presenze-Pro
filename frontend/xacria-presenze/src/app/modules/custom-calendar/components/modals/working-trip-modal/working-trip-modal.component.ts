@@ -51,6 +51,7 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
     ACCEPTED: 'bg-primary',
     REJECTED: 'bg-danger',
   };
+  todayString = new Date().toISOString().split('T')[0];
 
   constructor(
     private modalService: NgbModal,

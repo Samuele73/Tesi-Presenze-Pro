@@ -54,6 +54,7 @@
                       type="date"
                       class="form-control"
                       formControlName="dateFrom"
+                      [min]="todayString"
                     />
                     <app-form-error
                       [formControlRef]="dateFrom"
@@ -69,6 +70,7 @@
                       type="date"
                       class="form-control"
                       formControlName="dateTo"
+                      [min]="todayString"
                     />
                     <app-form-error
                       [formControlRef]="dateTo"
@@ -82,7 +84,7 @@
                 [formControlRef]="form"
                 [validator]="'invalidDateRange'"
                 [errorText]="
-                  'La data di inizio deve essere maggiore di quella finale'
+                  'La data di inizio deve essere minore di quella finale'
                 "
               ></app-form-error>
             </div>
@@ -292,7 +294,7 @@
                       [formControlRef]="requests.at(i)"
                       [validator]="'invalidDateRange'"
                       [errorText]="
-                        'La data di inizio deve essere maggiore di quella finale'
+                        'La data di inizio deve essere minore di quella finale'
                       "
                     ></app-form-error>
                   </div>

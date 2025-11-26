@@ -154,5 +154,5 @@
   "Dal" : "Dal",
   "Al" : "Al",
   "L'orario di inizio deve essere minore dell'orario di fine." : "L'orario di inizio deve essere minore dell'orario di fine.",
-  "La data di inizio deve essere maggiore di quella finale" : "La data di inizio deve essere maggiore di quella finale"
+  "La data di inizio deve essere minore di quella finale" : "La data di inizio deve essere minore di quella finale"
 }
