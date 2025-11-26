@@ -19,6 +19,7 @@ export class SignInComponent implements OnInit {
   signinForm!: FormGroup;
   apiError?: string;
   userEmail: string = '';
+  showPassword: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -106,5 +107,9 @@ export class SignInComponent implements OnInit {
         this.apiError = err.message;
       },
     });
+  }
+
+  togglePwdVisibility(): void{
+    this.showPassword = !this.showPassword;
   }
 }

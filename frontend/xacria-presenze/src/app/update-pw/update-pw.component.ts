@@ -15,6 +15,9 @@ export class UpdatePwComponent implements OnInit {
   serverError: boolean = false;
   authToken: string | null = '';
 
+  showPassword: boolean = false;
+  showConfirmPassword: boolean = false;
+
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
@@ -52,6 +55,14 @@ export class UpdatePwComponent implements OnInit {
     }
     console.log('Update form submitted!');
     this.makeChangePasswordRequest(this.updatePasswordForm.value.password);
+  }
+
+  toggleVisibility(field: 'password' | 'confirm'): void {
+    if (field === 'password') {
+      this.showPassword = !this.showPassword;
+    } else {
+      this.showConfirmPassword = !this.showConfirmPassword;
+    }
   }
 
   makeChangePasswordRequest(newPassword: string) {

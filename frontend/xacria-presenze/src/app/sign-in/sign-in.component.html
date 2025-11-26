@@ -3,45 +3,114 @@
   <div class="container">
     <div class="row g-0 rounded-3">
       <div class="col-lg-4 mx-auto text-center rounded bg-white">
-        <img src="../../favicon.ico" alt="" class="img-fluid mb-5" id="logo">
+        <img src="../../favicon.ico" alt="" class="img-fluid mb-5" id="logo" />
         <form [formGroup]="signinForm" (ngSubmit)="signinFormSubmit()">
           <div class="row g-3 mb-2">
-            <div class="form-group col-md-6 ">
-              <label for="nome" class="fw-bold fs-5 mb-2">{{"Nome" | translate}}</label>
-              <input type="text" class="form-control form-control-sm shadow-sm border-dark border-1 rounded-3" id="nome" placeholder="{{'Nome' | translate}}" formControlName="name">
+            <div class="form-group col-md-6">
+              <label for="nome" class="fw-bold fs-5 mb-2">{{
+                "Nome" | translate
+              }}</label>
+              <input
+                type="text"
+                class="form-control form-control-sm shadow-sm border-dark border-1 rounded-3"
+                id="nome"
+                placeholder="{{ 'Nome' | translate }}"
+                formControlName="name"
+              />
               <div *ngIf="nameControl!.invalid && nameControl!.touched">
-                <app-form-error [formControlRef]="nameControl" [validator]="'required'" [errorText]="'Campo richiesto' | translate"></app-form-error>
+                <app-form-error
+                  [formControlRef]="nameControl"
+                  [validator]="'required'"
+                  [errorText]="'Campo richiesto' | translate"
+                ></app-form-error>
               </div>
             </div>
-            <div class="form-group col-md-6 ">
-              <label for="cognome" class="fw-bold fs-5 mb-2">{{"Cognome" | translate}}</label>
-              <input type="text" class="form-control form-control-sm shadow-sm border-dark border-1 rounded-3" id="cognome" placeholder="{{'Cognome' | translate}}" formControlName="surname">
+            <div class="form-group col-md-6">
+              <label for="cognome" class="fw-bold fs-5 mb-2">{{
+                "Cognome" | translate
+              }}</label>
+              <input
+                type="text"
+                class="form-control form-control-sm shadow-sm border-dark border-1 rounded-3"
+                id="cognome"
+                placeholder="{{ 'Cognome' | translate }}"
+                formControlName="surname"
+              />
               <div *ngIf="surnameControl!.invalid && surnameControl!.touched">
-                <app-form-error [formControlRef]="surnameControl" [validator]="'required'" [errorText]="'Campo richiesto' | translate"></app-form-error>
+                <app-form-error
+                  [formControlRef]="surnameControl"
+                  [validator]="'required'"
+                  [errorText]="'Campo richiesto' | translate"
+                ></app-form-error>
               </div>
             </div>
           </div>
           <div class="form-group mb-2">
             <label for="email" class="fs-5 fw-bold mb-2">E-mail</label>
-            <input type="email" readonly class="form-control form-control-sm shadow-sm border-dark border-1 rounded-3" id="email" placeholder="E-mail" formControlName="email">
+            <input
+              type="email"
+              readonly
+              class="form-control form-control-sm shadow-sm border-dark border-1 rounded-3"
+              id="email"
+              placeholder="E-mail"
+              formControlName="email"
+            />
             <div *ngIf="emailControl!.invalid && emailControl!.touched">
-              <app-form-error [formControlRef]="emailControl" [validator]="'required'" [errorText]="'Campo richiesto' | translate"></app-form-error>
-              <app-form-error [formControlRef]="emailControl" [validator]="'pattern'" [errorText]="'Formato E-mail non valido' | translate"></app-form-error>
+              <app-form-error
+                [formControlRef]="emailControl"
+                [validator]="'required'"
+                [errorText]="'Campo richiesto' | translate"
+              ></app-form-error>
+              <app-form-error
+                [formControlRef]="emailControl"
+                [validator]="'pattern'"
+                [errorText]="'Formato E-mail non valido' | translate"
+              ></app-form-error>
             </div>
           </div>
           <div class="form-group mb-4">
             <label for="password" class="fs-5 fw-bold mb-2">Password</label>
-            <input type="password" class="form-control form-control-sm shadow-sm border-dark border-1 rounded-3" id="password" placeholder="Password" formControlName="password">
+            <div class="position-relative">
+              <input
+                class="form-control form-control-sm shadow-sm border-dark border-1 rounded-3"
+                id="password"
+                placeholder="Password"
+                formControlName="password"
+                [type]="showPassword ? 'text' : 'password'"
+              />
+              <i
+                class="fa-solid position-absolute top-50 end-0 translate-middle-y me-3 cursor-pointer text-secondary"
+                [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"
+                (click)="togglePwdVisibility()"
+                style="z-index: 10"
+              ></i>
+            </div>
+
             <div *ngIf="passwordControl!.invalid && passwordControl!.touched">
-              <app-form-error [formControlRef]="passwordControl" [validator]="'required'" [errorText]="'Campo richiesto' | translate"></app-form-error>
-              <app-form-error [formControlRef]="passwordControl" [validator]="'minlength'" [errorText]="'Numero di caratteri inferiore a 8' | translate"></app-form-error>
+              <app-form-error
+                [formControlRef]="passwordControl"
+                [validator]="'required'"
+                [errorText]="'Campo richiesto' | translate"
+              ></app-form-error>
+              <app-form-error
+                [formControlRef]="passwordControl"
+                [validator]="'minlength'"
+                [errorText]="'Numero di caratteri inferiore a 8' | translate"
+              ></app-form-error>
             </div>
           </div>
-          <small class="text-danger">{{apiError! | translate}}</small>
-          <button class="btn btn-sm btn-primary w-100 rounded-3 text-white fw-bold" [disabled]="signinForm.invalid || apiError">{{"Registrati" | translate}}</button>
+          <small class="text-danger">{{ apiError! | translate }}</small>
+          <button
+            class="btn btn-sm btn-primary w-100 rounded-3 text-white fw-bold"
+            [disabled]="signinForm.invalid || apiError"
+          >
+            {{ "Registrati" | translate }}
+          </button>
         </form>
         <div class="d-flex justify-content-between mt-2">
-          <app-auth-link [text]="'Informativa sulla privacy' | translate"></app-auth-link>
+          <app-auth-link
+            [text]="'Informativa sulla privacy' | translate"
+          ></app-auth-link>
         </div>
       </div>
     </div>

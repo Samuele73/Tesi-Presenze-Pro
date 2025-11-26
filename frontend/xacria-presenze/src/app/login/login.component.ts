@@ -17,6 +17,7 @@ import { LoginRequestDto } from 'src/generated-client';
 export class LoginComponent {
   loginForm!: FormGroup;
   areCredentialsInvalid: boolean = false;
+  showPassword: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -71,5 +72,9 @@ export class LoginComponent {
         this.areCredentialsInvalid = true;
       },
     });
+  }
+
+  togglePwdVisibility(): void {
+    this.showPassword = !this.showPassword
   }
 }

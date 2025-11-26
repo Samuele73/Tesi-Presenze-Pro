@@ -4,27 +4,67 @@
     <div class="row g-0 rounded-3">
       <div class="col-lg-4 mx-auto text-center rounded bg-white">
         <img src="../../favicon.ico" alt="" class="img-fluid mb-5" id="logo">
+
         <form [formGroup]="updatePasswordForm" (ngSubmit)="updatePasswordFormSubmit()">
-          <div class="form-group" class="mb-4">
-            <label for="email" class="fw-bold fs-5 d-block mb-2">{{"Nuova password" | translate}}</label>
-            <input type="text" id="email" class="w-100 form-control form-control-sm shadow-sm border-dark border-1 rounded-3" placeholder="xxxxxxx" formControlName="password">
+
+          <div class="form-group mb-4 text-start">
+            <label for="new-pwd" class="fw-bold fs-5 d-block mb-2 text-center">{{"Nuova password" | translate}}</label>
+
+            <div class="position-relative">
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                id="new-pwd"
+                class="w-100 form-control form-control-sm shadow-sm border-dark border-1 rounded-3 pe-5"
+                placeholder="xxxxxxx"
+                formControlName="password"
+              >
+
+              <i
+                class="fa-solid position-absolute top-50 end-0 translate-middle-y me-3 cursor-pointer text-secondary"
+                [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"
+                (click)="toggleVisibility('password')"
+                style="z-index: 10;"
+              ></i>
+            </div>
+
             <div *ngIf="passwordControl!.invalid && passwordControl!.touched">
               <app-form-error [formControlRef]="passwordControl" [validator]="'required'" [errorText]="'Campo richiesto' | translate"></app-form-error>
               <app-form-error [formControlRef]="passwordControl" [validator]="'pattern'" [errorText]="'Formato E-mail non valido' | translate"></app-form-error>
             </div>
           </div>
-          <div class="form-group" class="mb-4">
-            <label for="email" class="fw-bold fs-5 d-block mb-2">{{"Conferma password" | translate}}</label>
-            <input type="text" id="email" class="w-100 form-control form-control-sm shadow-sm border-dark border-1 rounded-3" placeholder="xxxxxxx" formControlName="password2">
+
+          <div class="form-group mb-4 text-start">
+            <label for="confirm-pwd" class="fw-bold fs-5 d-block mb-2 text-center">{{"Conferma password" | translate}}</label>
+
+            <div class="position-relative">
+              <input
+                [type]="showConfirmPassword ? 'text' : 'password'"
+                id="confirm-pwd"
+                class="w-100 form-control form-control-sm shadow-sm border-dark border-1 rounded-3 pe-5"
+                placeholder="xxxxxxx"
+                formControlName="password2"
+              >
+
+              <i
+                class="fa-solid position-absolute top-50 end-0 translate-middle-y me-3 cursor-pointer text-secondary"
+                [ngClass]="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'"
+                (click)="toggleVisibility('confirm')"
+                style="z-index: 10;"
+              ></i>
+            </div>
+
             <div *ngIf="password2Control!.invalid && password2Control!.touched">
               <app-form-error [formControlRef]="password2Control" [validator]="'required'" [errorText]="'Campo richiesto' | translate"></app-form-error>
               <app-form-error [formControlRef]="password2Control" [validator]="'pattern'" [errorText]="'Formato E-mail non valido' | translate"></app-form-error>
             </div>
           </div>
+
           <button class="btn btn-sm btn-primary w-100 rounded-3 text-white fw-bold" [disabled]="updatePasswordForm.invalid">{{"Modifica password" | translate}}</button>
         </form>
+
         <div *ngIf="updatePasswordForm.errors?.['equalPasswordsValidator']" class="text-danger small mt-1">{{"Le password non corrispondono" | translate}}</div>
         <div *ngIf="serverError" class="text-danger small mt-1">{{"Non autorizzato al cambio password" | translate}}</div>
+
         <div class="d-flex justify-content-between mt-2">
           <app-auth-link [link]="'/login'" [text]="'Accedi' | translate"></app-auth-link>
           <app-auth-link [text]="'Informativa sulla privacy' | translate"></app-auth-link>
