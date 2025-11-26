@@ -85,7 +85,7 @@ export class HomeComponent implements OnInit {
     const pageable: Pageable & { toString(): string } = {
       page: 0,
       size: this.authService.isOwner() ? 20 : 10,
-      sort: ['createdAt,desc'],
+      sort: ['updatedAt,desc'],
       toString() {
         return JSON.stringify({
           page: this.page,
@@ -122,5 +122,10 @@ export class HomeComponent implements OnInit {
         this.toastrService.error(err.error.message);
       },
     });
+  }
+
+  truncate(num: number, decimals: number): number {
+    const factor = Math.pow(10, decimals);
+    return Math.trunc(num * factor) / factor;
   }
 }

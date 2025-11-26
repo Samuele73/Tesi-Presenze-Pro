@@ -10,7 +10,7 @@
       [title]="'Permessi rimanenti'"
       [statName]="'ore'"
       [referenceMax]="40"
-      [value]="userVacationHours?.annualPermitHours ?? 0"
+      [value]="truncate(userVacationHours?.annualPermitHours ?? 0, 2)"
     ></app-stat>
     <app-stat [title]="'Richieste aperte'" [referenceMax]="15" [value]="requestsByTab['OPEN'].totalElements ?? 0"></app-stat>
     <app-stat [title]="'Richieste chiuse'" [referenceMax]="15" [value]="requestsByTab['CLOSED'].totalElements ?? 0"></app-stat>
