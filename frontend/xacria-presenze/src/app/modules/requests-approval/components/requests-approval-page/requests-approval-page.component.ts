@@ -107,7 +107,6 @@ export class RequestsApprovalPageComponent implements OnInit, OnDestroy {
           this.loadOpenClosedTabCount();
           this.loadTabData(this.activeTab);
           this.notifService.readNotif();
-          this.notifService.readNotif();
         }
       });
   }

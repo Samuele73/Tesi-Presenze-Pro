@@ -54,6 +54,9 @@ import { monthNamesIt, weekDayNamesIt } from '../../const-vars';
 import { ToastrService } from 'ngx-toastr';
 import { ProjectStoreService } from 'src/app/modules/project/services/project-store.service';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
+import { NotificationService } from 'src/app/shared/services/notification.service';
+import { APP_ROUTES } from 'src/app/shared/constants/route-paths';
+import { Router } from '@angular/router';
 
 type DistributedModalComponent =
   | AvailabilityModalComponent
@@ -116,13 +119,17 @@ export class CustomCalendarPageComponent
 
   errorMessage: string | null = null;
 
+  APP_ROUTES = APP_ROUTES;
+
   constructor(
     private calendarStateService: CalendarStateService,
     private cdr: ChangeDetectorRef,
     private userService: UserService,
     private toastrService: ToastrService,
     private projectStoreService: ProjectStoreService,
-    public dateFormat: DateFormatService
+    public dateFormat: DateFormatService,
+    private notifService: NotificationService,
+    private router: Router
   ) {
     this.weekDayNames = weekDayNamesIt;
     this.monthNames = monthNamesIt;
@@ -157,6 +164,15 @@ export class CustomCalendarPageComponent
       });
   }
 
+  private subscriteToNotifications(): void {
+    this.notifService.$notif.subscribe((message: string | null) => {
+      if (message !== null && this.router.url.startsWith(APP_ROUTES.CALENDAR)) {
+        this.fetchEssentialDate();
+        this.notifService.readNotif();
+      }
+    });
+  }
+
   // Aggiorna i riferimenti agli array per evitare accesso a proprietà nei template
   private updateEntriesReferences(): void {
     this.dayWorksEntries = this.calendarEntries.day_works || [];
@@ -175,7 +191,7 @@ export class CustomCalendarPageComponent
     this.dayWorkDateTitle = this.fromDateToModalTitle(this.dayClicked);
   }
 
-  ngOnInit(): void {
+  private fetchEssentialDate(): void {
     this.projectStoreService
       .getUserProjectsNames()
       .subscribe((success: boolean) => {
@@ -185,13 +201,18 @@ export class CustomCalendarPageComponent
           );
         }
       });
-    this.subscriteToCalendarStateServices();
     this.calendarStateService
       .getCalendarByMonthYear(this.currentMonth, this.currentYear)
       .subscribe((resp: boolean) => {
         if (!resp)
           this.toastrService.error('Errore nel caricamento del calendario.');
       });
+  }
+
+  ngOnInit(): void {
+    this.subscriteToCalendarStateServices();
+    this.subscriteToNotifications();
+    this.fetchEssentialDate();
   }
 
   ngAfterViewInit(): void {
@@ -333,9 +354,11 @@ export class CustomCalendarPageComponent
     return Math.floor(totalHours);
   }
 
-  getCellBackgroundFromDate(input: Date | string): string{
+  getCellBackgroundFromDate(input: Date | string): string {
     const date = new Date(input);
-    return this.dateFormat.isFromCalendarCurrentMonth(input, this.viewDate) ? "" : "bg-light"
+    return this.dateFormat.isFromCalendarCurrentMonth(input, this.viewDate)
+      ? ''
+      : 'bg-light';
   }
 }
 
