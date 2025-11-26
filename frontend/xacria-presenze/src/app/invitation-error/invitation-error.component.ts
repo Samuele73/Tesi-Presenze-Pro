@@ -17,7 +17,7 @@ export class InvitationErrorComponent implements OnInit {
     switch (reason) {
       case 'missing-token': {
         this.errorTitle = 'Invito non presente';
-        this.errorMessage = 'Per accedere alla pagina di registrazione è necessario un invito da parte di un Admin.'
+        this.errorMessage = 'Per accedere alla pagina di registrazione è necessario un invito da parte di un supervisore.'
       }
     }
   }
