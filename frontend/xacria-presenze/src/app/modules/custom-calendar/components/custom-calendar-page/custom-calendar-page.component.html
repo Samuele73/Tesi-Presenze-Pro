@@ -1,12 +1,12 @@
 <!-- Template modificato per risolvere l'overflow -->
 <ng-template #customCellTemplate let-day="day" let-locale="locale">
-  <div class="p-2 custom-cell-template">
+  <div class="p-2 custom-cell-template" [ngClass]="getCellBackgroundFromDate(day.date)">
     <div class="mb-3">
       <div class="d-flex justify-content-between">
         <span class="h4 day-number">{{
           day.date | calendarDate : "monthViewDayNumber" : locale
         }}</span>
-        <div class="d-flex">
+        <div class="d-flex" *ngIf="dateFormat.isFromCalendarCurrentMonth(day.date, viewDate)">
           <app-interactive-button
             [mode]="'ADD'"
             [date]="day.date"
@@ -23,7 +23,7 @@
         </div>
       </div>
     </div>
-    <div class="text-center mb-3" [ngClass]="dateFormat.isWeekend(day.date) ? 'invisible' : ''">
+    <div class="text-center mb-3" [ngClass]="dateFormat.isWeekend(day.date) ? 'invisible' : ''" *ngIf="dateFormat.isFromCalendarCurrentMonth(day.date, viewDate)">
       <span class="fw-semibold text-muted">
         {{ "Ore lavorate" | translate }}:
       </span>
@@ -31,7 +31,7 @@
         {{ calculateHoursWorked(day.date) }}
       </span>
     </div>
-    <div class="flex-grow-1 overflow-auto">
+    <div class="flex-grow-1 overflow-auto" *ngIf="dateFormat.isFromCalendarCurrentMonth(day.date, viewDate)">
       <div class="d-flex flex-column gap-2">
         <app-day-cell-notif
           [icon]="faIcons.briefcase"

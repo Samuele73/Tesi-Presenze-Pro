@@ -84,4 +84,9 @@ export class DateFormatService {
 
     return date < today;
   }
+
+  isFromCalendarCurrentMonth(input: Date | string, calendarInput: Date): boolean{
+    const dateMonth = new Date(input).getMonth();
+    return dateMonth == calendarInput.getMonth();
+  }
 }
