@@ -52,6 +52,7 @@ public class CalendarService {
 
     public CalendarResponseDto saveNewCalendarEntry(HttpServletRequest request ,SaveCalendarEntityRequestDto calendarEntityData){
         CalendarEntity newCalendarEntity = calendarMapper.fromCalendarSaveRequestToEntity(calendarEntityData);
+
         if(newCalendarEntity.getCalendarEntry() instanceof CalendarWorkingDayEntry workingDayEntry){
             if(this.isWeekend(workingDayEntry.getDateFrom()))
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Non è possibile creare una giornata lavorativa nel weekend");
@@ -60,11 +61,14 @@ public class CalendarService {
         }else if(newCalendarEntity.getCalendarEntry() instanceof  CalendarWorkingTripEntry workingTripEntry){
             validateNotPast(workingTripEntry.getDateFrom(), workingTripEntry.getDateTo(), "Non si possono creare trasferte con date precedenti ad oggi");
         }
+
         String userEmail = this.getUserEmailFromRequest(request);
         newCalendarEntity.setUserEmail(userEmail);
         this.applyDefaultStatus(newCalendarEntity);
 
-        //Controllo che siano disponibili le ore necessarie per le ferie o permessi
+        this.validateBusinessRulesForEntry(newCalendarEntity, null);
+
+        // Controllo che siano disponibili le ore necessarie per le ferie o permessi
         if(newCalendarEntity.getCalendarEntry() instanceof CalendarRequestEntry requestEntry){
             final String requestType = requestEntry.getRequestType();
             if(requestType.equalsIgnoreCase("PERMESSI") || requestType.equalsIgnoreCase("FERIE")){
@@ -87,9 +91,9 @@ public class CalendarService {
             e.printStackTrace();
         }
 
-
         return calendarMapper.fromCalendarEntityToCalendarEntry(calendarEntity);
     }
+
 
     private boolean isWeekend(Date date){
         return date.getDay() == 0 || date.getDay() == 6;
@@ -242,16 +246,116 @@ public class CalendarService {
         List<CalendarEntity> newCalendarEntities = calendarMapper.fromCalendarSaveRequestToEntities(calendarEntities);
 
         final String userEmail = this.getUserEmailFromRequest(request);
-        newCalendarEntities.forEach(calendarEntity -> {
-            if(calendarEntity.getCalendarEntry() instanceof CalendarWorkingDayEntry workingDayEntry){
-                if(this.isWeekend(workingDayEntry.getDateFrom()))
+
+        // Prima applico i dati comuni
+        newCalendarEntities.forEach(entity -> {
+            entity.setUserEmail(userEmail);
+
+            if (entity.getCalendarEntry() instanceof CalendarWorkingDayEntry workingDayEntry) {
+                if (this.isWeekend(workingDayEntry.getDateFrom())) {
                     throw new ResponseStatusException(HttpStatus.CONFLICT, "Non è possibile creare una giornata lavorativa nel weekend");
+                }
             }
-            calendarEntity.setUserEmail(userEmail);
         });
-        final List<CalendarEntity> savedCalendarEntities = this.repository.saveAll(newCalendarEntities);
-        return calendarMapper.fromCalendarEntitiesToCalendarEntries(savedCalendarEntities);
+
+        // ========================================================
+        //  VALIDAZIONE DB + VALIDAZIONE TRA LE ENTRY DELLO STESSO BATCH
+        // ========================================================
+
+        for (int i = 0; i < newCalendarEntities.size(); i++) {
+            CalendarEntity current = newCalendarEntities.get(i);
+
+            // 1️⃣ Validazione contro il DB
+            this.validateBusinessRulesForEntry(current, null);
+
+            // 2️⃣ Validazione contro le altre entry del batch (i+1 → fine)
+            for (int j = i + 1; j < newCalendarEntities.size(); j++) {
+                CalendarEntity other = newCalendarEntities.get(j);
+
+                // Confronto solo se dello stesso tipo di problema
+                this.validateBatchPair(current, other);
+            }
+        }
+
+        // Tutto valido → salva
+        final List<CalendarEntity> saved = this.repository.saveAll(newCalendarEntities);
+        return calendarMapper.fromCalendarEntitiesToCalendarEntries(saved);
     }
+
+
+    private void validateBatchPair(CalendarEntity a, CalendarEntity b) {
+
+        CalendarEntryType typeA = a.getEntryType();
+        CalendarEntryType typeB = b.getEntryType();
+
+        CalendarEntry entryA = a.getCalendarEntry();
+        CalendarEntry entryB = b.getCalendarEntry();
+
+        // Caso 1: due WORKING_DAY nello stesso batch → controlli accavallamenti
+        if (typeA == CalendarEntryType.WORKING_DAY && typeB == CalendarEntryType.WORKING_DAY) {
+            CalendarWorkingDayEntry dayA = (CalendarWorkingDayEntry) entryA;
+            CalendarWorkingDayEntry dayB = (CalendarWorkingDayEntry) entryB;
+
+            LocalDate dateA = toLocalDate(dayA.getDateFrom());
+            LocalDate dateB = toLocalDate(dayB.getDateFrom());
+
+            if (dateA != null && dateA.equals(dateB)) {
+                LocalTime aFrom = LocalTime.parse(dayA.getHourFrom());
+                LocalTime aTo = LocalTime.parse(dayA.getHourTo());
+                LocalTime bFrom = LocalTime.parse(dayB.getHourFrom());
+                LocalTime bTo = LocalTime.parse(dayB.getHourTo());
+
+                if (timesOverlap(aFrom, aTo, bFrom, bTo)) {
+                    throw new ConflictException("Due giornate lavorative inserite insieme hanno orari sovrapposti: " + dateA);
+                }
+            }
+        }
+
+        // Caso 2: availability che si accavallano tra loro nel batch
+        if (typeA == CalendarEntryType.AVAILABILITY && typeB == CalendarEntryType.AVAILABILITY) {
+            CalendarAvailabilityEntry avA = (CalendarAvailabilityEntry) entryA;
+            CalendarAvailabilityEntry avB = (CalendarAvailabilityEntry) entryB;
+
+            LocalDate aFrom = toLocalDate(avA.getDateFrom());
+            LocalDate aTo = toLocalDate(avA.getDateTo());
+            LocalDate bFrom = toLocalDate(avB.getDateFrom());
+            LocalDate bTo = toLocalDate(avB.getDateTo());
+
+            if (rangesOverlap(aFrom, aTo, bFrom, bTo)) {
+                throw new ConflictException("Due reperibilità inserite nello stesso batch sono sovrapposte");
+            }
+        }
+
+        // Caso 3: TRIP e REQUEST con sovrapposizioni nel batch
+        if (typeA == CalendarEntryType.REQUEST || typeA == CalendarEntryType.WORKING_TRIP ||
+                typeB == CalendarEntryType.REQUEST || typeB == CalendarEntryType.WORKING_TRIP) {
+
+            LocalDate aFrom = null, aTo = null, bFrom = null, bTo = null;
+
+            if (entryA instanceof CalendarRequestEntry rA) {
+                aFrom = toLocalDate(rA.getDateFrom());
+                aTo = toLocalDate(rA.getDateTo());
+            } else if (entryA instanceof CalendarWorkingTripEntry tA) {
+                aFrom = toLocalDate(tA.getDateFrom());
+                aTo = toLocalDate(tA.getDateTo());
+            }
+
+            if (entryB instanceof CalendarRequestEntry rB) {
+                bFrom = toLocalDate(rB.getDateFrom());
+                bTo = toLocalDate(rB.getDateTo());
+            } else if (entryB instanceof CalendarWorkingTripEntry tB) {
+                bFrom = toLocalDate(tB.getDateFrom());
+                bTo = toLocalDate(tB.getDateTo());
+            }
+
+            if (aFrom != null && aTo != null && bFrom != null && bTo != null) {
+                if (rangesOverlap(aFrom, aTo, bFrom, bTo)) {
+                    throw new ConflictException("Due richieste/trasferte inserite insieme hanno intervalli sovrapposti");
+                }
+            }
+        }
+    }
+
 
     private String getUserEmailFromRequest(HttpServletRequest request){
         final String tkn = jwtUtils.getJwtFromHeader(request);
@@ -484,5 +588,341 @@ public class CalendarService {
         CalendarEntity entity = repository.findById(id).orElseThrow(() -> new NoUserFoundException("Richiesta non trovata"));
         return this.calendarMapper.mapToUserRequestResponseDto(entity);
     }
+
+    //VALIDAZIONE BUSINESS LOGIC ENTRIES CALENDARIO
+
+    private LocalDate toLocalDate(Date date) {
+        if (date == null) return null;
+        return date.toInstant()
+                .atZone(ZoneOffset.UTC)
+                .toLocalDate();
+    }
+
+    private boolean rangesOverlap(LocalDate start1, LocalDate end1, LocalDate start2, LocalDate end2) {
+        return !start1.isAfter(end2) && !start2.isAfter(end1);
+    }
+
+    private boolean timesOverlap(LocalTime start1, LocalTime end1, LocalTime start2, LocalTime end2) {
+        return start1.isBefore(end2) && start2.isBefore(end1);
+    }
+
+    private double calculateWorkingDayHours(CalendarWorkingDayEntry day) {
+        if (day.getHourFrom() == null || day.getHourTo() == null) {
+            throw new ConflictException("Gli orari di inizio e fine sono obbligatori per una giornata lavorativa");
+        }
+        LocalTime from = LocalTime.parse(day.getHourFrom());
+        LocalTime to = LocalTime.parse(day.getHourTo());
+
+        if (!to.isAfter(from)) {
+            throw new ConflictException("L'orario di fine deve essere successivo all'orario di inizio");
+        }
+
+        long minutes = Duration.between(from, to).toMinutes();
+        if (minutes <= 0) {
+            throw new ConflictException("La durata della giornata lavorativa deve essere positiva");
+        }
+        return minutes / 60.0;
+    }
+
+    private double getUserDailyHours(String userEmail) {
+        System.out.println("USER DAILY HOURS REQ: " + this.userService.getUserDataFromEmail(userEmail));
+        return this.userService.getUserDataFromEmail(userEmail).dailyHours();
+    }
+
+    private void validateBusinessRulesForEntry(CalendarEntity entity, String excludeId) {
+        String userEmail = this.userService.getCurrentUserEmail();
+        System.out.println("CHEKC user email: " +  userEmail);
+        if (userEmail == null) {
+            throw new IllegalStateException("UserEmail non impostata sull'entry del calendario");
+        }
+
+        CalendarEntry entry = entity.getCalendarEntry();
+        CalendarEntryType type = entity.getEntryType();
+
+        if (type == CalendarEntryType.WORKING_DAY && entry instanceof CalendarWorkingDayEntry workingDayEntry) {
+            validateWorkingDayEntry(workingDayEntry, userEmail, excludeId);
+        } else if (type == CalendarEntryType.REQUEST && entry instanceof CalendarRequestEntry requestEntry) {
+            validateRequestOrTripEntry(requestEntry.getDateFrom(), requestEntry.getDateTo(), userEmail, excludeId);
+        } else if (type == CalendarEntryType.WORKING_TRIP && entry instanceof CalendarWorkingTripEntry tripEntry) {
+            validateRequestOrTripEntry(tripEntry.getDateFrom(), tripEntry.getDateTo(), userEmail, excludeId);
+        } else if (type == CalendarEntryType.AVAILABILITY && entry instanceof CalendarAvailabilityEntry availabilityEntry) {
+            validateAvailabilityEntry(availabilityEntry, userEmail, excludeId);
+        }
+    }
+
+    /**
+     * Regola: se inserisco/modifico una REQUEST o WORKING_TRIP,
+     * nel range [dateFrom, dateTo] non devono esistere:
+     *  - richieste (REQUEST) PENDING/ACCEPTED
+     *  - trasferte (WORKING_TRIP) PENDING/ACCEPTED
+     *  - giornate lavorative (WORKING_DAY) in quei giorni
+     */
+    private void validateRequestOrTripEntry(Date from, Date to, String userEmail, String excludeId) {
+        if (from == null || to == null) {
+            throw new ConflictException("Le date di inizio e fine sono obbligatorie");
+        }
+
+        LocalDate newFrom = toLocalDate(from);
+        LocalDate newTo = toLocalDate(to);
+
+        if (newTo.isBefore(newFrom)) {
+            throw new ConflictException("La data di fine non può essere precedente a quella di inizio");
+        }
+
+        List<CalendarEntity> userEntries = repository.findAllByUserEmail(userEmail);
+
+        for (CalendarEntity existing : userEntries) {
+            if (excludeId != null && excludeId.equals(existing.getId())) continue;
+
+            CalendarEntryType type = existing.getEntryType();
+            CalendarEntry ce = existing.getCalendarEntry();
+
+            if (type == CalendarEntryType.REQUEST && ce instanceof CalendarRequestEntry req) {
+                RequestStatus status = req.getStatus();
+                if (status != RequestStatus.PENDING && status != RequestStatus.ACCEPTED) continue;
+
+                LocalDate exFrom = toLocalDate(req.getDateFrom());
+                LocalDate exTo = toLocalDate(req.getDateTo());
+                if (exFrom == null || exTo == null) continue;
+
+                if (rangesOverlap(newFrom, newTo, exFrom, exTo)) {
+                    throw new ConflictException("L'intervallo selezionato si sovrappone ad una richiesta già presente.");
+                }
+            } else if (type == CalendarEntryType.WORKING_TRIP && ce instanceof CalendarWorkingTripEntry trip) {
+                RequestStatus status = trip.getStatus();
+                if (status != RequestStatus.PENDING && status != RequestStatus.ACCEPTED) continue;
+
+                LocalDate exFrom = toLocalDate(trip.getDateFrom());
+                LocalDate exTo = toLocalDate(trip.getDateTo());
+                if (exFrom == null || exTo == null) continue;
+
+                if (rangesOverlap(newFrom, newTo, exFrom, exTo)) {
+                    throw new ConflictException("L'intervallo selezionato si sovrappone ad una trasferta già presente.");
+                }
+            } else if (type == CalendarEntryType.WORKING_DAY && ce instanceof CalendarWorkingDayEntry day) {
+                LocalDate exDate = toLocalDate(day.getDateFrom());
+                if (exDate != null && !exDate.isBefore(newFrom) && !exDate.isAfter(newTo)) {
+                    throw new ConflictException("L'intervallo selezionato include una giornata lavorativa già presente.");
+                }
+            }
+        }
+    }
+
+    /**
+     * Regole per WORKING_DAY:
+     * - hourFrom/hourTo obbligatori
+     * - project obbligatorio
+     * - niente weekend (già gestito altrove, ma lo ricontrolliamo per sicurezza)
+     * - non può sovrapporsi ad altre working day nello stesso giorno
+     * - non può cadere in un giorno coperto da FERIE/CONGEDO (full day, PENDING/ACCEPTED)
+     * - non può sovrapporsi negli orari a PERMESSI/MALATTIA (PENDING/ACCEPTED)
+     * - le ore lavorate del giorno non possono superare dailyHours - orePermessi
+     * - non può cadere in un giorno coperto da una trasferta (TRIP) PENDING/ACCEPTED
+     */
+    private void validateWorkingDayEntry(CalendarWorkingDayEntry newDay, String userEmail, String excludeId) {
+        System.out.println("new day: " + newDay);
+        // VALIDAZIONI BASE
+        if (newDay.getHourFrom() == null || newDay.getHourTo() == null) {
+            throw new ConflictException("Gli orari di inizio e fine sono obbligatori per una giornata lavorativa");
+        }
+        if (newDay.getProject() == null || newDay.getProject().isBlank()) {
+            throw new ConflictException("Il progetto è obbligatorio per una giornata lavorativa");
+        }
+        if (newDay.getDateFrom() == null) {
+            throw new ConflictException("La data è obbligatoria per una giornata lavorativa");
+        }
+        if (this.isWeekend(newDay.getDateFrom())) {
+            throw new ConflictException("Non è possibile creare una giornata lavorativa nel weekend");
+        }
+
+        LocalDate date = toLocalDate(newDay.getDateFrom());
+        LocalTime newFrom = LocalTime.parse(newDay.getHourFrom());
+        LocalTime newTo = LocalTime.parse(newDay.getHourTo());
+
+        if (!newTo.isAfter(newFrom)) {
+            throw new ConflictException("L'orario di fine deve essere successivo all'orario di inizio");
+        }
+
+        List<CalendarEntity> entries = repository.findAllByUserEmail(userEmail);
+
+        double existingWorkingHours = 0.0;
+        double totalPermitHours = 0.0;
+
+        for (CalendarEntity e : entries) {
+            if (excludeId != null && excludeId.equals(e.getId())) continue;
+
+            CalendarEntryType type = e.getEntryType();
+            CalendarEntry ce = e.getCalendarEntry();
+
+            // GIORNATE LAVORATIVE ESISTENTI
+            if (type == CalendarEntryType.WORKING_DAY && ce instanceof CalendarWorkingDayEntry day) {
+                LocalDate d = toLocalDate(day.getDateFrom());
+                if (d != null && d.equals(date)) {
+                    LocalTime exFrom = LocalTime.parse(day.getHourFrom());
+                    LocalTime exTo = LocalTime.parse(day.getHourTo());
+
+                    if (timesOverlap(newFrom, newTo, exFrom, exTo)) {
+                        throw new ConflictException("Esiste già una giornata lavorativa con orari sovrapposti in questa data");
+                    }
+
+                    existingWorkingHours += calculateWorkingDayHours(day);
+                }
+            }
+
+            // RICHIESTE
+            else if (type == CalendarEntryType.REQUEST && ce instanceof CalendarRequestEntry req) {
+                RequestStatus status = req.getStatus();
+                if (status != RequestStatus.PENDING && status != RequestStatus.ACCEPTED) continue;
+
+                LocalDate fromDate = toLocalDate(req.getDateFrom());
+                LocalDate toDate = toLocalDate(req.getDateTo());
+                if (fromDate == null || toDate == null) continue;
+
+                boolean dateIncluded = !date.isBefore(fromDate) && !date.isAfter(toDate);
+                if (!dateIncluded) continue;
+
+                String rt = req.getRequestType() != null ? req.getRequestType().trim().toUpperCase() : "";
+
+                // FERIE / CONGEDO → full day
+                if ("FERIE".equals(rt) || "CONGEDO".equals(rt)) {
+                    System.out.println("IL BUGP: " + req);
+                    throw new ConflictException("Non puoi inserire una giornata lavorativa in un giorno coperto da una richiesta di " + rt);
+                }
+
+                // PERMESSI / MALATTIA → orario + multi-day
+                if ("PERMESSI".equals(rt) || "MALATTIA".equals(rt)) {
+
+                    LocalTime reqFrom = req.getTimeFrom() != null ? LocalTime.parse(req.getTimeFrom()) : null;
+                    LocalTime reqTo   = req.getTimeTo()   != null ? LocalTime.parse(req.getTimeTo())   : null;
+
+                    // Caso A → permesso senza orario → FULL DAY
+                    if (reqFrom == null || reqTo == null) {
+                        throw new ConflictException("Questa richiesta di " + rt + " copre l'intera giornata. Non puoi lavorare.");
+                    }
+
+                    // Caso B → permesso single-day (classico)
+                    if (fromDate.equals(toDate) && fromDate.equals(date)) {
+
+                        if (timesOverlap(newFrom, newTo, reqFrom, reqTo)) {
+                            throw new ConflictException("Gli orari della giornata lavorativa si sovrappongono ad una richiesta di " + rt);
+                        }
+
+                        long permMinutes = Duration.between(reqFrom, reqTo).toMinutes();
+                        if (permMinutes > 0 && "PERMESSI".equals(rt)) {
+                            totalPermitHours += permMinutes / 60.0;
+                        }
+                        continue;
+                    }
+
+                    // Caso C → MULTI-DAY
+
+                    // Primo giorno
+                    if (date.equals(fromDate)) {
+                        if (timesOverlap(newFrom, newTo, reqFrom, LocalTime.MAX)) {
+                            throw new ConflictException("Gli orari della giornata lavorativa si sovrappongono al primo giorno della richiesta di " + rt);
+                        }
+
+                        long permMinutes = Duration.between(reqFrom, LocalTime.MAX).toMinutes();
+                        if ("PERMESSI".equals(rt)) totalPermitHours += permMinutes / 60.0;
+                        continue;
+                    }
+
+                    // Ultimo giorno
+                    if (date.equals(toDate)) {
+                        if (timesOverlap(newFrom, newTo, LocalTime.MIN, reqTo)) {
+                            throw new ConflictException("Gli orari della giornata lavorativa si sovrappongono all'ultimo giorno della richiesta di " + rt);
+                        }
+
+                        long permMinutes = Duration.between(LocalTime.MIN, reqTo).toMinutes();
+                        if ("PERMESSI".equals(rt)) totalPermitHours += permMinutes / 60.0;
+                        continue;
+                    }
+
+                    // Giorni intermedi → applica gli stessi orari del permesso
+                    if (date.isAfter(fromDate) && date.isBefore(toDate)) {
+
+                        // Se sovrappone gli orari → errore
+                        if (timesOverlap(newFrom, newTo, reqFrom, reqTo)) {
+                            throw new ConflictException("Gli orari della giornata lavorativa si sovrappongono ad una richiesta di " + rt);
+                        }
+
+                        // Somma ore permesso (solo per PERMESSI)
+                        if ("PERMESSI".equals(rt)) {
+                            long permMinutes = Duration.between(reqFrom, reqTo).toMinutes();
+                            if (permMinutes > 0) totalPermitHours += permMinutes / 60.0;
+                        }
+                    }
+                }
+            }
+
+            // TRASFERTE
+            else if (type == CalendarEntryType.WORKING_TRIP && ce instanceof CalendarWorkingTripEntry trip) {
+                RequestStatus status = trip.getStatus();
+                if (status != RequestStatus.PENDING && status != RequestStatus.ACCEPTED) continue;
+
+                LocalDate tripFrom = toLocalDate(trip.getDateFrom());
+                LocalDate tripTo = toLocalDate(trip.getDateTo());
+
+                if (tripFrom != null && tripTo != null &&
+                        !date.isBefore(tripFrom) && !date.isAfter(tripTo)) {
+                    throw new ConflictException("Non puoi inserire una giornata lavorativa in un giorno coperto da una trasferta");
+                }
+            }
+        }
+
+        // LIMITE ORE GIORNALIERE
+        double newWorkingHours = calculateWorkingDayHours(newDay);
+        double dailyHours = getUserDailyHours(userEmail);
+
+        double maxWorkable = dailyHours - totalPermitHours;
+        if (maxWorkable < 0) {
+            maxWorkable = 0;
+        }
+
+        if (existingWorkingHours + newWorkingHours > maxWorkable) {
+            throw new ConflictException(
+                    "Le ore lavorative totali del giorno (" +
+                            (existingWorkingHours + newWorkingHours) +
+                            ") superano il limite consentito considerando i permessi (" +
+                            maxWorkable + ")."
+            );
+        }
+    }
+
+
+    /**
+     * Regola: una AVAILABILITY (reperibilità) non può sovrapporsi ad un'altra AVAILABILITY
+     */
+    private void validateAvailabilityEntry(CalendarAvailabilityEntry newAv, String userEmail, String excludeId) {
+        if (newAv.getDateFrom() == null || newAv.getDateTo() == null) {
+            throw new ConflictException("Le date di inizio e fine sono obbligatorie per la reperibilità");
+        }
+
+        LocalDate newFrom = toLocalDate(newAv.getDateFrom());
+        LocalDate newTo = toLocalDate(newAv.getDateTo());
+
+        if (newTo.isBefore(newFrom)) {
+            throw new ConflictException("La data di fine non può essere precedente a quella di inizio per la reperibilità");
+        }
+
+        List<CalendarEntity> entries = repository.findAllByUserEmail(userEmail);
+
+        for (CalendarEntity e : entries) {
+            if (excludeId != null && excludeId.equals(e.getId())) continue;
+
+            if (e.getEntryType() != CalendarEntryType.AVAILABILITY) continue;
+            CalendarEntry ce = e.getCalendarEntry();
+            if (!(ce instanceof CalendarAvailabilityEntry av)) continue;
+
+            LocalDate exFrom = toLocalDate(av.getDateFrom());
+            LocalDate exTo = toLocalDate(av.getDateTo());
+            if (exFrom == null || exTo == null) continue;
+
+            if (rangesOverlap(newFrom, newTo, exFrom, exTo)) {
+                throw new ConflictException("L'intervallo di reperibilità si sovrappone ad un'altra reperibilità esistente");
+            }
+        }
+    }
+
 
 }
