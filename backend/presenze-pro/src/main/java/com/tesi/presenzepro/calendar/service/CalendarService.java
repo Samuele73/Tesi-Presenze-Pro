@@ -28,8 +28,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.*;
 
@@ -49,6 +51,10 @@ public class CalendarService {
 
     public CalendarResponseDto saveNewCalendarEntry(HttpServletRequest request ,SaveCalendarEntityRequestDto calendarEntityData){
         CalendarEntity newCalendarEntity = calendarMapper.fromCalendarSaveRequestToEntity(calendarEntityData);
+        if(newCalendarEntity.getCalendarEntry() instanceof CalendarWorkingDayEntry workingDayEntry){
+            if(this.isWeekend(workingDayEntry.getDateFrom()))
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Non è possibile creare una giornata lavorativa nel weekend");
+        }
         String userEmail = this.getUserEmailFromRequest(request);
         newCalendarEntity.setUserEmail(userEmail);
         this.applyDefaultStatus(newCalendarEntity);
@@ -78,6 +84,10 @@ public class CalendarService {
 
 
         return calendarMapper.fromCalendarEntityToCalendarEntry(calendarEntity);
+    }
+
+    private boolean isWeekend(Date date){
+        return date.getDay() == 0 || date.getDay() == 6;
     }
 
     private void sendRequestNotifs(String message){
@@ -204,8 +214,15 @@ public class CalendarService {
 
     public List<CalendarResponseDto> saveCalendarEntities(HttpServletRequest request, List<SaveCalendarEntityRequestDto> calendarEntities) {
         List<CalendarEntity> newCalendarEntities = calendarMapper.fromCalendarSaveRequestToEntities(calendarEntities);
+
         final String userEmail = this.getUserEmailFromRequest(request);
-        newCalendarEntities.forEach(calendarEntity -> {calendarEntity.setUserEmail(userEmail);});
+        newCalendarEntities.forEach(calendarEntity -> {
+            if(calendarEntity.getCalendarEntry() instanceof CalendarWorkingDayEntry workingDayEntry){
+                if(this.isWeekend(workingDayEntry.getDateFrom()))
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "Non è possibile creare una giornata lavorativa nel weekend");
+            }
+            calendarEntity.setUserEmail(userEmail);
+        });
         final List<CalendarEntity> savedCalendarEntities = this.repository.saveAll(newCalendarEntities);
         return calendarMapper.fromCalendarEntitiesToCalendarEntries(savedCalendarEntities);
     }

@@ -321,7 +321,7 @@ export class InteractiveButtonComponent implements AfterViewInit, OnDestroy {
   // Precalcola i flag per il template
   private updateDisabledFlags(): void {
     this.isDayWorksDisabled =
-      (this.filteredEntries.day_works.length === 0 && this.mode === 'DELETE') || this.dateFormat.isWeekend(this._date ?? new Date());
+      (this.filteredEntries.day_works.length === 0 && this.mode === 'DELETE');
     this.isRequestsDisabled =
       this.filteredEntries.requests.length === 0 && this.mode === 'DELETE';
     this.isWorkingTripsDisabled =

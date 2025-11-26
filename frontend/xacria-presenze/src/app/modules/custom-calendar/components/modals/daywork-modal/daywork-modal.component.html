@@ -22,72 +22,74 @@
     </div>
     <form action="" [formGroup]="form" (ngSubmit)="submitNewEntries()">
       <div class="modal-body">
-        <h4>{{ "Orario lavorativo" | translate }}</h4>
-        <div class="mb-3 d-flex gap-4 text-primary">
-          <div>
-            <label for="date-from" class="form-label h5">{{
-              "Da" | translate
-            }}</label>
-            <input
-              type="time"
-              class="form-control"
-              id="hour-from"
-              formControlName="hourFrom"
-            />
-            <app-form-error
-              [formControlRef]="hourFrom"
-              [validator]="'required'"
-              [errorText]="'Seleziona la data di inizio'"
-            ></app-form-error>
-          </div>
-          <div>
-            <label for="date-to" class="form-label h5">{{
-              "A" | translate
-            }}</label>
-            <input
-              type="time"
-              class="form-control"
-              id="hour-to"
-              formControlName="hourTo"
-            />
-            <app-form-error
-              [formControlRef]="hourTo"
-              [validator]="'required'"
-              [errorText]="'Seleziona la data di fine'"
-            ></app-form-error>
-          </div>
-          <div>
-            <label for="projects" class="form-label h5">{{
-              "Progetto" | translate
-            }}</label>
-            <select
-              name="project_"
-              id="projects"
-              class="form-select"
-              formControlName="project"
-            >
-              <option
-                value="{{ project }}"
-                *ngFor="let project of validProjects"
+        <div class="mb-3">
+          <h4>{{ "Orario lavorativo" | translate }}</h4>
+          <div class="d-flex gap-4 text-primary">
+            <div>
+              <label for="date-from" class="form-label h5">{{
+                "Da" | translate
+              }}</label>
+              <input
+                type="time"
+                class="form-control"
+                id="hour-from"
+                formControlName="hourFrom"
+              />
+              <app-form-error
+                [formControlRef]="hourFrom"
+                [validator]="'required'"
+                [errorText]="'Seleziona la data di inizio'"
+              ></app-form-error>
+            </div>
+            <div>
+              <label for="date-to" class="form-label h5">{{
+                "A" | translate
+              }}</label>
+              <input
+                type="time"
+                class="form-control"
+                id="hour-to"
+                formControlName="hourTo"
+              />
+              <app-form-error
+                [formControlRef]="hourTo"
+                [validator]="'required'"
+                [errorText]="'Seleziona la data di fine'"
+              ></app-form-error>
+            </div>
+            <div>
+              <label for="projects" class="form-label h5">{{
+                "Progetto" | translate
+              }}</label>
+              <select
+                name="project_"
+                id="projects"
+                class="form-select"
+                formControlName="project"
               >
-                {{ project }}
-              </option>
-            </select>
-            <app-form-error
-              [formControlRef]="project"
-              [validator]="'required'"
-              [errorText]="'Seleziona il progetto'"
-            ></app-form-error>
+                <option
+                  value="{{ project }}"
+                  *ngFor="let project of validProjects"
+                >
+                  {{ project }}
+                </option>
+              </select>
+              <app-form-error
+                [formControlRef]="project"
+                [validator]="'required'"
+                [errorText]="'Seleziona il progetto'"
+              ></app-form-error>
+            </div>
           </div>
+          <app-form-error
+            [formControlRef]="form"
+            [validator]="'invalidTimeRange'"
+            [errorText]="
+              'L\'orario di inizio deve essere minore dell\'orario di fine.'
+            "
+          ></app-form-error>
         </div>
-        <app-form-error
-          [formControlRef]="form"
-          [validator]="'invalidTimeRange'"
-          [errorText]="
-            'L\'orario di inizio deve essere minore dell\'orario di fine.'
-          "
-          [styleClass]="'mb-1'"
-        ></app-form-error>
+
         <div class="d-flex gap-2 align-items-center">
           <h4>{{ "Aggiungi orario lavorativo" | translate }}</h4>
           <button
@@ -103,78 +105,82 @@
             *ngFor="let daywork of dayWorks.controls; let i = index"
             formGroupName="{{ i }}"
           >
-            <div class="mb-2 d-flex gap-4 text-primary w-100">
-              <div>
-                <label for="hourFrom" class="form-label h5">{{
-                  "Da" | translate
-                }}</label>
-                <input
-                  type="time"
-                  class="form-control"
-                  id="hourFrom"
-                  formControlName="hourFrom"
-                />
-                <app-form-error
-                  [formControlRef]="dayWorks.at(i).get('hourFrom')"
-                  [validator]="'required'"
-                  [errorText]="'Seleziona la data di inizio'"
-                ></app-form-error>
-              </div>
-              <div>
-                <label for="hourTo" class="form-label h5">{{
-                  "A" | translate
-                }}</label>
-                <input
-                  type="time"
-                  class="form-control"
-                  id="hourTo"
-                  formControlName="hourTo"
-                />
-                <app-form-error
-                  [formControlRef]="dayWorks.at(i).get('hourTo')"
-                  [validator]="'required'"
-                  [errorText]="'Seleziona la data di fine'"
-                ></app-form-error>
-              </div>
-              <div>
-                <label for="projects" class="form-label h5">{{
-                  "Progetto" | translate
-                }}</label>
-                <select
-                  name="project_"
-                  id="projects"
-                  class="form-select"
-                  formControlName="project"
-                >
-                  <option
-                    value="{{ project }}"
-                    *ngFor="let project of validProjects"
+            <div class="mb-2 w-100">
+              <div class="d-flex gap-4 text-primary">
+                <div>
+                  <label for="hourFrom" class="form-label h5">{{
+                    "Da" | translate
+                  }}</label>
+                  <input
+                    type="time"
+                    class="form-control"
+                    id="hourFrom"
+                    formControlName="hourFrom"
+                  />
+                  <app-form-error
+                    [formControlRef]="dayWorks.at(i).get('hourFrom')"
+                    [validator]="'required'"
+                    [errorText]="'Seleziona la data di inizio'"
+                  ></app-form-error>
+                </div>
+                <div>
+                  <label for="hourTo" class="form-label h5">{{
+                    "A" | translate
+                  }}</label>
+                  <input
+                    type="time"
+                    class="form-control"
+                    id="hourTo"
+                    formControlName="hourTo"
+                  />
+                  <app-form-error
+                    [formControlRef]="dayWorks.at(i).get('hourTo')"
+                    [validator]="'required'"
+                    [errorText]="'Seleziona la data di fine'"
+                  ></app-form-error>
+                </div>
+                <div>
+                  <label for="projects" class="form-label h5">{{
+                    "Progetto" | translate
+                  }}</label>
+                  <select
+                    name="project_"
+                    id="projects"
+                    class="form-select"
+                    formControlName="project"
                   >
-                    {{ project }}
-                  </option>
-                </select>
-                <app-form-error
-                  [formControlRef]="dayWorks.at(i).get('project')"
-                  [validator]="'required'"
-                  [errorText]="'Seleziona il progetto'"
-                ></app-form-error>
+                    <option
+                      value="{{ project }}"
+                      *ngFor="let project of validProjects"
+                    >
+                      {{ project }}
+                    </option>
+                  </select>
+                  <app-form-error
+                    [formControlRef]="dayWorks.at(i).get('project')"
+                    [validator]="'required'"
+                    [errorText]="'Seleziona il progetto'"
+                  ></app-form-error>
+                </div>
+                <div class="d-flex align-items-end">
+                  <button class="btn btn-danger" (click)="removeDayWork(i)">
+                    <fa-icon
+                      [icon]="faIcons.xSymbol"
+                      class="fa-sm text-light"
+                    ></fa-icon>
+                  </button>
+                </div>
               </div>
-              <div class="d-flex align-items-end">
-                <button class="btn btn-danger" (click)="removeDayWork(i)">
-                  <fa-icon
-                    [icon]="faIcons.xSymbol"
-                    class="fa-sm text-light"
-                  ></fa-icon>
-                </button>
-              </div>
+
+              <app-form-error
+                [formControlRef]="dayWorks.at(i)"
+                [validator]="'invalidTimeRange'"
+                [errorText]="
+                  'L\'orario di inizio deve essere minore dell\'orario di fine.'
+                "
+              ></app-form-error>
             </div>
-            <app-form-error
-              [formControlRef]="dayWorks.at(i)"
-              [validator]="'invalidTimeRange'"
-              [errorText]="
-                'L\'orario di inizio deve essere minore dell\'orario di fine.'
-              "
-            ></app-form-error>
+
             <hr
               class="my-4 border-1"
               *ngIf="i != dayWorks.controls.length - 1"

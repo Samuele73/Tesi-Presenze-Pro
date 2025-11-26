@@ -168,11 +168,7 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
     this.calendarStateService
       .updateCalendarEntries(changedEntries, 'AVAILABILITY')
       .subscribe((resp: boolean) => {
-        if (!resp)
-          this.toastrService.error(
-            this.apiError ?? 'Errore nella modifica delle disponibilità.'
-          );
-        else {
+        if (resp){
           this.toastrService.clear();
           this.toastrService.success('Disponibilità modificate con successo');
         }
@@ -185,11 +181,7 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
       this.calendarStateService
         .deleteCalendarEntities(this.toDeleteEntries, 'AVAILABILITY')
         .subscribe((resp: boolean) => {
-          if (!resp)
-            this.toastrService.error(
-              this.apiError ?? 'Errore nella cancellazione delle disponibilità.'
-            );
-          else {
+          if (resp){
             this.toastrService.clear();
             this.toastrService.success('Disponibilità cancellate con successo');
           }
@@ -279,11 +271,8 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
       this.calendarStateService
         .saveCalendarEntry(newEntry, 'AVAILABILITY')
         .subscribe((resp: boolean) => {
-          if (!resp)
-            this.toastrService.error(
-              this.apiError ?? 'Errore nella creazione della reperibiillità'
-            );
-          else this.toastrService.success('Reperibilità creata con successo');
+          if (resp)
+            this.toastrService.success('Reperibilità creata con successo');
         });
       this.form.reset();
     } else console.error('Availability new entry form is invalid');

@@ -166,12 +166,7 @@ export class DayworkModalComponent
       this.calendarStateService
         .deleteCalendarEntities(this.toDeleteEntries, 'WORKING_DAY')
         .subscribe((resp: boolean) => {
-          if (!resp)
-            this.toastrService.error(
-              this.apiError ??
-                'Errore nella cancellazione dei lavori giornalieri.'
-            );
-          else {
+          if (resp){
             this.toastrService.clear();
             this.toastrService.success(
               'Lavori giornalieri cancellati con successo'
@@ -271,11 +266,7 @@ export class DayworkModalComponent
     this.calendarStateService
       .updateCalendarEntries(changedEntries, 'WORKING_DAY')
       .subscribe((resp: boolean) => {
-        if (!resp)
-          this.toastrService.error(
-            this.apiError ?? 'Errore nella modifica dei lavori giornalieri.'
-          );
-        else {
+        if (resp) {
           this.toastrService.clear();
           this.toastrService.success(
             'Lavori giornalieri modificati con successo'
@@ -316,11 +307,7 @@ export class DayworkModalComponent
       this.calendarStateService
         .saveCalendarEntities(newDayWorkEntries, 'WORKING_DAY')
         .subscribe((resp: boolean) => {
-          if (!resp)
-            this.toastrService.error(
-              this.apiError ?? 'Errore nella creazione del lavoro giornaliero.'
-            );
-          else
+          if (resp)
             this.toastrService.success(
               'Lavoro giornaliero creato con successo'
             );

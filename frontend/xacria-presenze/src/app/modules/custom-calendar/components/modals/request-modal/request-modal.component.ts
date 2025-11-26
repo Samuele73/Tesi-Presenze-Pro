@@ -180,11 +180,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     this.calendarStateService
       .updateCalendarEntries(changedEntries, 'REQUEST')
       .subscribe((resp: boolean) => {
-        if (!resp)
-          this.toastrService.error(
-            this.apiError ?? 'Errore nella modifica della richiesta.'
-          );
-        else {
+        if (resp){
           this.toastrService.clear();
           this.toastrService.success('Richiesta modificata con successo');
         }
@@ -203,11 +199,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
       this.calendarStateService
         .deleteCalendarEntities(this.toDeleteEntries, 'REQUEST')
         .subscribe((resp: boolean) => {
-          if (!resp)
-            this.toastrService.error(
-              this.apiError ?? 'Errore nella cancellazione della richiesta.'
-            );
-          else {
+          if (resp){
             this.toastrService.clear();
             this.toastrService.success('Richiesta cancellata con successo');
           }
@@ -340,11 +332,8 @@ export class RequestModalComponent implements ModalComponent, OnInit {
       this.calendarStateService
         .saveCalendarEntry(newEntry, 'REQUEST')
         .subscribe((resp: boolean) => {
-          if (!resp)
-            this.toastrService.error(
-              this.apiError ?? 'Errore nella creazione della richiesta.'
-            );
-          else this.toastrService.success('Richiesta creata con successo');
+          if (resp)
+            this.toastrService.success('Richiesta creata con successo');
         });
       this.form.reset();
     } else console.error('Availability new entry form is invalid');

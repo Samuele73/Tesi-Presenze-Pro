@@ -154,11 +154,7 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
     this.calendarStateService
       .updateCalendarEntries(changedEntries, 'WORKING_TRIP')
       .subscribe((resp: boolean) => {
-        if (!resp)
-          this.toastrService.error(
-            this.apiError ?? 'Errore nella modifica dei trasferimenti.'
-          );
-        else {
+        if (resp){
           this.toastrService.clear();
           this.toastrService.success('Trasferta modificata con successo');
         }
@@ -189,11 +185,7 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
       this.calendarStateService
         .deleteCalendarEntities(this.toDeleteEntries, 'WORKING_TRIP')
         .subscribe((resp: boolean) => {
-          if (!resp)
-            this.toastrService.error(
-              this.apiError ?? 'Errore nella cancellazione della trasferte'
-            );
-          else {
+          if (resp){
             this.toastrService.clear();
             this.toastrService.success('Trasferte cancellate con successo');
           }
@@ -276,11 +268,9 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
       this.calendarStateService
         .saveCalendarEntry(newEntry, 'WORKING_TRIP')
         .subscribe((resp: boolean) => {
-          if (!resp)
-            this.toastrService.error(
-              this.apiError ?? 'Errore nella creazione della trasferta'
-            );
-          else this.toastrService.success('Trasferta creata con successo');
+          if (resp)
+            this.toastrService.success('Trasferta creata con successo');
+
         });
       this.form.reset();
     } else console.error('Availability new entry form is invalid');
