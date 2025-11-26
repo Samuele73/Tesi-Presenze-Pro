@@ -113,7 +113,7 @@
               <button
                 class="accordion-button d-flex gap-2 align-items-center"
                 [ngClass]="{
-                  collapsed: activePanelIndex !== i,
+                  collapsed: !activePanels.has(i),
                   'delete-mode': toDeleteEntries.includes(workingTrip.value.id)
                 }"
                 type="button"
@@ -129,7 +129,7 @@
             </h2>
             <div
               class="accordion-collapse collapse"
-              [ngClass]="{ show: activePanelIndex === i }"
+              [ngClass]="{ show: activePanels.has(i) }"
             >
               <div class="accordion-body">
                 <div class="mb-3">

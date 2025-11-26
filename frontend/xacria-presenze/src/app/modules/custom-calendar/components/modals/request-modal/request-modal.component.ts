@@ -93,10 +93,14 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     return this.form.get('requests') as FormArray;
   }
 
-  activePanelIndex: number | null = null;
+  activePanels: Set<number> = new Set();
 
   togglePanel(i: number) {
-    this.activePanelIndex = this.activePanelIndex === i ? null : i;
+    if (this.activePanels.has(i)) {
+      this.activePanels.delete(i);
+    } else {
+      this.activePanels.add(i);
+    }
   }
 
   ngOnInit(): void {
@@ -121,7 +125,10 @@ export class RequestModalComponent implements ModalComponent, OnInit {
           timeTo: [defaultTime, Validators.required],
         },
         {
-          validators: [dateRangeValidator('dateFrom', 'dateTo'), timeRangeValidator('timeFrom', 'timeTo')],
+          validators: [
+            dateRangeValidator('dateFrom', 'dateTo'),
+            timeRangeValidator('timeFrom', 'timeTo'),
+          ],
         }
       );
     } else {
@@ -181,7 +188,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     this.calendarStateService
       .updateCalendarEntries(changedEntries, 'REQUEST')
       .subscribe((resp: boolean) => {
-        if (resp){
+        if (resp) {
           this.toastrService.clear();
           this.toastrService.success('Richiesta modificata con successo');
         }
@@ -200,7 +207,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
       this.calendarStateService
         .deleteCalendarEntities(this.toDeleteEntries, 'REQUEST')
         .subscribe((resp: boolean) => {
-          if (resp){
+          if (resp) {
             this.toastrService.clear();
             this.toastrService.success('Richiesta cancellata con successo');
           }
@@ -293,7 +300,10 @@ export class RequestModalComponent implements ModalComponent, OnInit {
         status: [entry.calendarEntry.status, Validators.required],
       },
       {
-        validators: [dateRangeValidator('dateFrom', 'dateTo'), timeRangeValidator('timeFrom', 'timeTo')],
+        validators: [
+          dateRangeValidator('dateFrom', 'dateTo'),
+          timeRangeValidator('timeFrom', 'timeTo'),
+        ],
       }
     );
   }
@@ -333,8 +343,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
       this.calendarStateService
         .saveCalendarEntry(newEntry, 'REQUEST')
         .subscribe((resp: boolean) => {
-          if (resp)
-            this.toastrService.success('Richiesta creata con successo');
+          if (resp) this.toastrService.success('Richiesta creata con successo');
         });
       this.form.reset();
     } else console.error('Availability new entry form is invalid');

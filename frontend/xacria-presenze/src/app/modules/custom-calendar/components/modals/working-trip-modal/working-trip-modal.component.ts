@@ -75,10 +75,14 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
     this.initializeForm();
   }
 
-  activePanelIndex: number | null = null;
+  activePanels: Set<number> = new Set();
 
-  togglePanel(index: number) {
-    this.activePanelIndex = this.activePanelIndex === index ? null : index;
+  togglePanel(i: number) {
+    if (this.activePanels.has(i)) {
+      this.activePanels.delete(i);
+    } else {
+      this.activePanels.add(i);
+    }
   }
 
   initializeForm(): void {
