@@ -11,7 +11,7 @@ import { InvitationErrorComponent } from './invitation-error/invitation-error.co
 
 const routes: Routes = [
   {path: "login", component: LoginComponent},
-  {path: "signin", component: SignInComponent},
+  {path: "signin", component: SignInComponent, canActivate: [SigninInvitationGuard]},
   {path: "invitation-error", component: InvitationErrorComponent},
   {path: "forgotten-pw", component: ForgottenPwComponent},
   {path: "changePassword", component: UpdatePwComponent},
