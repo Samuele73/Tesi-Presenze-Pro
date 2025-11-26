@@ -44,6 +44,7 @@ import { CalendarStateService } from '../../services/calendar-state.service';
 import { monthNamesIt, weekDayNamesIt } from '../../const-vars';
 import { ToastrService } from 'ngx-toastr';
 import { ProjectStoreService } from 'src/app/modules/project/services/project-store.service';
+import { DateFormatService } from 'src/app/shared/services/date-format.service';
 
 type DistributedModalComponent = AvailabilityModalComponent | RequestModalComponent | WorkingTripModalComponent;
 type ModalComponentType = DistributedModalComponent | DayworkModalComponent;
@@ -105,7 +106,8 @@ export class CustomCalendarPageComponent implements OnInit, AfterViewInit, OnDes
     private cdr: ChangeDetectorRef,
     private userService: UserService,
     private toastrService: ToastrService,
-    private projectStoreService: ProjectStoreService
+    private projectStoreService: ProjectStoreService,
+    public dateFormat: DateFormatService
   ) {
     this.weekDayNames = weekDayNamesIt;
     this.monthNames = monthNamesIt;

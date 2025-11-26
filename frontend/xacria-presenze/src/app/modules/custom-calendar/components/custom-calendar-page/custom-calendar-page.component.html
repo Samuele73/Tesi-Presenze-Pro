@@ -23,7 +23,7 @@
         </div>
       </div>
     </div>
-    <div class="text-center mb-3">
+    <div class="text-center mb-3" [ngClass]="dateFormat.isWeekend(day.date) ? 'invisible' : ''">
       <span class="fw-semibold text-muted">
         {{ "Ore lavorate" | translate }}:
       </span>
