@@ -321,11 +321,11 @@ export class InteractiveButtonComponent implements AfterViewInit, OnDestroy {
   // Precalcola i flag per il template
   private updateDisabledFlags(): void {
     this.isDayWorksDisabled =
-      (this.filteredEntries.day_works.length === 0 && this.mode === 'DELETE');
+      (this.filteredEntries.day_works.length === 0 && this.mode === 'DELETE') || this.dateFormat.isWeekend(this._date ?? new Date());
     this.isRequestsDisabled =
-      this.filteredEntries.requests.length === 0 && this.mode === 'DELETE';
+      (this.filteredEntries.requests.length === 0 && this.mode === 'DELETE') || (this.dateFormat.isBeforeToday(this._date ?? new Date()) && this.mode == 'ADD');
     this.isWorkingTripsDisabled =
-      this.filteredEntries.working_trips.length === 0 && this.mode === 'DELETE';
+      this.filteredEntries.working_trips.length === 0 && this.mode === 'DELETE' || (this.dateFormat.isBeforeToday(this._date ?? new Date()) && this.mode == 'ADD');
     this.isAvailabilitiesDisabled =
       this.filteredEntries.availabilities.length === 0 &&
       this.mode === 'DELETE';

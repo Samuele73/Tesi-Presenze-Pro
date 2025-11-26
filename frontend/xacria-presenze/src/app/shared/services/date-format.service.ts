@@ -73,4 +73,15 @@ export class DateFormatService {
     const day = date.getDay();
     return day === 0 || day === 6;
   }
+
+  isBeforeToday(input: Date | string): boolean {
+    const date = new Date(input);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    date.setHours(0, 0, 0, 0);
+
+    return date < today;
+  }
 }
