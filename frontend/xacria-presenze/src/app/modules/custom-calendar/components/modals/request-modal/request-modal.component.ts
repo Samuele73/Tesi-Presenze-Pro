@@ -326,6 +326,15 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     console.log('status to delete entries:', this.toDeleteEntries);
   }
 
+  isModifySaveDisabled(): boolean {
+    if (!this.form) return true;
+    const hasFormChanges =
+      JSON.stringify(this.requests.getRawValue()) !==
+      JSON.stringify(this.initialRequests);
+    const hasDeletions = this.toDeleteEntries.length > 0;
+    return this.form.invalid || (!hasFormChanges && !hasDeletions);
+  }
+
   submitNewEntry(): void {
     if (this.form.valid) {
       const newEntry: CalendarRequestEntry = {

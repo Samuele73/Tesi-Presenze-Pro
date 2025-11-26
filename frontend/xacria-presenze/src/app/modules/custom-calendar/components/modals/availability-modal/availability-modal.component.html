@@ -229,7 +229,7 @@
             [type]="'submit'"
             [mode]="'SAVE'"
             [name]="'Salva'"
-            [buttonDisabled]="form.invalid"
+            [buttonDisabled]="isModifySaveDisabled()"
           ></app-button>
         </div>
       </form>

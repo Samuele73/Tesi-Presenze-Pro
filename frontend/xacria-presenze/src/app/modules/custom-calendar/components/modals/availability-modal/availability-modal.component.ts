@@ -243,6 +243,15 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
     this.toDeleteEntries = [];
   }
 
+  isModifySaveDisabled(): boolean {
+    if (!this.form) return true;
+    const hasFormChanges =
+      JSON.stringify(this.availabilities.getRawValue()) !==
+      JSON.stringify(this.initialCalendarentries);
+    const hasDeletions = this.toDeleteEntries.length > 0;
+    return this.form.invalid || (!hasFormChanges && !hasDeletions);
+  }
+
   private getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) {
       return 'by pressing ESC';
