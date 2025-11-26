@@ -594,7 +594,7 @@ public class CalendarService {
     private LocalDate toLocalDate(Date date) {
         if (date == null) return null;
         return date.toInstant()
-                .atZone(ZoneOffset.UTC)
+                .atZone(ZoneId.systemDefault())
                 .toLocalDate();
     }
 
@@ -642,9 +642,9 @@ public class CalendarService {
         if (type == CalendarEntryType.WORKING_DAY && entry instanceof CalendarWorkingDayEntry workingDayEntry) {
             validateWorkingDayEntry(workingDayEntry, userEmail, excludeId);
         } else if (type == CalendarEntryType.REQUEST && entry instanceof CalendarRequestEntry requestEntry) {
-            validateRequestOrTripEntry(requestEntry.getDateFrom(), requestEntry.getDateTo(), userEmail, excludeId);
+            validateRequestEntry(requestEntry, userEmail, excludeId);
         } else if (type == CalendarEntryType.WORKING_TRIP && entry instanceof CalendarWorkingTripEntry tripEntry) {
-            validateRequestOrTripEntry(tripEntry.getDateFrom(), tripEntry.getDateTo(), userEmail, excludeId);
+            validateTripEntry(tripEntry, userEmail, excludeId);
         } else if (type == CalendarEntryType.AVAILABILITY && entry instanceof CalendarAvailabilityEntry availabilityEntry) {
             validateAvailabilityEntry(availabilityEntry, userEmail, excludeId);
         }
@@ -657,56 +657,257 @@ public class CalendarService {
      *  - trasferte (WORKING_TRIP) PENDING/ACCEPTED
      *  - giornate lavorative (WORKING_DAY) in quei giorni
      */
-    private void validateRequestOrTripEntry(Date from, Date to, String userEmail, String excludeId) {
-        if (from == null || to == null) {
-            throw new ConflictException("Le date di inizio e fine sono obbligatorie");
-        }
+    private void validateRequestEntry(CalendarRequestEntry newReq, String userEmail, String excludeId) {
 
-        LocalDate newFrom = toLocalDate(from);
-        LocalDate newTo = toLocalDate(to);
+        LocalDate newFrom = toLocalDate(newReq.getDateFrom());
+        LocalDate newTo   = toLocalDate(newReq.getDateTo());
+        String type = newReq.getRequestType().toUpperCase();
+
+        LocalTime reqFrom = newReq.getTimeFrom() != null ? LocalTime.parse(newReq.getTimeFrom()) : null;
+        LocalTime reqTo   = newReq.getTimeTo()   != null ? LocalTime.parse(newReq.getTimeTo())   : null;
+
+        if (newFrom == null || newTo == null) {
+            throw new ConflictException("Le date di inizio e fine sono obbligatorie.");
+        }
 
         if (newTo.isBefore(newFrom)) {
-            throw new ConflictException("La data di fine non può essere precedente a quella di inizio");
+            throw new ConflictException("La data di fine non può precedere la data di inizio.");
         }
 
-        List<CalendarEntity> userEntries = repository.findAllByUserEmail(userEmail);
+        List<CalendarEntity> entries = repository.findAllByUserEmail(userEmail);
 
-        for (CalendarEntity existing : userEntries) {
-            if (excludeId != null && excludeId.equals(existing.getId())) continue;
+        if (!type.equals("PERMESSI")) {
+            for (CalendarEntity e : entries) {
 
-            CalendarEntryType type = existing.getEntryType();
-            CalendarEntry ce = existing.getCalendarEntry();
+                if (excludeId != null && excludeId.equals(e.getId())) continue;
 
-            if (type == CalendarEntryType.REQUEST && ce instanceof CalendarRequestEntry req) {
-                RequestStatus status = req.getStatus();
-                if (status != RequestStatus.PENDING && status != RequestStatus.ACCEPTED) continue;
+                if (e.getEntryType() == CalendarEntryType.WORKING_DAY) {
 
-                LocalDate exFrom = toLocalDate(req.getDateFrom());
-                LocalDate exTo = toLocalDate(req.getDateTo());
-                if (exFrom == null || exTo == null) continue;
+                    CalendarWorkingDayEntry wd = (CalendarWorkingDayEntry) e.getCalendarEntry();
+                    LocalDate wdDate = toLocalDate(wd.getDateFrom());
 
-                if (rangesOverlap(newFrom, newTo, exFrom, exTo)) {
-                    throw new ConflictException("L'intervallo selezionato si sovrappone ad una richiesta già presente.");
+                    if (wdDate != null &&
+                            !wdDate.isBefore(newFrom) &&
+                            !wdDate.isAfter(newTo)) {
+
+                        throw new ConflictException(
+                                "La richiesta si sovrappone a una giornata lavorativa"
+                        );
+                    }
                 }
-            } else if (type == CalendarEntryType.WORKING_TRIP && ce instanceof CalendarWorkingTripEntry trip) {
-                RequestStatus status = trip.getStatus();
-                if (status != RequestStatus.PENDING && status != RequestStatus.ACCEPTED) continue;
+            }
+        }
 
-                LocalDate exFrom = toLocalDate(trip.getDateFrom());
-                LocalDate exTo = toLocalDate(trip.getDateTo());
-                if (exFrom == null || exTo == null) continue;
+        // PERMESSI NON POSSONO SOVRAPPORSI A WORKING DAY NEGLI ORARI
+        if (type.equals("PERMESSI")) {
 
-                if (rangesOverlap(newFrom, newTo, exFrom, exTo)) {
-                    throw new ConflictException("L'intervallo selezionato si sovrappone ad una trasferta già presente.");
+            for (CalendarEntity e : entries) {
+
+                if (excludeId != null && excludeId.equals(e.getId())) continue;
+
+                if (e.getEntryType() == CalendarEntryType.WORKING_DAY &&
+                        e.getCalendarEntry() instanceof CalendarWorkingDayEntry wd) {
+
+                    LocalDate wdDate = toLocalDate(wd.getDateFrom());
+
+                    if (wdDate != null &&
+                            !wdDate.isBefore(newFrom) &&
+                            !wdDate.isAfter(newTo)) {
+
+                        // La working day è dentro al range della richiesta → controllo orario
+                        LocalTime wdFrom = LocalTime.parse(wd.getHourFrom());
+                        LocalTime wdTo   = LocalTime.parse(wd.getHourTo());
+
+                        if (reqFrom == null || reqTo == null) {
+                            throw new ConflictException(
+                                    "Il permesso si sovrappone ad una giornata lavorativa: il permesso senza orario copre l'intera giornata."
+                            );
+                        }
+
+                        if (timesOverlap(reqFrom, reqTo, wdFrom, wdTo)) {
+                            throw new ConflictException(
+                                    "Il permesso si sovrappone negli orari a quelli di lavoro"
+                            );
+                        }
+                    }
                 }
-            } else if (type == CalendarEntryType.WORKING_DAY && ce instanceof CalendarWorkingDayEntry day) {
-                LocalDate exDate = toLocalDate(day.getDateFrom());
-                if (exDate != null && !exDate.isBefore(newFrom) && !exDate.isAfter(newTo)) {
-                    throw new ConflictException("L'intervallo selezionato include una giornata lavorativa già presente.");
+            }
+        }
+
+        // QUALSIASI REQUEST NON PUÒ SOVRAPPORSI A UNA TRASFERTA ESISTENTE
+        for (CalendarEntity e : entries) {
+
+            if (excludeId != null && excludeId.equals(e.getId())) continue;
+
+            if (e.getEntryType() == CalendarEntryType.WORKING_TRIP &&
+                    e.getCalendarEntry() instanceof CalendarWorkingTripEntry trip) {
+
+                if (trip.getStatus() == RequestStatus.PENDING || trip.getStatus() == RequestStatus.ACCEPTED) {
+
+                    LocalDate tripFrom = toLocalDate(trip.getDateFrom());
+                    LocalDate tripTo   = toLocalDate(trip.getDateTo());
+
+                    if (rangesOverlap(newFrom, newTo, tripFrom, tripTo)) {
+
+                        throw new ConflictException(
+                                "La richiesta si sovrappone ad una trasferta esistente."
+                        );
+                    }
+                }
+            }
+        }
+
+        for (CalendarEntity e : entries) {
+
+            if (excludeId != null && excludeId.equals(e.getId())) continue;
+
+            CalendarEntryType entryType = e.getEntryType();
+
+            if (entryType == CalendarEntryType.REQUEST && e.getCalendarEntry() instanceof CalendarRequestEntry exReq) {
+
+                if (exReq.getStatus() != RequestStatus.PENDING &&
+                        exReq.getStatus() != RequestStatus.ACCEPTED) continue;
+
+                LocalDate exFrom = toLocalDate(exReq.getDateFrom());
+                LocalDate exTo   = toLocalDate(exReq.getDateTo());
+
+                LocalTime exHourFrom = exReq.getTimeFrom() != null ? LocalTime.parse(exReq.getTimeFrom()) : null;
+                LocalTime exHourTo   = exReq.getTimeTo()   != null ? LocalTime.parse(exReq.getTimeTo())   : null;
+
+                boolean rangesOverlap = rangesOverlap(newFrom, newTo, exFrom, exTo);
+                String exType = exReq.getRequestType().toUpperCase(); // ❗ TIPO ESISTENTE
+
+                // FERIE / CONGEDO -> FULL DAY
+                if (type.equals("FERIE") || type.equals("CONGEDO")) {
+                    if (rangesOverlap) {
+                        throw new ConflictException(
+                                "La richiesta si sovrappone ad una o più richieste"
+                        );
+                    }
+                    continue;
+                }
+
+                if (exType.equals("FERIE") || exType.equals("CONGEDO")) {
+                    if (rangesOverlap) {
+                        throw new ConflictException(
+                                "La richiesta si sovrappone ad una o più richieste"
+                        );
+                    }
+                    continue;
+                }
+
+                // PERMESSI
+                if (type.equals("PERMESSI")) {
+
+                    if (!rangesOverlap) continue;
+
+                    if (reqFrom == null || reqTo == null || exHourFrom == null || exHourTo == null) {
+                        throw new ConflictException(
+                                "Il permesso si sovrappone ad una richiesta esistente di " + exType + " che copre l'intera giornata."
+                        );
+                    }
+
+                    LocalDate cursor = newFrom;
+                    while (!cursor.isAfter(newTo)) {
+                        if (!cursor.isBefore(exFrom) && !cursor.isAfter(exTo)) {
+                            if (timesOverlap(reqFrom, reqTo, exHourFrom, exHourTo)) {
+                                throw new ConflictException(
+                                        "Il permesso si sovrappone negli orari ad una richiesta esistente di " + exType + "."
+                                );
+                            }
+                        }
+                        cursor = cursor.plusDays(1);
+                    }
+                    continue;
+                }
+
+                // MALATTIA
+                if (type.equals("MALATTIA")) {
+                    if (rangesOverlap) {
+                        throw new ConflictException(
+                                "La richiesta di malattia si sovrappone ad una richiesta esistente di " + exType + "."
+                        );
+                    }
                 }
             }
         }
     }
+
+
+
+    private void validateTripEntry(CalendarWorkingTripEntry newTrip, String userEmail, String excludeId) {
+
+        LocalDate newFrom = toLocalDate(newTrip.getDateFrom());
+        LocalDate newTo   = toLocalDate(newTrip.getDateTo());
+
+        if (newFrom == null || newTo == null) {
+            throw new ConflictException("Le date di una trasferta sono obbligatorie.");
+        }
+
+        if (newTo.isBefore(newFrom)) {
+            throw new ConflictException("La data di fine trasferta non può precedere quella di inizio.");
+        }
+
+        List<CalendarEntity> entries = repository.findAllByUserEmail(userEmail);
+
+        for (CalendarEntity e : entries) {
+
+            if (excludeId != null && excludeId.equals(e.getId())) continue;
+
+            CalendarEntryType type = e.getEntryType();
+            CalendarEntry ce = e.getCalendarEntry();
+
+            // 1- TRASFERTA NON PUÒ SOVRAPPORSI AD ALTRE TRASFERTE
+            if (type == CalendarEntryType.WORKING_TRIP && ce instanceof CalendarWorkingTripEntry tr) {
+
+                if (tr.getStatus() == RequestStatus.PENDING || tr.getStatus() == RequestStatus.ACCEPTED) {
+                    if (rangesOverlap(newFrom, newTo, toLocalDate(tr.getDateFrom()), toLocalDate(tr.getDateTo()))) {
+                        throw new ConflictException("La trasferta si sovrappone ad un'altra trasferta.");
+                    }
+                }
+            }
+
+            // 2- TRASFERTA NON PUÒ SOVRAPPORSI A GIORNATE LAVORATIVE
+            if (type == CalendarEntryType.WORKING_DAY && ce instanceof CalendarWorkingDayEntry wd) {
+
+                LocalDate wdDate = toLocalDate(wd.getDateFrom());
+
+                System.out.println("WD DATE: " + wd.getDateFrom());
+                System.out.println("LOCAL: " + toLocalDate(wd.getDateFrom()));
+
+                if (wdDate != null &&
+                        !wdDate.isBefore(newFrom) &&
+                        !wdDate.isAfter(newTo)) {
+
+                    throw new ConflictException(
+                            "La trasferta non può includere una giornata lavorativa"
+                    );
+                }
+            }
+
+            // 3- TRASFERTA NON PUÒ OVERLAPPARE CON REQUEST (FULL-DAY, inclusi PERMESSI)
+            if (type == CalendarEntryType.REQUEST && ce instanceof CalendarRequestEntry req) {
+
+                if (req.getStatus() == RequestStatus.PENDING || req.getStatus() == RequestStatus.ACCEPTED) {
+
+                    LocalDate reqFrom = toLocalDate(req.getDateFrom());
+                    LocalDate reqTo   = toLocalDate(req.getDateTo());
+
+                    if (rangesOverlap(newFrom, newTo, reqFrom, reqTo)) {
+
+                        throw new ConflictException(
+                                "La trasferta si sovrappone ad una o più richieste"
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
+
 
     /**
      * Regole per WORKING_DAY:
@@ -783,24 +984,24 @@ public class CalendarService {
 
                 String rt = req.getRequestType() != null ? req.getRequestType().trim().toUpperCase() : "";
 
-                // FERIE / CONGEDO → full day
+                // FERIE / CONGEDO -> full day
                 if ("FERIE".equals(rt) || "CONGEDO".equals(rt)) {
                     System.out.println("IL BUGP: " + req);
                     throw new ConflictException("Non puoi inserire una giornata lavorativa in un giorno coperto da una richiesta di " + rt);
                 }
 
-                // PERMESSI / MALATTIA → orario + multi-day
+                // PERMESSI / MALATTIA ->orario + multi-day
                 if ("PERMESSI".equals(rt) || "MALATTIA".equals(rt)) {
 
                     LocalTime reqFrom = req.getTimeFrom() != null ? LocalTime.parse(req.getTimeFrom()) : null;
                     LocalTime reqTo   = req.getTimeTo()   != null ? LocalTime.parse(req.getTimeTo())   : null;
 
-                    // Caso A → permesso senza orario → FULL DAY
+                    // Caso A -> permesso senza orario -> FULL DAY
                     if (reqFrom == null || reqTo == null) {
                         throw new ConflictException("Questa richiesta di " + rt + " copre l'intera giornata. Non puoi lavorare.");
                     }
 
-                    // Caso B → permesso single-day (classico)
+                    // Caso B -> permesso single-day (classico)
                     if (fromDate.equals(toDate) && fromDate.equals(date)) {
 
                         if (timesOverlap(newFrom, newTo, reqFrom, reqTo)) {
@@ -814,7 +1015,7 @@ public class CalendarService {
                         continue;
                     }
 
-                    // Caso C → MULTI-DAY
+                    // Caso C -> MULTI-DAY
 
                     // Primo giorno
                     if (date.equals(fromDate)) {
@@ -838,7 +1039,7 @@ public class CalendarService {
                         continue;
                     }
 
-                    // Giorni intermedi → applica gli stessi orari del permesso
+                    // Giorni intermedi -> applica gli stessi orari del permesso
                     if (date.isAfter(fromDate) && date.isBefore(toDate)) {
 
                         // Se sovrappone gli orari → errore
