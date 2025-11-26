@@ -46,7 +46,7 @@ export class DayworkModalComponent
   closeResult = '';
   faIcons: any = faIcons;
   toDeleteEntries: string[] = [];
-  initialWorkingDays: identifiableCalendarWorkingDay[] = [];
+  initialWorkingDays: ({ id: string } & CalendarWorkingDayEntry)[] = [];
   apiError: string | null = null;
 
   constructor(
@@ -108,6 +108,8 @@ export class DayworkModalComponent
     this.form = this.fb.group({
       day_works: this.fb.array(entries),
     });
+    this.initialWorkingDays = this.dayWorks.getRawValue();
+    this.emptyToDeleteEntries();
   }
 
   private emptyToDeleteEntries(): void {
@@ -242,13 +244,16 @@ export class DayworkModalComponent
     }
   }
 
-  private updateEntries(): void {
+  private updateEntries(): boolean {
     const currentEntries: ({ id: string } & CalendarWorkingDayEntry)[] =
-      this.dayWorks.value;
+      this.dayWorks.getRawValue();
     const changedEntries: identifiableCalendarWorkingDay[] = currentEntries
       .filter((entry: { id: string } & CalendarWorkingDayEntry, i) => {
         const initial = this.initialWorkingDays[i];
-        return JSON.stringify(entry) !== JSON.stringify(initial);
+        return (
+          JSON.stringify(entry) !== JSON.stringify(initial) &&
+          !this.toDeleteEntries.includes(entry.id)
+        );
       })
       .map((entry: { id: string } & CalendarWorkingDayEntry) => {
         return {
@@ -263,6 +268,7 @@ export class DayworkModalComponent
       });
     console.log('la data', this.parseItalianDate(this.dateString));
     console.log('To updated entries', changedEntries);
+    if (!changedEntries.length) return false;
     this.calendarStateService
       .updateCalendarEntries(changedEntries, 'WORKING_DAY')
       .subscribe((resp: boolean) => {
@@ -273,7 +279,8 @@ export class DayworkModalComponent
           );
         }
       });
-    this.initialWorkingDays = this.dayWorks.value;
+    this.initialWorkingDays = this.dayWorks.getRawValue();
+    return true;
   }
 
   parseItalianDate(input: string): Date {

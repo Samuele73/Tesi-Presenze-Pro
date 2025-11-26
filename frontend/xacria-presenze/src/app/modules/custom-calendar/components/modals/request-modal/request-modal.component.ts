@@ -33,7 +33,7 @@ type reqeustsFormType = {
   dateTo: string;
   timeFrom: string;
   timeTo: string;
-  requestsType: string;
+  requestType: string;
   status: string;
 };
 
@@ -52,7 +52,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
   @Input() currentDate?: Date;
   faIcons = faIcons;
   toDeleteEntries: string[] = [];
-  initialRequests: identifiableCalendarRequest[] = [];
+  initialRequests: reqeustsFormType[] = [];
   apiError: string | null = null;
   statusLabelMap: { [key: string]: string } = {
     PENDING: 'IN ATTESA',
@@ -154,37 +154,29 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     this.toDeleteEntries = [];
   }
 
-  private updateEntries(): void {
-    const currentEntries: ({ id: string } & CalendarRequestEntry)[] =
-      this.requests.value;
+  private updateEntries(): boolean {
+    const currentEntries: reqeustsFormType[] = this.requests.getRawValue();
     const changedEntries: identifiableCalendarRequest[] = currentEntries
-      .filter((entry: { id: string } & CalendarRequestEntry, i) => {
+      .filter((entry: reqeustsFormType, i) => {
         const initial = this.initialRequests[i];
-        console.log(
-          'todelete entries',
-          this.toDeleteEntries,
-          !this.toDeleteEntries.includes(entry.id),
-          entry.id
-        );
-
         return (
           JSON.stringify(entry) !== JSON.stringify(initial) &&
           !this.toDeleteEntries.includes(entry.id)
         );
       })
-      .map((entry: { id: string } & CalendarRequestEntry) => {
+      .map((entry: reqeustsFormType) => {
         return {
           id: entry.id,
           calendarEntry: {
-            dateFrom: entry.dateFrom,
-            dateTo: entry.dateTo,
+            dateFrom: entry.dateFrom as unknown as Date,
+            dateTo: entry.dateTo as unknown as Date,
             timeFrom: entry.timeFrom,
             timeTo: entry.timeTo,
             requestType: entry.requestType,
           },
         };
       });
-    console.log('To updated entries', changedEntries);
+    if (!changedEntries.length) return false;
     this.calendarStateService
       .updateCalendarEntries(changedEntries, 'REQUEST')
       .subscribe((resp: boolean) => {
@@ -193,27 +185,28 @@ export class RequestModalComponent implements ModalComponent, OnInit {
           this.toastrService.success('Richiesta modificata con successo');
         }
       });
-    this.initialRequests = this.requests.value;
+    this.initialRequests = this.requests.getRawValue();
+    return true;
   }
 
-  private deleteEntries(): void {
+  private deleteEntries(): boolean {
     console.log(
       'to delete entries lenght',
       this.toDeleteEntries.length,
       this.toDeleteEntries
     );
-    if (this.toDeleteEntries.length) {
-      console.log('i am about to delete', this.toDeleteEntries);
-      this.calendarStateService
-        .deleteCalendarEntities(this.toDeleteEntries, 'REQUEST')
-        .subscribe((resp: boolean) => {
-          if (resp) {
-            this.toastrService.clear();
-            this.toastrService.success('Richiesta cancellata con successo');
-          }
-        });
-      this.toDeleteEntries = [];
-    }
+    if (!this.toDeleteEntries.length) return false;
+    console.log('i am about to delete', this.toDeleteEntries);
+    this.calendarStateService
+      .deleteCalendarEntities(this.toDeleteEntries, 'REQUEST')
+      .subscribe((resp: boolean) => {
+        if (resp) {
+          this.toastrService.clear();
+          this.toastrService.success('Richiesta cancellata con successo');
+        }
+      });
+    this.toDeleteEntries = [];
+    return true;
   }
 
   submitModifyModeForm(): void {
@@ -280,6 +273,8 @@ export class RequestModalComponent implements ModalComponent, OnInit {
       requests: this.fb.array(entries),
     });
     this.disableClosedRequests();
+    this.initialRequests = this.requests.getRawValue();
+    this.emptyToDeleteEntries();
   }
 
   createRequestGroup(entry: identifiableCalendarRequest) {

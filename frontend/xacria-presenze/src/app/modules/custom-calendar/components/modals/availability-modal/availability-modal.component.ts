@@ -47,7 +47,7 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
   faIcons = faIcons;
   toDeleteEntries: string[] = [];
   @ViewChildren('entry') entryElements!: QueryList<ElementRef>;
-  initialCalendarentries: identifiableCalendarAvailability[] = [];
+  initialCalendarentries: ({ id: string } & CalendarAvailabilityEntry)[] = [];
   apiError: string | null = null;
 
   constructor(
@@ -119,6 +119,8 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
     this.form = this.fb.group({
       availabilities: this.fb.array(entries),
     });
+    this.initialCalendarentries = this.availabilities.getRawValue();
+    this.emptyToDeleteEntries();
   }
 
   createAvailabilityGroup(entry: identifiableCalendarAvailability) {
@@ -146,13 +148,16 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
     );
   }
 
-  private updateEntries(): void {
+  private updateEntries(): boolean {
     const currentEntries: ({ id: string } & CalendarAvailabilityEntry)[] =
-      this.availabilities.value;
+      this.availabilities.getRawValue();
     const changedEntries: identifiableCalendarAvailability[] = currentEntries
       .filter((entry: { id: string } & CalendarAvailabilityEntry, i) => {
         const initial = this.initialCalendarentries[i];
-        return JSON.stringify(entry) !== JSON.stringify(initial);
+        return (
+          JSON.stringify(entry) !== JSON.stringify(initial) &&
+          !this.toDeleteEntries.includes(entry.id)
+        );
       })
       .map((entry: { id: string } & CalendarAvailabilityEntry) => {
         return {
@@ -165,6 +170,7 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
         };
       });
     console.log('To updated entries', changedEntries);
+    if (!changedEntries.length) return false;
     this.calendarStateService
       .updateCalendarEntries(changedEntries, 'AVAILABILITY')
       .subscribe((resp: boolean) => {
@@ -173,7 +179,8 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
           this.toastrService.success('Disponibilità modificate con successo');
         }
       });
-    this.initialCalendarentries = this.availabilities.value;
+    this.initialCalendarentries = this.availabilities.getRawValue();
+    return true;
   }
 
   private deleteEntries(): void {
@@ -210,8 +217,6 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
       return;
     if (this.isModifyMode) {
       this.initializeModifyForm();
-      this.initialCalendarentries = this.availabilities.value;
-      //console.log('INITIAL', this.initialCalendarentries);
     } else {
       this.initializeForm();
     }

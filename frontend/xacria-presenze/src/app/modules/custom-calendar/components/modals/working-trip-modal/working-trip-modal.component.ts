@@ -38,7 +38,7 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
   @Input() currentDate?: Date;
   toDeleteEntries: string[] = [];
   faIcons = faIcons;
-  initialWorkingTrips: identifiableCalendarWorkingTrip[] = [];
+  initialWorkingTrips: ({ id: string } & CalendarWorkingTripEntry)[] = [];
   apiError: string | null = null;
 
   statusLabelMap: { [key: string]: string } = {
@@ -107,7 +107,7 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
   }
 
   initializeModifyForm(): void {
-    let entries: any[] = [];
+    let entries: FormGroup[] = [];
     this.calendarEntries.forEach((entry: identifiableCalendarWorkingTrip) => {
       entries.push(this.createWorkingTripGroup(entry));
     });
@@ -115,6 +115,8 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
       working_trips: this.fb.array(entries),
     });
     this.disableClosedRequests();
+    this.initialWorkingTrips = this.workingTrips.getRawValue();
+    this.emptyToDeleteEntries();
   }
 
   createWorkingTripGroup(entry: identifiableCalendarWorkingTrip) {
@@ -137,14 +139,16 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
     );
   }
 
-  private updateEntries(): void {
+  private updateEntries(): boolean {
     const currentEntries: ({ id: string } & CalendarWorkingTripEntry)[] =
-      this.workingTrips.value;
-    let result: boolean = false;
+      this.workingTrips.getRawValue();
     const changedEntries: identifiableCalendarWorkingTrip[] = currentEntries
       .filter((entry: { id: string } & CalendarWorkingTripEntry, i) => {
         const initial = this.initialWorkingTrips[i];
-        return JSON.stringify(entry) !== JSON.stringify(initial);
+        return (
+          JSON.stringify(entry) !== JSON.stringify(initial) &&
+          !this.toDeleteEntries.includes(entry.id)
+        );
       })
       .map((entry: { id: string } & CalendarWorkingTripEntry) => {
         return {
@@ -156,6 +160,7 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
         };
       });
     console.log('To updated entries', changedEntries);
+    if (!changedEntries.length) return false;
     this.calendarStateService
       .updateCalendarEntries(changedEntries, 'WORKING_TRIP')
       .subscribe((resp: boolean) => {
@@ -164,7 +169,8 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
           this.toastrService.success('Trasferta modificata con successo');
         }
       });
-    this.initialWorkingTrips = this.workingTrips.value;
+    this.initialWorkingTrips = this.workingTrips.getRawValue();
+    return true;
   }
 
   private disableClosedRequests(): void {
