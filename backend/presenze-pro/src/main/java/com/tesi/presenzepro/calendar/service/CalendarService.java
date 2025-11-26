@@ -5,6 +5,7 @@ import com.tesi.presenzepro.calendar.exception.InsufficientHoursException;
 import com.tesi.presenzepro.calendar.mapper.CalendarMapper;
 import com.tesi.presenzepro.calendar.model.*;
 import com.tesi.presenzepro.calendar.repository.CalendarRepository;
+import com.tesi.presenzepro.exception.ConflictException;
 import com.tesi.presenzepro.exception.NoDataFoundException;
 import com.tesi.presenzepro.exception.NoUserFoundException;
 import com.tesi.presenzepro.jwt.JwtUtils;
@@ -54,6 +55,10 @@ public class CalendarService {
         if(newCalendarEntity.getCalendarEntry() instanceof CalendarWorkingDayEntry workingDayEntry){
             if(this.isWeekend(workingDayEntry.getDateFrom()))
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Non è possibile creare una giornata lavorativa nel weekend");
+        }else if(newCalendarEntity.getCalendarEntry() instanceof  CalendarRequestEntry requestEntry){
+            validateNotPast(requestEntry.getDateFrom(), requestEntry.getDateTo(), "Non si possono creare richieste con date precedenti ad oggi");
+        }else if(newCalendarEntity.getCalendarEntry() instanceof  CalendarWorkingTripEntry workingTripEntry){
+            validateNotPast(workingTripEntry.getDateFrom(), workingTripEntry.getDateTo(), "Non si possono creare trasferte con date precedenti ad oggi");
         }
         String userEmail = this.getUserEmailFromRequest(request);
         newCalendarEntity.setUserEmail(userEmail);
@@ -88,6 +93,27 @@ public class CalendarService {
 
     private boolean isWeekend(Date date){
         return date.getDay() == 0 || date.getDay() == 6;
+    }
+
+    public boolean isBeforeToday(Date date) {
+        // Converti la Date in LocalDate rispettando il fuso orario del server
+        LocalDate inputDate = date.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+
+        LocalDate today = LocalDate.now();
+
+        return inputDate.isBefore(today);
+    }
+
+    private void validateNotPast(Date from, Date to, String errorMessage) {
+        if (isBeforeToday(from) || isBeforeToday(to)) {
+            throw new ConflictException(errorMessage);
+        }
+    }
+
+    private void validateNotPast(Date from, Date to) {
+        this.validateNotPast(from, to, "Non si possono creare voci con date precedenti a oggi");
     }
 
     private void sendRequestNotifs(String message){
