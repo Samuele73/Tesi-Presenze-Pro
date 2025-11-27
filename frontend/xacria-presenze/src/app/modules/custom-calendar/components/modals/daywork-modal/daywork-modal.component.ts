@@ -168,7 +168,7 @@ export class DayworkModalComponent
       this.calendarStateService
         .deleteCalendarEntities(this.toDeleteEntries, 'WORKING_DAY')
         .subscribe((resp: boolean) => {
-          if (resp){
+          if (resp) {
             this.toastrService.clear();
             this.toastrService.success(
               'Lavori giornalieri cancellati con successo'
@@ -294,7 +294,8 @@ export class DayworkModalComponent
   submitNewEntries(): void {
     if (this.form.valid) {
       console.log('check date:', this.dateFormat.normalizeDate(this.date));
-      const normalizedDate = this.dateFormat.normalizeDate(this.date);
+      const d = this.date instanceof Date ? this.date : new Date(this.date);
+      const normalizedDate = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
       const newDayWorkEntries: CalendarWorkingDayEntry[] =
         this.dayWorks.value.map((entry: CalendarWorkingDayEntry) => {
           return {

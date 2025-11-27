@@ -174,7 +174,6 @@ export class CustomCalendarPageComponent
           this.router.url.startsWith(APP_ROUTES.CALENDAR)
         ) {
           this.fetchEssentialDate();
-          this.notifService.readNotif();
         }
       });
   }
