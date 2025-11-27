@@ -8,6 +8,7 @@ import {
   NewPasswordDto,
   SignInRequestDto,
   User,
+  UserAuthResponseDto,
   UserEmailResponse,
   UserService,
 } from 'src/generated-client';
@@ -25,7 +26,7 @@ export class AuthService {
 
   constructor(private userService: UserService, private router: Router) {
     /* this.checkUserAutentication(this.token); se si hanno problemi controlla*/
-
+    this.getUserRole();
   }
 
   get token() {
@@ -45,7 +46,7 @@ export class AuthService {
     this.userEmail = email;
   }
 
-/*   setUserEmail() {
+  /*   setUserEmail() {
     if (this.token)
       this.userService.getEmailFromTkn(this.token).subscribe({
         next: (email: UserEmailResponse) => {
@@ -54,6 +55,21 @@ export class AuthService {
         },
       });
   } */
+
+  refreshToken(): void {
+    this.userService.refreshToken().subscribe({
+      next: (value: UserAuthResponseDto) => {
+        if (value.token) {
+          this.token = value.token;
+          console.log("IL TOKEN E CAMBIATO SIIIII");
+        }
+        console.log("IL TOKEN E CAMBIATO");
+      },
+      error: (err: HttpErrorResponse) => {
+        console.warn('MAJOR problem with token refresh: ', err);
+      },
+    });
+  }
 
   checkUserAutentication(token: string | null): void {
     /* this._isLoggedIn$.next(false); */
@@ -91,6 +107,10 @@ export class AuthService {
     const decoded: any = jwtDecode(token);
     return decoded.role;
   }
+
+  /* getUserRole(): string | null {
+    this.userService.getMyUserProfile();
+  } */
 
   isAdmin(): boolean {
     console.log('User role: ', this.getUserRole());

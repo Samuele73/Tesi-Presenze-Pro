@@ -46,6 +46,7 @@ backend/presenze-pro/target/
 backend/presenze-pro/.mvn/wrapper/maven-wrapper.jar
 backend/presenze-pro/!**/src/main/**/target/
 backend/presenze-pro/!**/src/test/**/target/
+.env
 
 ### STS ###
 backend/presenze-pro/.apt_generated

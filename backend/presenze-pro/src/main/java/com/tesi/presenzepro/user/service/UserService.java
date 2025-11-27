@@ -5,6 +5,7 @@ import com.tesi.presenzepro.calendar.model.HoursType;
 import com.tesi.presenzepro.exception.DuplicateEmailException;
 import com.tesi.presenzepro.exception.NoUserFoundException;
 import com.tesi.presenzepro.jwt.JwtUtils;
+import com.tesi.presenzepro.notification.service.NotificationService;
 import com.tesi.presenzepro.project.repository.ProjectRepository;
 import com.tesi.presenzepro.user.dto.*;
 import com.tesi.presenzepro.user.exception.UserTokenNotValidException;
@@ -50,6 +51,7 @@ public class UserService {
     private final MessageSource messageSource;
     private final JavaMailSender mailSender;
     private final UserTokenService userTokenService;
+    private final NotificationService notificationService;
 
     @Value("${spring.app.frontend-port}")
     private String frontendPort;
@@ -84,6 +86,13 @@ public class UserService {
         if (authentication == null || !authentication.isAuthenticated())
             return null;
         return authentication.getName();
+    }
+
+    public UserAuthResponseDto refreshMyToken(){
+        final String userEmail = getCurrentUserEmail();
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
+        String newToken = jwtUtils.generateTokenFromUsername(userDetails);
+        return new UserAuthResponseDto(newToken);
     }
 
     public List<String> getRoleBasedUsersEmail(){
@@ -191,7 +200,14 @@ public class UserService {
 
     public FullUserProfileResponseDto updateUserProfileByEmail(User updatedUserProfile, String email){
         Optional<User> newUserProfile = repository.findByEmailAndModify(updatedUserProfile, email);
+        if(updatedUserProfile.getRole() != null)
+            this.notifyChangedToken(email);
         return newUserProfile.map(userMapper::fromUserToFullUserProfileResponseDto).orElse(null);
+    }
+
+    private void notifyChangedToken(String userEmail){
+        System.out.println("INVIO NOTIFICA TOKEN PROFILO: " + userEmail);
+        this.notificationService.notifyChangedToken(userEmail);
     }
 
     public BasicUserProfileResponse getBasicUserProfileFromEmail(String email){

@@ -1,46 +1,67 @@
 services:
   mongodb:
-    image: mongo
+    image: mongo:7
     container_name: mongo_presenze_pro
+    restart: unless-stopped
     ports:
-      - 27019:27017
+      - "${MONGO_HOST_PORT:-27019}:27017"  
     volumes:
-      - mongo_db:/data
+      - mongo_db:/data/db          
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=user
-      - MONGO_INITDB_ROOT_PASSWORD=user
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:-user}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-user}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-mongodb-example}
     networks:
       - presenze_pro_network
+
   backend:
-    build: 
+    build:
       context: ./backend/presenze-pro
-      dockerfile: Dockerfile
     container_name: backend_presenze_pro
-    environment:
-      - SPRING_DATA_MONGODB_URI=mongodb://user:user@mongodb:27017/presenze_pro?authSource=admin
-      - SERVER_PORT=8080
-    ports:
-      - "8080:8080"
+    restart: unless-stopped
     depends_on:
       - mongodb
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    environment:
+      # Config Mongo per Spring (override di application.yml)
+      SPRING_DATA_MONGODB_HOST: mongodb
+      SPRING_DATA_MONGODB_PORT: 27017
+      SPRING_DATA_MONGODB_DATABASE: ${MONGO_INITDB_DATABASE:-mongodb-example}
+      SPRING_DATA_MONGODB_USERNAME: ${MONGO_ROOT_USER:-user}
+      SPRING_DATA_MONGODB_PASSWORD: ${MONGO_ROOT_PASSWORD:-user}
+      SPRING_DATA_MONGODB_AUTHENTICATION_DATABASE: admin
+
+      # Config app.* da application.yml (override via env)
+      SPRING_APP_JWTSECRET: ${JWT_SECRET:-04e4f610f80809047031491a0c0e33e04c018c35286bd2f7a8400df5a57d3c3c}
+      SPRING_APP_JWTEXPIRATIONMS: ${JWT_EXPIRATION_MS:-86400000}
+      SPRING_APP_FRONTEND_PORT: ${FRONTEND_PORT:-4200}
+      SPRING_APP_FRONTEND_NAME: ${FRONTEND_HOST:-localhost}
+      SPRING_APP_ANNUALLEAVEHOURS: ${ANNUAL_LEAVE_HOURS:-288}
+      SPRING_APP_ANNUALPERMITHOURS: ${ANNUAL_PERMIT_HOURS:-40}
+      SPRING_APP_STANDARDDAILYHOURS: ${STANDARD_DAILY_HOURS:-8}
+      SPRING_APP_DEFAULTOWNEREMAIL: ${DEFAULT_OWNER_EMAIL:-samuimpact1@gmail.com}
+      SPRING_APP_DEFAULTPWD: ${DEFAULT_PWD:-provaprova123}
     networks:
       - presenze_pro_network
+
   frontend:
     build:
       context: ./frontend/xacria-presenze
-      dockerfile: Dockerfile
     container_name: frontend_presenze_pro
-    ports: 
-      - 4200:4200
+    restart: unless-stopped
     depends_on:
       - backend
+    ports:
+      - "${FRONTEND_PORT:-4200}:4200"
+    environment:
+      BACKEND_URL: "http://localhost:${BACKEND_PORT:-8080}"
     networks:
       - presenze_pro_network
-    environment:
-      - API_URL=http://backend:3000/api
 
 volumes:
-  mongo_db: {}
+  mongo_db:
+
 networks:
   presenze_pro_network:
     driver: bridge

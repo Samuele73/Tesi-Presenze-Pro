@@ -15,6 +15,7 @@ spring:
     annualPermitHours: 40
     standardDailyHours: 8
     defaultOwnerEmail: samuimpact2@gmail.com
+    defaultPwd: provaprova123
 
 
 

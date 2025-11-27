@@ -40,6 +40,7 @@
           class="form-control border-dark"
           id="name"
           formControlName="name"
+          [readOnly]="this.mode == 'FULL'"
         />
         <!-- c border-dark   -->
       </div>
@@ -52,6 +53,7 @@
           class="form-control border-dark"
           id="surname"
           formControlName="surname"
+          [readOnly]="this.mode == 'FULL'"
         />
       </div>
       <div class="col-lg-4">
@@ -63,6 +65,7 @@
           class="form-control border-dark"
           id="serial-number"
           formControlName="serial_num"
+          [readOnly]="!this.authService.isOwner()"
         />
       </div>
       <div class="col-lg-4">
@@ -95,16 +98,18 @@
           type="date"
           class="form-control border-dark"
           formControlName="hire_date"
+          [readOnly]="!this.authService.isOwner()"
         />
       </div>
       <div class="col-lg-4">
-        <label for="serial-number" class="form-label fw-semibold fs-5">{{
+        <label for="serial-number" class="form-label fw-semibold fs-5" >{{
           "E-mail" | translate
         }}</label>
         <input
           type="email"
           class="form-control border-dark"
           formControlName="email"
+          [readOnly]="this.mode == 'FULL'"
         />
       </div>
       <div class="col-lg-4">
@@ -115,9 +120,10 @@
           type="number"
           class="form-control border-dark"
           formControlName="iban"
+          [readOnly]="this.mode == 'FULL'"
         />
       </div>
-      <div class="col-lg-4" *ngIf="authService.isOwner()">
+      <div class="col-lg-4" *ngIf="authService.isOwner() && this.mode == 'FULL'">
         <label for="roles" class="form-label fw-semibold fs-5">{{
           "Ruolo" | translate
         }}</label>
@@ -131,6 +137,16 @@
             {{ role }}
           </option>
         </select>
+      </div>
+      <div class="col-lg-4" *ngIf="!authService.isOwner()">
+        <label for="roles" class="form-label fw-semibold fs-5">{{
+          "Ruolo" | translate
+        }}</label>
+        <input
+          type="text"
+          class="form-control border-dark"
+          [value]="this.user.role"
+        />
       </div>
       <div class="col-12">
         <span class="text-primary form-label fw-semibold fs-4">{{

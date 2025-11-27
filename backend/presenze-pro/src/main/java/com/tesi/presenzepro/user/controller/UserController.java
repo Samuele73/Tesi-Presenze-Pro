@@ -35,6 +35,11 @@ public class UserController {
         return ResponseEntity.ok(service.login(user));
     }
 
+    @GetMapping("/refresh-token")
+    public ResponseEntity<UserAuthResponseDto> refreshToken(){
+        return ResponseEntity.ok(service.refreshMyToken());
+    }
+
     @PostMapping("/signin")
     public ResponseEntity<User> signIn(@RequestBody SignInRequestDto user){
         User savedUser = service.signIn(user);

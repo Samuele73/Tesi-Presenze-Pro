@@ -21,6 +21,8 @@ public class DefaultOwnerConfig {
 
     @Value("${spring.app.defaultOwnerEmail}")
     private String defaultEmail;
+    @Value("${spring.app.defaultPwd}")
+    private String defaultPwd;
     private final PasswordEncoder passwordEncoder;
 
     @Bean
@@ -45,7 +47,7 @@ public class DefaultOwnerConfig {
             // ✔️ Costruisco l'utente OWNER
             User owner = User.builder()
                     .email(email)
-                    .pwd(passwordEncoder.encode("owner123"))
+                    .pwd(passwordEncoder.encode(defaultPwd))
                     .role(Role.OWNER)
                     .profile(profile)
                     .data(data)

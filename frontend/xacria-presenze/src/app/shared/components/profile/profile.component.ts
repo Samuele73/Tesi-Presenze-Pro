@@ -21,6 +21,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { DropdownOptions } from '../ngb-options/ngb-options.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmModalComponent } from 'src/app/modules/layout/confirm-modal/confirm-modal.component';
+import { ToastrService } from 'ngx-toastr';
+import { APP_ROUTES } from '../../constants/route-paths';
 
 type ProfileMode = 'FULL' | 'BASIC' | 'ME';
 
@@ -38,6 +40,7 @@ export class ProfileComponent implements OnInit {
   isReadOnly: boolean = true;
   initialValue: any;
   roles = Object.values(FullUserProfileResponseDto.RoleEnum);
+  APP_ROUTES = APP_ROUTES;
 
   dropdownItems: DropdownOptions = [
     { name: 'Annulla', onclick: () => this.cancelEdit() },
@@ -51,7 +54,8 @@ export class ProfileComponent implements OnInit {
     private usernameService: UsernameService,
     private route: ActivatedRoute,
     private router: Router,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private toastrService: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -231,9 +235,11 @@ export class ProfileComponent implements OnInit {
             name: user.name || '',
             surname: user.surname || '',
           });
+          this.router.navigate([APP_ROUTES.HOME]);
         },
-        error: (err: any) => {
+        error: (err: HttpErrorResponse) => {
           console.log('Error in Profile update: ', err);
+          this.toastrService.error(err.error.message);
         },
       });
     } else if (this.mode == 'FULL' && this.authService.isOwner()) {
@@ -249,10 +255,11 @@ export class ProfileComponent implements OnInit {
         next: (user: FullUserProfileResponseDto) => {
           this.user = user;
           this.setProfileForm();
-          this.router.navigate(['/app/users-management']);
+          this.router.navigate([APP_ROUTES.USERS.DEFAULT]);
         },
-        error: (err: any) => {
+        error: (err: HttpErrorResponse) => {
           console.log('Error in Profile update: ', err);
+          this.toastrService.error(err.error.message);
         },
       });
     } else {

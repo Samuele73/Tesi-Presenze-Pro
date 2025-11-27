@@ -1,25 +1,25 @@
+# ===========================================
+# STAGE 1: Dev Environment con hot reload
+# ===========================================
 FROM node:18-alpine
 
-# Installa strumenti utili per sviluppo
+# Installa strumenti utili
 RUN apk add --no-cache git curl
 
-# Imposta la directory di lavoro
+# Imposta directory
 WORKDIR /app
 
-# Copia i file di configurazione delle dipendenze
+# Copia package.json e package-lock.json
 COPY package*.json ./
 
-# Installa le dipendenze
+# Installa dipendenze
 RUN npm install
 
-# Installa Angular CLI globalmente (versione compatibile con Angular 15.2)
-RUN npm install -g @angular/cli@15
-
-# Copia tutto il codice sorgente
+# Copia il resto del codice
 COPY . .
 
 # Espone la porta di sviluppo
 EXPOSE 4200
 
-# Comando per avviare il development server con hot reload
-CMD ["ng", "serve", "--host", "0.0.0.0", "--port", "4200", "--poll", "2000"]
+# Avvia Angular in modalità dev
+CMD ["npm", "run", "start", "--", "--host", "0.0.0.0"]
