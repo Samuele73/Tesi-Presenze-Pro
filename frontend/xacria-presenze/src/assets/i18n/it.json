@@ -156,5 +156,20 @@
   "L'orario di inizio deve essere minore dell'orario di fine." : "L'orario di inizio deve essere minore dell'orario di fine.",
   "La data di inizio deve essere minore di quella finale" : "La data di inizio deve essere minore di quella finale",
   "Scarica report" : "Scarica report",
-  "Scarica" : "Scarica"
+  "Scarica" : "Scarica",
+  "Il tuo ruolo è cambiato. Token aggiornato!" : "Il tuo ruolo è cambiato. Token aggiornato!",
+  "prova": "prova",
+  "Invito mandato con successo.": "Invito mandato con successo.",
+  "Richiesta aggiornata con successo": "Richiesta aggiornata con successo",
+  "Trasferta modificata con successo": "Trasferta modificata con successo",
+  "Trasferte cancellate con successo": "Trasferte cancellate con successo",
+  "Trasferta creata con successo": "Trasferta creata con successo",
+  "Richiesta cancellata con successo": "Richiesta cancellata con successo",
+  "Richiesta creata con successo": "Richiesta creata con successo",
+  "Disponibilità modificate con successo": "Disponibilità modificate con successo",
+  "Disponibilità cancellate con successo": "Disponibilità cancellate con successo",
+  "Reperibilità creata con successo": "Reperibilità creata con successo",
+  "Lavori giornalieri cancellati con successo": "Lavori giornalieri cancellati con successo",
+  "Lavori giornalieri modificati con successo": "Lavori giornalieri modificati con successo",
+  "Lavoro giornaliero creato con successo": "Lavoro giornaliero creato con successo"
 }

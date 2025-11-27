@@ -154,5 +154,20 @@
   "Al" : "To",
   "L'orario di inizio deve essere minore dell'orario di fine." : "The start time must be earlier than the end time",
   "Scarica report" : "Download report",
-  "Scarica" : "Download"
+  "Scarica" : "Download",
+  "Il tuo ruolo è cambiato. Token aggiornato!" : "Your role has changed. Token updated!",
+  "prova": "test",
+  "Invito mandato con successo.": "Invitation sent successfully.",
+  "Richiesta aggiornata con successo": "Request updated successfully",
+  "Trasferta modificata con successo": "Business trip updated successfully",
+  "Trasferte cancellate con successo": "Business trips deleted successfully",
+  "Trasferta creata con successo": "Business trip created successfully",
+  "Richiesta cancellata con successo": "Request deleted successfully",
+  "Richiesta creata con successo": "Request created successfully",
+  "Disponibilità modificate con successo": "Availability updated successfully",
+  "Disponibilità cancellate con successo": "Availability deleted successfully",
+  "Reperibilità creata con successo": "On-call shift created successfully",
+  "Lavori giornalieri cancellati con successo": "Daily tasks deleted successfully",
+  "Lavori giornalieri modificati con successo": "Daily tasks updated successfully",
+  "Lavoro giornaliero creato con successo": "Daily task created successfully"
 }
