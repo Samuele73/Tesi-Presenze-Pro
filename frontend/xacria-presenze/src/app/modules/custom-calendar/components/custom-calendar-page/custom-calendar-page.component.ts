@@ -17,6 +17,7 @@ import {
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { Renderer2, ElementRef } from '@angular/core';
+import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { FullCalendarComponent } from '@fullcalendar/angular';
 import {
   faPlus,
@@ -50,7 +51,12 @@ import {
   identifiableCalendarWorkingDay,
 } from '../../models/calendar';
 import { CalendarStateService } from '../../services/calendar-state.service';
-import { monthNamesIt, weekDayNamesIt } from '../../const-vars';
+import {
+  monthNamesEn,
+  monthNamesIt,
+  weekDayNamesEn,
+  weekDayNamesIt,
+} from '../../const-vars';
 import { ToastrService } from 'ngx-toastr';
 import { ProjectStoreService } from 'src/app/modules/project/services/project-store.service';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
@@ -100,6 +106,7 @@ export class CustomCalendarPageComponent
   currentMonth: string = '';
   currentYear: string = '';
   hoursWorked: string = 'Ore lavorate: 0';
+  currentLang: string;
 
   // Cache per i calcoli costosi
   private dateToTitleCache = new Map<string, string>();
@@ -129,11 +136,21 @@ export class CustomCalendarPageComponent
     private projectStoreService: ProjectStoreService,
     public dateFormat: DateFormatService,
     private notifService: NotificationService,
-    private router: Router
+    private router: Router,
+    private translateService: TranslateService
   ) {
-    this.weekDayNames = weekDayNamesIt;
-    this.monthNames = monthNamesIt;
+    this.currentLang = this.translateService.currentLang || 'it';
+    this.updateLocaleNames(this.currentLang);
     this.updatePreCalculatedValues();
+    this.translateService.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((event: LangChangeEvent) => {
+        this.currentLang = event.lang;
+        this.updateLocaleNames(event.lang);
+        this.dateToTitleCache.clear();
+        this.updatePreCalculatedValues();
+        this.cdr.markForCheck();
+      });
   }
 
   private subscriteToCalendarStateServices(): void {
@@ -194,6 +211,12 @@ export class CustomCalendarPageComponent
       this.currentYear
     }`;
     this.dayWorkDateTitle = this.fromDateToModalTitle(this.dayClicked);
+  }
+
+  private updateLocaleNames(lang: string): void {
+    const isEnglish = lang === 'en';
+    this.weekDayNames = isEnglish ? weekDayNamesEn : weekDayNamesIt;
+    this.monthNames = isEnglish ? monthNamesEn : monthNamesIt;
   }
 
   private fetchEssentialDate(): void {
@@ -294,16 +317,15 @@ export class CustomCalendarPageComponent
   fromDateToModalTitle(date: Date): string {
     if (!date) return '';
 
-    const key = date.toDateString();
+    const key = `${date.toDateString()}-${this.currentLang}`;
     if (this.dateToTitleCache.has(key)) {
       return this.dateToTitleCache.get(key) as string;
     }
 
-    const month: string = monthNamesIt[date.getMonth()];
     const day: string = date.getDate().toString();
     const year: string = date.getFullYear().toString();
     const dayWord: string = this.weekDayNames[date.getDay()];
-    const result: string = `${day} ${month} ${year} - ${dayWord}`;
+    const result: string = `${day} ${this.monthNames[date.getMonth()]} ${year} - ${dayWord}`;
 
     // Limita la cache a 50 elementi per evitare memory leaks
     if (this.dateToTitleCache.size > 50) {

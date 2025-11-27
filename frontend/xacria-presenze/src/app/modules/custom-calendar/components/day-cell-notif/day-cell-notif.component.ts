@@ -143,6 +143,7 @@ export class DayCellNotifComponent
     requestAnimationFrame(() => {
       this.isTemplateReady = true;
       this.updateTemplate();
+      this.updateCachedProperties();
       this.cdr.markForCheck();
     });
   }
@@ -151,6 +152,11 @@ export class DayCellNotifComponent
     // Aggiorna template solo se notifType è cambiato
     if (changes['notifType'] && this.isTemplateReady) {
       this.updateTemplate();
+    }
+    // Aggiorna il testo del bottone quando cambia la lingua (Input text cambia)
+    if (changes['text'] && !changes['text'].firstChange) {
+      this.updateCachedProperties();
+      this.cdr.markForCheck();
     }
   }
 
