@@ -151,12 +151,12 @@ public class CalendarController {
             }
     )
     @GetMapping(value = "/export/month", produces = "application/octet-stream")
-    public ResponseEntity<byte[]> exportMonthFromCurrentYear(@RequestParam int month, @RequestParam int year) throws IOException {
+    public ResponseEntity<byte[]> exportMonthFromCurrentYear(@RequestParam int month, @RequestParam int year, @RequestParam(defaultValue = "it") LanguageRequestParam lang) throws IOException {
         final Date currentDate = new Date();
         if(currentDate.getMonth() < month && currentDate.getYear() < year)
             throw new IllegalArgumentException("Data non valida per la creazione del report");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        XSSFWorkbook workbook = this.calendarReportService.generateMonthlyReportFromCurrentYear(month, year);
+        XSSFWorkbook workbook = this.calendarReportService.generateMonthlyReportFromCurrentYear(month, year, lang);
         workbook.write(out);
         workbook.close();
 
