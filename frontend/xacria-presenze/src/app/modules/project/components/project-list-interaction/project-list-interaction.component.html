@@ -18,7 +18,7 @@
       <input
         type="text"
         class="form-control"
-        placeholder="Cerca per nome..."
+        [placeholder]="'Cerca per nome...' | translate"
         [(ngModel)]="searchTerm"
         (input)="filterProjects()"
       />
@@ -35,7 +35,7 @@
         [options]="projectStatuses"
         optionLabel="label"
         optionValue="value"
-        placeholder="Tutti"
+        [placeholder]="'Tutti' | translate"
         [(ngModel)]="selectedStatus"
         (onChange)="filterProjects()"
         class="w-100 p-multiselect-sm"
@@ -53,7 +53,7 @@
 
       <p-multiSelect
         [options]="assignedToList"
-        placeholder="Seleziona..."
+        [placeholder]="'Seleziona...' | translate"
         [(ngModel)]="selectedAssignedTo"
         (onChange)="filterProjects()"
         [showToggleAll]="false"
@@ -73,7 +73,7 @@
       <h3 class="modal-title" id="modal-basic-title">
         {{ "Aggiungi Progetto" | translate }}
       </h3>
-      <span class="form-text">* Inserisci un nuovo progetto</span>
+      <span class="form-text">* {{ "Inserisci un nuovo progetto" | translate }}</span>
     </div>
     <button
       type="button"
@@ -91,12 +91,12 @@
   <div class="modal-footer">
     <app-button
       [type]="'button'"
-      [name]="'Annulla'"
+      [name]="'Annulla' | translate"
       [mode]="'UNDO'"
     ></app-button>
     <app-button
       [type]="'submit'"
-      [name]="'Salva'"
+      [name]="'Salva' | translate"
       [mode]="'SAVE'"
       [buttonDisabled]="projectFormComp.projectForm.invalid"
       (buttonClick)="submitAddProjectForm(projectFormComp)"

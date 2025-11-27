@@ -10,6 +10,7 @@ import {
   SimpleChanges,
   TemplateRef,
   ViewChild,
+  OnDestroy,
 } from '@angular/core';
 import { DynamicTableColumn } from '../dynamic-table/dynamic-table.component';
 import { DropdownOptions } from 'src/app/shared/components/ngb-options/ngb-options.component';
@@ -18,6 +19,8 @@ import {
   ApprovalRequestTab,
   UserRequestResponseDto,
 } from 'src/generated-client';
+import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 
 export interface RequestsTableRow {
   id?: string;
@@ -94,14 +97,10 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
   columns: DynamicTableColumn[] = [];
   canOpenDetails = true
 
-  requestTypeOptions = Object.values(UserRequestResponseDto.TypeEnum).map(
-    (value) => ({
-      label: value.charAt(0).toUpperCase() + value.slice(1).toLowerCase(),
-      value,
-    })
-  );
+  requestTypeOptions = this.buildRequestTypeOptions();
   selectedRequestTypes: UserRequestResponseDto.TypeEnum[] = [];
   selectedUsers: string[] = [];
+  private langSub?: Subscription;
 
   statusLabelMap: { [key: string]: string } = {
     PENDING: 'IN ATTESA',
@@ -116,8 +115,16 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    public authService: AuthService
-  ) {}
+    public authService: AuthService,
+    private translateService: TranslateService
+  ) {
+    this.langSub = this.translateService.onLangChange.subscribe(
+      (_: LangChangeEvent) => {
+        this.requestTypeOptions = this.buildRequestTypeOptions();
+        this.cdr.markForCheck();
+      }
+    );
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (
@@ -136,11 +143,26 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit {
     ) {
       this.generateUserOptions();
     }
+
+    if (changes['tab'] || changes['data']) {
+      this.requestTypeOptions = this.buildRequestTypeOptions();
+    }
   }
 
   ngAfterViewInit(): void {
     this.buildColumns();
     this.cdr.detectChanges();
+  }
+
+  ngOnDestroy(): void {
+    this.langSub?.unsubscribe();
+  }
+
+  private buildRequestTypeOptions() {
+    return Object.values(UserRequestResponseDto.TypeEnum).map((value) => ({
+      label: this.translateService.instant(value),
+      value,
+    }));
   }
 
   private generateUserOptions(): void {

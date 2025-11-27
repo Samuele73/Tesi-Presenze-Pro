@@ -51,7 +51,7 @@
         [options]="requestTypeOptions"
         optionLabel="label"
         optionValue="value"
-        placeholder="Tutti"
+        [placeholder]="'Tutti' | translate"
         [(ngModel)]="selectedRequestTypes"
         (onChange)="onFilterChange()"
         class="w-100 p-multiselect-sm"
@@ -68,7 +68,7 @@
 
       <p-multiSelect
         [options]="userOptions"
-        placeholder="Seleziona..."
+        [placeholder]="'Seleziona...' | translate"
         [(ngModel)]="selectedUsers"
         (onChange)="onFilterChange()"
         [showToggleAll]="false"

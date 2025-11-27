@@ -1,7 +1,7 @@
 <app-card-list-wrapper
   [contentLenght]="this.projects.length"
   [isLoading]="isLoading"
-  [noEntryMessage]="'Nessun progetto trovato'"
+  [noEntryMessage]="'Nessun progetto trovato' | translate"
 >
   <app-project-list-item
     [project]="project"

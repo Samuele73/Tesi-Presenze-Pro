@@ -7,7 +7,7 @@
     <app-form-error
       [formControlRef]="formName"
       validator="required"
-      errorText="Il nome del progetto è obbligatorio"
+      [errorText]="'Il nome del progetto è obbligatorio' | translate"
     ></app-form-error>
   </div>
 
@@ -18,7 +18,7 @@
     <app-form-error
       [formControlRef]="formSummary"
       validator="required"
-      errorText="Il riepilogo è obbligatorio"
+      [errorText]="'Il riepilogo è obbligatorio' | translate"
     ></app-form-error>
   </div>
 
@@ -33,7 +33,7 @@
     <app-form-error
       [formControlRef]="formDescription"
       validator="required"
-      errorText="La descrizione è obbligatoria"
+      [errorText]="'La descrizione è obbligatoria' | translate"
     ></app-form-error>
   </div>
 
@@ -41,9 +41,9 @@
   <div class="mb-3">
     <label class="form-label fw-bold">{{ "Stato" | translate }}</label>
     <select class="form-select" formControlName="status">
-      <option value="CREATED">Creato</option>
-      <option value="IN_PROGRESS">In Corso</option>
-      <option value="COMPLETED">Completato</option>
+      <option value="CREATED">{{ "Creato" | translate }}</option>
+      <option value="IN_PROGRESS">{{ "In corso" | translate }}</option>
+      <option value="COMPLETED">{{ "Completato" | translate }}</option>
     </select>
   </div>
 
@@ -67,7 +67,7 @@
       <input
         type="email"
         class="form-control chips-input p-0 m-0 border-0 shadow-none"
-        placeholder="Aggiungi email utente"
+        [placeholder]="'Aggiungi email utente' | translate"
         [(ngModel)]="newUserEmail"
         [ngModelOptions]="{ standalone: true }"
         #emailInput="ngModel"

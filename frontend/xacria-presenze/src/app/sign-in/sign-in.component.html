@@ -46,13 +46,13 @@
             </div>
           </div>
           <div class="form-group mb-2">
-            <label for="email" class="fs-5 fw-bold mb-2">E-mail</label>
+            <label for="email" class="fs-5 fw-bold mb-2">{{ 'E-mail' | translate }}</label>
             <input
               type="email"
               readonly
               class="form-control form-control-sm shadow-sm border-dark border-1 rounded-3"
               id="email"
-              placeholder="E-mail"
+              [placeholder]="'Inserisci email' | translate"
               formControlName="email"
             />
             <div *ngIf="emailControl!.invalid && emailControl!.touched">
@@ -69,12 +69,12 @@
             </div>
           </div>
           <div class="form-group mb-4">
-            <label for="password" class="fs-5 fw-bold mb-2">Password</label>
+            <label for="password" class="fs-5 fw-bold mb-2">{{ 'Password' | translate }}</label>
             <div class="position-relative">
               <input
                 class="form-control form-control-sm shadow-sm border-dark border-1 rounded-3"
                 id="password"
-                placeholder="Password"
+                [placeholder]="'Inserisci password' | translate"
                 formControlName="password"
                 [type]="showPassword ? 'text' : 'password'"
               />

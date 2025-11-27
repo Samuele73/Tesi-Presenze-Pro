@@ -6,8 +6,8 @@
         <img src="../../favicon.ico" alt="" class="img-fluid mb-5" id="logo">
         <form [formGroup]="forgottenPwdForm" (ngSubmit)="forgottenPwdFormSubmit()">
           <div class="form-group" class="mb-4">
-            <label for="email" class="fw-bold fs-5 d-block mb-2">E-mail</label>
-            <input type="text" id="email" class="w-100 form-control form-control-sm shadow-sm border-dark border-1 rounded-3" placeholder="Rosita@xacria.com" formControlName="email">
+            <label for="email" class="fw-bold fs-5 d-block mb-2">{{ 'E-mail' | translate }}</label>
+            <input type="text" id="email" class="w-100 form-control form-control-sm shadow-sm border-dark border-1 rounded-3" [placeholder]="'Inserisci email' | translate" formControlName="email">
             <div *ngIf="emailControl!.invalid && emailControl!.touched">
               <app-form-error [formControlRef]="emailControl" [validator]="'required'" [errorText]="'Campo richiesto' | translate"></app-form-error>
               <app-form-error [formControlRef]="emailControl" [validator]="'pattern'" [errorText]="'Formato E-mail non valido' | translate"></app-form-error>

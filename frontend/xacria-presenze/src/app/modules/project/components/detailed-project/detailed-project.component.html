@@ -2,7 +2,7 @@
 <ng-container *ngIf="isLoading; else checkProject">
   <div class="container-fluid text-center p-5">
     <div class="spinner-border text-primary mb-3" role="status"></div>
-    <p class="text-muted">Caricamento progetto...</p>
+    <p class="text-muted">{{ "Caricamento progetto..." | translate }}</p>
   </div>
 </ng-container>
 
@@ -22,7 +22,7 @@
       </a>
       <div class="d-flex justify-content-end gap-2" *ngIf="isEditMode">
         <app-ngb-options [dropdownOptions]="dropdownItems"></app-ngb-options>
-        <app-button [name]="'Salva'" [type]="'submit'" (buttonClick)="onSubmit()" [mode]="'SAVE'"></app-button>
+        <app-button [name]="'Salva' | translate" [type]="'submit'" (buttonClick)="onSubmit()" [mode]="'SAVE'"></app-button>
       </div>
     </div>
 
@@ -90,7 +90,7 @@
 
                   <ng-template #noUsers>
                     <p class="text-muted mb-0">
-                      <i class="bi bi-info-circle"></i> Nessun utente assegnato
+                      <i class="bi bi-info-circle"></i> {{ "Nessun utente assegnato" | translate }}
                     </p>
                   </ng-template>
                 </div>
@@ -129,7 +129,7 @@
         class="btn btn-primary text-white fw-semibold px-4 py-2"
         [routerLink]="['/app/projects']"
       >
-        <i class="bi bi-arrow-left me-2"></i>Torna alla lista
+        <i class="bi bi-arrow-left me-2"></i>{{ "Torna alla lista" | translate }}
       </button>
     </div>
   </div>

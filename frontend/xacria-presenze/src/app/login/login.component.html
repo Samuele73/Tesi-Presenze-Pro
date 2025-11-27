@@ -6,12 +6,12 @@
         <img src="../../favicon.ico" alt="" class="img-fluid mb-5" id="logo" />
         <form [formGroup]="loginForm" (ngSubmit)="loginFormSubmit()">
           <div class="form-group" class="mb-2">
-            <label for="email" class="fw-bold fs-5 d-block mb-2">E-mail</label>
+            <label for="email" class="fw-bold fs-5 d-block mb-2">{{ "E-mail" | translate }}</label>
             <input
               type="text"
               id="email"
               class="w-100 form-control form-control-sm shadow-sm border-dark border-1 rounded-3"
-              placeholder="Rosita@xacria.com"
+              [placeholder]="'Inserisci email' | translate"
               formControlName="email"
             />
             <div *ngIf="emailControl!.invalid && emailControl!.touched">
@@ -28,12 +28,12 @@
             </div>
           </div>
           <div class="form-group" class="mb-4">
-            <label for="pwd" class="fw-bold fs-5 d-block mb-2">Password</label>
+            <label for="pwd" class="fw-bold fs-5 d-block mb-2">{{ "Password" | translate }}</label>
             <div class="position-relative">
               <input
                 id="pwd"
                 class="w-100 form-control form-control-sm shadow-sm border-dark border-1 rounded-3"
-                placeholder="xxxxxxx"
+                [placeholder]="'Inserisci password' | translate"
                 formControlName="password"
                 [type]="showPassword ? 'text' : 'password'"
               />

@@ -7,6 +7,7 @@ import {
   SimpleChanges,
   ViewChild,
   OnInit,
+  OnDestroy,
 } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/shared/services/auth.service';
@@ -17,13 +18,17 @@ import {
   ProjectStoreService,
 } from '../../services/project-store.service';
 import { ApiError } from 'src/app/shared/models/api-error.models';
+import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-project-list-interaction',
   templateUrl: './project-list-interaction.component.html',
   styleUrls: ['./project-list-interaction.component.scss'],
 })
-export class ProjectListInteractionComponent implements OnChanges, OnInit {
+export class ProjectListInteractionComponent
+  implements OnChanges, OnInit, OnDestroy
+{
   @Input() projects: Project[] = [];
   @Input() filteredProjects: Project[] = [];
   @Output() filteredProjectsChange = new EventEmitter<Project[]>();
@@ -37,20 +42,24 @@ export class ProjectListInteractionComponent implements OnChanges, OnInit {
   selectedStatus: string[] = [];
   selectedAssignedTo: string[] = [];
 
-  projectStatuses = [
-    { value: 'CREATED', label: 'Creato' },
-    { value: 'IN_PROGRESS', label: 'In Corso' },
-    { value: 'COMPLETED', label: 'Completato' },
-  ];
+  projectStatuses = this.buildStatuses();
 
   assignedToList: string[] = [];
+  private langSub?: Subscription;
 
   constructor(
     public authService: AuthService,
     private modalService: NgbModal,
     private projectService: ProjectService,
-    private projectStoreService: ProjectStoreService
-  ) {}
+    private projectStoreService: ProjectStoreService,
+    private translateService: TranslateService
+  ) {
+    this.langSub = this.translateService.onLangChange.subscribe(
+      (_: LangChangeEvent) => {
+        this.projectStatuses = this.buildStatuses();
+      }
+    );
+  }
 
   subscribeToProjectStoreServices(): void {
     this.projectStoreService.apiError$.subscribe(
@@ -61,6 +70,10 @@ export class ProjectListInteractionComponent implements OnChanges, OnInit {
   }
 
   ngOnInit(): void {}
+
+  ngOnDestroy(): void {
+    this.langSub?.unsubscribe();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['projects'] && this.projects) {
@@ -121,5 +134,13 @@ export class ProjectListInteractionComponent implements OnChanges, OnInit {
       .subscribe((result: boolean) => {
         if (result) this.modalService.dismissAll();
       });
+  }
+
+  private buildStatuses() {
+    return [
+      { value: 'CREATED', label: this.translateService.instant('Creato') },
+      { value: 'IN_PROGRESS', label: this.translateService.instant('In corso') },
+      { value: 'COMPLETED', label: this.translateService.instant('Completato') },
+    ];
   }
 }

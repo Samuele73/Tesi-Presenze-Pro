@@ -70,7 +70,7 @@
         type="text"
         id="email"
         class="form-control"
-        placeholder="{{ 'Inserisci email utente' }}"
+        [placeholder]="'Inserisci email utente' | translate"
         [(ngModel)]="toInviteUserEmail"
         name="email"
         #emailControl="ngModel"
@@ -84,10 +84,10 @@
         class="text-danger mt-1 small"
       >
         <span *ngIf="emailControl.errors?.['required']">
-          L'email è richiesta.
+          {{ "L'email è richiesta" | translate }}.
         </span>
         <span *ngIf="emailControl.errors?.['email']">
-          Inserisci un formato email valido.
+          {{ "Inserisci un formato email valido." | translate }}
         </span>
       </div>
       <span
@@ -102,13 +102,13 @@
     </div>
     <div class="modal-footer">
       <app-button
-        [name]="'Annulla'"
+        [name]="'Annulla' | translate"
         [mode]="'UNDO'"
         [type]="'button'"
         (buttonClick)="modal.close()"
       ></app-button>
       <app-button
-        [name]="'Invia Invito'"
+        [name]="'Invia Invito' | translate"
         [mode]="'SAVE'"
         [type]="'submit'"
         [buttonDisabled]="inviteForm.invalid ?? false"
