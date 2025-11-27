@@ -171,13 +171,14 @@ export class CalendarService {
      * 
      * @param month 
      * @param year 
+     * @param lang 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public exportMonthFromCurrentYear(month: number, year: number, observe?: 'body', reportProgress?: boolean): Observable<Blob>;
-    public exportMonthFromCurrentYear(month: number, year: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Blob>>;
-    public exportMonthFromCurrentYear(month: number, year: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Blob>>;
-    public exportMonthFromCurrentYear(month: number, year: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public exportMonthFromCurrentYear(month: number, year: number, lang?: string, observe?: 'body', reportProgress?: boolean): Observable<Blob>;
+    public exportMonthFromCurrentYear(month: number, year: number, lang?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Blob>>;
+    public exportMonthFromCurrentYear(month: number, year: number, lang?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Blob>>;
+    public exportMonthFromCurrentYear(month: number, year: number, lang?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (month === null || month === undefined) {
             throw new Error('Required parameter month was null or undefined when calling exportMonthFromCurrentYear.');
@@ -187,12 +188,16 @@ export class CalendarService {
             throw new Error('Required parameter year was null or undefined when calling exportMonthFromCurrentYear.');
         }
 
+
         let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (month !== undefined && month !== null) {
             queryParameters = queryParameters.set('month', <any>month);
         }
         if (year !== undefined && year !== null) {
             queryParameters = queryParameters.set('year', <any>year);
+        }
+        if (lang !== undefined && lang !== null) {
+            queryParameters = queryParameters.set('lang', <any>lang);
         }
 
         let headers = this.defaultHeaders;

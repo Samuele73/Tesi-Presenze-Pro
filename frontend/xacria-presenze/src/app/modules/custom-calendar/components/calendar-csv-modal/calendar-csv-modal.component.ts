@@ -5,6 +5,7 @@ import { NgForm } from '@angular/forms';
 import { CalendarService } from 'src/generated-client';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ToastI18nService } from 'src/app/shared/services/toast-i18n.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-calendar-csv-modal',
@@ -26,7 +27,8 @@ export class CalendarCsvModalComponent {
   constructor(
     private modalService: NgbModal,
     private calendarService: CalendarService,
-    private toast: ToastI18nService
+    private toast: ToastI18nService,
+    private translateService: TranslateService
   ) {}
 
   initializeForm(): void {
@@ -106,17 +108,17 @@ export class CalendarCsvModalComponent {
       return;
     }
 
+    const lang = this.translateService.currentLang;
+
     this.calendarService
-      .exportMonthFromCurrentYear(this.selectedMonth!, referenceYear)
+      .exportMonthFromCurrentYear(this.selectedMonth!, referenceYear, lang)
       .subscribe({
         next: (blob: Blob) => {
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          const monthLabel =
-            this.availableMonths.find((m) => m.value === this.selectedMonth)
-              ?.label || 'report';
-          a.download = `report_${monthLabel}_${this.todayYear}.csv`;
+          const monthNum = String(this.selectedMonth! + 1).padStart(2, '0');
+          a.download = `report_${monthNum}-${referenceYear}.xlsx`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);

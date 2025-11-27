@@ -23,8 +23,8 @@ export interface User {
     accountNonExpired?: boolean;
     credentialsNonExpired?: boolean;
     accountNonLocked?: boolean;
-    authorities?: Array<GrantedAuthority>;
     username?: string;
+    authorities?: Array<GrantedAuthority>;
     password?: string;
     enabled?: boolean;
 }
