@@ -288,7 +288,13 @@ export class DayworkModalComponent
     const cleaned = input.split('-')[0].trim();
 
     // Parsing in formato "26 Agosto 2025"
-    return parse(cleaned, 'd MMMM yyyy', new Date(), { locale: itLocale });
+    const parsed = parse(cleaned, 'd MMMM yyyy', new Date(), {
+      locale: itLocale,
+    });
+    // Normalizza a mezzanotte UTC per evitare gli slittamenti di orario
+    return new Date(
+      Date.UTC(parsed.getFullYear(), parsed.getMonth(), parsed.getDate())
+    );
   }
 
   submitNewEntries(): void {
