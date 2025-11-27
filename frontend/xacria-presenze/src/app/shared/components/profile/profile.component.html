@@ -3,11 +3,13 @@
   <form
     [formGroup]="profileForm"
     (ngSubmit)="onProfileFormSubmit()"
-    class=" d-flex flex-column overflow-hidden"
+    class="d-flex flex-column overflow-hidden"
     *ngIf="this.mode === 'FULL' || this.mode === 'ME'"
   >
-    <div class="d-flex justify-content-between align-items-center mb-2 flex-shrink-0">
-      <button type="submit" style="display:none"></button>
+    <div
+      class="d-flex justify-content-between align-items-center mb-2 flex-shrink-0"
+    >
+      <button type="submit" style="display: none"></button>
       <a
         [routerLink]="['/app/users-management']"
         class="text-decoration-none text-muted d-flex align-items-center"
@@ -25,14 +27,17 @@
       </div>
     </div>
 
-    <div class="row row-gap-3 pb-4 m-0 flex-grow-1 overflow-y-auto" style=" overflow-x: hidden">
+    <div
+      class="row row-gap-3 pb-4 m-0 flex-grow-1 overflow-y-auto"
+      style="overflow-x: hidden"
+    >
       <div class="col-lg-4">
         <label for="name" class="form-label fw-semibold fs-5">{{
           "Nome" | translate
         }}</label>
         <input
           type="text"
-          class="form-control border-dark  "
+          class="form-control border-dark"
           id="name"
           formControlName="name"
         />
@@ -44,7 +49,7 @@
         }}</label>
         <input
           type="text"
-          class="form-control border-dark  "
+          class="form-control border-dark"
           id="surname"
           formControlName="surname"
         />
@@ -55,7 +60,7 @@
         }}</label>
         <input
           type="number"
-          class="form-control border-dark  "
+          class="form-control border-dark"
           id="serial-number"
           formControlName="serial_num"
         />
@@ -66,17 +71,19 @@
         }}</label>
         <input
           type="text"
-          class="form-control border-dark  "
+          class="form-control border-dark"
           formControlName="duty"
         />
       </div>
       <div class="col-lg-4">
-        <label for="serial-number form-label " class="form-label fw-semibold fs-5">{{
-          "Tipo d'impiego" | translate
-        }}</label>
+        <label
+          for="serial-number form-label "
+          class="form-label fw-semibold fs-5"
+          >{{ "Tipo d'impiego" | translate }}</label
+        >
         <input
           type="text"
-          class="form-control border-dark  "
+          class="form-control border-dark"
           formControlName="employment_type"
         />
       </div>
@@ -86,7 +93,7 @@
         }}</label>
         <input
           type="date"
-          class="form-control border-dark  "
+          class="form-control border-dark"
           formControlName="hire_date"
         />
       </div>
@@ -96,7 +103,7 @@
         }}</label>
         <input
           type="email"
-          class="form-control border-dark  "
+          class="form-control border-dark"
           formControlName="email"
         />
       </div>
@@ -106,9 +113,24 @@
         }}</label>
         <input
           type="number"
-          class="form-control border-dark  "
+          class="form-control border-dark"
           formControlName="iban"
         />
+      </div>
+      <div class="col-lg-4" *ngIf="authService.isOwner()">
+        <label for="roles" class="form-label fw-semibold fs-5">{{
+          "Ruolo" | translate
+        }}</label>
+        <select
+          name="role_"
+          id="roles"
+          class="form-select"
+          formControlName="role"
+        >
+          <option value="{{ role }}" *ngFor="let role of roles">
+            {{ role }}
+          </option>
+        </select>
       </div>
       <div class="col-12">
         <span class="text-primary form-label fw-semibold fs-4">{{
@@ -121,7 +143,7 @@
         }}</label>
         <input
           type="date"
-          class="form-control border-dark  "
+          class="form-control border-dark"
           formControlName="birth_date"
         />
       </div>
@@ -131,7 +153,7 @@
         }}</label>
         <input
           type="text"
-          class="form-control border-dark  "
+          class="form-control border-dark"
           formControlName="address"
         />
       </div>
@@ -141,7 +163,7 @@
         }}</label>
         <input
           type="tel"
-          class="form-control border-dark  "
+          class="form-control border-dark"
           formControlName="phone"
         />
       </div>
@@ -154,7 +176,9 @@
     class="d-flex flex-column overflow-hidden"
     *ngIf="this.mode === 'BASIC'"
   >
-    <div class="d-flex justify-content-between align-items-center mb-2 flex-shrink-0">
+    <div
+      class="d-flex justify-content-between align-items-center mb-2 flex-shrink-0"
+    >
       <a
         [routerLink]="['/app/users-management']"
         class="text-decoration-none text-muted d-flex align-items-center"
@@ -164,14 +188,18 @@
       </a>
     </div>
 
-    <div class="row row-gap-3 pb-4 m-0 flex-grow-1 overflow-y-auto" style=" overflow-x: hidden" [ngClass]="{ 'mt-2': isReadOnly }">
+    <div
+      class="row row-gap-3 pb-4 m-0 flex-grow-1 overflow-y-auto"
+      style="overflow-x: hidden"
+      [ngClass]="{ 'mt-2': isReadOnly }"
+    >
       <div class="col-lg-4">
         <label for="name" class="form-label fw-semibold fs-5">{{
           "Nome" | translate
         }}</label>
         <input
           type="text"
-          class="form-control border-dark  "
+          class="form-control border-dark"
           id="name"
           formControlName="name"
           [readOnly]="isReadOnly"
@@ -183,7 +211,7 @@
         }}</label>
         <input
           type="text"
-          class="form-control border-dark  "
+          class="form-control border-dark"
           id="surname"
           formControlName="surname"
           [readOnly]="isReadOnly"
@@ -195,7 +223,7 @@
         }}</label>
         <input
           type="email"
-          class="form-control border-dark  "
+          class="form-control border-dark"
           formControlName="email"
           [readOnly]="isReadOnly"
         />

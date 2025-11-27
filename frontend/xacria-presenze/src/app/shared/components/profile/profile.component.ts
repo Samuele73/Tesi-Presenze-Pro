@@ -37,6 +37,7 @@ export class ProfileComponent implements OnInit {
   apiError: string = '';
   isReadOnly: boolean = true;
   initialValue: any;
+  roles = Object.values(FullUserProfileResponseDto.RoleEnum);
 
   dropdownItems: DropdownOptions = [
     { name: 'Annulla', onclick: () => this.cancelEdit() },
@@ -45,7 +46,7 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private authService: AuthService,
+    public authService: AuthService,
     private userService: UserService,
     private usernameService: UsernameService,
     private route: ActivatedRoute,
@@ -92,6 +93,10 @@ export class ProfileComponent implements OnInit {
     return this.profileForm.get('phone');
   }
 
+  get role(){
+    return this.profileForm.get('role');
+  }
+
   setProfileForm(): void {
     console.log('USER profile:', this.user);
     if (this.mode === 'FULL' || this.mode === 'ME') {
@@ -126,6 +131,7 @@ export class ProfileComponent implements OnInit {
         ],
         address: [this.user?.address ?? '', []],
         phone: [this.user?.phone ?? '', []],
+        role: [this.user?.role ?? '', []]
       });
       this.initialValue = this.profileForm.getRawValue();
     } else if (this.mode === 'BASIC') {
@@ -230,7 +236,7 @@ export class ProfileComponent implements OnInit {
           console.log('Error in Profile update: ', err);
         },
       });
-    } else if (this.mode == 'FULL') {
+    } else if (this.mode == 'FULL' && this.authService.isOwner()) {
       const userEmail: string | null =
         this.route.snapshot.queryParamMap.get('email');
       if (!userEmail) {
@@ -238,7 +244,8 @@ export class ProfileComponent implements OnInit {
         this.apiError = 'Nessuna email per effetture l aggiornamento';
         return;
       }
-      this.userService.updateUserProfileByEmail(tmp_user, userEmail).subscribe({
+      const tmpUserForOwner = this.getAllUserCredsForOwner();
+      this.userService.updateUserProfileByEmail(tmpUserForOwner, userEmail).subscribe({
         next: (user: FullUserProfileResponseDto) => {
           this.user = user;
           this.setProfileForm();
@@ -268,24 +275,27 @@ export class ProfileComponent implements OnInit {
         birthDate: this.birth_date?.value,
         address: this.address?.value,
         phone: this.phone?.value,
-      },
-      data: {
-        assignedProjects: [],
-      },
+      }
     };
-    /* return {
-      name: this.name?.value,
-      surname: this.surname?.value,
+  }
+
+  getAllUserCredsForOwner(): User{
+    return {
       email: this.user.email,
-      duty: this.duty?.value,
-      serialNum: this.serial_num?.value,
-      employmentType: this.employment_type?.value,
-      hireDate: this.hire_date?.value,
-      iban: this.iban?.value,
-      birthDate: this.birth_date?.value,
-      address: this.address?.value,
-      phone: this.phone?.value
-    }; */
+      profile: {
+        name: this.name?.value,
+        surname: this.surname?.value,
+        serialNum: this.serial_num?.value,
+        employmentType: this.employment_type?.value,
+        hireDate: this.hire_date?.value,
+        duty: this.duty?.value,
+        iban: this.iban?.value,
+        birthDate: this.birth_date?.value,
+        address: this.address?.value,
+        phone: this.phone?.value
+      },
+      role: this.role?.value
+    };
   }
 
   emitChangedUsername(newUsername: Username) {

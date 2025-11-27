@@ -36,10 +36,10 @@ public class DefaultOwnerConfig {
             }
             UserProfile profile = new UserProfile("Owner", "Account");
             UserData data = new UserData(
-                    Collections.emptyList(), // nessun progetto assegnato
-                    0.0,                     // ferie
-                    0.0,                     // permessi
-                    8                       // ore giornaliere
+                    Collections.emptyList(),
+                    0.0,
+                    0.0,
+                    8
             );
 
             // ✔️ Costruisco l'utente OWNER
