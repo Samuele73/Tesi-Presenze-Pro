@@ -271,6 +271,31 @@ public class CalendarService {
         //  VALIDAZIONE DB + VALIDAZIONE TRA LE ENTRY DELLO STESSO BATCH
         // ========================================================
 
+        newCalendarEntities.sort((e1, e2) -> {
+
+            // Ordina working day prima per data, poi per ora
+            if (e1.getEntryType() == CalendarEntryType.WORKING_DAY &&
+                    e2.getEntryType() == CalendarEntryType.WORKING_DAY) {
+
+                CalendarWorkingDayEntry d1 = (CalendarWorkingDayEntry) e1.getCalendarEntry();
+                CalendarWorkingDayEntry d2 = (CalendarWorkingDayEntry) e2.getCalendarEntry();
+
+                LocalDate date1 = toLocalDate(d1.getDateFrom());
+                LocalDate date2 = toLocalDate(d2.getDateFrom());
+
+                int cmp = date1.compareTo(date2);
+                if (cmp != 0) return cmp;
+
+                LocalTime t1 = LocalTime.parse(d1.getHourFrom());
+                LocalTime t2 = LocalTime.parse(d2.getHourFrom());
+
+                return t1.compareTo(t2);
+            }
+
+            // Altri tipi mantengono ordine originale
+            return 0;
+        });
+
         for (int i = 0; i < newCalendarEntities.size(); i++) {
             CalendarEntity current = newCalendarEntities.get(i);
 
@@ -292,16 +317,25 @@ public class CalendarService {
     }
 
 
+    /**
+     * Validazione tra due entry nello stesso batch (create insieme).
+     * Gestisce:
+     *  - working day → controllo orario
+     *  - availability → no overlap
+     *  - request/trip → nessun overlap date
+     */
     private void validateBatchPair(CalendarEntity a, CalendarEntity b) {
 
         CalendarEntryType typeA = a.getEntryType();
         CalendarEntryType typeB = b.getEntryType();
-
         CalendarEntry entryA = a.getCalendarEntry();
         CalendarEntry entryB = b.getCalendarEntry();
 
-        // Caso 1: due WORKING_DAY nello stesso batch → controlli accavallamenti
+        // ------------------------------------------------------------
+        // 1) DUE WORKING DAY → controlla orari
+        // ------------------------------------------------------------
         if (typeA == CalendarEntryType.WORKING_DAY && typeB == CalendarEntryType.WORKING_DAY) {
+
             CalendarWorkingDayEntry dayA = (CalendarWorkingDayEntry) entryA;
             CalendarWorkingDayEntry dayB = (CalendarWorkingDayEntry) entryB;
 
@@ -309,33 +343,41 @@ public class CalendarService {
             LocalDate dateB = toLocalDate(dayB.getDateFrom());
 
             if (dateA != null && dateA.equals(dateB)) {
-                LocalTime aFrom = LocalTime.parse(dayA.getHourFrom());
-                LocalTime aTo = LocalTime.parse(dayA.getHourTo());
-                LocalTime bFrom = LocalTime.parse(dayB.getHourFrom());
-                LocalTime bTo = LocalTime.parse(dayB.getHourTo());
 
-                if (timesOverlap(aFrom, aTo, bFrom, bTo)) {
-                    throw new ConflictException("Due giornate lavorative inserite insieme hanno orari sovrapposti: " + dateA);
+                LocalTime aFrom = LocalTime.parse(dayA.getHourFrom());
+                LocalTime aTo   = LocalTime.parse(dayA.getHourTo());
+
+                LocalTime bFrom = LocalTime.parse(dayB.getHourFrom());
+                LocalTime bTo   = LocalTime.parse(dayB.getHourTo());
+
+                // Usa la versione STRICT (08–12 e 12–17 NON sovrapposti)
+                if (timesOverlapStrict(aFrom, aTo, bFrom, bTo)) {
+                    throw new ConflictException(
+                            "Due giornate lavorative inserite nel batch hanno orari sovrapposti in data " + dateA
+                    );
                 }
             }
         }
 
-        // Caso 2: availability che si accavallano tra loro nel batch
+        // ------------------------------------------------------------
+        // 2) DUE AVAILABILITY → nessun overlap tra date
+        // ------------------------------------------------------------
         if (typeA == CalendarEntryType.AVAILABILITY && typeB == CalendarEntryType.AVAILABILITY) {
+
             CalendarAvailabilityEntry avA = (CalendarAvailabilityEntry) entryA;
             CalendarAvailabilityEntry avB = (CalendarAvailabilityEntry) entryB;
 
-            LocalDate aFrom = toLocalDate(avA.getDateFrom());
-            LocalDate aTo = toLocalDate(avA.getDateTo());
-            LocalDate bFrom = toLocalDate(avB.getDateFrom());
-            LocalDate bTo = toLocalDate(avB.getDateTo());
-
-            if (rangesOverlap(aFrom, aTo, bFrom, bTo)) {
-                throw new ConflictException("Due reperibilità inserite nello stesso batch sono sovrapposte");
+            if (rangesOverlap(
+                    toLocalDate(avA.getDateFrom()), toLocalDate(avA.getDateTo()),
+                    toLocalDate(avB.getDateFrom()), toLocalDate(avB.getDateTo())
+            )) {
+                throw new ConflictException("Due reperibilità nel batch sono sovrapposte.");
             }
         }
 
-        // Caso 3: TRIP e REQUEST con sovrapposizioni nel batch
+        // ------------------------------------------------------------
+        // 3) REQUEST - TRIP → NO overlap date
+        // ------------------------------------------------------------
         if (typeA == CalendarEntryType.REQUEST || typeA == CalendarEntryType.WORKING_TRIP ||
                 typeB == CalendarEntryType.REQUEST || typeB == CalendarEntryType.WORKING_TRIP) {
 
@@ -343,27 +385,35 @@ public class CalendarService {
 
             if (entryA instanceof CalendarRequestEntry rA) {
                 aFrom = toLocalDate(rA.getDateFrom());
-                aTo = toLocalDate(rA.getDateTo());
+                aTo   = toLocalDate(rA.getDateTo());
             } else if (entryA instanceof CalendarWorkingTripEntry tA) {
                 aFrom = toLocalDate(tA.getDateFrom());
-                aTo = toLocalDate(tA.getDateTo());
+                aTo   = toLocalDate(tA.getDateTo());
             }
 
             if (entryB instanceof CalendarRequestEntry rB) {
                 bFrom = toLocalDate(rB.getDateFrom());
-                bTo = toLocalDate(rB.getDateTo());
+                bTo   = toLocalDate(rB.getDateTo());
             } else if (entryB instanceof CalendarWorkingTripEntry tB) {
                 bFrom = toLocalDate(tB.getDateFrom());
-                bTo = toLocalDate(tB.getDateTo());
+                bTo   = toLocalDate(tB.getDateTo());
             }
 
             if (aFrom != null && aTo != null && bFrom != null && bTo != null) {
+
                 if (rangesOverlap(aFrom, aTo, bFrom, bTo)) {
-                    throw new ConflictException("Due richieste/trasferte inserite insieme hanno intervalli sovrapposti");
+
+                    String typeAName = typeA == CalendarEntryType.REQUEST ? "richiesta" : "trasferta";
+                    String typeBName = typeB == CalendarEntryType.REQUEST ? "richiesta" : "trasferta";
+
+                    throw new ConflictException(
+                            "Nel batch ci sono una " + typeAName + " e una " + typeBName + " con intervalli sovrapposti."
+                    );
                 }
             }
         }
     }
+
 
 
     private String getUserEmailFromRequest(HttpServletRequest request){
@@ -631,8 +681,21 @@ public class CalendarService {
         return !start1.isAfter(end2) && !start2.isAfter(end1);
     }
 
+    /**
+     * Restituisce TRUE solo se gli intervalli orari si sovrappongono davvero.
+     * Intervalli contigui (es. 08–12 e 12–17) NON sono sovrapposti.
+     */
     private boolean timesOverlap(LocalTime start1, LocalTime end1, LocalTime start2, LocalTime end2) {
         return start1.isBefore(end2) && start2.isBefore(end1);
+    }
+
+    /**
+     * Versione esclusiva: considera NON sovrapposti gli orari adiacenti.
+     * Usala nel batch.
+     */
+    private boolean timesOverlapStrict(LocalTime start1, LocalTime end1, LocalTime start2, LocalTime end2) {
+        boolean endsTouch = end1.equals(start2) || end2.equals(start1);
+        return !endsTouch && start1.isBefore(end2) && start2.isBefore(end1);
     }
 
     private double calculateWorkingDayHours(CalendarWorkingDayEntry day) {

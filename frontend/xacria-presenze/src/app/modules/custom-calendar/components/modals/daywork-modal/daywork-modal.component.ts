@@ -301,7 +301,7 @@ export class DayworkModalComponent
           return {
             project: entry.project,
             hourFrom: entry.hourFrom,
-            hourTo: entry.hourFrom,
+            hourTo: entry.hourTo,
             dateFrom: normalizedDate,
           };
         });
