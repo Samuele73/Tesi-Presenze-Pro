@@ -2,9 +2,9 @@
   <div class="modal-header">
     <div>
       <h3 class="modal-title" id="modal-basic-title">
-        {{ ("Scarica Report del " | translate) + " " + todayYear }}
+        {{ ("Scarica Report del" | translate) + " " + todayYear }}
       </h3>
-      <span class="form-text">* {{"Seleziona un mese valido dell'anno corrente" | translate}}</span>
+      <span class="form-text">* {{ "Seleziona un mese valido dell'anno corrente" | translate }}</span>
     </div>
     <button
       type="button"
@@ -16,7 +16,7 @@
   <form #monthForm="ngForm" (ngSubmit)="submitReportExport(monthForm)" novalidate>
     <div class="modal-body">
       <div class="">
-        <label for="month-select" class="form-label fw-bold">{{"Mese"}}</label>
+        <label for="month-select" class="form-label fw-bold">{{ "Mese" | translate }}</label>
         <select
           id="month-select"
           class="form-select w-50"
@@ -25,7 +25,7 @@
           [(ngModel)]="selectedMonth"
         >
           <option *ngFor="let month of availableMonths" [ngValue]="month.value">
-            {{ month.label | titlecase }}
+            {{ month.label | translate | titlecase }}
           </option>
         </select>
         <div
@@ -39,13 +39,13 @@
     <div class="modal-footer">
       <app-button
         [type]="'button'"
-        [name]="'Annulla'"
+        [name]="'Annulla' | translate"
         [mode]="'UNDO'"
         (buttonClick)="thisModal.close()"
       ></app-button>
       <app-button
         [type]="'submit'"
-        [name]="'Scarica'"
+        [name]="'Scarica' | translate"
         [mode]="'SAVE'"
         [buttonDisabled]="!!monthForm?.invalid"
       ></app-button>
