@@ -620,8 +620,6 @@ public class CalendarService {
         return this.calendarMapper.mapToUserRequestResponseDto(entity);
     }
 
-    //VALIDAZIONE BUSINESS LOGIC ENTRIES CALENDARIO
-
     private LocalDate toLocalDate(Date date) {
         if (date == null) return null;
         return date.toInstant()
@@ -700,7 +698,7 @@ public class CalendarService {
         List<CalendarEntity> entries = repository.findAllByUserEmail(userEmail);
 
         // ===============================================================
-        // 1️⃣ SE NON È PERMESSO → NON PUÒ CONTENERE GIORNATE LAVORATIVE
+        // SE NON È PERMESSO → NON PUÒ CONTENERE GIORNATE LAVORATIVE
         // ===============================================================
         if (!type.equals("PERMESSI")) {
             for (CalendarEntity e : entries) {
@@ -716,7 +714,7 @@ public class CalendarService {
         }
 
         // ===============================================================
-        // 2️⃣ SE È PERMESSO → CONTROLLA SOVRAPPOSIZIONE ORARIA CON WORKING_DAY
+        // SE È PERMESSO → CONTROLLA SOVRAPPOSIZIONE ORARIA CON WORKING_DAY
         // ===============================================================
         if (type.equals("PERMESSI")) {
 
@@ -744,7 +742,7 @@ public class CalendarService {
         }
 
         // ===============================================================
-        // 3️⃣ RICHIESTE NON POSSONO OVERLAPPARE CON TRASFERTE
+        // RICHIESTE NON POSSONO OVERLAPPARE CON TRASFERTE
         // ===============================================================
         for (CalendarEntity e : entries) {
             if (excludeId != null && excludeId.equals(e.getId())) continue;
@@ -760,7 +758,7 @@ public class CalendarService {
         }
 
         // ===============================================================
-        // 4️⃣ CONFRONTO CON ALTRE RICHIESTE
+        //  CONFRONTO CON ALTRE RICHIESTE
         // ===============================================================
         for (CalendarEntity e : entries) {
 
@@ -788,7 +786,7 @@ public class CalendarService {
                 continue;
             }
 
-            // PERMESSI → Orari
+            // PERMESSI  Orari
             if (type.equals("PERMESSI")) {
 
                 if (!overlap) continue;
@@ -807,7 +805,7 @@ public class CalendarService {
                 continue;
             }
 
-            // MALATTIA → FULL DAY
+            // MALATTIA  FULL DAY
             if (type.equals("MALATTIA")) {
                 if (overlap) {
                     throw new ConflictException("La richiesta di malattia si sovrappone ad una richiesta di " + exType);
@@ -974,7 +972,7 @@ public class CalendarService {
 
                 String rt = req.getRequestType().trim().toUpperCase();
 
-                // ❌ FERIE / CONGEDO → full day → vietato
+                // FERIE / CONGEDO full day vietato
                 if (rt.equals("FERIE") || rt.equals("CONGEDO")) {
                     throw new ConflictException(
                             "Non puoi inserire una giornata lavorativa in un giorno coperto da una richiesta di " + rt
@@ -1007,7 +1005,7 @@ public class CalendarService {
             }
 
             // ----------------------------------------
-            // 3) TRASFERTA → full day → vietato
+            // 3) TRASFERTA full day vietato
             // ----------------------------------------
             if (e.getEntryType() == CalendarEntryType.WORKING_TRIP &&
                     e.getCalendarEntry() instanceof CalendarWorkingTripEntry trip) {
