@@ -1030,22 +1030,6 @@ public class CalendarService {
                 }
             }
         }
-
-        // ----------------------------------------
-        // 4) Limite ore giornaliere
-        // ----------------------------------------
-        double newWorkingHours = calculateWorkingDayHours(newDay);
-        double dailyHours = getUserDailyHours(userEmail);
-
-        double maxWorkable = dailyHours - totalPermitHours;
-        if (maxWorkable < 0) maxWorkable = 0;
-
-        if (existingWorkingHours + newWorkingHours > maxWorkable) {
-            throw new ConflictException(
-                    "Le ore lavorative totali del giorno (" + (existingWorkingHours + newWorkingHours) +
-                            ") superano il limite consentito considerando i permessi (" + maxWorkable + ")."
-            );
-        }
     }
 
 
