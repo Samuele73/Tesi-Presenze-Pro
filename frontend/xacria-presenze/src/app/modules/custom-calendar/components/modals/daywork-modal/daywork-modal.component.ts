@@ -24,9 +24,9 @@ import { identifiableCalendarWorkingDay } from 'src/app/modules/custom-calendar/
 import { parse } from 'date-fns';
 import { it as itLocale } from 'date-fns/locale';
 import { CalendarStateService } from '../../../services/calendar-state.service';
-import { ToastrService } from 'ngx-toastr';
 import { ProjectStoreService } from 'src/app/modules/project/services/project-store.service';
 import { timeRangeValidator } from '../../../validators/timeRange.validators';
+import { ToastI18nService } from 'src/app/shared/services/toast-i18n.service';
 
 @Component({
   selector: 'app-daywork-modal',
@@ -56,7 +56,7 @@ export class DayworkModalComponent
     private dateFormat: DateFormatService,
     private calendarStateService: CalendarStateService,
     private projectService: ProjectService,
-    private toastrService: ToastrService,
+    private toast: ToastI18nService,
     private projectStoreService: ProjectStoreService
   ) {}
 
@@ -169,8 +169,8 @@ export class DayworkModalComponent
         .deleteCalendarEntities(this.toDeleteEntries, 'WORKING_DAY')
         .subscribe((resp: boolean) => {
           if (resp) {
-            this.toastrService.clear();
-            this.toastrService.success(
+            this.toast.clear();
+            this.toast.success(
               'Lavori giornalieri cancellati con successo'
             );
           }
@@ -273,8 +273,8 @@ export class DayworkModalComponent
       .updateCalendarEntries(changedEntries, 'WORKING_DAY')
       .subscribe((resp: boolean) => {
         if (resp) {
-          this.toastrService.clear();
-          this.toastrService.success(
+          this.toast.clear();
+          this.toast.success(
             'Lavori giornalieri modificati con successo'
           );
         }
@@ -322,7 +322,7 @@ export class DayworkModalComponent
         .saveCalendarEntities(newDayWorkEntries, 'WORKING_DAY')
         .subscribe((resp: boolean) => {
           if (resp)
-            this.toastrService.success(
+            this.toast.success(
               'Lavoro giornaliero creato con successo'
             );
         });

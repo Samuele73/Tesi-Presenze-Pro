@@ -17,9 +17,9 @@ import { AuthService } from 'src/app/shared/services/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RequestDetailsModalComponent } from '../request-details-modal/request-details-modal.component';
 import { RequestStoreService } from '../../services/request-store.service';
-import { ToastrService } from 'ngx-toastr';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { APP_ROUTES } from 'src/app/shared/constants/route-paths';
+import { ToastI18nService } from 'src/app/shared/services/toast-i18n.service';
 
 export type RequestsTab = 'open' | 'closed';
 
@@ -65,7 +65,7 @@ export class RequestsApprovalPageComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private requestStoreService: RequestStoreService,
     private activatedRoute: ActivatedRoute,
-    private toastrService: ToastrService,
+    private toast: ToastI18nService,
     private notifService: NotificationService,
     private router: Router
   ) {}
@@ -370,13 +370,13 @@ export class RequestsApprovalPageComponent implements OnInit, OnDestroy {
           if (request) {
             this.openRequestDetailsModal(request);
           } else {
-            this.toastrService.error(
+            this.toast.error(
               'Impossibile caricare la richiesta selezionata'
             );
           }
         },
         error: () => {
-          this.toastrService.error(
+          this.toast.error(
             'Impossibile caricare la richiesta selezionata'
           );
         },

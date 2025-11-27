@@ -9,7 +9,7 @@ import {
 } from 'src/generated-client';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
+import { ToastI18nService } from 'src/app/shared/services/toast-i18n.service';
 
 class AuthServiceStub {
   isPrivilegedUser(): boolean {
@@ -81,7 +81,7 @@ describe('RequestsApprovalPageComponent', () => {
         { provide: RequestStoreService, useClass: RequestStoreServiceStub },
         { provide: NgbModal, useClass: NgbModalStub },
         { provide: ActivatedRoute, useValue: { queryParamMap: queryParamMap$.asObservable() } },
-        { provide: ToastrService, useValue: { error: () => {} } },
+        { provide: ToastI18nService, useValue: { error: () => {} } },
       ],
     })
       .compileComponents();

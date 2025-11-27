@@ -27,9 +27,9 @@ import {
 import { identifiableCalendarAvailability } from 'src/app/modules/custom-calendar/models/calendar';
 import { projects } from '../../../const-vars';
 import { CalendarStateService } from '../../../services/calendar-state.service';
-import { ToastrService } from 'ngx-toastr';
 import { ProjectStoreService } from 'src/app/modules/project/services/project-store.service';
 import { dateRangeValidator } from '../../../validators/dateRange.validators';
+import { ToastI18nService } from 'src/app/shared/services/toast-i18n.service';
 
 @Component({
   selector: 'app-availability-modal',
@@ -56,7 +56,7 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
     private renderer: Renderer2,
     private dateFormat: DateFormatService,
     private calendarStateService: CalendarStateService,
-    private toastrService: ToastrService,
+    private toast: ToastI18nService,
     private projectService: ProjectService,
     private cdr: ChangeDetectorRef,
     private projectStoreService: ProjectStoreService
@@ -175,8 +175,8 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
       .updateCalendarEntries(changedEntries, 'AVAILABILITY')
       .subscribe((resp: boolean) => {
         if (resp){
-          this.toastrService.clear();
-          this.toastrService.success('Disponibilità modificate con successo');
+          this.toast.clear();
+          this.toast.success('Disponibilità modificate con successo');
         }
       });
     this.initialCalendarentries = this.availabilities.getRawValue();
@@ -189,8 +189,8 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
         .deleteCalendarEntities(this.toDeleteEntries, 'AVAILABILITY')
         .subscribe((resp: boolean) => {
           if (resp){
-            this.toastrService.clear();
-            this.toastrService.success('Disponibilità cancellate con successo');
+            this.toast.clear();
+            this.toast.success('Disponibilità cancellate con successo');
           }
         });
       this.toDeleteEntries = [];
@@ -286,7 +286,7 @@ export class AvailabilityModalComponent implements ModalComponent, OnInit {
         .saveCalendarEntry(newEntry, 'AVAILABILITY')
         .subscribe((resp: boolean) => {
           if (resp)
-            this.toastrService.success('Reperibilità creata con successo');
+            this.toast.success('Reperibilità creata con successo');
         });
       this.form.reset();
     } else console.error('Availability new entry form is invalid');

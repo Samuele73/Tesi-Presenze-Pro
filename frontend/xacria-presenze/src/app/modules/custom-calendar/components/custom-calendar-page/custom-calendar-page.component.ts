@@ -57,12 +57,12 @@ import {
   weekDayNamesEn,
   weekDayNamesIt,
 } from '../../const-vars';
-import { ToastrService } from 'ngx-toastr';
 import { ProjectStoreService } from 'src/app/modules/project/services/project-store.service';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { APP_ROUTES } from 'src/app/shared/constants/route-paths';
 import { Router } from '@angular/router';
+import { ToastI18nService } from 'src/app/shared/services/toast-i18n.service';
 
 type DistributedModalComponent =
   | AvailabilityModalComponent
@@ -132,12 +132,12 @@ export class CustomCalendarPageComponent
     private calendarStateService: CalendarStateService,
     private cdr: ChangeDetectorRef,
     private userService: UserService,
-    private toastrService: ToastrService,
     private projectStoreService: ProjectStoreService,
     public dateFormat: DateFormatService,
     private notifService: NotificationService,
     private router: Router,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private toast: ToastI18nService
   ) {
     this.currentLang = this.translateService.currentLang || 'it';
     this.updateLocaleNames(this.currentLang);
@@ -176,7 +176,7 @@ export class CustomCalendarPageComponent
       .subscribe((error: string | null) => {
         this.errorMessage = error;
         /* if(this.errorMessage)
-          this.toastrService.error(this.errorMessage); */
+          this.toast.error(this.errorMessage); */
         this.cdr.markForCheck();
       });
   }
@@ -224,7 +224,7 @@ export class CustomCalendarPageComponent
       .getUserProjectsNames()
       .subscribe((success: boolean) => {
         if (!success) {
-          this.toastrService.error(
+          this.toast.error(
             'Errore nel caricamento dei progetti utente.'
           );
         }
@@ -233,7 +233,7 @@ export class CustomCalendarPageComponent
       .getCalendarByMonthYear(this.currentMonth, this.currentYear)
       .subscribe((resp: boolean) => {
         if (!resp)
-          this.toastrService.error('Errore nel caricamento del calendario.');
+          this.toast.error('Errore nel caricamento del calendario.');
       });
   }
 
@@ -280,7 +280,7 @@ export class CustomCalendarPageComponent
       .getCalendarByMonthYear(this.currentMonth, this.currentYear)
       .subscribe((resp: boolean) => {
         if (!resp)
-          this.toastrService.error('Errore nel caricamento del calendario.');
+          this.toast.error('Errore nel caricamento del calendario.');
       });
     this.cdr.markForCheck();
   }
@@ -292,7 +292,7 @@ export class CustomCalendarPageComponent
       .getCalendarByMonthYear(this.currentMonth, this.currentYear)
       .subscribe((resp: boolean) => {
         if (!resp)
-          this.toastrService.error('Errore nel caricamento del calendario.');
+          this.toast.error('Errore nel caricamento del calendario.');
       });
     this.cdr.markForCheck();
   }

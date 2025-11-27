@@ -2,9 +2,10 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { UsernameService } from '../shared/services/username.service';
 import { Username } from '../../custom-calendar/models/username';
 import { AuthService } from 'src/app/shared/services/auth.service';
-import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective } from 'ngx-toastr';
 import { UserEmailResponse, UserService } from 'src/generated-client';
 import { NotificationService } from 'src/app/shared/services/notification.service';
+import { ToastI18nService } from 'src/app/shared/services/toast-i18n.service';
 
 declare var bootstrap: any;
 
@@ -21,7 +22,9 @@ export class LayoutComponent implements OnInit{
   constructor(
     private usernameService: UsernameService,
     private authService: AuthService,
-    private toastrService: ToastrService, private userService: UserService, private notifService: NotificationService
+    private toast: ToastI18nService,
+    private userService: UserService,
+    private notifService: NotificationService
   ) {
     this.authService.checkUserAutentication(this.authService.token);
     let userCreds = this.authService.getMyUserProfile();
@@ -42,7 +45,7 @@ export class LayoutComponent implements OnInit{
     });
   }
   ngOnInit(): void {
-    this.toastrService.overlayContainer = this.toastContainer;
+    this.toast.setOverlayContainer(this.toastContainer);
     if(this.authService.token)
       this.userService.getEmailFromTkn(this.authService.token!!).subscribe({
         next: (email: UserEmailResponse) => {
@@ -56,7 +59,7 @@ export class LayoutComponent implements OnInit{
   }
 
   onClick(){
-    this.toastrService.success('prova')
+    this.toast.success('prova')
   }
 
 }

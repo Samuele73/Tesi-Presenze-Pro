@@ -21,8 +21,8 @@ import { faIcons } from '../../custom-calendar-page/custom-calendar-page.compone
 import { CalendarWorkingTripEntry } from 'src/generated-client';
 import { identifiableCalendarWorkingTrip } from 'src/app/modules/custom-calendar/models/calendar';
 import { CalendarStateService } from '../../../services/calendar-state.service';
-import { ToastrService } from 'ngx-toastr';
 import { dateRangeValidator } from '../../../validators/dateRange.validators';
+import { ToastI18nService } from 'src/app/shared/services/toast-i18n.service';
 
 @Component({
   selector: 'app-working-trip-modal',
@@ -58,7 +58,7 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
     private fb: FormBuilder,
     private dateFormat: DateFormatService,
     private calendarStateService: CalendarStateService,
-    private toastrService: ToastrService
+    private toast: ToastI18nService
   ) {}
 
   get dateFrom() {
@@ -165,8 +165,8 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
       .updateCalendarEntries(changedEntries, 'WORKING_TRIP')
       .subscribe((resp: boolean) => {
         if (resp){
-          this.toastrService.clear();
-          this.toastrService.success('Trasferta modificata con successo');
+          this.toast.clear();
+          this.toast.success('Trasferta modificata con successo');
         }
       });
     this.initialWorkingTrips = this.workingTrips.getRawValue();
@@ -197,8 +197,8 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
         .deleteCalendarEntities(this.toDeleteEntries, 'WORKING_TRIP')
         .subscribe((resp: boolean) => {
           if (resp){
-            this.toastrService.clear();
-            this.toastrService.success('Trasferte cancellate con successo');
+            this.toast.clear();
+            this.toast.success('Trasferte cancellate con successo');
           }
         });
       this.toDeleteEntries = [];
@@ -280,7 +280,7 @@ export class WorkingTripModalComponent implements ModalComponent, OnInit {
         .saveCalendarEntry(newEntry, 'WORKING_TRIP')
         .subscribe((resp: boolean) => {
           if (resp)
-            this.toastrService.success('Trasferta creata con successo');
+            this.toast.success('Trasferta creata con successo');
 
         });
       this.form.reset();

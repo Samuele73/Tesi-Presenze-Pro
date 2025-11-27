@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { APP_ROUTES } from 'src/app/shared/constants/route-paths';
 import { NotificationService } from 'src/app/shared/services/notification.service';
+import { ToastI18nService } from 'src/app/shared/services/toast-i18n.service';
 
 @Component({
   selector: 'app-notification',
@@ -12,7 +12,7 @@ import { NotificationService } from 'src/app/shared/services/notification.servic
 export class NotificationComponent implements OnInit {
   isNotified: boolean = false;
 
-  constructor(private notifService: NotificationService, private toastrService: ToastrService, private router: Router) {
+  constructor(private notifService: NotificationService, private toast: ToastI18nService, private router: Router) {
   }
 
   ngOnInit(): void {
@@ -20,7 +20,7 @@ export class NotificationComponent implements OnInit {
       this.isNotified = message !== null;
       sessionStorage.setItem('isNotified', this.isNotified ? 'true' : 'false');
       if(message !== null)
-        this.toastrService.info(message);
+        this.toast.info(message);
     });
   }
 

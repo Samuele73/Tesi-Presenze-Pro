@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { RequestStoreService } from '../../services/request-store.service';
 import {
@@ -12,6 +11,7 @@ import {
 import { RequestsTab } from '../requests-approval-page/requests-approval-page.component';
 import { DateFormatService } from 'src/app/shared/services/date-format.service';
 import { formatDate } from '@angular/common';
+import { ToastI18nService } from 'src/app/shared/services/toast-i18n.service';
 
 @Component({
   selector: 'app-request-details-modal',
@@ -38,7 +38,7 @@ export class RequestDetailsModalComponent {
     public activeModal: NgbActiveModal,
     public authService: AuthService,
     private requestStoreService: RequestStoreService,
-    private toastrService: ToastrService,
+    private toast: ToastI18nService,
     public dateService: DateFormatService
   ) {
     if(this.isEditMode === undefined)
@@ -72,7 +72,7 @@ export class RequestDetailsModalComponent {
           }
         },
         error: (err: HttpErrorResponse) => {
-          this.toastrService.error(
+          this.toast.error(
             'Errore con il reperimento dell email utente: ' + err.error.message
           );
         },
@@ -81,7 +81,7 @@ export class RequestDetailsModalComponent {
 
   onFeedback(mode: ApprovalAction): void {
     if (!this.request?.id) {
-      this.toastrService.error('Nessun id presente nella richiesta');
+      this.toast.error('Nessun id presente nella richiesta');
       return;
     }
 
@@ -90,11 +90,11 @@ export class RequestDetailsModalComponent {
       .subscribe({
         next: (success: boolean) => {
           success
-            ? this.toastrService.success('Richiesta aggiornata con successo')
-            : this.toastrService.error('Impossibile gestire la richiesta');
+            ? this.toast.success('Richiesta aggiornata con successo')
+            : this.toast.error('Impossibile gestire la richiesta');
         },
         error: (err: HttpErrorResponse) => {
-          this.toastrService.error(err.error?.message ?? 'Errore sconosciuto');
+          this.toast.error(err.error?.message ?? 'Errore sconosciuto');
         },
         complete: () => {
           this.activeModal.dismiss();

@@ -11,9 +11,9 @@ import {
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { UserBasicDetailsResponse, UserService } from 'src/generated-client';
+import { ToastI18nService } from 'src/app/shared/services/toast-i18n.service';
 
 type invitationFeedback = {
   positive: boolean;
@@ -49,7 +49,7 @@ export class UserLisInteractionComponent implements OnChanges {
     public authService: AuthService,
     private modalService: NgbModal,
     private userService: UserService,
-    private toastrService: ToastrService
+    private toast: ToastI18nService
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -99,17 +99,17 @@ export class UserLisInteractionComponent implements OnChanges {
     this.userService.sendInvitationByEmail(this.toInviteUserEmail).subscribe({
       next: () => {
         this.modalRef.close();
-        this.toastrService.success('Invito mandato con successo.');
+        this.toast.success('Invito mandato con successo.');
         form.resetForm();
       },
       error: (err: HttpErrorResponse) => {
         if (err.status == 409) {
           this.modalRef.close();
-          this.toastrService.error('Un utente con questa email esiste già.')
+          this.toast.error('Un utente con questa email esiste già.')
           return;
         }
         this.modalRef.close();
-        this.toastrService.error('Non è stato possibile mandare l invito')
+        this.toast.error('Non è stato possibile mandare l invito')
       },
     });
   }

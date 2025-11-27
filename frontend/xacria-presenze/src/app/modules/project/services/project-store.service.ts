@@ -1,9 +1,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, catchError, map, Observable, of, tap } from 'rxjs';
 import { ApiError } from 'src/app/shared/models/api-error.models';
 import { AuthService } from 'src/app/shared/services/auth.service';
+import { ToastI18nService } from 'src/app/shared/services/toast-i18n.service';
 import {
   CreateProjectRequest,
   Project,
@@ -29,7 +29,7 @@ export class ProjectStoreService {
   constructor(
     private authService: AuthService,
     private projectService: ProjectService,
-    private toastrService: ToastrService
+    private toast: ToastI18nService
   ) {}
 
   get projects$() {
@@ -61,7 +61,7 @@ export class ProjectStoreService {
           error: err.error.message,
           op: 'GET',
         });
-        this.toastrService.error(err.error.message);
+        this.toast.error(err.error.message);
       },
       complete: () => this.isLoadingSubject.next(false),
     });
@@ -76,7 +76,7 @@ export class ProjectStoreService {
       map(() => true),
       catchError((err) => {
         console.error('Error fetching user projects:', err);
-        this.toastrService.error("Errore nel recupero dei nomi dei progetti")
+        this.toast.error("Errore nel recupero dei nomi dei progetti")
         return of(false);
       })
     )
@@ -98,7 +98,7 @@ export class ProjectStoreService {
           error: err.error.message,
           op: 'ADD',
         });
-        this.toastrService.error(err.error.message);
+        this.toast.error(err.error.message);
         return of(false);
       })
     );
@@ -120,7 +120,7 @@ export class ProjectStoreService {
         error: err.error.message,
         op: 'DELETE',
       });
-      this.toastrService.error(err.error.message);
+      this.toast.error(err.error.message);
       return of(false);
     })
   );
@@ -147,7 +147,7 @@ export class ProjectStoreService {
           error: err.error.message,
           op: 'UPDATE',
         });
-        this.toastrService.error(err.error.message);
+        this.toast.error(err.error.message);
         return of(false);
       })
     );

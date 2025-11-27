@@ -18,7 +18,7 @@ import {
 import { en } from '@fullcalendar/core/internal-common';
 import { id } from 'date-fns/locale';
 import { calendar, identifiableCalendarEntry } from '../models/calendar';
-import { ToastrService } from 'ngx-toastr';
+import { ToastI18nService } from 'src/app/shared/services/toast-i18n.service';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +31,10 @@ export class CalendarStateService {
     string | null
   >(null);
 
-  constructor(private calendarApi: CalendarService, private toastrSerice: ToastrService) {}
+  constructor(
+    private calendarApi: CalendarService,
+    private toastI18n: ToastI18nService
+  ) {}
 
   get calendar(): Observable<calendar> {
     return this.calendar$.asObservable();
@@ -109,7 +112,7 @@ export class CalendarStateService {
       catchError((error: HttpErrorResponse) => {
         console.error('Error fetch calendar:', error);
         this.error$.next(error.error.message || "Errore nel recupero del calendario");
-        this.toastrSerice.error(error.error.message);
+        this.toastI18n.error(error.error.message);
         return of(false);
       })
     );
@@ -162,7 +165,7 @@ export class CalendarStateService {
       catchError((error: HttpErrorResponse) => {
         console.error('Error saving calendar entry:', error);
         this.error$.next(error.error.message || "Errore nel salvataggio dell'entry del calendario");
-        this.toastrSerice.error(error.error.message);
+        this.toastI18n.error(error.error.message);
         return of(false);
       })
     );
@@ -219,7 +222,7 @@ export class CalendarStateService {
         catchError((error: HttpErrorResponse) => {
           console.error('Error saving calendar entry:', error);
           this.error$.next(error.error.message || "Errore nel salvataggio dell'entry del calendario");
-          this.toastrSerice.error(error.error.message);
+          this.toastI18n.error(error.error.message);
           return of(false);
         })
       );
@@ -277,7 +280,7 @@ export class CalendarStateService {
         this.error$.next(
           error.error.message || "Errore nella cancellazione dell'entry del calendario"
         );
-        this.toastrSerice.error(error.error.message);
+        this.toastI18n.error(error.error.message);
         return of(false);
       })
     );
@@ -364,7 +367,7 @@ export class CalendarStateService {
       catchError((error: HttpErrorResponse) => {
         console.error('Error updating calendar entries:', error);
         this.error$.next(error.error.message || "Errore nell'aggiornamento dell'entry del calendario");
-        this.toastrSerice.error(error.error.message);
+        this.toastI18n.error(error.error.message);
         return of(false);
       })
     );

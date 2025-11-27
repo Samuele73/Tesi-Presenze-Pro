@@ -4,7 +4,7 @@ import { Modal } from 'bootstrap';
 import { NgForm } from '@angular/forms';
 import { CalendarService } from 'src/generated-client';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ToastrService } from 'ngx-toastr';
+import { ToastI18nService } from 'src/app/shared/services/toast-i18n.service';
 
 @Component({
   selector: 'app-calendar-csv-modal',
@@ -26,7 +26,7 @@ export class CalendarCsvModalComponent {
   constructor(
     private modalService: NgbModal,
     private calendarService: CalendarService,
-    private toastrService: ToastrService
+    private toast: ToastI18nService
   ) {}
 
   initializeForm(): void {
@@ -127,12 +127,12 @@ export class CalendarCsvModalComponent {
         },
         error: (err: HttpErrorResponse) => {
           if (err.status === 404) {
-            this.toastrService.error(
+            this.toast.error(
               'Nessun dato disponibile per il mese selezionato.',
               'Download fallito'
             );
           } else
-            this.toastrService.error(
+            this.toast.error(
               'Si è verificato un errore durante il download del report.',
               'Download fallito'
             );

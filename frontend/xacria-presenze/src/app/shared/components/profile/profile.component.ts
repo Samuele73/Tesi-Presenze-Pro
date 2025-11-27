@@ -21,8 +21,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { DropdownOptions } from '../ngb-options/ngb-options.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmModalComponent } from 'src/app/modules/layout/confirm-modal/confirm-modal.component';
-import { ToastrService } from 'ngx-toastr';
 import { APP_ROUTES } from '../../constants/route-paths';
+import { ToastI18nService } from '../../services/toast-i18n.service';
 
 type ProfileMode = 'FULL' | 'BASIC' | 'ME';
 
@@ -55,7 +55,7 @@ export class ProfileComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private modalService: NgbModal,
-    private toastrService: ToastrService
+    private toast: ToastI18nService
   ) {}
 
   ngOnInit(): void {
@@ -239,7 +239,7 @@ export class ProfileComponent implements OnInit {
         },
         error: (err: HttpErrorResponse) => {
           console.log('Error in Profile update: ', err);
-          this.toastrService.error(err.error.message);
+          this.toast.error(err.error.message);
         },
       });
     } else if (this.mode == 'FULL' && this.authService.isOwner()) {
@@ -259,7 +259,7 @@ export class ProfileComponent implements OnInit {
         },
         error: (err: HttpErrorResponse) => {
           console.log('Error in Profile update: ', err);
-          this.toastrService.error(err.error.message);
+          this.toast.error(err.error.message);
         },
       });
     } else {

@@ -1,11 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { delay } from 'rxjs';
 import { APP_ROUTES } from 'src/app/shared/constants/route-paths';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
+import { ToastI18nService } from 'src/app/shared/services/toast-i18n.service';
 import {
   ApprovalRequestTab,
   CalendarService,
@@ -38,7 +38,7 @@ export class HomeComponent implements OnInit {
   constructor(
     public authService: AuthService,
     private userService: UserService,
-    private toastrService: ToastrService,
+    private toast: ToastI18nService,
     private calendarService: CalendarService,
     private notifService: NotificationService,
     private router: Router
@@ -75,7 +75,7 @@ export class HomeComponent implements OnInit {
         };
       },
       error: (err: HttpErrorResponse) => {
-        this.toastrService.error(
+        this.toast.error(
           'Problema con il reperiemento dei valori delle pie: ' +
             err.error.message
         );
@@ -113,7 +113,7 @@ export class HomeComponent implements OnInit {
         this.requestsByTab['OPEN'] = requests;
       },
       error: (err: HttpErrorResponse) => {
-        this.toastrService.error(err.error.message);
+        this.toast.error(err.error.message);
       },
     });
     $closedTabRequest.subscribe({
@@ -121,7 +121,7 @@ export class HomeComponent implements OnInit {
         this.requestsByTab['CLOSED'] = requests;
       },
       error: (err: HttpErrorResponse) => {
-        this.toastrService.error(err.error.message);
+        this.toast.error(err.error.message);
       },
     });
   }

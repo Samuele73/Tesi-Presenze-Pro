@@ -23,9 +23,9 @@ import { CalendarRequestEntry } from 'src/generated-client';
 import { identifiableCalendarRequest } from 'src/app/modules/custom-calendar/models/calendar';
 import { request_types } from '../../../const-vars';
 import { CalendarStateService } from '../../../services/calendar-state.service';
-import { ToastrService } from 'ngx-toastr';
 import { dateRangeValidator } from '../../../validators/dateRange.validators';
 import { timeRangeValidator } from '../../../validators/timeRange.validators';
+import { ToastI18nService } from 'src/app/shared/services/toast-i18n.service';
 
 type reqeustsFormType = {
   id: string;
@@ -71,7 +71,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
     private fb: FormBuilder,
     private dateFormat: DateFormatService,
     private calendarStateService: CalendarStateService,
-    private toastrService: ToastrService
+    private toast: ToastI18nService
   ) {}
 
   get requestType() {
@@ -181,8 +181,8 @@ export class RequestModalComponent implements ModalComponent, OnInit {
       .updateCalendarEntries(changedEntries, 'REQUEST')
       .subscribe((resp: boolean) => {
         if (resp) {
-          this.toastrService.clear();
-          this.toastrService.success('Richiesta modificata con successo');
+          this.toast.clear();
+          this.toast.success('Richiesta modificata con successo');
         }
       });
     this.initialRequests = this.requests.getRawValue();
@@ -201,8 +201,8 @@ export class RequestModalComponent implements ModalComponent, OnInit {
       .deleteCalendarEntities(this.toDeleteEntries, 'REQUEST')
       .subscribe((resp: boolean) => {
         if (resp) {
-          this.toastrService.clear();
-          this.toastrService.success('Richiesta cancellata con successo');
+          this.toast.clear();
+          this.toast.success('Richiesta cancellata con successo');
         }
       });
     this.toDeleteEntries = [];
@@ -347,7 +347,7 @@ export class RequestModalComponent implements ModalComponent, OnInit {
       this.calendarStateService
         .saveCalendarEntry(newEntry, 'REQUEST')
         .subscribe((resp: boolean) => {
-          if (resp) this.toastrService.success('Richiesta creata con successo');
+          if (resp) this.toast.success('Richiesta creata con successo');
         });
       this.form.reset();
     } else console.error('Availability new entry form is invalid');

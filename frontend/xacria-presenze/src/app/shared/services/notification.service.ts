@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Client, IMessage, Stomp } from '@stomp/stompjs';
-import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject } from 'rxjs';
 import SockJS from 'sockjs-client/dist/sockjs.min.js';
 import { UserService } from 'src/generated-client';
 import { AuthService } from './auth.service';
+import { ToastI18nService } from './toast-i18n.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +12,7 @@ import { AuthService } from './auth.service';
 export class NotificationService {
 
   constructor(
-    private toastrService: ToastrService,
+    private toast: ToastI18nService,
     private authService: AuthService
   ) {
     this.notifSubject.next(
@@ -61,7 +61,7 @@ export class NotificationService {
           if (payload.event === "TOKEN_INVALIDATED") {
             /* this.authService.refreshToken(); */
             this.authService.refreshToken();
-            this.toastrService.info("Il tuo ruolo è cambiato. Token aggiornato!");
+            this.toast.info("Il tuo ruolo è cambiato. Token aggiornato!");
           }
         }
       );
