@@ -144,7 +144,7 @@ public class CalendarService {
                     toDate.plusDays(1).atStartOfDay()
             ).toDays();
 
-            return days * 24.0; // Come nel tuo progetto
+            return days * 24.0;
         }
 
         // ----- PERMESSI / RICHIESTE CON ORARI -----
@@ -167,7 +167,7 @@ public class CalendarService {
                 toDate.plusDays(1).atStartOfDay()
         ).toDays();
 
-        // totale = ore del giorno × numero giorni
+        // totale = ore del giorno x numero giorni
         return dailyHours * days;
     }
 
@@ -267,9 +267,7 @@ public class CalendarService {
             }
         });
 
-        // ========================================================
         //  VALIDAZIONE DB + VALIDAZIONE TRA LE ENTRY DELLO STESSO BATCH
-        // ========================================================
 
         newCalendarEntities.sort((e1, e2) -> {
 
@@ -299,10 +297,10 @@ public class CalendarService {
         for (int i = 0; i < newCalendarEntities.size(); i++) {
             CalendarEntity current = newCalendarEntities.get(i);
 
-            // 1️⃣ Validazione contro il DB
+            // Validazione contro il DB
             this.validateBusinessRulesForEntry(current, null);
 
-            // 2️⃣ Validazione contro le altre entry del batch (i+1 → fine)
+            // Validazione contro le altre entry del batch (i+1 → fine)
             for (int j = i + 1; j < newCalendarEntities.size(); j++) {
                 CalendarEntity other = newCalendarEntities.get(j);
 
@@ -311,7 +309,7 @@ public class CalendarService {
             }
         }
 
-        // Tutto valido → salva
+        // Tutto valido -> salva
         final List<CalendarEntity> saved = this.repository.saveAll(newCalendarEntities);
         return calendarMapper.fromCalendarEntitiesToCalendarEntries(saved);
     }
@@ -331,9 +329,7 @@ public class CalendarService {
         CalendarEntry entryA = a.getCalendarEntry();
         CalendarEntry entryB = b.getCalendarEntry();
 
-        // ------------------------------------------------------------
-        // 1) DUE WORKING DAY → controlla orari
-        // ------------------------------------------------------------
+        // 1) DUE WORKING DAY -> controlla orari
         if (typeA == CalendarEntryType.WORKING_DAY && typeB == CalendarEntryType.WORKING_DAY) {
 
             CalendarWorkingDayEntry dayA = (CalendarWorkingDayEntry) entryA;
@@ -350,7 +346,6 @@ public class CalendarService {
                 LocalTime bFrom = LocalTime.parse(dayB.getHourFrom());
                 LocalTime bTo   = LocalTime.parse(dayB.getHourTo());
 
-                // Usa la versione STRICT (08–12 e 12–17 NON sovrapposti)
                 if (timesOverlapStrict(aFrom, aTo, bFrom, bTo)) {
                     throw new ConflictException(
                             "Due giornate lavorative inserite nel batch hanno orari sovrapposti in data " + dateA
@@ -359,9 +354,8 @@ public class CalendarService {
             }
         }
 
-        // ------------------------------------------------------------
-        // 2) DUE AVAILABILITY → nessun overlap tra date
-        // ------------------------------------------------------------
+        // 2) DUE AVAILABILITY -> nessun overlap tra date
+
         if (typeA == CalendarEntryType.AVAILABILITY && typeB == CalendarEntryType.AVAILABILITY) {
 
             CalendarAvailabilityEntry avA = (CalendarAvailabilityEntry) entryA;
@@ -375,9 +369,8 @@ public class CalendarService {
             }
         }
 
-        // ------------------------------------------------------------
-        // 3) REQUEST - TRIP → NO overlap date
-        // ------------------------------------------------------------
+        // 3) REQUEST - TRIP -> NO overlap date
+
         if (typeA == CalendarEntryType.REQUEST || typeA == CalendarEntryType.WORKING_TRIP ||
                 typeB == CalendarEntryType.REQUEST || typeB == CalendarEntryType.WORKING_TRIP) {
 
@@ -760,9 +753,8 @@ public class CalendarService {
 
         List<CalendarEntity> entries = repository.findAllByUserEmail(userEmail);
 
-        // ===============================================================
-        // SE NON È PERMESSO → NON PUÒ CONTENERE GIORNATE LAVORATIVE
-        // ===============================================================
+        // SE NON È PERMESSO - > NON PUÒ CONTENERE GIORNATE LAVORATIVE
+
         if (!type.equals("PERMESSI")) {
             for (CalendarEntity e : entries) {
                 if (excludeId != null && excludeId.equals(e.getId())) continue;
@@ -776,9 +768,8 @@ public class CalendarService {
             }
         }
 
-        // ===============================================================
-        // SE È PERMESSO → CONTROLLA SOVRAPPOSIZIONE ORARIA CON WORKING_DAY
-        // ===============================================================
+        // SE È PERMESSO -> CONTROLLA SOVRAPPOSIZIONE ORARIA CON WORKING_DAY
+
         if (type.equals("PERMESSI")) {
 
             for (CalendarEntity e : entries) {
@@ -804,9 +795,8 @@ public class CalendarService {
             }
         }
 
-        // ===============================================================
         // RICHIESTE NON POSSONO OVERLAPPARE CON TRASFERTE
-        // ===============================================================
+
         for (CalendarEntity e : entries) {
             if (excludeId != null && excludeId.equals(e.getId())) continue;
 
@@ -820,9 +810,8 @@ public class CalendarService {
             }
         }
 
-        // ===============================================================
         //  CONFRONTO CON ALTRE RICHIESTE
-        // ===============================================================
+
         for (CalendarEntity e : entries) {
 
             if (excludeId != null && excludeId.equals(e.getId())) continue;
@@ -1042,9 +1031,7 @@ public class CalendarService {
                     );
                 }
 
-                // --------------------
                 // PERMESSI / MALATTIA con orari
-                // --------------------
                 LocalTime reqFrom = req.getTimeFrom() != null ? LocalTime.parse(req.getTimeFrom()) : null;
                 LocalTime reqTo   = req.getTimeTo()   != null ? LocalTime.parse(req.getTimeTo())   : null;
 
@@ -1067,9 +1054,7 @@ public class CalendarService {
                 }
             }
 
-            // ----------------------------------------
             // 3) TRASFERTA full day vietato
-            // ----------------------------------------
             if (e.getEntryType() == CalendarEntryType.WORKING_TRIP &&
                     e.getCalendarEntry() instanceof CalendarWorkingTripEntry trip) {
 
