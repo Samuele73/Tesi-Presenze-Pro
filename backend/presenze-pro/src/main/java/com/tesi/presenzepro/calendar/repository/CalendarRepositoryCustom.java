@@ -25,4 +25,6 @@ public interface CalendarRepositoryCustom {
     List<CalendarEntity> findUserYearMonthEntities(String userEmail, int year, int month);
 
     CalendarEntity updateCalendarEntityById(String id, CalendarEntity newEntity);
+
+    boolean updateCalendarEntitiesProjectName(String oldProjectName, String newProjectName);
 }

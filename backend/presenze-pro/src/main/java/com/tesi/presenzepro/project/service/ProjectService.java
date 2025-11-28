@@ -1,5 +1,6 @@
 package com.tesi.presenzepro.project.service;
 
+import com.tesi.presenzepro.calendar.service.CalendarService;
 import com.tesi.presenzepro.project.dto.CreateProjectRequest;
 import com.tesi.presenzepro.project.exception.NoProjectFound;
 import com.tesi.presenzepro.project.exception.NoUserForProjectFound;
@@ -22,6 +23,7 @@ public class ProjectService {
     private ProjectRepository projectRepository;
     private UserService userService;
     private ProjectMapper projectMapper;
+    private CalendarService calendarService;
 
     public List<Project> findAllProjects(){
         return this.projectRepository.findAll();
@@ -108,6 +110,7 @@ public class ProjectService {
     private void updateProjectNameIfChanged(String oldProjectName, String newProjectName) {
         if (!oldProjectName.equals(newProjectName)) {
             userService.updateProjectNameForAll(oldProjectName, newProjectName);
+            calendarService.updateCalendarEntitiesProjectName(oldProjectName, newProjectName);
         }
     }
 

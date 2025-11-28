@@ -268,5 +268,29 @@ public class CalendarRepositoryCustomImpl implements CalendarRepositoryCustom {
         }
     }
 
+    @Override
+    public boolean updateCalendarEntitiesProjectName(
+            String oldProjectName,
+            String newProjectName
+    ) {
+
+        Query query = new Query();
+
+        query.addCriteria(
+                new Criteria().orOperator(
+                        Criteria.where("entryType").is("WORKING_DAY")
+                                .and("calendarEntry.project").is(oldProjectName),
+                        Criteria.where("entryType").is("AVAILABILITY")
+                                .and("calendarEntry.project").is(oldProjectName)
+                )
+        );
+
+        Update update = new Update().set("calendarEntry.project", newProjectName);
+
+        UpdateResult result = mongoTemplate.updateMulti(query, update, CalendarEntity.class);
+
+        return result.getModifiedCount() > 0;
+    }
+
 
 }

@@ -91,6 +91,10 @@ public class CalendarService {
         return calendarMapper.fromCalendarEntityToCalendarEntry(calendarEntity);
     }
 
+    public boolean updateCalendarEntitiesProjectName(String oldProjectName, String newProjectName){
+        return this.repository.updateCalendarEntitiesProjectName(oldProjectName, newProjectName);
+    }
+
 
     private boolean isWeekend(Date date) {
         LocalDate ld = toLocalDate(date);
